@@ -227,7 +227,12 @@ function moveReviewQuestion(direction: -1 | 1) {
   const next = Math.min(filteredReviewQuestions.value.length - 1, Math.max(0, current + direction))
   selectedReviewQuestionId.value = filteredReviewQuestions.value[next]?.questionId ?? null
 }
-function practiceReviewQuestion(question: SatReportReviewQuestion) { void router.push({ name: 'study-guide', params: { topicId: question.topicId } }) }
+function reviewTopic(question: SatReportReviewQuestion) { return manifest.value?.topics.find((topic) => topic.topicId === question.topicId) ?? null }
+function reviewTopicTitle(question: SatReportReviewQuestion) { return reviewTopic(question)?.title ?? question.officialSkill }
+function practiceReviewQuestion(question: SatReportReviewQuestion) {
+  const topic = reviewTopic(question)
+  if (topic) void router.push({ name: 'quiz', params: { topicId: topic.id } })
+}
 function optionEntries(question: SatReportReviewQuestion) { return Object.entries(question.options).sort(([left], [right]) => left.localeCompare(right)) }
 function optionState(question: SatReportReviewQuestion, answer: string) {
   if (answer === question.correctAnswer) return 'correct'
@@ -482,8 +487,8 @@ onBeforeUnmount(() => document.body.classList.remove('package-route', 'dark'))
                   <div v-else class="review-produced-response"><div><span>Your answer</span><strong :class="selectedReviewQuestion.status.toLowerCase()">{{ selectedReviewQuestion.userAnswer ?? 'No answer' }}</strong></div><div><span>Correct answer</span><strong class="correct">{{ selectedReviewQuestion.correctAnswer }}</strong></div></div>
                   <section :class="['review-feedback-panel', selectedReviewQuestion.status.toLowerCase()]"><header><span>{{ selectedReviewQuestion.status === 'CORRECT' ? '✓' : selectedReviewQuestion.status === 'INCORRECT' ? '×' : '–' }}</span><strong>{{ selectedReviewQuestion.status === 'CORRECT' ? 'You got it right' : selectedReviewQuestion.status === 'INCORRECT' ? 'Review this answer' : 'You left this unanswered' }}</strong><em>{{ selectedReviewQuestion.earnedRawPoints }}/{{ selectedReviewQuestion.maximumRawPoints }} point</em></header><p><b>Explanation</b>{{ selectedReviewQuestion.explanation }}</p></section>
                   <section class="review-skill-panel">
-                    <div><span>Skill to review</span><strong>{{ selectedReviewQuestion.officialSkill }}</strong><p>{{ selectedReviewQuestion.contentDomain }} · {{ selectedReviewQuestion.teachingTopic }}</p></div>
-                    <button type="button" @click="practiceReviewQuestion(selectedReviewQuestion)">Practice this skill →</button>
+                    <div><span>Skill to review</span><strong>{{ selectedReviewQuestion.officialSkill }}</strong><p>{{ selectedReviewQuestion.contentDomain }} · {{ reviewTopicTitle(selectedReviewQuestion) }}</p></div>
+                    <button type="button" @click="practiceReviewQuestion(selectedReviewQuestion)">Practice this topic</button>
                   </section>
                   <dl class="review-data-grid"><div><dt>Time spent</dt><dd>{{ selectedReviewQuestion.timeSpentSeconds ? formatReportTime(selectedReviewQuestion.timeSpentSeconds) : '—' }}</dd></div><div><dt>Route</dt><dd>{{ selectedReviewQuestion.route }} path</dd></div><div><dt>Response type</dt><dd>{{ reviewTypeLabel(selectedReviewQuestion) }}</dd></div><div><dt>Scoring</dt><dd>{{ selectedReviewQuestion.isScored ? 'Scored' : 'Unscored' }} · {{ selectedReviewQuestion.maximumRawPoints }} raw point</dd></div></dl>
                   <footer class="review-detail-pagination"><button type="button" :disabled="selectedReviewQuestionPosition <= 0" @click="moveReviewQuestion(-1)">← Previous</button><span>{{ selectedReviewQuestionPosition + 1 }} of {{ filteredReviewQuestions.length }} in this view</span><button type="button" :disabled="selectedReviewQuestionPosition >= filteredReviewQuestions.length - 1" @click="moveReviewQuestion(1)">Next →</button></footer>
