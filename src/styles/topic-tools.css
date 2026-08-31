@@ -231,7 +231,7 @@ body.topic-tool-route main { margin-left: 0; }
 .solvely-voice-ended strong span { display: grid; width: 22px; height: 22px; place-items: center; border-radius: 50%; color: #fff; background: #2c71e8; font-size: 11px; }
 .solvely-voice-ended p { margin: 9px 0 0; color: #596270; font-size: 12px; }
 
-.solvely-chat-composer { display: grid; grid-template-columns: minmax(0, 1fr) 24px 1px 24px; gap: 9px; align-items: center; min-height: 58px; margin: 0 16px 13px; padding: 10px 0 10px 13px; border: 1px solid #e5e7eb; border-radius: 14px; background: rgba(255, 255, 255, .96); box-shadow: 0 6px 16px rgba(20, 34, 65, .03); }
+.solvely-chat-composer { display: grid; grid-template-columns: minmax(0, 1fr) 24px 1px 24px; gap: 9px; align-items: center; min-height: 58px; margin: 0 16px 13px; padding: 10px 10px 10px 13px; border: 1px solid #e5e7eb; border-radius: 14px; background: rgba(255, 255, 255, .96); box-shadow: 0 6px 16px rgba(20, 34, 65, .03); }
 .solvely-chat-composer textarea { width: 100%; min-height: 24px; max-height: 96px; resize: none; overflow: auto; padding: 0; border: 0; outline: 0; color: #111; background: transparent; font-size: 14px; line-height: 24px; }
 .solvely-chat-composer textarea::placeholder { color: #c7cbd1; }
 .solvely-send-button, .solvely-voice-button { display: grid; width: 24px; height: 24px; place-items: center; padding: 0; border: 0; border-radius: 999px; color: #fff; background: #2e72ea; cursor: pointer; }

@@ -466,9 +466,9 @@ onBeforeUnmount(() => document.body.classList.remove('package-route', 'dark'))
                 <span class="course-start-number" aria-hidden="true">1</span>
                 <div class="course-start-copy">
                   <span class="course-start-label">Lessons</span>
-                  <h2>Learn With 100 Video Lessons</h2>
+                  <h2>Learn With Interactive Video Lessons</h2>
                   <p>Each topic pairs a video and written study guide with an exit-ticket check, plus flashcards and a quiz.</p>
-                  <div class="course-start-tags" aria-label="Lesson tools"><span>Video Lesson</span><span>Study Guide</span><span>Exit Ticket</span><span>Flashcards</span><span>Topic Quiz</span></div>
+                  <div class="course-start-tags" aria-label="Lesson tools"><span>Video Lesson</span><span>Study Guide</span><span>Exit Ticket</span><span>Flashcards</span><span>Topic Quiz</span><span>AI Tutor</span></div>
                 </div>
                 <button class="course-start-action" type="button" @click="startCourseLearning">Start Learning</button>
               </li>
