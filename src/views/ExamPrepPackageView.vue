@@ -433,6 +433,7 @@ onBeforeUnmount(() => document.body.classList.remove('package-route', 'dark'))
 
       <section v-else class="course-workspace" aria-labelledby="courseWorkspaceTitle">
         <header class="course-package-hero">
+          <div class="course-package-hero-inner">
           <span class="course-package-art" aria-hidden="true"><i/><i/><i/></span>
           <button class="course-back" type="button" @click="closeCourse"><svg class="icon"><use href="#i-chevron"/></svg><span>Back to courses</span></button>
           <div class="course-package-hero-main">
@@ -452,8 +453,10 @@ onBeforeUnmount(() => document.body.classList.remove('package-route', 'dark'))
             </aside>
           </div>
           <nav class="course-package-tabs" role="tablist" aria-label="Course sections"><button v-for="tab in ([['overview','Overview'],['study','Lessons'],['mock','Practice Tests'],['results','Results & Improve']] as [CourseTab,string][])" :key="tab[0]" class="course-package-tab" type="button" role="tab" :aria-selected="activeTab === tab[0]" @click="selectTab(tab[0])">{{ tab[1] }}</button></nav>
+          </div>
         </header>
-        <div class="course-package-panel" role="tabpanel" aria-live="polite">
+        <div class="course-workspace-body">
+          <div class="course-package-panel" role="tabpanel" aria-live="polite">
           <div v-if="activeTab === 'overview'" class="course-overview-waterfall">
             <ol v-if="!isCourseStarted" class="course-start-path" aria-label="Your SAT prep path">
               <li class="course-start-step featured">
@@ -519,11 +522,11 @@ onBeforeUnmount(() => document.body.classList.remove('package-route', 'dark'))
           </div>
 
           <div v-else class="results-experience">
-            <header class="results-experience-head results-switch-only">
+            <header class="results-experience-head">
               <div class="results-view-switch" role="tablist" aria-label="Result views">
-                <button type="button" role="tab" :aria-selected="resultView === 'score'" @click="setResultView('score')">Score Report</button>
-                <button type="button" role="tab" :aria-selected="resultView === 'review'" @click="setResultView('review')">Question Review</button>
-                <button type="button" role="tab" :aria-selected="resultView === 'improve'" @click="setResultView('improve')">Topics to Improve</button>
+                <button type="button" role="tab" :aria-selected="resultView === 'score'" @click="setResultView('score')"><span class="results-view-icon"><svg class="icon" aria-hidden="true"><use href="#i-chart"/></svg></span><span class="results-view-copy"><strong>Score Report</strong><small>Scores &amp; performance</small></span></button>
+                <button type="button" role="tab" :aria-selected="resultView === 'review'" @click="setResultView('review')"><span class="results-view-icon"><svg class="icon" aria-hidden="true"><use href="#i-exam"/></svg></span><span class="results-view-copy"><strong>Question Review</strong><small>{{ reportQuestions.length || 98 }} questions</small></span></button>
+                <button type="button" role="tab" :aria-selected="resultView === 'improve'" @click="setResultView('improve')"><span class="results-view-icon"><svg class="icon" aria-hidden="true"><use href="#i-target"/></svg></span><span class="results-view-copy"><strong>Topics to Improve</strong><small>Adaptive practice</small></span></button>
               </div>
             </header>
 
@@ -654,6 +657,7 @@ onBeforeUnmount(() => document.body.classList.remove('package-route', 'dark'))
               </div>
             </section>
           </div>
+        </div>
         </div>
       </section>
     </main>
