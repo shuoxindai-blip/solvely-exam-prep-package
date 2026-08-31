@@ -2,6 +2,7 @@
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { loadSatManifest, loadTopicContent, loadTopicQuiz } from '../data/satData'
+import { loadImprovePracticeProgress, saveImprovePracticeProgress } from '../data/improvePracticeProgress'
 import type { EpFlashCardContent, EpQuestion, EpStudyGuideContent } from '../types/epV2'
 import type { SatFlashcard, SatManifest, SatQuizQuestion, SatTopic } from '../types/sat'
 
@@ -31,11 +32,13 @@ const selectedAnswer = ref<number | null>(null)
 const shortAnswer = ref('')
 const shortAnswerChecked = ref(false)
 const iframeLoaded = ref(false)
+const improvePracticeProgress = ref(0)
 
 const mode = computed<ToolMode>(() => {
   const name = String(route.name)
   return name === 'flashcards' || name === 'quiz' ? name : 'study-guide'
 })
+const isImprovePractice = computed(() => route.query.source === 'improve')
 const topicId = computed(() => String(route.params.topicId || ''))
 const topic = computed(() => manifest.value?.topics.find((item) => item.id === topicId.value) ?? null)
 const studyGuide = computed(() => studyGuideContent.value?.payload.content ?? null)
@@ -58,6 +61,8 @@ const currentTopicPosition = computed(() => orderedTopics.value.findIndex((item)
 const isLastTopic = computed(() => currentTopicPosition.value === orderedTopics.value.length - 1)
 const nextStudyTopic = computed(() => orderedTopics.value[currentTopicPosition.value + 1] ?? null)
 const hasAnotherStudyPractice = computed(() => studyPracticeIndex.value < studyPracticeQuestions.value.length - 1)
+const isLastQuizQuestion = computed(() => quizIndex.value === quizQuestions.value.length - 1)
+const isImproveReview = computed(() => isImprovePractice.value && quizQuestions.value.length > 0 && improvePracticeProgress.value >= quizQuestions.value.length)
 let studyPracticeTimer: number | undefined
 
 const topicsBySection = computed(() => {
@@ -76,6 +81,12 @@ const cardStatusCounts = computed(() => {
 function toolRoute(tool: ToolMode, target = topic.value) {
   if (!target) return
   void router.push({ name: tool, params: { topicId: target.id } })
+}
+
+function backToPackage() {
+  void router.push(isImprovePractice.value
+    ? { name: 'package', query: { tab: 'results', view: 'improve' }, hash: '#course-0' }
+    : { name: 'package', query: { tab: 'study' }, hash: '#course-0' })
 }
 
 function chooseTopic(target: SatTopic) {
@@ -132,6 +143,7 @@ function normalize(value: string) {
 function chooseAnswer(index: number) {
   if (selectedAnswer.value !== null) return
   selectedAnswer.value = index
+  recordImprovePracticeAnswer()
 }
 
 function chooseStudyPracticeAnswer(answer: string) {
@@ -181,11 +193,26 @@ function advanceStudyTopic() {
 }
 
 function checkShortAnswer() {
-  if (shortAnswer.value.trim()) shortAnswerChecked.value = true
+  if (shortAnswer.value.trim()) {
+    shortAnswerChecked.value = true
+    recordImprovePracticeAnswer()
+  }
+}
+
+function recordImprovePracticeAnswer() {
+  if (!isImprovePractice.value || !topic.value || isImproveReview.value) return
+  improvePracticeProgress.value = Math.max(improvePracticeProgress.value, quizIndex.value + 1)
+  saveImprovePracticeProgress(topic.value.id, improvePracticeProgress.value)
 }
 
 function nextQuestion() {
   if (!quizQuestions.value.length) return
+  if (isImprovePractice.value && isLastQuizQuestion.value) {
+    improvePracticeProgress.value = quizQuestions.value.length
+    if (topic.value) saveImprovePracticeProgress(topic.value.id, improvePracticeProgress.value)
+    backToPackage()
+    return
+  }
   quizIndex.value = (quizIndex.value + 1) % quizQuestions.value.length
   selectedAnswer.value = null
   shortAnswer.value = ''
@@ -212,7 +239,8 @@ async function loadQuiz() {
   quizLoading.value = true
   try {
     quizQuestions.value = await loadTopicQuiz(topic.value.id)
-    quizIndex.value = 0
+    improvePracticeProgress.value = isImprovePractice.value ? (loadImprovePracticeProgress()[topic.value.id] ?? 0) : 0
+    quizIndex.value = isImprovePractice.value && improvePracticeProgress.value > 0 && improvePracticeProgress.value < quizQuestions.value.length ? improvePracticeProgress.value : 0
     selectedAnswer.value = null
     shortAnswer.value = ''
     shortAnswerChecked.value = false
@@ -287,24 +315,25 @@ onBeforeUnmount(() => {
 <template>
   <div class="topic-tool-shell">
     <header class="topic-tool-header">
-      <button class="topic-back-button" type="button" @click="router.push({ name: 'package', query: { tab: 'study' }, hash: '#course-0' })" aria-label="Back to SAT exam prep">←</button>
-      <button class="topic-package-button" type="button" @click="router.push({ name: 'package', query: { tab: 'study' }, hash: '#course-0' })">
+      <button class="topic-back-button" type="button" @click="backToPackage" aria-label="Back to SAT exam prep">←</button>
+      <button class="topic-package-button" type="button" @click="backToPackage">
         <img src="/assets/solvely-ai-logo.jpeg" alt="" width="27" height="27" />
-        <span><strong>Digital SAT Exam Prep</strong><small>{{ toolLabel }}</small></span>
+        <span><strong>Digital SAT Exam Prep</strong><small>{{ isImprovePractice ? 'Targeted Practice' : toolLabel }}</small></span>
       </button>
-      <nav class="topic-mode-switch" aria-label="Topic study tools">
+      <nav v-if="!isImprovePractice" class="topic-mode-switch" aria-label="Topic study tools">
         <button :class="{ active: mode === 'study-guide' }" type="button" @click="toolRoute('study-guide')">Study Guide</button>
         <button :class="{ active: mode === 'flashcards' }" type="button" @click="toolRoute('flashcards')">Flashcards</button>
         <button :class="{ active: mode === 'quiz' }" type="button" @click="toolRoute('quiz')">Quiz</button>
       </nav>
-      <span class="topic-material-count">100 SAT topics</span>
+      <span v-else class="topic-practice-only-label">Quiz only</span>
+      <span class="topic-material-count">{{ isImprovePractice ? `${topic?.quizCount ?? 0} questions` : '100 SAT topics' }}</span>
     </header>
 
     <div v-if="loadError" class="topic-load-state"><strong>Unable to load SAT materials</strong><p>{{ loadError }}</p></div>
     <div v-else-if="!manifest || !topic" class="topic-load-state"><span class="topic-loader" /><strong>Loading SAT materials…</strong></div>
 
-    <div v-else class="topic-tool-layout">
-      <aside class="topic-sidebar" aria-label="SAT topics">
+    <div v-else :class="['topic-tool-layout',{ 'practice-only': isImprovePractice }]">
+      <aside v-if="!isImprovePractice" class="topic-sidebar" aria-label="SAT topics">
         <div class="topic-sidebar-heading"><span>Topics</span><strong>{{ manifest.totals.topics }}</strong></div>
         <div class="topic-sidebar-stats">
           <span><strong>{{ manifest.totals.flashcards }}</strong> flashcards</span>
@@ -454,9 +483,9 @@ onBeforeUnmount(() => {
                 <span>{{ selectedAnswer !== null ? (selectedCorrect ? 'Correct' : 'Keep learning') : `Answer: ${currentQuestion.answer}` }}</span>
                 <h3>Explanation</h3>
                 <p>{{ currentQuestion.explanation || 'Review the study guide for the complete solution path.' }}</p>
-                <button type="button" @click="toolRoute('study-guide')">View Study Guide</button>
+                <button v-if="!isImprovePractice" type="button" @click="toolRoute('study-guide')">View Study Guide</button>
               </section>
-              <footer><button type="button" class="quiz-next" :disabled="selectedAnswer === null && !shortAnswerChecked" @click="nextQuestion">Next question →</button></footer>
+              <footer><button type="button" class="quiz-next" :disabled="selectedAnswer === null && !shortAnswerChecked" @click="nextQuestion">{{ isImprovePractice && isLastQuizQuestion ? 'Finish practice' : 'Next question →' }}</button></footer>
             </article>
           </template>
         </section>

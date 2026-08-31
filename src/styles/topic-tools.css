@@ -11,6 +11,7 @@ body.topic-tool-route main { margin-left: 0; }
 .topic-mode-switch { display: flex; gap: 3px; padding: 4px; border-radius: 11px; background: #eff2f7; }
 .topic-mode-switch button { min-height: 33px; padding: 0 13px; border: 0; border-radius: 8px; color: #6f798c; background: transparent; font-size: 9px; font-weight: 750; cursor: pointer; }
 .topic-mode-switch button.active { color: #1b5fd8; background: #fff; box-shadow: 0 2px 8px rgba(30, 45, 73, .1); }
+.topic-practice-only-label { min-height: 33px; display: inline-flex; align-items: center; justify-content: center; padding: 0 14px; border-radius: 10px; color: #1b5fd8; background: #edf4ff; font-size: 9px; font-weight: 800; }
 .topic-material-count { justify-self: end; color: #8b94a5; font-size: 9px; font-weight: 700; }
 
 .topic-load-state { display: flex; min-height: calc(100vh - 66px); flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: #778398; font-size: 11px; text-align: center; }
@@ -20,6 +21,8 @@ body.topic-tool-route main { margin-left: 0; }
 @keyframes topic-spin { to { transform: rotate(360deg); } }
 
 .topic-tool-layout { display: grid; grid-template-columns: 285px minmax(0, 1fr); min-height: calc(100vh - 65px); }
+.topic-tool-layout.practice-only { grid-template-columns: minmax(0, 1fr); }
+.topic-tool-layout.practice-only .topic-main { width: 100%; }
 .topic-sidebar { position: sticky; top: 65px; height: calc(100vh - 65px); overflow-y: auto; border-right: 1px solid #e1e6ef; background: #fff; scrollbar-width: thin; }
 .topic-sidebar-heading { display: flex; align-items: center; justify-content: space-between; padding: 19px 18px 7px; color: #273248; font-size: 12px; font-weight: 800; }
 .topic-sidebar-heading strong { display: grid; min-width: 26px; height: 21px; place-items: center; border-radius: 999px; color: #3162bb; background: #edf3ff; font-size: 8px; }
@@ -199,6 +202,7 @@ body.topic-tool-route main { margin-left: 0; }
   .topic-tool-header { position: relative; grid-template-columns: 38px 1fr; padding: 9px 12px; }
   .topic-package-button { min-width: 0; }
   .topic-mode-switch { overflow-x: auto; justify-content: flex-start; }
+  .topic-practice-only-label { grid-column: 1 / -1; justify-self: stretch; }
   .topic-tool-layout { display: block; }
   .topic-sidebar { position: relative; top: auto; height: 188px; border-right: 0; border-bottom: 1px solid #e1e6ef; }
   .topic-sidebar-heading, .topic-sidebar-stats { display: none; }

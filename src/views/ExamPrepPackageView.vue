@@ -3,6 +3,7 @@ import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { loadEpExam, loadSatManifest } from '../data/satData'
 import { buildReviewQuestions, buildSatReport } from '../data/satReport'
+import { loadImprovePracticeProgress } from '../data/improvePracticeProgress'
 import type { SatReportReviewQuestion } from '../data/satReport'
 import type { EpExam } from '../types/epV2'
 import type { SatManifest, SatTopic } from '../types/sat'
@@ -35,6 +36,7 @@ const reviewSectionFilter = ref<ReviewSectionFilter>('ALL')
 const selectedReviewQuestionId = ref<number | null>(null)
 const improveSection = ref<'math' | 'reading-writing'>('math')
 const improvePriority = ref<'ALL' | SatTopic['priority']>('ALL')
+const improvePracticeProgress = ref<Record<string, number>>({})
 const lastActivity = ref<LastActivity>({ kind: 'learning', examTitle: 'SAT Prep 2026', sectionTitle: 'Advanced Math', itemTitle: 'Expansion, factoring, and completing the square', resourceLabel: 'Study Guide', progressPercent: 62, topicId: 'sat_math_advanced_equivalent_expressions_01' })
 const isCourseOpen = computed(() => route.hash === '#course-0')
 const lastActivityDetail = computed(() => lastActivity.value.kind === 'learning'
@@ -105,13 +107,18 @@ const improveTopics = computed(() => {
       averageSeconds,
       missed,
       opportunityScore: Math.round(topic.importanceScore * (missed / Math.max(1, results.length))),
-      state: topicProgress(topic) ? 'CONTINUE' as const : accuracy < 50 ? 'REVIEW' as const : 'PRACTICE' as const,
     }
   }).filter((topic) => topic.missed > 0).sort((left, right) => right.opportunityScore - left.opportunityScore || right.importanceScore - left.importanceScore)
 })
-const improveGroups = computed(() => {
+const improveTopicSections = computed(() => {
   const topics = improveTopics.value.filter((topic) => topic.sectionId === improveSection.value && (improvePriority.value === 'ALL' || topic.priority === improvePriority.value))
-  return [...new Set(topics.map((topic) => topic.contentDomain))].map((contentDomain) => ({ contentDomain, topics: topics.filter((topic) => topic.contentDomain === contentDomain) }))
+  if (improvePriority.value !== 'ALL') return topics.length ? [{ id: `${improveSection.value}-${improvePriority.value}`, title: '', examSection: '', topics }] : []
+  return [...new Set(topics.map((topic) => topic.contentDomain))].map((contentDomain) => ({
+    id: `${improveSection.value}-${contentDomain}`,
+    title: contentDomain,
+    examSection: improveSection.value === 'math' ? 'Math' : 'Reading & Writing',
+    topics: topics.filter((topic) => topic.contentDomain === contentDomain),
+  }))
 })
 
 const courses: Course[] = [
@@ -181,6 +188,20 @@ function closeCourse() { void router.push({ name: 'package' }) }
 function selectTab(tab: CourseTab) { activeTab.value = tab; window.scrollTo({ top: 0, behavior: 'smooth' }) }
 function toggleSection(id: string) { const next = new Set(collapsedSections.value); next.has(id) ? next.delete(id) : next.add(id); collapsedSections.value = next }
 function openTopic(topic: SatTopic, tool: 'study-guide' | 'flashcards' | 'quiz') { void router.push({ name: tool, params: { topicId: topic.id } }) }
+function improveAnswered(topic: SatTopic) { return Math.min(topic.quizCount, Math.max(0, improvePracticeProgress.value[topic.id] ?? 0)) }
+function improvePracticeState(topic: SatTopic) {
+  const answered = improveAnswered(topic)
+  return answered >= topic.quizCount ? 'review' : answered > 0 ? 'continue' : 'practice'
+}
+function improvePracticeLabel(topic: SatTopic) {
+  const state = improvePracticeState(topic)
+  return state === 'review' ? 'Review' : state === 'continue' ? 'Continue' : 'Practice'
+}
+function improvePracticeDetail(topic: SatTopic) {
+  const answered = improveAnswered(topic)
+  return answered >= topic.quizCount ? `${topic.quizCount} questions completed` : answered > 0 ? `${answered} of ${topic.quizCount} answered` : `${topic.quizCount} practice questions`
+}
+function openImprovePractice(topic: SatTopic) { void router.push({ name: 'quiz', params: { topicId: topic.id }, query: { source: 'improve' } }) }
 function resumeLastActivity() {
   if (lastActivity.value.kind === 'learning') void router.push({ name: 'study-guide', params: { topicId: lastActivity.value.topicId } })
   else startMockExam(lastActivity.value.examId)
@@ -245,6 +266,7 @@ watch([() => route.hash, () => route.query.tab, () => route.query.view], () => {
 onMounted(async () => {
   document.body.classList.add('package-route')
   syncTabFromRoute()
+  improvePracticeProgress.value = loadImprovePracticeProgress()
   try { manifest.value = await loadSatManifest() }
   catch (error) { loadError.value = error instanceof Error ? error.message : 'Unable to load SAT materials.' }
   try { resultExam.value = await loadEpExam(1) }
@@ -471,15 +493,17 @@ onBeforeUnmount(() => document.body.classList.remove('package-route', 'dark'))
               <footer class="report-footer"><p>SAT® is a registered trademark of the College Board, which is not affiliated with or endorsed by this product.</p><div><button class="report-retake-button" type="button" @click="startMockExam(1)">Retake</button><button class="report-practice-button" type="button" @click="setResultView('improve')">Practice Weak Topics</button></div></footer>
             </div>
 
-            <div v-else class="topics-improve-view">
-              <header class="topics-improve-toolbar"><div><span class="course-hub-eyebrow">Targeted next steps</span><h3>Topics to Improve</h3><p>Prioritized using question accuracy, time, and SAT exam importance.</p></div><div class="improve-section-switch" role="tablist" aria-label="Choose SAT section"><button type="button" role="tab" :aria-selected="improveSection === 'math'" @click="improveSection = 'math'">Math</button><button type="button" role="tab" :aria-selected="improveSection === 'reading-writing'" @click="improveSection = 'reading-writing'">Reading &amp; Writing</button></div></header>
-              <div class="improve-priority-tabs" role="tablist" aria-label="Filter topic importance"><button v-for="filter in (['ALL','CORE','LIKELY','POSSIBLE'] as const)" :key="filter" type="button" role="tab" :aria-selected="improvePriority === filter" @click="improvePriority = filter">{{ filter.charAt(0) + filter.slice(1).toLowerCase() }}</button></div>
-              <div class="improve-domain-list">
-                <section v-for="group in improveGroups" :key="group.contentDomain" class="improve-domain-group"><header><i/><h4>{{ group.contentDomain }}</h4><span>{{ group.topics.length }} {{ group.topics.length === 1 ? 'topic' : 'topics' }}</span></header><div class="improve-topic-grid"><article v-for="topic in group.topics" :key="topic.id" class="improve-topic-card"><div><h5>{{ topic.title }}</h5><p>{{ topic.description }}</p></div><dl><div><dt>Accuracy</dt><dd>{{ topic.accuracy }}%</dd></div><div><dt>Attempts</dt><dd>{{ topic.attempts }}</dd></div><div><dt>Avg time</dt><dd>{{ formatReportTime(topic.averageSeconds) }}</dd></div></dl><footer><span :class="topic.priority.toLowerCase()">{{ topic.importanceScore }}% · {{ priorityLabel(topic.priority) }}</span><button type="button" @click="selectTab('study')">{{ topic.state === 'REVIEW' ? 'Review' : topic.state === 'CONTINUE' ? 'Continue' : 'Practice' }} →</button></footer></article></div></section>
+            <section v-else class="topics-improve-view study-breakdown" aria-label="Topics to improve">
+              <header class="study-breakdown-toolbar" aria-label="Filter improvement topics"><div class="study-breakdown-filters"><div class="study-filter-group"><span class="study-filter-label">Section</span><div class="study-section-switch" role="group" aria-label="SAT section"><button v-for="section in (['math','reading-writing'] as const)" :key="section" type="button" :aria-pressed="improveSection === section" @click="improveSection = section">{{ section === 'math' ? 'Math' : 'Reading & Writing' }}</button></div></div><div class="study-filter-group importance"><span class="study-filter-label">Importance</span><div class="study-importance-chips" role="group" aria-label="Topic importance"><button v-for="filter in (['ALL','CORE','LIKELY','POSSIBLE'] as const)" :key="filter" :class="filter.toLowerCase()" type="button" :aria-pressed="improvePriority === filter" @click="improvePriority = filter"><i v-if="filter !== 'ALL'"/>{{ filter.charAt(0) + filter.slice(1).toLowerCase() }}</button></div></div></div></header>
+              <div class="study-priority-note"><svg class="icon"><use href="#i-target"/></svg><span>Topics are prioritized using your latest practice-test results and SAT importance. Practice progress is tracked separately from Lessons.</span></div>
+              <div v-if="!improveTopicSections.length" class="study-topic-empty">No topics match this importance filter.</div>
+              <div v-else class="study-topic-sections">
+                <section v-for="section in improveTopicSections" :key="section.id" class="study-topic-section" :aria-labelledby="improvePriority === 'ALL' ? section.id : undefined" :aria-label="improvePriority !== 'ALL' ? `${improvePriority} topics sorted by importance` : undefined">
+                  <header v-if="improvePriority === 'ALL'" class="study-section-head static"><h3 :id="section.id">{{ section.examSection }} · {{ section.title }}</h3><span class="study-section-meta"><span>{{ section.topics.length }} {{ section.topics.length === 1 ? 'Topic' : 'Topics' }}</span></span></header>
+                  <div role="table"><div class="study-topic-table-head" role="row"><span role="columnheader">Topic Area</span><span role="columnheader">Practice</span></div><article v-for="topic in section.topics" :key="topic.id" class="study-topic-row improve-topic-row" role="row"><div class="study-topic-copy" role="cell"><strong>{{ topic.title }}</strong><span>{{ topic.description }}</span><div class="study-topic-meta"><span :class="['study-topic-importance',topic.priority.toLowerCase()]">{{ topic.importanceScore }}% · {{ priorityLabel(topic.priority) }}</span><span>{{ topic.missed }} missed · {{ topic.accuracy }}% accuracy</span><span>{{ topic.contentDomain }}</span></div></div><div class="improve-topic-action" role="cell"><span><strong>{{ improvePracticeLabel(topic) }}</strong><small>{{ improvePracticeDetail(topic) }}</small></span><button type="button" :class="improvePracticeState(topic)" @click="openImprovePractice(topic)">{{ improvePracticeLabel(topic) }}</button></div></article></div>
+                </section>
               </div>
-              <div v-if="!improveGroups.length" class="results-empty">No topics match this importance filter.</div>
-              <footer class="report-footer"><p>Topic importance is separate from mastery: Core, Likely, and Possible describe exam relevance; accuracy and progress describe your performance.</p><div><button class="report-retake-button" type="button" @click="setResultView('score')">Back to report</button><button class="report-practice-button" type="button" @click="selectTab('study')">Open Study Plan</button></div></footer>
-            </div>
+            </section>
           </div>
         </div>
       </section>
