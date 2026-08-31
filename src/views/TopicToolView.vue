@@ -3,6 +3,7 @@ import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { loadSatManifest, loadTopicContent, loadTopicQuiz } from '../data/satData'
 import { loadImprovePracticeProgress, saveImprovePracticeProgress } from '../data/improvePracticeProgress'
+import AskSolvelyPanel from '../components/AskSolvelyPanel.vue'
 import type { EpFlashCardContent, EpQuestion, EpStudyGuideContent } from '../types/epV2'
 import type { SatFlashcard, SatManifest, SatQuizQuestion, SatTopic } from '../types/sat'
 
@@ -33,6 +34,8 @@ const shortAnswer = ref('')
 const shortAnswerChecked = ref(false)
 const iframeLoaded = ref(false)
 const improvePracticeProgress = ref(0)
+const askSolvelyOpen = ref(false)
+const askSolvelyPanelWidth = ref(344)
 
 const mode = computed<ToolMode>(() => {
   const name = String(route.name)
@@ -313,7 +316,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="topic-tool-shell">
+  <div :class="['topic-tool-shell', { 'ask-solvely-open': askSolvelyOpen }]" :style="{ '--ask-panel-width': `${askSolvelyPanelWidth}px` }">
     <header class="topic-tool-header">
       <button class="topic-back-button" type="button" @click="backToPackage" aria-label="Back to SAT exam prep">←</button>
       <button class="topic-package-button" type="button" @click="backToPackage">
@@ -491,5 +494,13 @@ onBeforeUnmount(() => {
         </section>
       </main>
     </div>
+
+    <AskSolvelyPanel
+      v-if="topic"
+      v-model:open="askSolvelyOpen"
+      v-model:panel-width="askSolvelyPanelWidth"
+      :context-title="topic.title"
+      context-detail="Digital SAT Exam Prep"
+    />
   </div>
 </template>
