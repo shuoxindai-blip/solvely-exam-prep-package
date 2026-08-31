@@ -266,10 +266,6 @@ function improvePracticeLabel(topic: SatTopic) {
   const state = improvePracticeState(topic)
   return state === 'review' ? 'Review' : state === 'continue' ? 'Continue' : 'Practice'
 }
-function improvePracticeDetail(topic: SatTopic) {
-  const answered = improveAnswered(topic)
-  return answered >= topic.quizCount ? `${topic.quizCount} questions completed` : answered > 0 ? `${answered} of ${topic.quizCount} answered` : `${topic.quizCount} practice questions`
-}
 function openImprovePractice(topic: SatTopic) { void router.push({ name: 'quiz', params: { topicId: topic.id }, query: { source: 'improve' } }) }
 function dismissImportanceNote(note: 'lessons' | 'improve') {
   if (note === 'lessons') showLessonImportanceNote.value = false
@@ -622,7 +618,7 @@ onBeforeUnmount(() => document.body.classList.remove('package-route', 'dark'))
               <div v-else class="study-topic-sections">
                 <section v-for="section in improveTopicSections" :key="section.id" class="study-topic-section" :aria-labelledby="improvePriority === 'ALL' ? section.id : undefined" :aria-label="improvePriority !== 'ALL' ? `${improvePriority} topics sorted by importance` : undefined">
                   <header v-if="improvePriority === 'ALL'" class="study-section-head static"><h3 :id="section.id">{{ section.examSection }} · {{ section.title }}</h3><span class="study-section-meta"><span>{{ section.topics.length }} {{ section.topics.length === 1 ? 'Topic' : 'Topics' }}</span></span></header>
-                  <div role="table"><div class="study-topic-table-head" role="row"><span role="columnheader">Topic Area</span><span role="columnheader">Practice</span></div><article v-for="topic in section.topics" :key="topic.id" class="study-topic-row improve-topic-row" role="row"><div class="study-topic-copy" role="cell"><strong>{{ topic.title }}</strong><span>{{ topic.description }}</span><div class="study-topic-meta"><span :class="['study-topic-importance',topic.priority.toLowerCase()]">{{ topic.importanceScore }}% · {{ priorityLabel(topic.priority) }}</span><span>{{ topic.missed }} missed · {{ topic.accuracy }}% accuracy</span><span>{{ topic.contentDomain }}</span></div></div><div class="improve-topic-action" role="cell"><span><strong>{{ improvePracticeLabel(topic) }}</strong><small>{{ improvePracticeDetail(topic) }}</small></span><button type="button" :class="improvePracticeState(topic)" @click="openImprovePractice(topic)">{{ improvePracticeLabel(topic) }}</button></div></article></div>
+                  <div role="table"><article v-for="topic in section.topics" :key="topic.id" class="study-topic-row improve-topic-row" role="row"><div class="study-topic-copy" role="cell"><strong>{{ topic.title }}</strong><span>{{ topic.description }}</span><div class="study-topic-meta"><span :class="['study-topic-importance',topic.priority.toLowerCase()]">{{ topic.importanceScore }}% · {{ priorityLabel(topic.priority) }}</span><span>{{ topic.missed }} missed · {{ topic.accuracy }}% accuracy</span><span>{{ topic.contentDomain }}</span></div></div><div class="improve-topic-action" role="cell"><button type="button" :class="improvePracticeState(topic)" @click="openImprovePractice(topic)">{{ improvePracticeLabel(topic) }}</button></div></article></div>
                 </section>
               </div>
             </section>
