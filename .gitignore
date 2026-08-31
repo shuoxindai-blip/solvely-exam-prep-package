@@ -1,0 +1,9 @@
+node_modules
+dist
+.vercel
+tmp
+.DS_Store
+.vercel
+.playwright-cli
+output
+*.log

@@ -1,0 +1,529 @@
+examQuestionId,examId,section,module,route,questionNumber,examSequence,difficulty,responseType,questionText,answer,pictureKey,contentDomain,officialSkill,teachingTopic,answerExplanation,distractorRationale,passageWordCount,estimatedTimeSeconds,autoQAScore,reviewStatus,originalQuestionId,originalMockExam,originalRoute,sourceSimilarityMax,internalSimilarityMax,qaAnswerCheck,qaBlueprintMatch,sourceOutlineUrl,authoringNote
+SAT_MOCK_EXAM_1-RW-M1-Q01,sat_mock_exam_1,Reading and Writing,M1,Common,1,1,Easy,Multiple Choice,"A research team studying solar-powered buoys reported that the buoys transmitted storm data even after nearby stations lost power. The repeated result across five field seasons makes the finding especially _______. Which choice completes the text with the most logical and precise word or phrase?
+A) robust
+B) decorative
+C) temporary
+D) accidental",A,,Craft and Structure,Words in Context,根据上下文辨析近义词的精确含义,The context calls for “robust”: robust means well supported by repeated evidence.,Each distractor is grammatically possible but does not express the precise relationship established by the surrounding sentences.,45,71,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-RW-M1-Q01,Mock A,Common,0,0,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-RW-M1-Q02,sat_mock_exam_1,Reading and Writing,M1,Common,2,2,Easy,Multiple Choice,"A research team studying bilingual street signs reported that residents navigated unfamiliar districts more accurately when both languages appeared. Because the new data agree with two earlier surveys, they _______ the researchers’ original conclusion. Which choice completes the text with the most logical and precise word or phrase?
+A) postpone
+B) corroborate
+C) disguise
+D) complicate",B,,Craft and Structure,Words in Context,根据上下文辨析近义词的精确含义,The context calls for “corroborate”: corroborate means provide confirming evidence for.,Each distractor is grammatically possible but does not express the precise relationship established by the surrounding sentences.,48,71,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-RW-M1-Q02,Mock A,Common,0,0,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-RW-M1-Q03,sat_mock_exam_1,Reading and Writing,M1,Common,3,3,Easy,Multiple Choice,"Researchers in ecology examined migrating shorebirds. They found that birds paused longer at wetlands with denser insect populations. The team argues that the result identifies a practical condition that future projects should consider. Which choice best states the main purpose of the text?
+A) To dispute the reliability of all earlier work in the field
+B) To provide a complete history of the subject
+C) To describe a study and explain the practical significance of its result
+D) To argue that the subject should no longer be studied",C,,Craft and Structure,Text Structure and Purpose,分析句子、例子或段落在全文中的功能,"The text introduces a study, reports its result, and closes by identifying why that result matters in practice.","The incorrect choices either contradict a stated detail, reverse the relationship, or use a related idea imprecisely.",43,71,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-RW-M1-Q03,Mock A,Common,0,0,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-RW-M1-Q04,sat_mock_exam_1,Reading and Writing,M1,Common,4,4,Medium,Multiple Choice,"A research team studying restored peatlands reported that rewetted plots released less carbon during summer droughts. The pilot program did not eliminate flooding, but it did _______ the most severe runoff peaks. Which choice completes the text with the most logical and precise word or phrase?
+A) predict
+B) imitate
+C) document
+D) mitigate",D,,Craft and Structure,Words in Context,根据上下文辨析近义词的精确含义,The context calls for “mitigate”: mitigate means make less severe.,Each distractor is grammatically possible but does not express the precise relationship established by the surrounding sentences.,46,71,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-RW-M1-Q04,Mock A,Common,0,0,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-RW-M1-Q05,sat_mock_exam_1,Reading and Writing,M1,Common,5,5,Medium,Multiple Choice,"An initial survey of solar-powered buoys produced an unexpected pattern: the buoys transmitted storm data even after nearby stations lost power. To check whether the pattern was a measurement artifact, the researchers repeated the survey with newly calibrated equipment. The same pattern appeared again. Which choice best describes the function of the second sentence in the overall structure of the text?
+A) It describes a step taken to test whether the initial result was reliable.
+B) It introduces a competing theory that the researchers ultimately accept.
+C) It lists the consequences of applying the result outside the study.
+D) It explains why the researchers abandoned the initial survey.",A,,Craft and Structure,Text Structure and Purpose,分析句子、例子或段落在全文中的功能,The second sentence describes a replication check designed to rule out measurement error.,"The incorrect choices either contradict a stated detail, reverse the relationship, or use a related idea imprecisely.",61,71,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-RW-M1-Q05,Mock A,Common,0,0.115,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-RW-M1-Q06,sat_mock_exam_1,Reading and Writing,M1,Common,6,6,Medium,Multiple Choice,"A common account of handwoven textiles emphasizes cost and convenience. Recent work in art history, however, found that weavers varied border patterns to identify regional workshops. This result suggests that the subject’s value cannot be assessed by cost and convenience alone. Which choice best describes the overall structure of the text?
+A) It gives two unrelated descriptions and then chooses the older one.
+B) It presents a familiar way of evaluating a subject, introduces evidence that the evaluation is incomplete, and draws a broader conclusion.
+C) It narrates a failed experiment and proposes repeating it without changes.
+D) It defines a technical term and then lists several exceptions to the definition.",B,,Craft and Structure,Text Structure and Purpose,分析句子、例子或段落在全文中的功能,The text moves from a conventional account to evidence that complicates it and then states the implication.,"The incorrect choices either contradict a stated detail, reverse the relationship, or use a related idea imprecisely.",51,71,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-RW-M1-Q06,Mock A,Common,0,0,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-RW-M1-Q07,sat_mock_exam_1,Reading and Writing,M1,Common,7,7,Hard,Multiple Choice,"A research team studying handwoven textiles reported that weavers varied border patterns to identify regional workshops. Since only three sites were studied, the authors describe their conclusion as _______. Which choice completes the text with the most logical and precise word or phrase?
+A) inevitable
+B) exhaustive
+C) tentative
+D) irrelevant",C,,Craft and Structure,Words in Context,根据上下文辨析近义词的精确含义,The context calls for “tentative”: tentative appropriately signals limited certainty.,Each distractor is grammatically possible but does not express the precise relationship established by the surrounding sentences.,43,71,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-RW-M1-Q07,Mock A,Common,0,0.088,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-RW-M1-Q08,sat_mock_exam_1,Reading and Writing,M1,Common,8,8,Hard,Multiple Choice,"Text 1
+Text 1 argues that adding native flowers to small city lots can create useful habitat for insects.
+
+Text 2
+Text 2 reports that such lots attract more pollinator species only when they are connected to other green spaces.
+
+Based on the texts, how would the author of Text 2 most likely respond to the claim in Text 1?
+A) reject the topic as unworthy of further study
+B) agree without adding any qualification or new evidence
+C) argue that the evidence discussed in both texts is entirely irrelevant
+D) agree that native-flower lots can help insects but would emphasize that surrounding connectivity affects the benefit",D,,Craft and Structure,Cross-Text Connections,推断一位作者会如何评价另一篇文本,Text 2 would agree that native-flower lots can help insects but would emphasize that surrounding connectivity affects the benefit.,The distractors overstate agreement or disagreement or ignore the specific qualification supplied by Text 2.,60,71,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-RW-M1-Q08,Mock A,Common,0.057,0,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-RW-M1-Q09,sat_mock_exam_1,Reading and Writing,M1,Common,9,9,Easy,Multiple Choice,"A team working in engineering investigated ceramic water filters at several locations. Across the locations, filters made with finer clay removed more sediment but slowed flow. Although the strength of the pattern varied, it appeared in each location, suggesting that the result was not limited to a single site. Which choice best states the main idea of the text?
+A) A multisite study of ceramic water filters found a recurring pattern, though the pattern’s strength differed by location.
+B) Researchers proved that every feature of ceramic water filters is identical at all locations.
+C) A study found no meaningful pattern involving ceramic water filters.
+D) Researchers studied ceramic water filters at only one location and warned against comparison.",A,,Information and Ideas,Central Ideas and Details,识别主旨、核心观点和最恰当概括,The correct choice captures both the repeated result and the stated variation across locations.,"The distractors contradict the passage by claiming no pattern, a single site, or complete uniformity.",59,71,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-RW-M1-Q09,Mock A,Common,0,0,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-RW-M1-Q10,sat_mock_exam_1,Reading and Writing,M1,Common,10,10,Easy,Multiple Choice,"A study compared three approaches involving museum audio guides. The graph shows the average score for each approach after one month. The researchers concluded that the modified approach produced the strongest one-month outcome. Which choice most effectively uses data from the graph to support the researchers’ conclusion?
+A) The standard approach scored 28, which was higher than the modified approach.
+B) The modified approach had a score of 37, compared with 28 for the standard approach and 31 for the hybrid approach.
+C) The hybrid and modified approaches had identical scores.
+D) All three approaches scored below 23.",B,https://img.justsolvely.com/followUpImage/17399c1a-e17d-473c-a2c2-ce9a16b75c4d-1786419933202-604.webp,Information and Ideas,Command of Evidence - Quantitative,将表格数据与文本主张对应,The modified approach has the highest value in the graph (37).,Each distractor misreads or contradicts the displayed values.,47,71,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-RW-M1-Q10,Mock A,Common,0,0,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank. Figure rendered deterministically in a monochrome SAT-style format with Python and Matplotlib; no answer choice is color-emphasized.
+SAT_MOCK_EXAM_1-RW-M1-Q11,sat_mock_exam_1,Reading and Writing,M1,Common,11,11,Medium,Multiple Choice,"A team working in public policy investigated bilingual street signs at several locations. Across the locations, residents navigated unfamiliar districts more accurately when both languages appeared. Although the strength of the pattern varied, it appeared in each location, suggesting that the result was not limited to a single site. Which choice best states the main idea of the text?
+A) Researchers proved that every feature of bilingual street signs is identical at all locations.
+B) A study found no meaningful pattern involving bilingual street signs.
+C) A multisite study of bilingual street signs found a recurring pattern, though the pattern’s strength differed by location.
+D) Researchers studied bilingual street signs at only one location and warned against comparison.",C,,Information and Ideas,Central Ideas and Details,识别主旨、核心观点和最恰当概括,The correct choice captures both the repeated result and the stated variation across locations.,"The distractors contradict the passage by claiming no pattern, a single site, or complete uniformity.",59,71,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-RW-M1-Q11,Mock A,Common,0,0.304,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-RW-M1-Q12,sat_mock_exam_1,Reading and Writing,M1,Common,12,12,Medium,Multiple Choice,"A researcher claims that a particular design feature can materially influence outcomes involving community seed libraries. Which finding, if true, would most directly support the researcher’s claim?
+A) Participants reported that they had heard of community seed libraries before the study.
+B) The study’s locations differed in age, but the feature was not recorded.
+C) Researchers used the same data-entry software at every location.
+D) When the feature was present, borrowers returned locally adapted seeds after each growing season; when it was absent, that pattern was substantially weaker.",D,,Information and Ideas,Command of Evidence - Textual,选择最能支持某项结论的文本证据,"The correct choice directly compares outcomes with and without the design feature, isolating the relationship described in the claim.","The other findings concern familiarity, site age, or data entry and therefore do not directly test the claimed influence.",27,71,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-RW-M1-Q12,Mock A,Common,0.065,0,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-RW-M1-Q13,sat_mock_exam_1,Reading and Writing,M1,Common,13,13,Medium,Multiple Choice,"Researchers studying bilingual street signs collected data during both routine conditions and unusually demanding conditions. During routine conditions, the groups differed little. During demanding conditions, however, residents navigated unfamiliar districts more accurately when both languages appeared. The researchers did not change any other part of the procedure. Which choice most logically completes the text?
+A) The factor associated with the finding may matter more under demanding conditions than under routine conditions.
+B) The groups must have been measured with entirely different procedures.
+C) The finding demonstrates that routine conditions never affect any outcome.
+D) The researchers should assume that the factor has exactly the same effect in all conditions.",A,,Information and Ideas,Inferences,根据文本证据作合理推断,The contrast between similar routine results and different demanding-condition results supports a condition-dependent inference.,The distractors contradict the controlled procedure or make absolute claims not supported by the passage.,54,71,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-RW-M1-Q13,Mock A,Common,0,0.091,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-RW-M1-Q14,sat_mock_exam_1,Reading and Writing,M1,Common,14,14,Medium,Multiple Choice,"Researchers studying recycled glass concrete collected data during both routine conditions and unusually demanding conditions. During routine conditions, the groups differed little. During demanding conditions, however, small glass particles increased reflectivity without reducing compressive strength. The researchers did not change any other part of the procedure. Which choice most logically completes the text?
+A) The groups must have been measured with entirely different procedures.
+B) The factor associated with the finding may matter more under demanding conditions than under routine conditions.
+C) The finding demonstrates that routine conditions never affect any outcome.
+D) The researchers should assume that the factor has exactly the same effect in all conditions.",B,,Information and Ideas,Inferences,根据文本证据作合理推断,The contrast between similar routine results and different demanding-condition results supports a condition-dependent inference.,The distractors contradict the controlled procedure or make absolute claims not supported by the passage.,53,71,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-RW-M1-Q14,Mock A,Common,0,0.393,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-RW-M1-Q15,sat_mock_exam_1,Reading and Writing,M1,Common,15,15,Hard,Multiple Choice,"A researcher claims that a particular design feature can materially influence outcomes involving modular school furniture. Which finding, if true, would most directly support the researcher’s claim?
+A) Participants reported that they had heard of modular school furniture before the study.
+B) The study’s locations differed in age, but the feature was not recorded.
+C) When the feature was present, students rearranged lightweight desks more often for collaborative tasks; when it was absent, that pattern was substantially weaker.
+D) Researchers used the same data-entry software at every location.",C,,Information and Ideas,Command of Evidence - Textual,选择最能支持某项结论的文本证据,"The correct choice directly compares outcomes with and without the design feature, isolating the relationship described in the claim.","The other findings concern familiarity, site age, or data entry and therefore do not directly test the claimed influence.",27,71,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-RW-M1-Q15,Mock A,Common,0.065,0.548,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-RW-M1-Q16,sat_mock_exam_1,Reading and Writing,M1,Common,16,16,Easy,Multiple Choice,"The research team tested handwoven textiles at four locations ______ and the same pattern appeared at every location. Which choice completes the text so that it conforms to the conventions of Standard English?
+A) ;
+B) :
+C) , but
+D) ,",D,,Standard English Conventions,Boundaries,句子边界与标点使用,A comma before the coordinating conjunction “and” correctly joins two independent clauses.,The distractors misuse punctuation before the coordinating conjunction.,33,71,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-RW-M1-Q16,Mock A,Common,0,0,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-RW-M1-Q17,sat_mock_exam_1,Reading and Writing,M1,Common,17,17,Easy,Multiple Choice,"A set of measurements from the three sites ______ that the pattern involving night-blooming flowers is consistent. Which choice completes the text so that it conforms to the conventions of Standard English?
+A) indicates
+B) indicate
+C) have indicated
+D) were indicating",A,,Standard English Conventions,"Form, Structure, and Sense",语法形式、结构与语意,The singular subject “set” requires the singular verb “indicates.”,"The incorrect choices either contradict a stated detail, reverse the relationship, or use a related idea imprecisely.",32,71,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-RW-M1-Q17,Mock A,Common,0,0,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-RW-M1-Q18,sat_mock_exam_1,Reading and Writing,M1,Common,18,18,Medium,Multiple Choice,"The instrument used to study coral nursery frames has a primary component ______ that can be replaced without special tools. Which choice completes the text so that it conforms to the conventions of Standard English?
+A) a thin ceramic membrane,
+B) , a thin ceramic membrane,
+C) : a thin ceramic membrane;
+D) —a thin ceramic membrane,",B,,Standard English Conventions,Boundaries,句子边界与标点使用,The appositive is nonessential and must be set off with matching commas.,The distractors use unmatched or inappropriate punctuation.,35,71,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-RW-M1-Q18,Mock A,Common,0,0,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-RW-M1-Q19,sat_mock_exam_1,Reading and Writing,M1,Common,19,19,Medium,Multiple Choice,"The survey revealed one especially consistent result ______ parks with permanent tables attracted longer intergenerational visits. Which choice completes the text so that it conforms to the conventions of Standard English?
+A) ,
+B) ;
+C) :
+D)  although",C,,Standard English Conventions,Boundaries,句子边界与标点使用,A colon can follow a complete clause to introduce the result that explains it.,A comma or semicolon does not correctly introduce the explanatory phrase as written.,31,71,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-RW-M1-Q19,Mock A,Common,0,0,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-RW-M1-Q20,sat_mock_exam_1,Reading and Writing,M1,Common,20,20,Medium,Multiple Choice,"By the time the second survey of paper microfluidic tests began, the team ______ the equipment against a reference instrument. Which choice completes the text so that it conforms to the conventions of Standard English?
+A) calibrates
+B) will calibrate
+C) is calibrating
+D) had calibrated",D,,Standard English Conventions,"Form, Structure, and Sense",语法形式、结构与语意,Past perfect marks an action completed before another past action began.,"The incorrect choices either contradict a stated detail, reverse the relationship, or use a related idea imprecisely.",35,71,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-RW-M1-Q20,Mock A,Common,0,0,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-RW-M1-Q21,sat_mock_exam_1,Reading and Writing,M1,Common,21,21,Hard,Multiple Choice,"After the researchers recalibrated the sensors ______ they repeated all measurements involving library tool collections. Which choice completes the text so that it conforms to the conventions of Standard English?
+A) ,
+B) ;
+C) :
+D) —",A,,Standard English Conventions,Boundaries,句子边界与标点使用,A comma follows the introductory dependent clause.,The other choices either omit required punctuation or separate the dependent clause incorrectly.,30,71,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-RW-M1-Q21,Mock A,Common,0,0,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-RW-M1-Q22,sat_mock_exam_1,Reading and Writing,M1,Common,22,22,Hard,Multiple Choice,"For the project involving library tool collections, the engineers designed the frame to be lightweight, durable, and ______. Which choice completes the text so that it conforms to the conventions of Standard English?
+A) repairs easily
+B) easy to repair
+C) with easy repairs
+D) it can be repaired easily",B,,Standard English Conventions,"Form, Structure, and Sense",语法形式、结构与语意,“Easy to repair” is parallel with the preceding adjectives in the series.,"The incorrect choices either contradict a stated detail, reverse the relationship, or use a related idea imprecisely.",33,71,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-RW-M1-Q22,Mock A,Common,0,0,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-RW-M1-Q23,sat_mock_exam_1,Reading and Writing,M1,Common,23,23,Easy,Multiple Choice,"While researching a topic, a student has taken the following notes:
+• A 2018 study in education examined modular school furniture.
+• The study included 6 sites.
+• It found that students rearranged lightweight desks more often for collaborative tasks.
+• The student wants to emphasize both the scope and the principal finding of the study.
+Which choice most effectively uses relevant information from the notes to accomplish the goal?
+A) In 2018, researchers conducted a study, but the number of sites is not known.
+B) Researchers in education have studied many topics, including some unrelated to modular school furniture.
+C) A 2018 study of modular school furniture across 6 sites found that students rearranged lightweight desks more often for collaborative tasks.
+D) The 2018 study included 6 sites; however, its finding about modular school furniture was the opposite of what the notes report.",C,,Expression of Ideas,Rhetorical Synthesis,根据写作目标筛选并综合笔记信息,The correct choice accurately combines the study’s scope and its principal finding in one concise sentence.,"The distractors omit required information, add irrelevant content, or contradict the notes.",66,71,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-RW-M1-Q23,Mock A,Common,0.08,0,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-RW-M1-Q24,sat_mock_exam_1,Reading and Writing,M1,Common,24,24,Medium,Multiple Choice,"While researching a topic, a student has taken the following notes:
+• A 2019 study in materials science examined recycled glass concrete.
+• The study included 9 sites.
+• It found that small glass particles increased reflectivity without reducing compressive strength.
+• The student wants to emphasize both the scope and the principal finding of the study.
+Which choice most effectively uses relevant information from the notes to accomplish the goal?
+A) In 2019, researchers conducted a study, but the number of sites is not known.
+B) Researchers in materials science have studied many topics, including some unrelated to recycled glass concrete.
+C) The 2019 study included 9 sites; however, its finding about recycled glass concrete was the opposite of what the notes report.
+D) A 2019 study of recycled glass concrete across 9 sites found that small glass particles increased reflectivity without reducing compressive strength.",D,,Expression of Ideas,Rhetorical Synthesis,根据写作目标筛选并综合笔记信息,The correct choice accurately combines the study’s scope and its principal finding in one concise sentence.,"The distractors omit required information, add irrelevant content, or contradict the notes.",67,71,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-RW-M1-Q24,Mock A,Common,0.08,0.244,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-RW-M1-Q25,sat_mock_exam_1,Reading and Writing,M1,Common,25,25,Medium,Multiple Choice,"The first prototype was inexpensive to build. ______, it failed after repeated exposure to salt water. Which choice completes the text with the most logical transition?
+A) However
+B) Likewise
+C) For example
+D) Therefore",A,,Expression of Ideas,Transitions,根据逻辑关系选择过渡词,The second sentence contrasts low cost with poor durability.,The distractors signal a different logical relationship from the one between the two sentences.,26,71,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-RW-M1-Q25,Mock A,Common,0,0,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-RW-M1-Q26,sat_mock_exam_1,Reading and Writing,M1,Common,26,26,Hard,Multiple Choice,"While researching a topic, a student has taken the following notes:
+• A 2020 study in acoustics examined wooden concert halls.
+• The study included 12 sites.
+• It found that irregular wall panels scattered sound more evenly across seats.
+• The student wants to emphasize both the scope and the principal finding of the study.
+Which choice most effectively uses relevant information from the notes to accomplish the goal?
+A) In 2020, researchers conducted a study, but the number of sites is not known.
+B) A 2020 study of wooden concert halls across 12 sites found that irregular wall panels scattered sound more evenly across seats.
+C) Researchers in acoustics have studied many topics, including some unrelated to wooden concert halls.
+D) The 2020 study included 12 sites; however, its finding about wooden concert halls was the opposite of what the notes report.",B,,Expression of Ideas,Rhetorical Synthesis,根据写作目标筛选并综合笔记信息,The correct choice accurately combines the study’s scope and its principal finding in one concise sentence.,"The distractors omit required information, add irrelevant content, or contradict the notes.",66,71,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-RW-M1-Q26,Mock A,Common,0.08,0.247,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-RW-M1-Q27,sat_mock_exam_1,Reading and Writing,M1,Common,27,27,Hard,Multiple Choice,"The archive digitized its most fragile maps. ______, researchers can examine the maps without handling the originals. Which choice completes the text with the most logical transition?
+A) Nevertheless
+B) Meanwhile
+C) As a result
+D) For instance",C,,Expression of Ideas,Transitions,根据逻辑关系选择过渡词,The second sentence states a result of digitization.,The distractors signal a different logical relationship from the one between the two sentences.,27,71,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-RW-M1-Q27,Mock A,Common,0,0,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-RW-M2-Q01,sat_mock_exam_1,Reading and Writing,M2,Harder,1,28,Easy,Multiple Choice,"A research team studying quiet pavement reported that porous road surfaces reduced tire noise at moderate speeds. The artist’s repeated circles are not incidental; they are a _______ feature of the series. Which choice completes the text with the most logical and precise word or phrase?
+A) deliberate
+B) scarce
+C) neutral
+D) portable",A,,Craft and Structure,Words in Context,根据上下文辨析近义词的精确含义,The context calls for “deliberate”: deliberate means intentional.,Each distractor is grammatically possible but does not express the precise relationship established by the surrounding sentences.,46,71,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-RW-M2H-Q01,Mock A,Harder,0,0,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-RW-M2-Q02,sat_mock_exam_1,Reading and Writing,M2,Harder,2,29,Easy,Multiple Choice,"A common account of forest sound recordings emphasizes cost and convenience. Recent work in conservation, however, found that automated classifiers detected rare frogs missed during daytime surveys. This result suggests that the subject’s value cannot be assessed by cost and convenience alone. Which choice best describes the overall structure of the text?
+A) It gives two unrelated descriptions and then chooses the older one.
+B) It presents a familiar way of evaluating a subject, introduces evidence that the evaluation is incomplete, and draws a broader conclusion.
+C) It narrates a failed experiment and proposes repeating it without changes.
+D) It defines a technical term and then lists several exceptions to the definition.",B,,Craft and Structure,Text Structure and Purpose,分析句子、例子或段落在全文中的功能,The text moves from a conventional account to evidence that complicates it and then states the implication.,"The incorrect choices either contradict a stated detail, reverse the relationship, or use a related idea imprecisely.",52,71,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-RW-M2H-Q02,Mock A,Harder,0,0.242,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-RW-M2-Q03,sat_mock_exam_1,Reading and Writing,M2,Harder,3,30,Medium,Multiple Choice,"A research team studying coral nursery frames reported that juvenile corals grew fastest on frames placed in steady currents. Although the samples differ in color, their chemical compositions are remarkably _______. Which choice completes the text with the most logical and precise word or phrase?
+A) profitable
+B) visible
+C) consistent
+D) urgent",C,,Craft and Structure,Words in Context,根据上下文辨析近义词的精确含义,The context calls for “consistent”: consistent means showing little variation.,Each distractor is grammatically possible but does not express the precise relationship established by the surrounding sentences.,45,71,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-RW-M2H-Q03,Mock A,Harder,0,0.095,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-RW-M2-Q04,sat_mock_exam_1,Reading and Writing,M2,Harder,4,31,Medium,Multiple Choice,"Text 1
+Text 1 attributes an ancient town’s decline mainly to drought.
+
+Text 2
+Text 2 presents trade records showing that commerce had already fallen decades before the drought began.
+
+Based on the texts, how would the author of Text 2 most likely respond to the claim in Text 1?
+A) reject the topic as unworthy of further study
+B) agree without adding any qualification or new evidence
+C) argue that the evidence discussed in both texts is entirely irrelevant
+D) argue that drought may have contributed but cannot by itself explain the earlier decline",D,,Craft and Structure,Cross-Text Connections,推断一位作者会如何评价另一篇文本,Text 2 would argue that drought may have contributed but cannot by itself explain the earlier decline.,The distractors overstate agreement or disagreement or ignore the specific qualification supplied by Text 2.,50,71,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-RW-M2H-Q04,Mock A,Harder,0.06,0.205,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-RW-M2-Q05,sat_mock_exam_1,Reading and Writing,M2,Harder,5,32,Hard,Multiple Choice,"A research team studying oral-history archives reported that searchable transcripts increased use of interviews by local teachers. The historian used shipping records to _______ the date of the settlement’s expansion. Which choice completes the text with the most logical and precise word or phrase?
+A) pinpoint
+B) celebrate
+C) revise
+D) obscure",A,,Craft and Structure,Words in Context,根据上下文辨析近义词的精确含义,The context calls for “pinpoint”: pinpoint means determine precisely.,Each distractor is grammatically possible but does not express the precise relationship established by the surrounding sentences.,44,71,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-RW-M2H-Q05,Mock A,Harder,0,0.103,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-RW-M2-Q06,sat_mock_exam_1,Reading and Writing,M2,Harder,6,33,Hard,Multiple Choice,"Researchers in public health examined mobile produce markets. They found that weekly stops increased fresh-food purchases in neighborhoods far from supermarkets. The team argues that the result identifies a practical condition that future projects should consider. Which choice best states the main purpose of the text?
+A) To dispute the reliability of all earlier work in the field
+B) To describe a study and explain the practical significance of its result
+C) To provide a complete history of the subject
+D) To argue that the subject should no longer be studied",B,,Craft and Structure,Text Structure and Purpose,分析句子、例子或段落在全文中的功能,"The text introduces a study, reports its result, and closes by identifying why that result matters in practice.","The incorrect choices either contradict a stated detail, reverse the relationship, or use a related idea imprecisely.",46,71,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-RW-M2H-Q06,Mock A,Harder,0,0.216,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-RW-M2-Q07,sat_mock_exam_1,Reading and Writing,M2,Harder,7,34,Hard,Multiple Choice,"Text 1
+Text 1 recommends replacing all printed field guides with phone apps.
+
+Text 2
+Text 2 notes that apps update quickly but printed guides remain dependable where batteries and signals are limited.
+
+Based on the texts, how would the author of Text 2 most likely respond to the claim in Text 1?
+A) reject the topic as unworthy of further study
+B) agree without adding any qualification or new evidence
+C) reject a complete replacement while acknowledging one advantage of apps
+D) argue that the evidence discussed in both texts is entirely irrelevant",C,,Craft and Structure,Cross-Text Connections,推断一位作者会如何评价另一篇文本,Text 2 would reject a complete replacement while acknowledging one advantage of apps.,The distractors overstate agreement or disagreement or ignore the specific qualification supplied by Text 2.,53,71,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-RW-M2H-Q07,Mock A,Harder,0.059,0.2,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-RW-M2-Q08,sat_mock_exam_1,Reading and Writing,M2,Harder,8,35,Easy,Multiple Choice,"A team working in geology investigated volcanic ash layers at several locations. Across the locations, matching chemical signatures allowed geologists to align distant sediment records. Although the strength of the pattern varied, it appeared in each location, suggesting that the result was not limited to a single site. Which choice best states the main idea of the text?
+A) Researchers proved that every feature of volcanic ash layers is identical at all locations.
+B) A study found no meaningful pattern involving volcanic ash layers.
+C) Researchers studied volcanic ash layers at only one location and warned against comparison.
+D) A multisite study of volcanic ash layers found a recurring pattern, though the pattern’s strength differed by location.",D,,Information and Ideas,Central Ideas and Details,识别主旨、核心观点和最恰当概括,The correct choice captures both the repeated result and the stated variation across locations.,"The distractors contradict the passage by claiming no pattern, a single site, or complete uniformity.",58,71,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-RW-M2H-Q08,Mock A,Harder,0,0.318,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-RW-M2-Q09,sat_mock_exam_1,Reading and Writing,M2,Harder,9,36,Medium,Multiple Choice,"A researcher claims that a particular design feature can materially influence outcomes involving prairie restoration plots. Which finding, if true, would most directly support the researcher’s claim?
+A) When the feature was present, plots planted with more native species resisted invasive grasses better; when it was absent, that pattern was substantially weaker.
+B) Participants reported that they had heard of prairie restoration plots before the study.
+C) The study’s locations differed in age, but the feature was not recorded.
+D) Researchers used the same data-entry software at every location.",A,,Information and Ideas,Command of Evidence - Textual,选择最能支持某项结论的文本证据,"The correct choice directly compares outcomes with and without the design feature, isolating the relationship described in the claim.","The other findings concern familiarity, site age, or data entry and therefore do not directly test the claimed influence.",27,71,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-RW-M2H-Q09,Mock A,Harder,0.065,0.548,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-RW-M2-Q10,sat_mock_exam_1,Reading and Writing,M2,Harder,10,37,Medium,Multiple Choice,"Researchers studying independent bookstores collected data during both routine conditions and unusually demanding conditions. During routine conditions, the groups differed little. During demanding conditions, however, staff recommendation cards increased sales of unfamiliar authors. The researchers did not change any other part of the procedure. Which choice most logically completes the text?
+A) The groups must have been measured with entirely different procedures.
+B) The factor associated with the finding may matter more under demanding conditions than under routine conditions.
+C) The finding demonstrates that routine conditions never affect any outcome.
+D) The researchers should assume that the factor has exactly the same effect in all conditions.",B,,Information and Ideas,Inferences,根据文本证据作合理推断,The contrast between similar routine results and different demanding-condition results supports a condition-dependent inference.,The distractors contradict the controlled procedure or make absolute claims not supported by the passage.,51,71,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-RW-M2H-Q10,Mock A,Harder,0,0.414,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-RW-M2-Q11,sat_mock_exam_1,Reading and Writing,M2,Harder,11,38,Medium,Multiple Choice,"Researchers studying restored peatlands collected data during both routine conditions and unusually demanding conditions. During routine conditions, the groups differed little. During demanding conditions, however, rewetted plots released less carbon during summer droughts. The researchers did not change any other part of the procedure. Which choice most logically completes the text?
+A) The groups must have been measured with entirely different procedures.
+B) The finding demonstrates that routine conditions never affect any outcome.
+C) The factor associated with the finding may matter more under demanding conditions than under routine conditions.
+D) The researchers should assume that the factor has exactly the same effect in all conditions.",C,,Information and Ideas,Inferences,根据文本证据作合理推断,The contrast between similar routine results and different demanding-condition results supports a condition-dependent inference.,The distractors contradict the controlled procedure or make absolute claims not supported by the passage.,51,71,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-RW-M2H-Q11,Mock A,Harder,0,0.429,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-RW-M2-Q12,sat_mock_exam_1,Reading and Writing,M2,Harder,12,39,Hard,Multiple Choice,"A team working in economics investigated independent bookstores at several locations. Across the locations, staff recommendation cards increased sales of unfamiliar authors. Although the strength of the pattern varied, it appeared in each location, suggesting that the result was not limited to a single site. Which choice best states the main idea of the text?
+A) Researchers proved that every feature of independent bookstores is identical at all locations.
+B) A study found no meaningful pattern involving independent bookstores.
+C) Researchers studied independent bookstores at only one location and warned against comparison.
+D) A multisite study of independent bookstores found a recurring pattern, though the pattern’s strength differed by location.",D,,Information and Ideas,Central Ideas and Details,识别主旨、核心观点和最恰当概括,The correct choice captures both the repeated result and the stated variation across locations.,"The distractors contradict the passage by claiming no pattern, a single site, or complete uniformity.",55,71,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-RW-M2H-Q12,Mock A,Harder,0,0.333,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-RW-M2-Q13,sat_mock_exam_1,Reading and Writing,M2,Harder,13,40,Hard,Multiple Choice,"A study compared three approaches involving solar-powered buoys. The table shows the average score for each approach after one month. The researchers concluded that the modified approach produced the strongest one-month outcome. Which choice most effectively uses data from the table to support the researchers’ conclusion?
+A) The modified approach had a score of 49, compared with 37 for the standard approach and 40 for the hybrid approach.
+B) The standard approach scored 37, which was higher than the modified approach.
+C) The hybrid and modified approaches had identical scores.
+D) All three approaches scored below 32.",A,https://img.justsolvely.com/followUpImage/3eaabd43-cbf1-4bcc-9d8a-a14556dbdd7c-1786419937230-746.webp,Information and Ideas,Command of Evidence - Quantitative,将表格数据与文本主张对应,The modified approach has the highest value in the table (49).,Each distractor misreads or contradicts the displayed values.,46,71,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-RW-M2H-Q13,Mock A,Harder,0.016,0.639,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank. Figure rendered deterministically in a monochrome SAT-style format with Python and Matplotlib; no answer choice is color-emphasized.
+SAT_MOCK_EXAM_1-RW-M2-Q14,sat_mock_exam_1,Reading and Writing,M2,Harder,14,41,Hard,Multiple Choice,"A study compared three approaches involving paper microfluidic tests. The graph shows the average score for each approach after one month. The researchers concluded that the modified approach produced the strongest one-month outcome. Which choice most effectively uses data from the graph to support the researchers’ conclusion?
+A) The standard approach scored 40, which was higher than the modified approach.
+B) The modified approach had a score of 49, compared with 40 for the standard approach and 43 for the hybrid approach.
+C) The hybrid and modified approaches had identical scores.
+D) All three approaches scored below 35.",B,https://img.justsolvely.com/followUpImage/ee931519-57b3-4b9c-a58f-aeae068e7713-1786419938946-921.webp,Information and Ideas,Command of Evidence - Quantitative,将表格数据与文本主张对应,The modified approach has the highest value in the graph (49).,Each distractor misreads or contradicts the displayed values.,47,71,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-RW-M2H-Q14,Mock A,Harder,0,0.639,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank. Figure rendered deterministically in a monochrome SAT-style format with Python and Matplotlib; no answer choice is color-emphasized.
+SAT_MOCK_EXAM_1-RW-M2-Q15,sat_mock_exam_1,Reading and Writing,M2,Harder,15,42,Medium,Multiple Choice,"The survey revealed one especially consistent result ______ wax channels directed tiny liquid samples without pumps. Which choice completes the text so that it conforms to the conventions of Standard English?
+A) ,
+B) ;
+C) :
+D)  although",C,,Standard English Conventions,Boundaries,句子边界与标点使用,A colon can follow a complete clause to introduce the result that explains it.,A comma or semicolon does not correctly introduce the explanatory phrase as written.,31,71,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-RW-M2H-Q15,Mock A,Harder,0,0.158,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-RW-M2-Q16,sat_mock_exam_1,Reading and Writing,M2,Harder,16,43,Medium,Multiple Choice,"After the researchers recalibrated the sensors ______ they repeated all measurements involving volcanic ash layers. Which choice completes the text so that it conforms to the conventions of Standard English?
+A) ;
+B) :
+C) —
+D) ,",D,,Standard English Conventions,Boundaries,句子边界与标点使用,A comma follows the introductory dependent clause.,The other choices either omit required punctuation or separate the dependent clause incorrectly.,30,71,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-RW-M2H-Q16,Mock A,Harder,0,0.538,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-RW-M2-Q17,sat_mock_exam_1,Reading and Writing,M2,Harder,17,44,Medium,Multiple Choice,"A set of measurements from the three sites ______ that the pattern involving recycled glass concrete is consistent. Which choice completes the text so that it conforms to the conventions of Standard English?
+A) indicates
+B) indicate
+C) have indicated
+D) were indicating",A,,Standard English Conventions,"Form, Structure, and Sense",语法形式、结构与语意,The singular subject “set” requires the singular verb “indicates.”,"The incorrect choices either contradict a stated detail, reverse the relationship, or use a related idea imprecisely.",33,71,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-RW-M2H-Q17,Mock A,Harder,0,0.444,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-RW-M2-Q18,sat_mock_exam_1,Reading and Writing,M2,Harder,18,45,Hard,Multiple Choice,"The oldest sample of material from independent bookstores ______ showed no visible damage. Which choice completes the text so that it conforms to the conventions of Standard English?
+A) which had been stored in a sealed case,
+B) , which had been stored in a sealed case,
+C) ; which had been stored in a sealed case;
+D) which had been stored in a sealed case",B,,Standard English Conventions,Boundaries,句子边界与标点使用,The nonrestrictive relative clause must be enclosed by commas.,The distractors omit one or both commas or misuse semicolons.,28,71,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-RW-M2H-Q18,Mock A,Harder,0,0.133,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-RW-M2-Q19,sat_mock_exam_1,Reading and Writing,M2,Harder,19,46,Hard,Multiple Choice,"The researchers studying digital manuscript scans reached a clear conclusion ______ the need to test the modified procedure on a larger sample. Which choice completes the text so that it conforms to the conventions of Standard English?
+A) ;
+B) , and
+C) :
+D) because",C,,Standard English Conventions,Boundaries,句子边界与标点使用,"The complete clause before the blank introduces a noun phrase that states the conclusion, so a colon is appropriate.",The other choices cannot correctly connect a complete clause to the noun phrase that follows.,37,71,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-RW-M2H-Q19,Mock A,Harder,0,0.478,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-RW-M2-Q20,sat_mock_exam_1,Reading and Writing,M2,Harder,20,47,Hard,Multiple Choice,"By the time the second survey of independent bookstores began, the team ______ the equipment against a reference instrument. Which choice completes the text so that it conforms to the conventions of Standard English?
+A) calibrates
+B) will calibrate
+C) is calibrating
+D) had calibrated",D,,Standard English Conventions,"Form, Structure, and Sense",语法形式、结构与语意,Past perfect marks an action completed before another past action began.,"The incorrect choices either contradict a stated detail, reverse the relationship, or use a related idea imprecisely.",34,71,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-RW-M2H-Q20,Mock A,Harder,0,0.381,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-RW-M2-Q21,sat_mock_exam_1,Reading and Writing,M2,Harder,21,48,Hard,Multiple Choice,"For the project involving ceramic water filters, the engineers designed the frame to be lightweight, durable, and ______. Which choice completes the text so that it conforms to the conventions of Standard English?
+A) easy to repair
+B) repairs easily
+C) with easy repairs
+D) it can be repaired easily",A,,Standard English Conventions,"Form, Structure, and Sense",语法形式、结构与语意,“Easy to repair” is parallel with the preceding adjectives in the series.,"The incorrect choices either contradict a stated detail, reverse the relationship, or use a related idea imprecisely.",33,71,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-RW-M2H-Q21,Mock A,Harder,0,0.3,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-RW-M2-Q22,sat_mock_exam_1,Reading and Writing,M2,Harder,22,49,Medium,Multiple Choice,"The survey measured residents’ current travel habits. ______, a follow-up study will examine how those habits change after the new rail line opens. Which choice completes the text with the most logical transition?
+A) In contrast
+B) Next
+C) For instance
+D) Nevertheless",B,,Expression of Ideas,Transitions,根据逻辑关系选择过渡词,Next introduces a later stage in the research.,The distractors signal a different logical relationship from the one between the two sentences.,33,71,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-RW-M2H-Q22,Mock A,Harder,0,0,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-RW-M2-Q23,sat_mock_exam_1,Reading and Writing,M2,Harder,23,50,Hard,Multiple Choice,"While researching a topic, a student has taken the following notes:
+• A 2024 study in environmental science examined urban tree canopies.
+• The study included 9 sites.
+• It found that city blocks with mature trees cooled more slowly after sunset.
+• The student wants to emphasize both the scope and the principal finding of the study.
+Which choice most effectively uses relevant information from the notes to accomplish the goal?
+A) In 2024, researchers conducted a study, but the number of sites is not known.
+B) Researchers in environmental science have studied many topics, including some unrelated to urban tree canopies.
+C) A 2024 study of urban tree canopies across 9 sites found that city blocks with mature trees cooled more slowly after sunset.
+D) The 2024 study included 9 sites; however, its finding about urban tree canopies was the opposite of what the notes report.",C,,Expression of Ideas,Rhetorical Synthesis,根据写作目标筛选并综合笔记信息,The correct choice accurately combines the study’s scope and its principal finding in one concise sentence.,"The distractors omit required information, add irrelevant content, or contradict the notes.",68,71,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-RW-M2H-Q23,Mock A,Harder,0.079,0.303,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-RW-M2-Q24,sat_mock_exam_1,Reading and Writing,M2,Harder,24,51,Hard,Multiple Choice,"While researching a topic, a student has taken the following notes:
+• A 2018 study in botany examined night-blooming flowers.
+• The study included 12 sites.
+• It found that flowers produced stronger scents when their primary moth pollinators were active.
+• The student wants to emphasize both the scope and the principal finding of the study.
+Which choice most effectively uses relevant information from the notes to accomplish the goal?
+A) In 2018, researchers conducted a study, but the number of sites is not known.
+B) Researchers in botany have studied many topics, including some unrelated to night-blooming flowers.
+C) The 2018 study included 12 sites; however, its finding about night-blooming flowers was the opposite of what the notes report.
+D) A 2018 study of night-blooming flowers across 12 sites found that flowers produced stronger scents when their primary moth pollinators were active.",D,,Expression of Ideas,Rhetorical Synthesis,根据写作目标筛选并综合笔记信息,The correct choice accurately combines the study’s scope and its principal finding in one concise sentence.,"The distractors omit required information, add irrelevant content, or contradict the notes.",67,71,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-RW-M2H-Q24,Mock A,Harder,0.079,0.307,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-RW-M2-Q25,sat_mock_exam_1,Reading and Writing,M2,Harder,25,52,Hard,Multiple Choice,"While researching a topic, a student has taken the following notes:
+• A 2019 study in sociology examined public chess tables.
+• The study included 15 sites.
+• It found that parks with permanent tables attracted longer intergenerational visits.
+• The student wants to emphasize both the scope and the principal finding of the study.
+Which choice most effectively uses relevant information from the notes to accomplish the goal?
+A) A 2019 study of public chess tables across 15 sites found that parks with permanent tables attracted longer intergenerational visits.
+B) In 2019, researchers conducted a study, but the number of sites is not known.
+C) Researchers in sociology have studied many topics, including some unrelated to public chess tables.
+D) The 2019 study included 15 sites; however, its finding about public chess tables was the opposite of what the notes report.",A,,Expression of Ideas,Rhetorical Synthesis,根据写作目标筛选并综合笔记信息,The correct choice accurately combines the study’s scope and its principal finding in one concise sentence.,"The distractors omit required information, add irrelevant content, or contradict the notes.",65,71,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-RW-M2H-Q25,Mock A,Harder,0.081,0.311,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-RW-M2-Q26,sat_mock_exam_1,Reading and Writing,M2,Harder,26,53,Hard,Multiple Choice,"The northern site receives more annual rainfall. ______, its shallow soil dries faster than the deeper soil at the southern site. Which choice completes the text with the most logical transition?
+A) Therefore
+B) Nevertheless
+C) Similarly
+D) In other words",B,,Expression of Ideas,Transitions,根据逻辑关系选择过渡词,Nevertheless signals an unexpected contrast.,The distractors signal a different logical relationship from the one between the two sentences.,31,71,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-RW-M2H-Q26,Mock A,Harder,0,0,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-RW-M2-Q27,sat_mock_exam_1,Reading and Writing,M2,Harder,27,54,Hard,Multiple Choice,"The membrane blocks large particles. ______, it allows dissolved salts to pass through. Which choice completes the text with the most logical transition?
+A) Consequently
+B) For example
+C) At the same time
+D) Instead",C,,Expression of Ideas,Transitions,根据逻辑关系选择过渡词,At the same time links simultaneous contrasting properties.,The distractors signal a different logical relationship from the one between the two sentences.,23,71,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-RW-M2H-Q27,Mock A,Harder,0,0,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-MATH-M1-Q01,sat_mock_exam_1,Math,M1,Common,1,55,Easy,Multiple Choice,"2x + 4 = 10
+What is the value of x?
+A) 3
+B) 2
+C) 4
+D) 6",A,,Algebra,Linear Equations in One Variable,解一元一次方程和线性情境模型,Subtracting 4 and dividing by 2 gives x = 3.,"The distractors reflect common setup, sign, substitution, or arithmetic errors.",,95,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-MATH-M1-Q01,Mock A,Common,0,0,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-MATH-M1-Q02,sat_mock_exam_1,Math,M1,Common,2,56,Easy,Multiple Choice,"x² + x - 6 = 0
+What is the positive solution to the equation?
+A) -3
+B) 2
+C) 3
+D) 1",B,,Advanced Math,Nonlinear Equations in One Variable,求解二次及其他非线性方程,"The quadratic factors as (x - 2)(x + 3) = 0, so the positive solution is 2.","The distractors reflect common setup, sign, substitution, or arithmetic errors.",,95,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-MATH-M1-Q02,Mock A,Common,0,0,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-MATH-M1-Q03,sat_mock_exam_1,Math,M1,Common,3,57,Easy,Multiple Choice,"The figure shows triangle ABC. What is the value of x?
+A) 48
+B) 67
+C) 65
+D) 132",C,https://img.justsolvely.com/followUpImage/c4821731-7833-4e22-8575-339a3a740e49-1786419918395-220.webp,Geometry and Trigonometry,"Lines, Angles, and Triangles",角度关系、相似与全等,The angle measures in a triangle sum to 180°. Thus x = 180 − 48 − 67 = 65.,The distractors use a labeled angle directly or subtract only one labeled angle from 180°.,,95,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-MATH-M1-Q03,Mock A,Common,0,0,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank. Figure rendered deterministically in a monochrome SAT-style format with Python and Matplotlib; no answer choice is color-emphasized.
+SAT_MOCK_EXAM_1-MATH-M1-Q04,sat_mock_exam_1,Math,M1,Common,4,58,Easy,Student-Produced Response,"A club can spend at most $420. It pays a fixed reservation fee of $60 and $12 for each participant. What is the greatest possible number of participants?
+Enter your answer.",30,,Algebra,Linear Inequalities in One or Two Variables,建立并解释线性约束,"The constraint is 60 + 12n ≤ 420. Thus n ≤ 30, so the greatest integer possible is 30.",Student-produced response; no answer choices are shown.,,95,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-MATH-M1-Q04,Mock A,Common,0,0,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-MATH-M1-Q05,sat_mock_exam_1,Math,M1,Common,5,59,Easy,Multiple Choice,"The data set is 8, 10, 11, 13. What is the mean of the data set?
+A) 10
+B) 11.5
+C) 9.5
+D) 10.5",D,,Problem-Solving and Data Analysis,One-Variable Data,均值、中位数与离散程度,The sum is 42; dividing by 4 gives 10.5.,"The distractors reflect common setup, sign, substitution, or arithmetic errors.",,95,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-MATH-M1-Q05,Mock A,Common,0,0,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-MATH-M1-Q06,sat_mock_exam_1,Math,M1,Common,6,60,Easy,Multiple Choice,"For f(x) = (x - 2)² - 3, the graph of y = f(x) has a minimum point. What is the y-coordinate of that point?
+A) -3
+B) 2
+C) 3
+D) 1",A,,Advanced Math,Nonlinear Functions,分析二次与指数函数特征,"Because the squared term is nonnegative and its coefficient is positive, the minimum occurs at x = 2 and equals -3.","The distractors reflect common setup, sign, substitution, or arithmetic errors.",,95,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-MATH-M1-Q06,Mock A,Common,0.1,0,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-MATH-M1-Q07,sat_mock_exam_1,Math,M1,Common,7,61,Medium,Multiple Choice,"x + y = 5
+x - y = -1
+The solution to the system is (x, y). What is the value of x?
+A) 3
+B) 2
+C) 5
+D) 1",B,,Algebra,Systems of Two Linear Equations in Two Variables,代入法与消元法求解方程组,"Adding the equations gives 2x = 4, so x = 2; substituting gives y = 3.","The distractors reflect common setup, sign, substitution, or arithmetic errors.",,95,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-MATH-M1-Q07,Mock A,Common,0.4,0,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-MATH-M1-Q08,sat_mock_exam_1,Math,M1,Common,8,62,Medium,Student-Produced Response,"A population is modeled by P(t) = 6(3)^t. What is P(4)?
+Enter your answer.",486,,Advanced Math,Nonlinear Functions,分析二次与指数函数特征,Substituting t = 4 gives 6(3)^4 = 486.,Student-produced response; no answer choices are shown.,,95,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-MATH-M1-Q08,Mock A,Common,0,0,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-MATH-M1-Q09,sat_mock_exam_1,Math,M1,Common,9,63,Medium,Multiple Choice,"3x + 5 = 17
+What is the value of x?
+A) 3
+B) 5
+C) 4
+D) 12",C,,Algebra,Linear Equations in One Variable,解一元一次方程和线性情境模型,Subtracting 5 and dividing by 3 gives x = 4.,"The distractors reflect common setup, sign, substitution, or arithmetic errors.",,95,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-MATH-M1-Q09,Mock A,Common,0,0,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-MATH-M1-Q10,sat_mock_exam_1,Math,M1,Common,10,64,Medium,Multiple Choice,"Which equation defines line ℓ shown in the xy-plane?
+A) y = 2x + 3
+B) y = -2x - 3
+C) y = -0.5x + 3
+D) y = -2x + 3",D,https://img.justsolvely.com/followUpImage/77d3919b-5c3f-4433-b7de-7eb4a2a5fe3d-1786419919888-480.webp,Algebra,Linear Equations in Two Variables,根据条件建立直线方程,"The graph has slope -2 and y-intercept 3, so its equation is y = -2x + 3.","The distractors reverse the slope, reverse the intercept, or use the reciprocal slope.",,95,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-MATH-M1-Q10,Mock A,Common,0,0,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank. Figure rendered deterministically in a monochrome SAT-style format with Python and Matplotlib; no answer choice is color-emphasized.
+SAT_MOCK_EXAM_1-MATH-M1-Q11,sat_mock_exam_1,Math,M1,Common,11,65,Medium,Multiple Choice,"x² + x - 12 = 0
+What is the positive solution to the equation?
+A) 3
+B) -4
+C) 4
+D) 2",A,,Advanced Math,Nonlinear Equations in One Variable,求解二次及其他非线性方程,"The quadratic factors as (x - 3)(x + 4) = 0, so the positive solution is 3.","The distractors reflect common setup, sign, substitution, or arithmetic errors.",,95,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-MATH-M1-Q11,Mock A,Common,0,0,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-MATH-M1-Q12,sat_mock_exam_1,Math,M1,Common,12,66,Medium,Student-Produced Response,"A right triangle has legs of lengths 3 and 4. What is the length of its hypotenuse?
+Enter your answer.",5,,Geometry and Trigonometry,Right Triangles and Trigonometry,直角三角形与三角函数,"By the Pythagorean theorem, c = √(3² + 4²) = 5.",Student-produced response; no answer choices are shown.,,95,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-MATH-M1-Q12,Mock A,Common,0.025,0,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-MATH-M1-Q13,sat_mock_exam_1,Math,M1,Common,13,67,Medium,Multiple Choice,"The graph shows a circle in the xy-plane. Which equation defines the circle?
+A) (x + 2)² + (y - 1)² = 9
+B) (x - 2)² + (y + 1)² = 9
+C) (x - 2)² + (y + 1)² = 3
+D) (x + 1)² + (y - 2)² = 9",B,https://img.justsolvely.com/followUpImage/b0c50dc0-a6af-48cc-b90f-1ddbedeffe49-1786419921640-113.webp,Geometry and Trigonometry,Circles,圆的度量与圆方程,"A circle with center (2, -1) and radius 3 has equation (x - 2)² + (y + 1)² = 9.","The distractors reverse coordinate signs, use r instead of r², or interchange the center coordinates.",,95,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-MATH-M1-Q13,Mock A,Common,0.08,0,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank. Figure rendered deterministically in a monochrome SAT-style format with Python and Matplotlib; no answer choice is color-emphasized.
+SAT_MOCK_EXAM_1-MATH-M1-Q14,sat_mock_exam_1,Math,M1,Common,14,68,Medium,Student-Produced Response,"The expression x² + 5x + 6 is equivalent to (x + a)(x + b), where a and b are positive integers. What is the value of a + b?",5,,Advanced Math,Equivalent Expressions,展开、合并与因式分解,"Two positive integers with product 6 and sum 5 are 2 and 3, so a + b = 5.",Student-produced response; no answer choices are shown.,,95,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-MATH-M1-Q14,Mock A,Common,0.1,0,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-MATH-M1-Q15,sat_mock_exam_1,Math,M1,Common,15,69,Medium,Multiple Choice,"Researchers want to determine whether a new tutoring method causes higher algebra scores. They randomly assign 180 volunteer students to either the new method or the standard method and use the same final assessment for both groups. Which conclusion is best supported if the new-method group scores significantly higher?
+A) The method will cause the same improvement for every student in the country.
+B) The method and scores are associated, but random assignment provides no evidence about causation.
+C) For students like those who volunteered, the tutoring method likely caused the difference in scores.
+D) The standard method necessarily lowers scores below what students would earn with no tutoring.",C,,Problem-Solving and Data Analysis,Evaluating Statistical Claims,实验设计、抽样与因果推断,"Random assignment supports a causal conclusion for participants like those in the study, but volunteer sampling limits broad generalization.","The incorrect choices either contradict a stated detail, reverse the relationship, or use a related idea imprecisely.",,95,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-MATH-M1-Q15,Mock A,Common,0,0,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-MATH-M1-Q16,sat_mock_exam_1,Math,M1,Common,16,70,Medium,Multiple Choice,"A tank initially contains 18 liters of water. Water is added at a constant rate of 4 liters per minute. How many liters of water are in the tank after 4 minutes?
+A) 22
+B) 16
+C) 30
+D) 34",D,,Algebra,Linear Functions,解释变化率与初始值,"The linear model is V = 18 + 4t. At t = 4, V = 34.","The distractors reflect common setup, sign, substitution, or arithmetic errors.",,95,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-MATH-M1-Q16,Mock A,Common,0.016,0,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-MATH-M1-Q17,sat_mock_exam_1,Math,M1,Common,17,71,Hard,Multiple Choice,"Which expression is equivalent to 2x² + 13x + 15?
+A) (2x + 3)(x + 5)
+B) (2x - 3)(x - 5)
+C) (2x + 3)(x - 5)
+D) (x + 3)(x + 10)",A,,Advanced Math,Equivalent Expressions,展开、合并与因式分解,Expanding (2x + 3)(x + 5) gives 2x² + 13x + 15.,"The incorrect choices either contradict a stated detail, reverse the relationship, or use a related idea imprecisely.",,95,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-MATH-M1-Q17,Mock A,Common,0.167,0,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-MATH-M1-Q18,sat_mock_exam_1,Math,M1,Common,18,72,Hard,Multiple Choice,"The dimensions of a right circular cylinder are shown. What is the volume of the cylinder, in cubic units?
+A) 42π
+B) 63π
+C) 60π
+D) 21π",B,https://img.justsolvely.com/followUpImage/ccc91c9f-3b90-467f-b15a-d8e822d07a95-1786419923214-716.webp,Geometry and Trigonometry,Area and Volume,面积、表面积与体积,The volume is πr²h = π(3)²(7) = 63π cubic units.,The distractors use a surface-area expression or omit one factor of the radius.,,95,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-MATH-M1-Q18,Mock A,Common,0,0,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank. Figure rendered deterministically in a monochrome SAT-style format with Python and Matplotlib; no answer choice is color-emphasized.
+SAT_MOCK_EXAM_1-MATH-M1-Q19,sat_mock_exam_1,Math,M1,Common,19,73,Hard,Student-Produced Response,"x + y = 9
+x - y = -3
+The solution to the system is (x, y). What is the value of 2x + y?
+Enter your answer.",12,,Algebra,Systems of Two Linear Equations in Two Variables,代入法与消元法求解方程组,"Adding the equations gives 2x = 6, so x = 3; substituting gives y = 6 and 2x + y = 12.",Student-produced response; no answer choices are shown.,,95,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-MATH-M1-Q19,Mock A,Common,0.308,0.211,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-MATH-M1-Q20,sat_mock_exam_1,Math,M1,Common,20,74,Hard,Multiple Choice,"A pump transfers water at a constant rate of 12 liters per minute. How many liters does it transfer in 3 hours?
+A) 36
+B) 720
+C) 2160
+D) 2148",C,,Problem-Solving and Data Analysis,"Ratios, Rates, Proportional Relationships, and Units",比率、单位率与单位换算,"Convert 3 hours to 180 minutes, then multiply: 12 × 180 = 2160 liters.","The distractors reflect common setup, sign, substitution, or arithmetic errors.",,95,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-MATH-M1-Q20,Mock A,Common,0.019,0.07,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-MATH-M1-Q21,sat_mock_exam_1,Math,M1,Common,21,75,Hard,Multiple Choice,"Line k passes through (3, 1) and is perpendicular to the line y = -1x + 7. Which equation defines line k?
+A) y = -x + 4
+B) y = x + 2
+C) y = -x - 2
+D) y = x - 2",D,,Algebra,Linear Equations in Two Variables,根据条件建立直线方程,The perpendicular slope is 1; using the given point gives y-intercept -2.,"The incorrect choices either contradict a stated detail, reverse the relationship, or use a related idea imprecisely.",,95,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-MATH-M1-Q21,Mock A,Common,0,0,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-MATH-M1-Q22,sat_mock_exam_1,Math,M1,Common,22,76,Hard,Multiple Choice,"y = x² + 2
+y = 3x + 2
+A solution to the system has x > 0. What is the y-coordinate of that solution?
+A) 11
+B) 3
+C) 9
+D) 12",A,,Advanced Math,Systems of Equations in Two Variables,求一次与非线性函数交点,"Equating the expressions gives x² = 3x, so the positive x-value is 3. Then y = 3² + 2 = 11.","The distractors reflect common setup, sign, substitution, or arithmetic errors.",,95,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-MATH-M1-Q22,Mock A,Common,0,0,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-MATH-M2-Q01,sat_mock_exam_1,Math,M2,Harder,1,77,Easy,Multiple Choice,"5x + 7 = 37
+What is the value of x?
+A) 6
+B) 5
+C) 7
+D) 30",A,,Algebra,Linear Equations in One Variable,解一元一次方程和线性情境模型,Subtracting 7 and dividing by 5 gives x = 6.,"The distractors reflect common setup, sign, substitution, or arithmetic errors.",,95,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-MATH-M2H-Q01,Mock A,Harder,0,0,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-MATH-M2-Q02,sat_mock_exam_1,Math,M2,Harder,2,78,Easy,Multiple Choice,"The dimensions of a rectangular prism are shown. What is the volume of the prism, in cubic units?
+A) 158
+B) 120
+C) 43
+D) 16",B,https://img.justsolvely.com/followUpImage/c0cf0647-39ae-4e62-8e33-c62f6c8e559b-1786419929372-342.webp,Geometry and Trigonometry,Area and Volume,面积、表面积与体积,The volume is length × width × height = 8 × 5 × 3 = 120.,The distractors calculate surface area or combine the dimensions additively.,,95,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-MATH-M2H-Q02,Mock A,Harder,0,0,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank. Figure rendered deterministically in a monochrome SAT-style format with Python and Matplotlib; no answer choice is color-emphasized.
+SAT_MOCK_EXAM_1-MATH-M2-Q03,sat_mock_exam_1,Math,M2,Harder,3,79,Medium,Student-Produced Response,"Line k in the xy-plane passes through (5, 11) and has slope 1. What is the y-coordinate of the point where line k crosses the y-axis?",6,,Algebra,Linear Equations in Two Variables,根据条件建立直线方程,"Using y = mx + b with (5, 11) gives 11 = 1(5) + b, so b = 6.",Student-produced response; no answer choices are shown.,,95,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-MATH-M2H-Q03,Mock A,Harder,0.083,0.25,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-MATH-M2-Q04,sat_mock_exam_1,Math,M2,Harder,4,80,Medium,Multiple Choice,"x² + x - 42 = 0
+What is the positive solution to the equation?
+A) -7
+B) 7
+C) 6
+D) 5",C,,Advanced Math,Nonlinear Equations in One Variable,求解二次及其他非线性方程,"The quadratic factors as (x - 6)(x + 7) = 0, so the positive solution is 6.","The distractors reflect common setup, sign, substitution, or arithmetic errors.",,95,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-MATH-M2H-Q04,Mock A,Harder,0,0,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-MATH-M2-Q05,sat_mock_exam_1,Math,M2,Harder,5,81,Medium,Multiple Choice,"In the right triangle shown, what is cos θ?
+A) 12/13
+B) 5/12
+C) 13/5
+D) 5/13",D,https://img.justsolvely.com/followUpImage/4206599b-2b6c-4738-bc8d-6cf8f19c77c8-1786419930888-447.webp,Geometry and Trigonometry,Right Triangles and Trigonometry,直角三角形与三角函数,"Cosine is adjacent over hypotenuse, so cos θ = 5/13 = 5/13.","The distractors use sine, compare the two legs, or invert the cosine ratio.",,95,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-MATH-M2H-Q05,Mock A,Harder,0.111,0,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank. Figure rendered deterministically in a monochrome SAT-style format with Python and Matplotlib; no answer choice is color-emphasized.
+SAT_MOCK_EXAM_1-MATH-M2-Q06,sat_mock_exam_1,Math,M2,Harder,6,82,Medium,Student-Produced Response,"The expression x² + 10x + 24 is equivalent to (x + a)(x + b), where a and b are positive integers. What is the value of a + b?",10,,Advanced Math,Equivalent Expressions,展开、合并与因式分解,"Two positive integers with product 24 and sum 10 are 6 and 4, so a + b = 10.",Student-produced response; no answer choices are shown.,,95,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-MATH-M2H-Q06,Mock A,Harder,0.1,0.5,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-MATH-M2-Q07,sat_mock_exam_1,Math,M2,Harder,7,83,Medium,Multiple Choice,"The scatterplot shows data and a line of best fit. Which choice best interprets the slope of the line of best fit?
+A) For each additional unit of x, the predicted value of y decreases by about 1.5.
+B) The predicted value of y when x is 0 is 1.5.
+C) For each additional unit of y, x changes by about 42.
+D) All data points lie exactly on the line of best fit.",A,https://img.justsolvely.com/followUpImage/28b5e5c4-d4ed-4c3d-bf50-e4005ed32f41-1786419932047-252.webp,Problem-Solving and Data Analysis,Two-Variable Data,散点图与最佳拟合线,"The slope is about -1.5, so the predicted y-value changes by -1.5 for each 1-unit increase in x.","The distractors confuse slope with the intercept, reverse the variables, or treat a best-fit line as an exact fit.",,95,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-MATH-M2H-Q07,Mock A,Harder,0.034,0.188,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank. Figure rendered deterministically in a monochrome SAT-style format with Python and Matplotlib; no answer choice is color-emphasized.
+SAT_MOCK_EXAM_1-MATH-M2-Q08,sat_mock_exam_1,Math,M2,Harder,8,84,Medium,Multiple Choice,"A table classifies workshop participants.
+Group | Passed | Did not pass
+Blue | 4 | 5
+Red | 5 | 6
+
+One participant who passed is selected at random. What is the probability that the participant is in the Blue group?
+A) 4/20
+B) 4/9
+C) 9/20
+D) 5/9",B,,Problem-Solving and Data Analysis,Probability and Conditional Probability,简单概率与条件概率,"Among the 9 participants who passed, 4 are in Blue, so the conditional probability is 4/9.","The distractors reflect common setup, sign, substitution, or arithmetic errors.",,95,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-MATH-M2H-Q08,Mock A,Harder,0,0.429,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-MATH-M2-Q09,sat_mock_exam_1,Math,M2,Harder,9,85,Medium,Multiple Choice,"A club can spend at most $600. It pays a fixed reservation fee of $105 and $21 for each participant. What is the greatest possible number of participants?
+A) 22
+B) 24
+C) 23
+D) 28",C,,Algebra,Linear Inequalities in One or Two Variables,建立并解释线性约束,"The constraint is 105 + 21n ≤ 600. Thus n ≤ 23.571428571428573, so the greatest integer possible is 23.","The distractors reflect common setup, sign, substitution, or arithmetic errors.",,95,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-MATH-M2H-Q09,Mock A,Harder,0,0.185,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-MATH-M2-Q10,sat_mock_exam_1,Math,M2,Harder,10,86,Medium,Student-Produced Response,"For f(x) = (x - 6)² - 7, the graph of y = f(x) has a minimum point. What is the y-coordinate of that point?
+Enter your answer.",-7,,Advanced Math,Nonlinear Functions,分析二次与指数函数特征,"Because the squared term is nonnegative and its coefficient is positive, the minimum occurs at x = 6 and equals -7.",Student-produced response; no answer choices are shown.,,95,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-MATH-M2H-Q10,Mock A,Harder,0.087,0.286,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-MATH-M2-Q11,sat_mock_exam_1,Math,M2,Harder,11,87,Hard,Multiple Choice,"x² - 4x - 21 = 0
+What is the positive solution to the equation?
+A) -3
+B) 3
+C) 8
+D) 7",D,,Advanced Math,Nonlinear Equations in One Variable,求解二次及其他非线性方程,"The quadratic factors as (x - 7)(x + 3) = 0, so the positive solution is 7.","The distractors reflect common setup, sign, substitution, or arithmetic errors.",,95,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-MATH-M2H-Q11,Mock A,Harder,0,0,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-MATH-M2-Q12,sat_mock_exam_1,Math,M2,Harder,12,88,Hard,Multiple Choice,"Two independent random samples from the same population produce similar sample means. Sample A contains 125 observations, and sample B contains 500 observations. The same method is used to construct both confidence intervals. Which statement is most likely true?
+A) The interval based on sample B has a smaller margin of error.
+B) The interval based on sample A has a smaller margin of error.
+C) Both intervals must have exactly the same margin of error.
+D) The larger sample makes the estimate systematically biased.",A,,Problem-Solving and Data Analysis,Inference from Sample Statistics and Margin of Error,样本估计与误差范围,A larger random sample generally reduces sampling variability and therefore the margin of error.,"The incorrect choices either contradict a stated detail, reverse the relationship, or use a related idea imprecisely.",,95,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-MATH-M2H-Q12,Mock A,Harder,0,0,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-MATH-M2-Q13,sat_mock_exam_1,Math,M2,Harder,13,89,Hard,Student-Produced Response,"A club can spend at most $660. It pays a fixed reservation fee of $60 and $24 for each participant. What is the greatest possible number of participants?
+Enter your answer.",25,,Algebra,Linear Inequalities in One or Two Variables,建立并解释线性约束,"The constraint is 60 + 24n ≤ 660. Thus n ≤ 25, so the greatest integer possible is 25.",Student-produced response; no answer choices are shown.,,95,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-MATH-M2H-Q13,Mock A,Harder,0,0.31,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-MATH-M2-Q14,sat_mock_exam_1,Math,M2,Harder,14,90,Hard,Multiple Choice,"An exponential function has the form P(t) = a(b)^t. If P(0) = 5 and P(2) = 80, what is the positive value of b?
+A) 16
+B) 4
+C) 5
+D) 3",B,,Advanced Math,Nonlinear Functions,分析二次与指数函数特征,"P(0) = a, so a = 5. Then 5b² = 80, giving b² = 16 and positive b = 4.","The distractors reflect common setup, sign, substitution, or arithmetic errors.",,95,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-MATH-M2H-Q14,Mock A,Harder,0,0,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-MATH-M2-Q15,sat_mock_exam_1,Math,M2,Harder,15,91,Hard,Multiple Choice,"x + y = 10
+x - y = 2
+The solution to the system is (x, y). What is the value of 2x + y?
+A) 4
+B) 10
+C) 16
+D) 2",C,,Algebra,Systems of Two Linear Equations in Two Variables,代入法与消元法求解方程组,"Adding the equations gives 2x = 12, so x = 6; substituting gives y = 4 and 2x + y = 16.","The distractors reflect common setup, sign, substitution, or arithmetic errors.",,95,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-MATH-M2H-Q15,Mock A,Harder,0.4,0.25,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-MATH-M2-Q16,sat_mock_exam_1,Math,M2,Harder,16,92,Hard,Student-Produced Response,"A quantity with an initial value of 100 increases by 15% and then decreases by 10%. What is the final value?
+Enter your answer.",103.5,,Problem-Solving and Data Analysis,Percentages,百分比与百分比变化,Successive percent changes multiply: 100(1 + 0.15)(0.90) = 103.5.,Student-produced response; no answer choices are shown.,,95,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-MATH-M2H-Q16,Mock A,Harder,0.02,0.158,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-MATH-M2-Q17,sat_mock_exam_1,Math,M2,Harder,17,93,Hard,Multiple Choice,"A tank initially contains 24 liters of water. Water is added at 6 liters per minute for 11 minutes, after which 9 liters are removed. How many liters remain?
+A) 90
+B) 39
+C) 57
+D) 81",D,,Algebra,Linear Functions,解释变化率与初始值,The final amount is 24 + 6(11) - 9 = 81 liters.,"The distractors reflect common setup, sign, substitution, or arithmetic errors.",,95,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-MATH-M2H-Q17,Mock A,Harder,0,0.06,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-MATH-M2-Q18,sat_mock_exam_1,Math,M2,Harder,18,94,Hard,Multiple Choice,"y = x² + 5
+y = 6x + 5
+A solution to the system has x > 0. What is the y-coordinate of that solution?
+A) 41
+B) 6
+C) 36
+D) 42",A,,Advanced Math,Systems of Equations in Two Variables,求一次与非线性函数交点,"Equating the expressions gives x² = 6x, so the positive x-value is 6. Then y = 6² + 5 = 41.","The distractors reflect common setup, sign, substitution, or arithmetic errors.",,95,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-MATH-M2H-Q18,Mock A,Harder,0,0.286,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-MATH-M2-Q19,sat_mock_exam_1,Math,M2,Harder,19,95,Hard,Multiple Choice,"x + y = 14
+x - y = 0
+The solution to the system is (x, y). What is the value of 2x + y?
+A) 7
+B) 21
+C) 14
+D) 0",B,,Algebra,Systems of Two Linear Equations in Two Variables,代入法与消元法求解方程组,"Adding the equations gives 2x = 14, so x = 7; substituting gives y = 7 and 2x + y = 21.","The distractors reflect common setup, sign, substitution, or arithmetic errors.",,95,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-MATH-M2H-Q19,Mock A,Harder,0.4,0.25,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-MATH-M2-Q20,sat_mock_exam_1,Math,M2,Harder,20,96,Hard,Student-Produced Response,"y = x² + 6
+y = 7x + 6
+A solution to the system has x > 0. What is the y-coordinate of that solution?
+Enter your answer.",55,,Advanced Math,Systems of Equations in Two Variables,求一次与非线性函数交点,"Equating the expressions gives x² = 7x, so the positive x-value is 7. Then y = 7² + 6 = 55.",Student-produced response; no answer choices are shown.,,95,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-MATH-M2H-Q20,Mock A,Harder,0,0.235,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-MATH-M2-Q21,sat_mock_exam_1,Math,M2,Harder,21,97,Hard,Multiple Choice,"The equation x² + y² - 8x - 6y - 11 = 0 represents a circle. What is the radius of the circle?
+A) 36
+B) 7
+C) 6
+D) 11",C,,Geometry and Trigonometry,Circles,圆的度量与圆方程,"Completing the square gives (x - 4)² + (y - 3)² = 36, so the radius is 6.","The incorrect choices either contradict a stated detail, reverse the relationship, or use a related idea imprecisely.",,95,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-MATH-M2H-Q21,Mock A,Harder,0,0,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
+SAT_MOCK_EXAM_1-MATH-M2-Q22,sat_mock_exam_1,Math,M2,Harder,22,98,Hard,Multiple Choice,"Which expression is equivalent to 2x² + 19x + 42?
+A) (2x - 7)(x - 6)
+B) (2x + 7)(x - 6)
+C) (x + 7)(x + 12)
+D) (2x + 7)(x + 6)",D,,Advanced Math,Equivalent Expressions,展开、合并与因式分解,Expanding (2x + 7)(x + 6) gives 2x² + 19x + 42.,"The incorrect choices either contradict a stated detail, reverse the relationship, or use a related idea imprecisely.",,95,100,Auto QA Passed - Human Review Pending,SAT-MOCK-A-MATH-M2H-Q22,Mock A,Harder,0.167,0.333,true,true,https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre?from=from_copylink,Original mock item; modeled on taxonomy and current Digital SAT blueprint; not copied from the source bank.
