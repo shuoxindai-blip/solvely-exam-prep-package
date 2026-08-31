@@ -41,6 +41,7 @@ const improvePracticeProgress = ref<Record<string, number>>({})
 const showLessonImportanceNote = ref(true)
 const showImproveImportanceNote = ref(true)
 const practiceTestState = ref<PracticeTestState>('in-progress')
+const retakeDialog = ref<HTMLDialogElement | null>(null)
 const lastActivity = ref<LastActivity>({ kind: 'learning', examTitle: 'SAT Prep 2026', sectionTitle: 'Advanced Math', itemTitle: 'Expansion, factoring, and completing the square', resourceLabel: 'Study Guide', progressPercent: 62, topicId: 'sat_math_advanced_equivalent_expressions_01' })
 const isCourseOpen = computed(() => route.hash === '#course-0')
 const isCourseStarted = computed(() => String(route.query.courseState || '') !== 'not-started')
@@ -280,6 +281,15 @@ function resumeLastActivity() {
 function continueOverviewStudy() { void router.push({ name: 'study-guide', params: { topicId: 'sat_math_algebra_systems_linear_01' } }) }
 function startCourseLearning() { void router.push({ name: 'study-guide', params: { topicId: 'sat_math_algebra_systems_linear_01' } }) }
 function startMockExam(examId: number) { void router.push({ name: 'mock-exam', params: { examId } }) }
+function requestRetake() {
+  if (retakeDialog.value && !retakeDialog.value.open) retakeDialog.value.showModal()
+}
+function closeRetakeConfirm() { retakeDialog.value?.close() }
+function confirmRetake() {
+  closeRetakeConfirm()
+  practiceTestState.value = 'not-started'
+  startMockExam(1)
+}
 function handlePracticeTestAction() {
   if (practiceTestState.value === 'scoring') return
   if (practiceTestState.value === 'results') {
@@ -557,7 +567,7 @@ onBeforeUnmount(() => document.body.classList.remove('package-route', 'dark'))
                 </article>
               </section>
 
-              <footer class="report-footer"><p>SAT® is a registered trademark of the College Board, which is not affiliated with or endorsed by this product. Practice scores are estimates, not official College Board scores.</p><div><button class="report-retake-button" type="button" @click="startMockExam(1)">Retake</button><button class="report-practice-button" type="button" @click="setResultView('improve')">Practice Weak Topics</button></div></footer>
+              <footer class="report-footer"><p>SAT® is a registered trademark of the College Board, which is not affiliated with or endorsed by this product. Practice scores are estimates, not official College Board scores.</p><div><button class="report-retake-button" type="button" @click="requestRetake">Retake</button><button class="report-practice-button" type="button" @click="setResultView('improve')">Practice Weak Topics</button></div></footer>
             </div>
 
             <div v-else-if="resultView === 'review'" class="question-review-view">
@@ -611,7 +621,7 @@ onBeforeUnmount(() => document.body.classList.remove('package-route', 'dark'))
                 </article>
               </div>
               <div v-else class="results-empty">No questions match these filters.</div>
-              <footer class="report-footer"><p>SAT® is a registered trademark of the College Board, which is not affiliated with or endorsed by this product.</p><div><button class="report-retake-button" type="button" @click="startMockExam(1)">Retake</button><button class="report-practice-button" type="button" @click="setResultView('improve')">Practice Weak Topics</button></div></footer>
+              <footer class="report-footer"><p>SAT® is a registered trademark of the College Board, which is not affiliated with or endorsed by this product.</p><div><button class="report-retake-button" type="button" @click="requestRetake">Retake</button><button class="report-practice-button" type="button" @click="setResultView('improve')">Practice Weak Topics</button></div></footer>
             </div>
 
             <section v-else class="topics-improve-view study-breakdown" aria-label="Topics to improve">
@@ -629,5 +639,12 @@ onBeforeUnmount(() => document.body.classList.remove('package-route', 'dark'))
         </div>
       </section>
     </main>
+    <dialog ref="retakeDialog" class="retake-confirm-dialog" aria-labelledby="retakeConfirmTitle" aria-describedby="retakeConfirmDescription" @cancel.prevent="closeRetakeConfirm">
+      <div class="retake-confirm-content">
+        <span class="retake-confirm-icon" aria-hidden="true"><svg class="icon"><use href="#i-history"/></svg></span>
+        <div><h2 id="retakeConfirmTitle">Retake This Practice Test?</h2><p id="retakeConfirmDescription">Retaking this practice test will permanently delete your current result, answers, and score analysis. This can’t be undone.</p></div>
+      </div>
+      <footer class="retake-confirm-actions"><button type="button" class="retake-cancel-button" @click="closeRetakeConfirm">Cancel</button><button type="button" class="retake-confirm-button" @click="confirmRetake">Retake Test</button></footer>
+    </dialog>
   </div>
 </template>
