@@ -359,7 +359,7 @@ onBeforeUnmount(() => {
       <main class="topic-main">
         <header class="topic-main-head">
           <div>
-            <p><span>{{ topic.section }}</span><i />{{ topic.domain }}<i />{{ topic.skill }}</p>
+            <p><span>{{ topic.section }}</span><i />{{ topic.skill }}</p>
             <h1>{{ topic.title }}</h1>
             <span class="topic-summary">{{ topic.summary }}</span>
           </div>
