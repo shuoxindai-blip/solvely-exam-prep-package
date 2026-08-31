@@ -10,6 +10,7 @@ import type { SatManifest, SatTopic } from '../types/sat'
 
 type CourseTab = 'overview' | 'study' | 'mock' | 'results'
 type ResultView = 'score' | 'review' | 'improve'
+type PracticeTestState = 'not-started' | 'in-progress' | 'scoring' | 'results'
 type ReviewFilter = 'ALL' | 'INCORRECT' | 'CORRECT' | 'OMITTED'
 type ReviewSectionFilter = 'ALL' | 'reading-writing' | 'math'
 type Course = { family: string; label: string; title: string; topics: string; videos: string; questions: string; search: string }
@@ -37,6 +38,7 @@ const selectedReviewQuestionId = ref<number | null>(null)
 const improveSection = ref<'math' | 'reading-writing'>('math')
 const improvePriority = ref<'ALL' | SatTopic['priority']>('ALL')
 const improvePracticeProgress = ref<Record<string, number>>({})
+const practiceTestState = ref<PracticeTestState>('in-progress')
 const lastActivity = ref<LastActivity>({ kind: 'learning', examTitle: 'SAT Prep 2026', sectionTitle: 'Advanced Math', itemTitle: 'Expansion, factoring, and completing the square', resourceLabel: 'Study Guide', progressPercent: 62, topicId: 'sat_math_advanced_equivalent_expressions_01' })
 const isCourseOpen = computed(() => route.hash === '#course-0')
 const lastActivityDetail = computed(() => lastActivity.value.kind === 'learning'
@@ -45,6 +47,45 @@ const lastActivityDetail = computed(() => lastActivity.value.kind === 'learning'
 const lastActivityCta = computed(() => lastActivity.value.kind === 'learning' ? 'Continue learning' : 'Resume exam')
 
 const resultReport = computed(() => resultExam.value ? buildSatReport(resultExam.value) : null)
+const practiceTestStates: { id: PracticeTestState; label: string }[] = [
+  { id: 'not-started', label: 'Not started' },
+  { id: 'in-progress', label: 'In progress' },
+  { id: 'scoring', label: 'Scoring' },
+  { id: 'results', label: 'Results ready' },
+]
+const practiceTestCard = computed(() => {
+  const report = resultReport.value
+  const readingWritingScore = report?.sections.find((section) => section.sectionId === 'reading-writing')?.score ?? 650
+  const mathScore = report?.sections.find((section) => section.sectionId === 'math')?.score ?? 630
+  if (practiceTestState.value === 'not-started') return {
+    stateLabel: 'Not started',
+    description: 'Take a realistic full-length Digital SAT with the official section timing and module structure.',
+    metrics: [{ value: '98', label: 'questions' }, { value: '134', label: 'min' }, { value: '4', label: 'modules' }],
+    progressTitle: 'Progress', progressLabel: 'Ready to start', progressPercent: 0,
+    helper: 'Your timer starts after setup', cta: 'Start Practice Test', disabled: false,
+  }
+  if (practiceTestState.value === 'scoring') return {
+    stateLabel: 'Scoring',
+    description: 'Your answers were submitted. We are preparing your score report and personalized recommendations.',
+    metrics: [{ value: '98', label: 'answered' }, { value: '2h 09m', label: 'time used' }, { value: '4', label: 'modules' }],
+    progressTitle: 'Status', progressLabel: 'Preparing score report', progressPercent: 36,
+    helper: 'Usually ready in under a minute', cta: 'Scoring…', disabled: true,
+  }
+  if (practiceTestState.value === 'results') return {
+    stateLabel: 'Results ready',
+    description: 'Your score report is ready. Review your performance and practice the topics with the biggest opportunity.',
+    metrics: [{ value: String(report?.totalScore ?? 1280), label: 'total score' }, { value: String(readingWritingScore), label: 'Reading & Writing' }, { value: String(mathScore), label: 'Math' }],
+    progressTitle: 'Completed', progressLabel: report ? formatReportDate(report.completedAt) : 'Aug 21, 2026', progressPercent: 100,
+    helper: `${report?.percentile ?? 70}th percentile`, cta: 'View Results', disabled: false,
+  }
+  return {
+    stateLabel: 'In progress',
+    description: 'Resume your saved attempt from Reading and Writing, Module 1.',
+    metrics: [{ value: '98', label: 'questions' }, { value: '134', label: 'min' }, { value: '4', label: 'modules' }],
+    progressTitle: 'Progress', progressLabel: '14 of 98 answered', progressPercent: 14.3,
+    helper: 'Answers saved automatically', cta: 'Continue Practice Test', disabled: false,
+  }
+})
 const reportQuestions = computed(() => resultExam.value && resultReport.value ? buildReviewQuestions(resultExam.value, resultReport.value) : [])
 const confidenceTopics = computed(() => {
   const groups = new Map<string, { sectionId: string; label: string; correct: number; attempts: number; seconds: number[] }>()
@@ -208,6 +249,16 @@ function resumeLastActivity() {
 }
 function continueOverviewStudy() { void router.push({ name: 'study-guide', params: { topicId: 'sat_math_algebra_systems_linear_01' } }) }
 function startMockExam(examId: number) { void router.push({ name: 'mock-exam', params: { examId } }) }
+function handlePracticeTestAction() {
+  if (practiceTestState.value === 'scoring') return
+  if (practiceTestState.value === 'results') {
+    resultView.value = 'score'
+    activeTab.value = 'results'
+    void router.push({ name: 'package', query: { tab: 'results' }, hash: '#course-0' })
+    return
+  }
+  startMockExam(1)
+}
 function toggleTheme() { document.body.classList.toggle('dark') }
 function setResultView(view: ResultView) {
   resultView.value = view
@@ -355,13 +406,16 @@ onBeforeUnmount(() => document.body.classList.remove('package-route', 'dark'))
           <section v-else-if="activeTab === 'study'" class="study-breakdown" aria-label="SAT lessons"><header class="study-breakdown-toolbar" aria-label="Filter lessons"><div class="study-breakdown-filters"><div class="study-filter-group"><span class="study-filter-label">Section</span><div class="study-section-switch" role="group" aria-label="SAT section"><button v-for="section in (['Math','Reading and Writing'] as const)" :key="section" type="button" :aria-pressed="sectionFilter === section" @click="sectionFilter = section">{{ section === 'Reading and Writing' ? 'Reading & Writing' : section }}</button></div></div><div class="study-filter-group importance"><span class="study-filter-label">Importance</span><div class="study-importance-chips" role="group" aria-label="Topic importance"><button v-for="filter in ([['all','All'],['core','Core'],['likely','Likely'],['possible','Possible']] as const)" :key="filter[0]" :class="filter[0]" type="button" :aria-pressed="priorityFilter === filter[0]" @click="priorityFilter = filter[0]"><i v-if="filter[0] !== 'all'"/>{{ filter[1] }}</button></div></div></div></header><div class="study-priority-note"><svg class="icon"><use href="#i-target"/></svg><span>Importance combines the official SAT content-domain weight ({{ Math.round((manifest?.importanceModel.domainWeightContribution ?? 0.65) * 100) }}%) with mapped frequency across {{ (manifest?.importanceModel.sourceQuestionCount ?? 3879).toLocaleString() }} practice questions ({{ Math.round((manifest?.importanceModel.topicFrequencyContribution ?? 0.35) * 100) }}%). Study progress is tracked separately.</span></div><div v-if="loadError" class="study-topic-empty">{{ loadError }}</div><div v-else-if="!manifest" class="study-topic-empty">Loading SAT topics…</div><div v-else class="study-topic-sections"><section v-for="section in topicsBySection" :key="section.id" :class="['study-topic-section',{ collapsed:priorityFilter === 'all' && collapsedSections.has(section.id) }]" :aria-labelledby="priorityFilter === 'all' ? section.id : undefined" :aria-label="priorityFilter !== 'all' ? `${priorityFilter} topics sorted by importance` : undefined"><button v-if="priorityFilter === 'all'" class="study-section-head" type="button" :aria-expanded="!collapsedSections.has(section.id)" @click="toggleSection(section.id)"><h3 :id="section.id">{{ section.examSection }} · {{ section.title }}</h3><span class="study-section-meta"><span>{{ section.topics.length }} Topics</span><svg class="icon"><use href="#i-chevron"/></svg></span></button><div v-if="priorityFilter !== 'all' || !collapsedSections.has(section.id)" role="table"><div class="study-topic-table-head" role="row"><span role="columnheader">Topic Area</span><span role="columnheader">Progress</span></div><article v-for="topic in section.topics" :key="topic.id" class="study-topic-row" role="row" tabindex="0"><div class="study-topic-copy" role="cell"><strong>{{ topic.title }}</strong><span>{{ topic.summary }}</span><div class="study-topic-meta"><span :class="['study-topic-importance',topic.priority.toLowerCase()]">{{ topic.importanceScore }}% · {{ priorityLabel(topic.priority) }}</span><span>{{ topic.mappedQuestionCount }} mapped questions</span><span>{{ topic.domain }}</span></div></div><div class="study-topic-progress" role="cell"><span class="study-topic-progress-copy"><strong>{{ topicProgress(topic) ? 'In progress' : 'Not started' }}</strong><span>{{ topicProgressLabel(topic) }}</span></span><span class="study-topic-progress-meter"><strong>{{ topicProgress(topic) }}%</strong><span class="study-topic-progress-track"><i :class="{complete:topicProgress(topic)===100}" :style="{width:`${topicProgress(topic)}%`}"/></span></span></div><aside class="study-topic-popover"><div class="study-topic-popover-head"><h4>{{ topic.title }}</h4><span :class="topic.priority.toLowerCase()">{{ topic.importanceScore }}% · {{ priorityLabel(topic.priority) }}</span></div><p>{{ topic.summary }}</p><p class="study-topic-importance-detail">{{ topic.domainWeightPercent }}% official domain weight · {{ topic.mappedQuestionCount }} mapped questions</p><small>Study with</small><div class="study-topic-actions"><button class="study-topic-tool" type="button" @click="openTopic(topic,'study-guide')"><svg class="icon"><use href="#i-book"/></svg><span>Study Guide</span></button><button class="study-topic-tool" type="button" @click="openTopic(topic,'flashcards')"><svg class="icon"><use href="#i-grid"/></svg><span>Flashcards</span></button><button class="study-topic-tool" type="button" @click="openTopic(topic,'quiz')"><svg class="icon"><use href="#i-exam"/></svg><span>Quiz</span></button></div></aside></article></div></section></div></section>
 
           <div v-else-if="activeTab === 'mock'" class="mock-state-shell">
+            <nav class="mock-state-nav" aria-label="Preview practice test card state">
+              <button v-for="state in practiceTestStates" :key="state.id" :class="['mock-state-button',{ active:practiceTestState === state.id }]" type="button" :aria-pressed="practiceTestState === state.id" @click="practiceTestState = state.id">{{ state.label }}</button>
+            </nav>
             <div class="mock-exam-card-grid">
-              <article class="mock-entry-card in-progress">
-                <header class="mock-entry-head"><span class="mock-entry-number">Practice Test</span><span class="mock-entry-state in-progress"><i/>In progress</span></header>
-                <div class="mock-entry-copy"><h3>Digital SAT Full-Length Practice Test 1</h3><p>Resume your saved attempt from Reading and Writing, Module 1.</p></div>
-                <div class="mock-entry-metrics"><span><strong>98</strong> questions</span><span><strong>134</strong> min</span><span><strong>4</strong> modules</span></div>
-                <div class="mock-entry-progress"><div><span>Progress</span><strong>14 of 98 answered</strong></div><span class="mock-entry-progress-track"><i style="width:14.3%"/></span></div>
-                <footer class="mock-entry-footer"><span>Answers saved automatically</span><button class="mock-primary-action" type="button" @click="startMockExam(1)">Continue Practice Test</button></footer>
+              <article :class="['mock-entry-card',practiceTestState]">
+                <header class="mock-entry-head"><span class="mock-entry-number">Practice Test</span><span :class="['mock-entry-state',practiceTestState]"><i/>{{ practiceTestCard.stateLabel }}</span></header>
+                <div class="mock-entry-copy"><h3>Digital SAT Full-Length Practice Test 1</h3><p>{{ practiceTestCard.description }}</p></div>
+                <div class="mock-entry-metrics"><span v-for="metric in practiceTestCard.metrics" :key="metric.label"><strong>{{ metric.value }}</strong>{{ metric.label }}</span></div>
+                <div class="mock-entry-progress"><div><span>{{ practiceTestCard.progressTitle }}</span><strong>{{ practiceTestCard.progressLabel }}</strong></div><span class="mock-entry-progress-track"><i :style="{width:`${practiceTestCard.progressPercent}%`}"/></span></div>
+                <footer class="mock-entry-footer"><span>{{ practiceTestCard.helper }}</span><button class="mock-primary-action" type="button" :disabled="practiceTestCard.disabled" @click="handlePracticeTestAction">{{ practiceTestCard.cta }}</button></footer>
               </article>
             </div>
           </div>
