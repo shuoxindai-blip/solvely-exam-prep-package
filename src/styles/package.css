@@ -1649,7 +1649,7 @@
     .mock-exams-heading h2 { margin:0; font-size:20px; letter-spacing:-.03em; }
     .mock-exams-heading p { margin:6px 0 0; color:var(--muted); font-size:10px; line-height:1.5; }
     .mock-exam-count { min-height:29px; display:inline-flex; align-items:center; padding:0 10px; border:1px solid var(--line); border-radius:999px; background:var(--surface); color:var(--muted); font-size:9px; font-weight:720; white-space:nowrap; }
-    .mock-exam-card-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
+    .mock-exam-card-grid { display:grid; grid-template-columns:minmax(0,1fr); gap:14px; }
     .mock-entry-card { min-width:0; overflow:hidden; position:relative; display:flex; flex-direction:column; padding:20px; border:1px solid var(--line); border-radius:17px; background:var(--surface); box-shadow:0 5px 18px rgba(31,45,69,.04); }
     .mock-entry-card::before { content:""; position:absolute; inset:0 0 auto; height:3px; background:#dfe4eb; }
     .mock-entry-card.in-progress { border-color:rgba(35,104,240,.24); background:linear-gradient(180deg,rgba(35,104,240,.055),var(--surface) 34%); box-shadow:0 10px 26px rgba(35,104,240,.08); }
@@ -1833,16 +1833,11 @@
     .report-retake-button { border:1px solid #d9eafe; background:#ecf5ff; color:#087bf1; }
     .report-practice-button { border:1px solid #087bf1; background:#087bf1; color:#fff; }
 
-    .question-review-toolbar { display:flex; align-items:flex-end; gap:20px; padding:14px 16px; border:1px solid var(--line); border-radius:16px; background:var(--surface); }
-    .question-review-filter-group { display:grid; gap:6px; }
-    .question-review-filter-group > span { color:var(--muted); font-size:7px; font-weight:720; letter-spacing:.055em; text-transform:uppercase; }
-    .question-review-section-filters,.question-review-filters { display:flex; align-items:center; gap:4px; padding:3px; border-radius:10px; background:var(--surface-soft); }
-    .question-review-section-filters button,.question-review-filters button { min-height:31px; padding:0 10px; border:0; border-radius:7px; background:transparent; color:var(--muted); font-size:8px; font-weight:650; white-space:nowrap; cursor:pointer; }
-    .question-review-section-filters button[aria-selected="true"],.question-review-filters button[aria-selected="true"] { background:var(--surface); color:#087bf1; box-shadow:0 1px 4px rgba(34,45,62,.09); }
-    .question-review-filters span { min-width:17px; display:inline-grid; place-items:center; margin-left:3px; padding:2px 4px; border-radius:999px; background:#eaf0f7; color:#68768a; font-size:7px; font-weight:720; }
-    .question-review-filters button[aria-selected="true"] span { background:#e8f3ff; color:#087bf1; }
-    .question-review-toolbar > p { margin:0 0 8px auto; color:var(--muted); font-size:8px; white-space:nowrap; }
-    .question-review-toolbar > p strong { color:var(--text); font-size:10px; }
+    .review-status-chips button b { min-width:18px; display:inline-grid; place-items:center; padding:2px 5px; border-radius:999px; background:#eef2f7; color:#68768a; font-size:7px; }
+    .review-status-chips button[aria-pressed="true"] b { background:#dcecff; color:#147ef5; }
+    .review-status-chips .incorrect i { background:#bd4e28; }
+    .review-status-chips .omitted i { background:#7d828a; }
+    .review-status-chips .correct i { background:#16865d; }
     .question-review-workspace { min-width:0; display:grid; grid-template-columns:238px minmax(0,1fr); align-items:start; gap:14px; }
     .review-question-navigator { position:sticky; top:16px; overflow:hidden; border:1px solid var(--line); border-radius:17px; background:var(--surface); }
     .review-question-navigator > header { display:flex; align-items:flex-end; justify-content:space-between; gap:10px; padding:15px 16px 13px; border-bottom:1px solid var(--line); }
@@ -1968,9 +1963,7 @@
       .report-stat-strip > div { border-top:1px solid var(--line); }
       .report-stat-strip > div:nth-child(-n+2) { border-top:0; }
       .report-stat-strip > div:nth-child(odd) { border-left:0; }
-      .question-review-toolbar,.report-footer { align-items:flex-start; flex-direction:column; }
-      .question-review-toolbar > p { margin:0; text-align:left; }
-      .question-review-section-filters,.question-review-filters { max-width:100%; overflow-x:auto; }
+      .report-footer { align-items:flex-start; flex-direction:column; }
       .report-footer > div { width:100%; }
       .report-footer button { flex:1; }
       .question-navigator { position:static; }

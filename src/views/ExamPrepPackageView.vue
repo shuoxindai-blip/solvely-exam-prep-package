@@ -336,7 +336,7 @@ onBeforeUnmount(() => document.body.classList.remove('package-route', 'dark'))
 
       <section v-else class="course-workspace" aria-labelledby="courseWorkspaceTitle">
         <button class="course-back" type="button" @click="closeCourse"><svg class="icon"><use href="#i-chevron"/></svg><span>Back to courses</span></button>
-        <header class="course-package-hero"><div class="course-package-copy"><h1 id="courseWorkspaceTitle">SAT Prep 2026</h1><p>A focused SAT Prep 2026 plan with topic study tools, realistic mock exams, score reports, and targeted improvement.</p><div class="course-package-metrics"><span class="course-package-metric"><svg class="icon"><use href="#i-book"/></svg><span><strong>100</strong> video lessons</span></span><span class="course-package-metric"><svg class="icon"><use href="#i-grid"/></svg><span><strong>3,879</strong> practice questions</span></span><span class="course-package-metric"><svg class="icon"><use href="#i-exam"/></svg><span><strong>2</strong> full-length practice tests with score analysis</span></span></div></div><aside class="course-progress-summary" aria-label="Course progress"><span class="course-progress-watermark" aria-hidden="true">18</span><div class="course-progress-value"><strong>18%</strong><span>Course Progress</span></div><div class="course-progress-track" role="progressbar" aria-label="Course progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="18"><i style="width:18%"/></div></aside></header>
+        <header class="course-package-hero"><div class="course-package-copy"><h1 id="courseWorkspaceTitle">SAT Prep 2026</h1><p>A focused SAT Prep 2026 plan with topic study tools, realistic mock exams, score reports, and targeted improvement.</p><div class="course-package-metrics"><span class="course-package-metric"><svg class="icon"><use href="#i-book"/></svg><span><strong>100</strong> video lessons</span></span><span class="course-package-metric"><svg class="icon"><use href="#i-grid"/></svg><span><strong>3,879</strong> practice questions</span></span><span class="course-package-metric"><svg class="icon"><use href="#i-exam"/></svg><span><strong>1</strong> full-length practice test with score analysis</span></span></div></div><aside class="course-progress-summary" aria-label="Course progress"><span class="course-progress-watermark" aria-hidden="true">18</span><div class="course-progress-value"><strong>18%</strong><span>Course Progress</span></div><div class="course-progress-track" role="progressbar" aria-label="Course progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="18"><i style="width:18%"/></div></aside></header>
         <nav class="course-package-tabs" role="tablist" aria-label="Course sections"><button v-for="tab in ([['overview','Overview'],['study','Lessons'],['mock','Practice Tests'],['results','Results & Improve']] as [CourseTab,string][])" :key="tab[0]" class="course-package-tab" type="button" role="tab" :aria-selected="activeTab === tab[0]" @click="selectTab(tab[0])">{{ tab[1] }}</button></nav>
         <div class="course-package-panel" role="tabpanel" aria-live="polite">
           <div v-if="activeTab === 'overview'" class="course-overview-waterfall">
@@ -357,19 +357,11 @@ onBeforeUnmount(() => document.body.classList.remove('package-route', 'dark'))
           <div v-else-if="activeTab === 'mock'" class="mock-state-shell">
             <div class="mock-exam-card-grid">
               <article class="mock-entry-card in-progress">
-                <header class="mock-entry-head"><span class="mock-entry-number">Mock Exam 1</span><span class="mock-entry-state in-progress"><i/>In progress</span></header>
+                <header class="mock-entry-head"><span class="mock-entry-number">Practice Test</span><span class="mock-entry-state in-progress"><i/>In progress</span></header>
                 <div class="mock-entry-copy"><h3>Digital SAT Full-Length Practice Test 1</h3><p>Resume your saved attempt from Reading and Writing, Module 1.</p></div>
                 <div class="mock-entry-metrics"><span><strong>98</strong> questions</span><span><strong>134</strong> min</span><span><strong>4</strong> modules</span></div>
                 <div class="mock-entry-progress"><div><span>Progress</span><strong>14 of 98 answered</strong></div><span class="mock-entry-progress-track"><i style="width:14.3%"/></span></div>
-                <footer class="mock-entry-footer"><span>Answers saved automatically</span><button class="mock-primary-action" type="button" @click="startMockExam(1)">Continue Mock Exam 1</button></footer>
-              </article>
-
-              <article class="mock-entry-card not-started">
-                <header class="mock-entry-head"><span class="mock-entry-number">Mock Exam 2</span><span class="mock-entry-state not-started"><i/>Not started</span></header>
-                <div class="mock-entry-copy"><h3>Digital SAT Full-Length Practice Test 2</h3><p>Start a fresh full-length simulation with a different set of SAT questions.</p></div>
-                <div class="mock-entry-metrics"><span><strong>98</strong> questions</span><span><strong>134</strong> min</span><span><strong>4</strong> modules</span></div>
-                <div class="mock-entry-progress"><div><span>Progress</span><strong>0 of 98 answered</strong></div><span class="mock-entry-progress-track"><i style="width:0"/></span></div>
-                <footer class="mock-entry-footer"><span>Ready when you are</span><button class="mock-secondary-action" type="button" @click="startMockExam(2)">Start Mock Exam 2</button></footer>
+                <footer class="mock-entry-footer"><span>Answers saved automatically</span><button class="mock-primary-action" type="button" @click="startMockExam(1)">Continue Practice Test</button></footer>
               </article>
             </div>
           </div>
@@ -444,20 +436,21 @@ onBeforeUnmount(() => document.body.classList.remove('package-route', 'dark'))
             </div>
 
             <div v-else-if="resultView === 'review'" class="question-review-view">
-              <header class="question-review-toolbar">
-                <div class="question-review-filter-group">
-                  <span>Section</span>
-                  <div class="question-review-section-filters" role="tablist" aria-label="Filter by SAT section">
-                    <button v-for="section in ([['ALL','All sections'],['reading-writing','Reading & Writing'],['math','Math']] as const)" :key="section[0]" type="button" role="tab" :aria-selected="reviewSectionFilter === section[0]" @click="setReviewSectionFilter(section[0])">{{ section[1] }}</button>
+              <header class="study-breakdown-toolbar question-review-toolbar" aria-label="Filter reviewed questions">
+                <div class="study-breakdown-filters">
+                  <div class="study-filter-group">
+                    <span class="study-filter-label">Section</span>
+                    <div class="study-section-switch" role="group" aria-label="Filter by SAT section">
+                      <button v-for="section in ([['ALL','All sections'],['reading-writing','Reading & Writing'],['math','Math']] as const)" :key="section[0]" type="button" :aria-pressed="reviewSectionFilter === section[0]" @click="setReviewSectionFilter(section[0])">{{ section[1] }}</button>
+                    </div>
+                  </div>
+                  <div class="study-filter-group importance">
+                    <span class="study-filter-label">Answer status</span>
+                    <div class="study-importance-chips review-status-chips" role="group" aria-label="Filter by answer status">
+                      <button v-for="filter in (['ALL','INCORRECT','OMITTED','CORRECT'] as ReviewFilter[])" :key="filter" :class="filter.toLowerCase()" type="button" :aria-pressed="reviewFilter === filter" @click="setReviewFilter(filter)"><i v-if="filter !== 'ALL'"/>{{ filter === 'ALL' ? 'All' : reviewStatusLabel(filter) }} <b>{{ filter === 'ALL' ? sectionReviewQuestions.length : sectionReviewQuestions.filter((question) => question.status === filter).length }}</b></button>
+                    </div>
                   </div>
                 </div>
-                <div class="question-review-filter-group">
-                  <span>Answer status</span>
-                  <div class="question-review-filters" role="tablist" aria-label="Filter reviewed questions">
-                    <button v-for="filter in (['ALL','INCORRECT','OMITTED','CORRECT'] as ReviewFilter[])" :key="filter" type="button" role="tab" :aria-selected="reviewFilter === filter" @click="setReviewFilter(filter)">{{ filter === 'ALL' ? 'All' : reviewStatusLabel(filter) }} <span>{{ filter === 'ALL' ? sectionReviewQuestions.length : sectionReviewQuestions.filter((question) => question.status === filter).length }}</span></button>
-                  </div>
-                </div>
-                <p><strong>{{ filteredReviewQuestions.length }}</strong> questions shown</p>
               </header>
 
               <div v-if="selectedReviewQuestion" class="question-review-workspace">

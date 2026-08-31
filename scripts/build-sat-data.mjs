@@ -307,7 +307,7 @@ const manifest = {
     mappedPracticeQuestions: quizRows.length - unmatched.length,
     studyGuidePracticeQuestions: QUESTION_INVENTORY.studyGuidePracticeQuestionCount,
     quizQuestions: QUESTION_INVENTORY.standaloneQuizQuestionCount,
-    mockExams: 2,
+    mockExams: 1,
   },
   sections: [...sectionMap.values()],
   topics,
