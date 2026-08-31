@@ -526,7 +526,7 @@ onBeforeUnmount(() => document.body.classList.remove('package-route', 'dark'))
               <article :class="['mock-entry-card',practiceTestState]">
                 <div class="mock-entry-content">
                   <header class="mock-entry-head"><span class="mock-entry-number">Practice Test</span><span :class="['mock-entry-state',practiceTestState]"><i/>{{ practiceTestCard.stateLabel }}</span></header>
-                  <div class="mock-entry-copy"><h3>Digital SAT Full-Length Practice Test 1</h3><p>{{ practiceTestCard.description }}</p></div>
+                  <div class="mock-entry-copy"><h3>SAT Full-Length Practice Test</h3><p>{{ practiceTestCard.description }}</p></div>
                   <div class="mock-entry-metrics"><span v-for="metric in practiceTestCard.metrics" :key="metric.label"><strong>{{ metric.value }}</strong>{{ metric.label }}</span></div>
                   <div class="mock-entry-progress"><div><span>{{ practiceTestCard.progressTitle }}</span><strong>{{ practiceTestCard.progressLabel }}</strong></div><span class="mock-entry-progress-track"><i :style="{width:`${practiceTestCard.progressPercent}%`}"/></span></div>
                 </div>
