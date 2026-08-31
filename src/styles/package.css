@@ -1638,9 +1638,13 @@
     .study-topic-empty { padding:34px 20px; border:1px dashed var(--line); border-radius:15px; color:var(--muted); font-size:10px; text-align:center; }
 
     .mock-state-shell { display:grid; gap:14px; }
-    .mock-state-nav { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:7px; padding:7px; border:1px solid var(--line); border-radius:14px; background:var(--surface-soft); }
-    .mock-state-button { min-height:38px; border:0; border-radius:9px; background:transparent; color:var(--muted); font-size:10px; font-weight:710; cursor:pointer; }
-    .mock-state-button.active { background:var(--surface); color:#2368f0; box-shadow:0 3px 12px rgba(31,45,69,.08); }
+    .mock-demo-controller { position:fixed; right:18px; bottom:18px; z-index:90; width:250px; padding:12px; border:1px solid rgba(255,255,255,.12); border-radius:14px; background:rgba(24,31,43,.96); box-shadow:0 18px 44px rgba(15,23,36,.28); backdrop-filter:blur(14px); }
+    .mock-demo-controller-head { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:9px; color:#fff; }
+    .mock-demo-controller-head strong { font-size:9px; letter-spacing:.04em; text-transform:uppercase; }
+    .mock-demo-controller-head span { color:#9da9bb; font-size:8px; }
+    .mock-state-nav { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:6px; }
+    .mock-state-button { min-height:32px; border:1px solid rgba(255,255,255,.1); border-radius:8px; background:rgba(255,255,255,.06); color:#b7c2d1; font-size:9px; font-weight:710; cursor:pointer; }
+    .mock-state-button.active { border-color:#4b85f3; background:#2368f0; color:#fff; box-shadow:0 5px 14px rgba(35,104,240,.3); }
     .mock-exam-stage { min-height:340px; display:grid; grid-template-columns:minmax(0,1.2fr) minmax(260px,.8fr); gap:14px; }
     .mock-exam-card,.mock-benefit-card { border:1px solid var(--line); border-radius:17px; background:var(--surface); }
     .mock-exam-card { padding:22px; }
@@ -2053,7 +2057,7 @@
       .course-hub-stats { grid-template-columns:1fr; }
       .course-next-task { grid-template-columns:42px minmax(0,1fr); }
       .course-next-task .course-primary-small { grid-column:1 / -1; }
-      .mock-state-nav { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .mock-demo-controller { right:12px; bottom:12px; width:min(250px,calc(100vw - 24px)); }
       .mock-entry-footer { align-items:stretch; flex-direction:column; }
       .mock-entry-footer button { width:100%; }
       .study-breakdown-filters { align-items:stretch; flex-direction:column; gap:10px; }
