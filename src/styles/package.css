@@ -1875,14 +1875,14 @@
     .report-confidence-column > header { align-items:center; margin-bottom:9px; padding:0 2px; }
     .report-confidence-column h5 { margin:0; font-size:10px; }
     .report-confidence-column > header span { color:var(--muted); font-size:8px; }
-    .report-confidence-chart { position:relative; height:248px; overflow:visible; border:1px solid #d8dfe8; border-radius:14px; background:linear-gradient(90deg,transparent calc(50% - .5px),rgba(104,117,136,.38) 50%,transparent calc(50% + .5px)),linear-gradient(0deg,transparent calc(50% - .5px),rgba(104,117,136,.38) 50%,transparent calc(50% + .5px)),linear-gradient(90deg,rgba(199,249,219,.62) 0 50%,rgba(255,247,216,.7) 50% 100%); }
+    .report-confidence-chart { position:relative; height:280px; overflow:visible; border:1px solid #d8dfe8; border-radius:14px; background:linear-gradient(90deg,transparent calc(50% - .5px),rgba(104,117,136,.38) 50%,transparent calc(50% + .5px)),linear-gradient(0deg,transparent calc(50% - .5px),rgba(104,117,136,.38) 50%,transparent calc(50% + .5px)),linear-gradient(90deg,rgba(199,249,219,.62) 0 50%,rgba(255,247,216,.7) 50% 100%); }
     .report-confidence-chart::after { position:absolute; inset:50% 0 0; z-index:0; border-radius:0 0 13px 13px; background:linear-gradient(90deg,rgba(255,239,214,.75),rgba(255,225,234,.74)); content:""; pointer-events:none; }
     .report-quad-label { position:absolute; z-index:1; padding:10px; font-size:7px; font-weight:760; letter-spacing:.025em; text-transform:uppercase; }
     .report-quad-label.proficient { top:0; left:0; color:#16866a; }
     .report-quad-label.inefficient { top:0; left:50%; color:#9a7910; }
     .report-quad-label.careless { top:50%; left:0; color:#bd7015; }
     .report-quad-label.struggling { top:50%; left:50%; color:#bd4a65; }
-    .report-confidence-dot { position:absolute; z-index:2; width:13px; height:13px; padding:0; border:2px solid #fff; border-radius:50%; background:#f1a532; box-shadow:0 1px 5px rgba(25,45,70,.24); cursor:help; transform:translate(-50%,-50%); }
+    .report-confidence-dot { position:absolute; z-index:2; width:12px; height:12px; padding:0; border:2px solid #fff; border-radius:50%; background:#f1a532; box-shadow:0 1px 5px rgba(25,45,70,.24); cursor:help; transform:translate(-50%,-50%); }
     .report-confidence-dot::before { position:absolute; inset:-7px; border-radius:50%; content:""; }
     .report-confidence-dot.proficient { background:#23a77d; }
     .report-confidence-dot.inefficient { background:#d8a321; }

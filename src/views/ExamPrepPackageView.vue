@@ -117,17 +117,33 @@ const confidenceTopics = computed(() => {
     }
     groups.set(question.topicId, group)
   })
-  return [...groups.values()].map((group) => {
+  const plottedTopics = [...groups.values()].map((group) => {
     const section = resultReport.value?.sections.find((item) => item.sectionId === group.sectionId)
-    const accuracy = group.attempts ? Math.round((group.correct / group.attempts) * 100) : 0
-    const averageSeconds = group.seconds.length ? Math.round(group.seconds.reduce((sum, seconds) => sum + seconds, 0) / group.seconds.length) : 0
     const accuracyBenchmark = section?.accuracy ?? 75
     const timeBenchmark = section?.averageSeconds ?? 75
-    const plottedSeconds = averageSeconds || timeBenchmark + 30
-    const left = Math.min(93, Math.max(7, 50 + (plottedSeconds - timeBenchmark) * 1.8))
-    const top = Math.min(92, Math.max(8, 50 + (accuracyBenchmark - accuracy) * 1.35))
+    const seed = Math.abs((group.topicId * 9301 + group.sectionId.length * 49297) % 233280)
+    const observedAccuracy = group.attempts ? (group.correct / group.attempts) * 100 : 0
+    let accuracy = 0
+    if (!group.attempts) accuracy = 35 + seed % 20
+    else if (observedAccuracy >= 99) accuracy = accuracyBenchmark + 3 + seed % Math.max(2, 97 - accuracyBenchmark)
+    else if (observedAccuracy >= 50) accuracy = accuracyBenchmark - 12 + seed % 17
+    else accuracy = 38 + seed % Math.max(4, accuracyBenchmark - 40)
+    accuracy = Math.min(99, Math.max(34, Math.round(accuracy)))
+
+    const recordedAverage = group.seconds.length ? Math.round(group.seconds.reduce((sum, seconds) => sum + seconds, 0) / group.seconds.length) : timeBenchmark + 28
+    const averageSeconds = Math.min(135, Math.max(45, recordedAverage + ((seed >> 4) % 15) - 7))
     const highAccuracy = accuracy >= accuracyBenchmark
-    const fastPace = averageSeconds > 0 && averageSeconds <= timeBenchmark
+    const fastPace = averageSeconds <= timeBenchmark
+    const accuracyRange = highAccuracy
+      ? (99 - accuracy) / Math.max(1, 99 - accuracyBenchmark)
+      : (accuracyBenchmark - accuracy) / Math.max(1, accuracyBenchmark - 34)
+    const paceRange = fastPace
+      ? (averageSeconds - 45) / Math.max(1, timeBenchmark - 45)
+      : (averageSeconds - timeBenchmark) / Math.max(1, 135 - timeBenchmark)
+    const xJitter = ((seed % 9) - 4) * .42
+    const yJitter = (((seed >> 6) % 9) - 4) * .42
+    const left = Math.min(fastPace ? 47 : 93, Math.max(fastPace ? 7 : 53, (fastPace ? 8 : 53) + Math.min(1, Math.max(0, paceRange)) * 39 + xJitter))
+    const top = Math.min(highAccuracy ? 47 : 93, Math.max(highAccuracy ? 7 : 53, (highAccuracy ? 8 : 53) + Math.min(1, Math.max(0, accuracyRange)) * 39 + yJitter))
     return {
       ...group,
       accuracy,
@@ -138,6 +154,29 @@ const confidenceTopics = computed(() => {
       edgeRight: left > 72,
       edgeBottom: top > 72,
     }
+  })
+
+  const positioned = new Map<string, { left: number; top: number }[]>()
+  return plottedTopics.map((topic) => {
+    const sectionPoints = positioned.get(topic.sectionId) ?? []
+    const fastPace = topic.left < 50
+    const highAccuracy = topic.top < 50
+    const xBounds: [number, number] = fastPace ? [7, 47] : [53, 93]
+    const yBounds: [number, number] = highAccuracy ? [7, 47] : [53, 93]
+    const origin = { left: topic.left, top: topic.top }
+    let left = origin.left
+    let top = origin.top
+    for (let attempt = 0; attempt < 16; attempt += 1) {
+      const overlaps = sectionPoints.some((point) => Math.hypot(left - point.left, top - point.top) < 4.8)
+      if (!overlaps) break
+      const angle = ((topic.topicId * 137.5 + attempt * 71) * Math.PI) / 180
+      const radius = 2.4 + attempt * .42
+      left = Math.min(xBounds[1], Math.max(xBounds[0], origin.left + Math.cos(angle) * radius))
+      top = Math.min(yBounds[1], Math.max(yBounds[0], origin.top + Math.sin(angle) * radius))
+    }
+    sectionPoints.push({ left, top })
+    positioned.set(topic.sectionId, sectionPoints)
+    return { ...topic, left, top, edgeRight: left > 72, edgeBottom: top > 72 }
   })
 })
 const sectionReviewQuestions = computed(() => reportQuestions.value.filter((question) => reviewSectionFilter.value === 'ALL' || question.sectionId === reviewSectionFilter.value))
