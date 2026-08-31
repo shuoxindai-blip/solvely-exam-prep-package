@@ -1506,13 +1506,13 @@
     .course-overview-grid { display:grid; grid-template-columns:minmax(0,1.42fr) minmax(270px,.78fr); gap:14px; }
     .course-hub-card { min-width:0; border:1px solid var(--line); border-radius:17px; background:var(--surface); overflow:hidden; }
     .course-hub-card + .course-hub-card { margin-top:14px; }
-    .course-hub-head { display:flex; align-items:flex-start; justify-content:space-between; gap:18px; padding:18px; border-bottom:1px solid var(--line); }
+    .course-hub-head { min-height:64px; display:flex; align-items:center; justify-content:space-between; gap:18px; padding:16px 18px; border-bottom:1px solid var(--line); box-sizing:border-box; }
     .course-hub-eyebrow { display:block; margin-bottom:5px; color:#2368f0; font-size:9px; font-weight:780; letter-spacing:.08em; text-transform:uppercase; }
     .course-hub-head h2,.course-hub-card h2 { margin:0; font-size:17px; line-height:1.25; letter-spacing:-.025em; }
     .course-hub-head p { margin:5px 0 0; color:var(--muted); font-size:10px; line-height:1.45; }
     .course-link-button { min-height:32px; flex:0 0 auto; padding:0 11px; border:1px solid rgba(35,104,240,.22); border-radius:9px; background:rgba(35,104,240,.07); color:#2368f0; font-size:10px; font-weight:730; cursor:pointer; }
     .course-link-button:hover { background:rgba(35,104,240,.12); }
-    .course-next-task { display:grid; grid-template-columns:46px minmax(0,1fr) auto; align-items:center; gap:13px; padding:17px 18px; }
+    .course-next-task { display:grid; grid-template-columns:46px minmax(0,1fr) auto; align-items:center; gap:13px; padding:16px 18px; }
     .course-next-icon { width:46px; height:46px; display:grid; place-items:center; border-radius:13px; background:linear-gradient(145deg,#edf5ff,#eaf1ff); color:#2368f0; }
     .course-next-icon .icon { width:21px; height:21px; }
     .course-next-copy { min-width:0; }
@@ -1529,7 +1529,7 @@
     .course-hub-stat strong { display:block; margin-top:12px; font-size:24px; line-height:1; letter-spacing:-.045em; }
     .course-hub-stat p { margin:8px 0 0; color:var(--muted); font-size:10px; line-height:1.42; }
     .course-hub-stat em { display:block; margin-top:12px; color:#2368f0; font-size:10px; font-style:normal; font-weight:730; }
-    .course-weak-list { display:grid; gap:8px; padding:14px 17px 17px; }
+    .course-weak-list { display:grid; gap:8px; padding:16px 17px; }
     .course-weak-row { display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:10px; padding:10px 11px; border-radius:11px; background:var(--surface-soft); }
     .course-weak-row strong { font-size:10px; }
     .course-weak-row span { color:#c46c14; font-size:9px; font-weight:720; }
@@ -1964,7 +1964,8 @@
     .review-skill-panel p { margin:0; overflow:hidden; color:var(--muted); font-size:8px; text-overflow:ellipsis; white-space:nowrap; }
     .review-skill-panel button { flex:0 0 auto; min-height:33px; padding:0 12px; border:1px solid #087bf1; border-radius:999px; background:#087bf1; color:#fff; font-size:8px; font-weight:700; cursor:pointer; }
     .review-detail-pagination { display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:10px; padding-top:2px; }
-    .review-detail-pagination button { min-height:34px; padding:0 12px; border:1px solid #d6e5f6; border-radius:999px; background:#f3f8fe; color:#087bf1; font-size:8px; font-weight:690; cursor:pointer; }
+    .review-detail-pagination button { width:92px; min-height:34px; display:inline-flex; align-items:center; justify-content:center; padding:0 12px; border:1px solid #d6e5f6; border-radius:999px; background:#f3f8fe; color:#087bf1; font-size:8px; font-weight:690; cursor:pointer; box-sizing:border-box; }
+    .review-detail-pagination button:first-child { justify-self:start; }
     .review-detail-pagination button:last-child { justify-self:end; }
     .review-detail-pagination button:disabled { opacity:.42; cursor:default; }
     .review-detail-pagination span { color:var(--muted); font-size:8px; text-align:center; }
@@ -2047,6 +2048,7 @@
       .review-question-tags { justify-content:flex-start; }
       .review-skill-panel button { width:100%; }
       .review-detail-pagination { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .review-detail-pagination button { width:100%; }
       .review-detail-pagination span { grid-column:1/-1; grid-row:1; }
       .report-confidence-chart { height:220px; }
       .improve-section-switch { width:100%; }
