@@ -478,7 +478,7 @@ onBeforeUnmount(() => document.body.classList.remove('package-route', 'dark'))
                   <span class="course-start-label">Practice Test</span>
                   <h2>Practice Like It’s Test Day</h2>
                   <p>Take one full-length practice test with the same timing, section order, and module structure as the Digital SAT.</p>
-                  <div class="course-start-tags" aria-label="Practice test details"><span>98 Questions</span><span>134 Minutes</span><span>4 Modules</span></div>
+                  <div class="course-start-tags" aria-label="Practice test details"><span>Full-Length Test</span><span>Real Test Timing</span><span>Digital SAT Format</span></div>
                 </div>
               </li>
               <li class="course-start-step">
