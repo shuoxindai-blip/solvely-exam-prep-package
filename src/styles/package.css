@@ -14,6 +14,7 @@
       --accent: #2368f0;
       --accent-rgb: 35, 104, 240;
       --accent-soft: #edf4ff;
+      --action-radius: 999px;
       --success: #16865d;
       --shadow: 0 14px 40px rgba(27, 39, 70, .09), 0 2px 7px rgba(27, 39, 70, .05);
       --shadow-soft: 0 4px 16px rgba(27, 39, 70, .07);
@@ -1923,6 +1924,29 @@
     .retake-cancel-button { border:1px solid var(--line); background:var(--surface); color:var(--text); }
     .retake-confirm-button { border:1px solid #d83d43; background:#d83d43; color:#fff; }
     .retake-confirm-button:hover { background:#bf2e35; }
+
+    /* Keep text actions on the same rounded geometry as the Practice Test CTA. */
+    .diagnostic-entry-button,
+    .diagnostic-continue,
+    .diagnostic-start,
+    .course-start-action,
+    .course-link-button,
+    .course-primary-small,
+    .study-topic-tool,
+    .improve-topic-action button,
+    .mock-primary-action,
+    .mock-secondary-action,
+    .mock-entry-footer button,
+    .mock-state-button,
+    .report-footer button,
+    .review-skill-panel button,
+    .review-detail-pagination button,
+    .retake-confirm-actions button { border-radius:var(--action-radius); }
+
+    .study-section-switch,
+    .study-section-switch button,
+    .results-view-switch,
+    .results-view-switch button { border-radius:var(--action-radius); }
 
     .review-status-chips button b { min-width:18px; display:inline-grid; place-items:center; padding:2px 5px; border-radius:999px; background:#eef2f7; color:#68768a; font-size:7px; }
     .review-status-chips button[aria-pressed="true"] b { background:#dcecff; color:#147ef5; }

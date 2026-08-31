@@ -2,7 +2,7 @@ body.topic-tool-route { --sidebar-width: 0px; min-width: 320px; overflow: auto; 
 body.topic-tool-route main { margin-left: 0; }
 .topic-tool-shell { --blue: #2469ed; --ink: #172033; --muted: #728096; --line: #e1e6ef; --ask-panel-width: 344px; min-height: 100vh; color: var(--ink); background: #f5f7fb; }
 .topic-tool-header { position: sticky; top: 0; z-index: 50; display: grid; grid-template-columns: 42px minmax(220px, 1fr) auto minmax(110px, 1fr); align-items: center; gap: 10px; min-height: 65px; padding: 0 22px; border-bottom: 1px solid #e2e7ef; background: rgba(255, 255, 255, .94); box-shadow: 0 2px 10px rgba(33, 47, 76, .04); backdrop-filter: blur(18px); }
-.topic-back-button { width: 34px; height: 34px; border: 1px solid #e0e5ed; border-radius: 9px; color: #5b6678; background: #fff; font-size: 17px; cursor: pointer; }
+.topic-back-button { width: 34px; height: 34px; border: 1px solid #e0e5ed; border-radius: 50%; color: #5b6678; background: #fff; font-size: 17px; cursor: pointer; }
 .topic-package-button { display: flex; width: fit-content; align-items: center; gap: 9px; padding: 0; border: 0; color: inherit; background: transparent; text-align: left; cursor: pointer; }
 .topic-package-button img { border-radius: 8px; }
 .topic-package-button span { display: grid; gap: 2px; }
@@ -188,6 +188,18 @@ body.topic-tool-route main { margin-left: 0; }
 .quiz-feedback p { margin: 0; color: #566478; font-size: 10px; line-height: 1.65; }
 .quiz-feedback button { margin-top: 13px; padding: 0; border: 0; color: #1e61d7; background: transparent; font-size: 9px; font-weight: 750; cursor: pointer; }
 .quiz-card > footer { display: flex; justify-content: flex-end; margin-top: 22px; }
+
+/* Action and segmented buttons share the Practice Test CTA's pill silhouette. */
+.topic-mode-switch,
+.topic-mode-switch button,
+.view-mode-buttons,
+.view-mode-buttons button,
+.topic-sidebar-list > button,
+.study-quick-actions button,
+.guide-next-actions button,
+.flashcard-rating button,
+.quiz-short-answer button,
+.quiz-next { border-radius: var(--action-radius, 999px); }
 
 .solvely-ask-button { display: inline-flex; min-width: 133px; height: 38px; align-items: center; justify-content: center; gap: 8px; padding: 7px 17px; border: 0; border-radius: 999px; color: #fff; background: linear-gradient(90deg, #007aff, #a464fd); box-shadow: 0 3px 8px rgba(0, 0, 0, .1); font-size: 13px; font-weight: 600; cursor: pointer; transition: transform .16s ease, box-shadow .16s ease, background .16s ease; }
 .solvely-chat-launch { position: fixed; z-index: 120; right: 22px; bottom: 22px; }
