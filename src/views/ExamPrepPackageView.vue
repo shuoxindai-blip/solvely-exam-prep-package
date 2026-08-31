@@ -41,6 +41,8 @@ const improvePracticeProgress = ref<Record<string, number>>({})
 const practiceTestState = ref<PracticeTestState>('in-progress')
 const lastActivity = ref<LastActivity>({ kind: 'learning', examTitle: 'SAT Prep 2026', sectionTitle: 'Advanced Math', itemTitle: 'Expansion, factoring, and completing the square', resourceLabel: 'Study Guide', progressPercent: 62, topicId: 'sat_math_advanced_equivalent_expressions_01' })
 const isCourseOpen = computed(() => route.hash === '#course-0')
+const isCourseStarted = computed(() => String(route.query.courseState || '') !== 'not-started')
+const courseProgressPercent = computed(() => isCourseStarted.value ? 18 : 0)
 const lastActivityDetail = computed(() => lastActivity.value.kind === 'learning'
   ? `${lastActivity.value.sectionTitle} · ${lastActivity.value.resourceLabel} · ${lastActivity.value.progressPercent}% complete`
   : `${lastActivity.value.sectionTitle} · ${lastActivity.value.moduleLabel} · ${lastActivity.value.answered} of ${lastActivity.value.total} answered`)
@@ -248,6 +250,7 @@ function resumeLastActivity() {
   else startMockExam(lastActivity.value.examId)
 }
 function continueOverviewStudy() { void router.push({ name: 'study-guide', params: { topicId: 'sat_math_algebra_systems_linear_01' } }) }
+function startCourseLearning() { void router.push({ name: 'study-guide', params: { topicId: 'sat_math_algebra_systems_linear_01' } }) }
 function startMockExam(examId: number) { void router.push({ name: 'mock-exam', params: { examId } }) }
 function handlePracticeTestAction() {
   if (practiceTestState.value === 'scoring') return
@@ -387,16 +390,47 @@ onBeforeUnmount(() => document.body.classList.remove('package-route', 'dark'))
 
       <section v-else class="course-workspace" aria-labelledby="courseWorkspaceTitle">
         <button class="course-back" type="button" @click="closeCourse"><svg class="icon"><use href="#i-chevron"/></svg><span>Back to courses</span></button>
-        <header class="course-package-hero"><div class="course-package-copy"><h1 id="courseWorkspaceTitle">SAT Prep 2026</h1><p>A focused SAT Prep 2026 plan with topic study tools, realistic mock exams, score reports, and targeted improvement.</p><div class="course-package-metrics"><span class="course-package-metric"><svg class="icon"><use href="#i-book"/></svg><span><strong>100</strong> video lessons</span></span><span class="course-package-metric"><svg class="icon"><use href="#i-grid"/></svg><span><strong>3,879</strong> practice questions</span></span><span class="course-package-metric"><svg class="icon"><use href="#i-exam"/></svg><span><strong>1</strong> full-length practice test with score analysis</span></span></div></div><aside class="course-progress-summary" aria-label="Course progress"><span class="course-progress-watermark" aria-hidden="true">18</span><div class="course-progress-value"><strong>18%</strong><span>Course Progress</span></div><div class="course-progress-track" role="progressbar" aria-label="Course progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="18"><i style="width:18%"/></div></aside></header>
+        <header class="course-package-hero"><div class="course-package-copy"><h1 id="courseWorkspaceTitle">SAT Prep 2026</h1><p>A focused SAT Prep 2026 plan with topic study tools, realistic mock exams, score reports, and targeted improvement.</p><div class="course-package-metrics"><span class="course-package-metric"><svg class="icon"><use href="#i-book"/></svg><span><strong>100</strong> video lessons</span></span><span class="course-package-metric"><svg class="icon"><use href="#i-grid"/></svg><span><strong>3,879</strong> practice questions</span></span><span class="course-package-metric"><svg class="icon"><use href="#i-exam"/></svg><span><strong>1</strong> full-length practice test with score analysis</span></span></div></div><aside class="course-progress-summary" aria-label="Course progress"><span class="course-progress-watermark" aria-hidden="true">{{ courseProgressPercent }}</span><div class="course-progress-value"><strong>{{ courseProgressPercent }}%</strong><span>Course Progress</span></div><div class="course-progress-track" role="progressbar" aria-label="Course progress" aria-valuemin="0" aria-valuemax="100" :aria-valuenow="courseProgressPercent"><i :style="{ width: `${courseProgressPercent}%` }"/></div></aside></header>
         <nav class="course-package-tabs" role="tablist" aria-label="Course sections"><button v-for="tab in ([['overview','Overview'],['study','Lessons'],['mock','Practice Tests'],['results','Results & Improve']] as [CourseTab,string][])" :key="tab[0]" class="course-package-tab" type="button" role="tab" :aria-selected="activeTab === tab[0]" @click="selectTab(tab[0])">{{ tab[1] }}</button></nav>
         <div class="course-package-panel" role="tabpanel" aria-live="polite">
           <div v-if="activeTab === 'overview'" class="course-overview-waterfall">
-            <section class="course-hub-card">
+            <ol v-if="!isCourseStarted" class="course-start-path" aria-label="Your SAT prep path">
+              <li class="course-start-step featured">
+                <span class="course-start-number" aria-hidden="true">1</span>
+                <div class="course-start-copy">
+                  <span class="course-start-label">Lessons</span>
+                  <h2>Learn With 100 Video Lessons</h2>
+                  <p>Each topic pairs a video and written study guide with an exit-ticket check, plus flashcards and a quiz.</p>
+                  <div class="course-start-tags" aria-label="Lesson tools"><span>Video Lesson</span><span>Study Guide</span><span>Exit Ticket</span><span>Flashcards</span><span>Topic Quiz</span></div>
+                </div>
+                <button class="course-start-action" type="button" @click="startCourseLearning">Start Learning</button>
+              </li>
+              <li class="course-start-step">
+                <span class="course-start-number" aria-hidden="true">2</span>
+                <div class="course-start-copy">
+                  <span class="course-start-label">Practice Test</span>
+                  <h2>Practice Like It’s Test Day</h2>
+                  <p>Take one full-length practice test with the same timing, section order, and module structure as the Digital SAT.</p>
+                  <div class="course-start-tags" aria-label="Practice test details"><span>98 Questions</span><span>134 Minutes</span><span>4 Modules</span></div>
+                </div>
+              </li>
+              <li class="course-start-step">
+                <span class="course-start-number" aria-hidden="true">3</span>
+                <div class="course-start-copy">
+                  <span class="course-start-label">Results &amp; Improve</span>
+                  <h2>Know What to Improve Next</h2>
+                  <p>Get a detailed score report, see your strengths and weaknesses, and practice adaptively with Topics to Improve.</p>
+                  <div class="course-start-tags" aria-label="Result tools"><span>Score Report</span><span>Strengths &amp; Weaknesses</span><span>Adaptive Practice</span></div>
+                </div>
+              </li>
+            </ol>
+
+            <section v-if="isCourseStarted" class="course-hub-card">
               <header class="course-hub-head"><div><h2>Jump back in</h2></div><button class="course-link-button" type="button" @click="selectTab('study')">View plan</button></header>
               <div class="course-next-task"><span class="course-next-icon"><svg class="icon"><use href="#i-book"/></svg></span><div class="course-next-copy"><strong>Linear equations &amp; systems</strong><span>Study Guide · Section 3 of 6</span></div><button class="course-primary-small" type="button" @click="continueOverviewStudy">Continue</button></div>
             </section>
 
-            <section class="course-hub-card">
+            <section v-if="isCourseStarted" class="course-hub-card">
               <header class="course-hub-head"><div><h2>Topics to improve</h2></div><button class="course-link-button" type="button" @click="selectTab('results')">View all</button></header>
               <div class="course-weak-list"><div v-for="topic in improveTopics.slice(0, 3)" :key="`overview-${topic.id}`" class="course-weak-row"><strong>{{ topic.title }}</strong><span :class="topic.priority.toLowerCase()">{{ topic.importanceScore }}% · {{ priorityLabel(topic.priority) }}</span></div></div>
             </section>
