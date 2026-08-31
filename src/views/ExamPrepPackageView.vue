@@ -510,11 +510,13 @@ onBeforeUnmount(() => document.body.classList.remove('package-route', 'dark'))
           <div v-else-if="activeTab === 'mock'" class="mock-state-shell">
             <div class="mock-exam-card-grid">
               <article :class="['mock-entry-card',practiceTestState]">
-                <header class="mock-entry-head"><span class="mock-entry-number">Practice Test</span><span :class="['mock-entry-state',practiceTestState]"><i/>{{ practiceTestCard.stateLabel }}</span></header>
-                <div class="mock-entry-copy"><h3>Digital SAT Full-Length Practice Test 1</h3><p>{{ practiceTestCard.description }}</p></div>
-                <div class="mock-entry-metrics"><span v-for="metric in practiceTestCard.metrics" :key="metric.label"><strong>{{ metric.value }}</strong>{{ metric.label }}</span></div>
-                <div class="mock-entry-progress"><div><span>{{ practiceTestCard.progressTitle }}</span><strong>{{ practiceTestCard.progressLabel }}</strong></div><span class="mock-entry-progress-track"><i :style="{width:`${practiceTestCard.progressPercent}%`}"/></span></div>
-                <footer class="mock-entry-footer"><span>{{ practiceTestCard.helper }}</span><button class="mock-primary-action" type="button" :disabled="practiceTestCard.disabled" @click="handlePracticeTestAction">{{ practiceTestCard.cta }}</button></footer>
+                <div class="mock-entry-content">
+                  <header class="mock-entry-head"><span class="mock-entry-number">Practice Test</span><span :class="['mock-entry-state',practiceTestState]"><i/>{{ practiceTestCard.stateLabel }}</span></header>
+                  <div class="mock-entry-copy"><h3>Digital SAT Full-Length Practice Test 1</h3><p>{{ practiceTestCard.description }}</p></div>
+                  <div class="mock-entry-metrics"><span v-for="metric in practiceTestCard.metrics" :key="metric.label"><strong>{{ metric.value }}</strong>{{ metric.label }}</span></div>
+                  <div class="mock-entry-progress"><div><span>{{ practiceTestCard.progressTitle }}</span><strong>{{ practiceTestCard.progressLabel }}</strong></div><span class="mock-entry-progress-track"><i :style="{width:`${practiceTestCard.progressPercent}%`}"/></span></div>
+                </div>
+                <footer class="mock-entry-footer"><button class="mock-primary-action" type="button" :disabled="practiceTestCard.disabled" @click="handlePracticeTestAction"><svg class="icon" aria-hidden="true"><use href="#i-spark"/></svg><span>{{ practiceTestCard.cta }}</span></button><span>{{ practiceTestCard.helper }}</span></footer>
               </article>
             </div>
             <aside class="mock-demo-controller" aria-label="Practice test demo state controller">
