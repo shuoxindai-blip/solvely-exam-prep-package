@@ -111,6 +111,28 @@ function answerValue(question) {
   return String(question.answer || '').trim()
 }
 
+function quickPracticeExplanation(question) {
+  if (String(question.explanation || '').trim()) return question.explanation.trim()
+  const answer = answerValue(question)
+  const option = question.options[question.correctIndex]
+  return `The correct answer is ${answer}${option ? `: ${option}` : ''}. Review the Exam Essentials and worked examples above, then apply the same reasoning to this question.`
+}
+
+const STUDY_GUIDE_PRACTICE_PER_TOPIC = 2
+
+function quickPracticeQuestions(questions, topicId) {
+  const candidates = questions
+    .filter((question) => question.options.length >= 2 && question.correctIndex >= 0 && !question.pictureKey)
+    .sort((left, right) => (
+      Number(String(right.id).startsWith('SAT-QB-')) - Number(String(left.id).startsWith('SAT-QB-'))
+      || Number(right.options.length === 4) - Number(left.options.length === 4)
+      || Number(Boolean(String(right.explanation || '').trim())) - Number(Boolean(String(left.explanation || '').trim()))
+      || String(left.id).localeCompare(String(right.id))
+    ))
+  if (candidates.length < STUDY_GUIDE_PRACTICE_PER_TOPIC) throw new Error(`Not enough text-only multiple-choice Quick Practice candidates for ${topicId}`)
+  return candidates.slice(0, STUDY_GUIDE_PRACTICE_PER_TOPIC)
+}
+
 const OFFICIAL_DOMAIN_WEIGHTS = Object.freeze({
   'Craft and Structure': 28,
   'Information and Ideas': 26,
@@ -218,10 +240,32 @@ for (const row of quizRows) {
   if (topic) questionsByTopic.get(topic.id).push(question)
   else unmatched.push(question)
 }
-for (const topic of topics) topic.quizCount = questionsByTopic.get(topic.id).length
+
+const studyGuidePracticeByTopic = new Map()
+const standaloneQuizByTopic = new Map()
+for (const topic of topics) {
+  const mappedQuestions = questionsByTopic.get(topic.id)
+  const studyGuidePractice = quickPracticeQuestions(mappedQuestions, topic.id)
+  const studyGuidePracticeSet = new Set(studyGuidePractice)
+  studyGuidePracticeByTopic.set(topic.id, studyGuidePractice)
+  standaloneQuizByTopic.set(topic.id, mappedQuestions.filter((question) => !studyGuidePracticeSet.has(question)))
+  topic.mappedQuestionCount = mappedQuestions.length
+  topic.studyGuidePracticeCount = studyGuidePractice.length
+  topic.quizCount = mappedQuestions.length - studyGuidePractice.length
+}
+
+const QUESTION_INVENTORY = Object.freeze({
+  schemaVersion: 'SAT_PRACTICE_INVENTORY_V1',
+  sourceQuestionCount: quizRows.length,
+  mappedQuestionCount: quizRows.length - unmatched.length,
+  studyGuidePracticeQuestionCount: [...studyGuidePracticeByTopic.values()].reduce((total, questions) => total + questions.length, 0),
+  standaloneQuizQuestionCount: [...standaloneQuizByTopic.values()].reduce((total, questions) => total + questions.length, 0),
+  overlapQuestionCount: 0,
+  selectionRule: 'Two text-only multiple-choice questions per Topic, preferring SAT question-bank sources, complete four-option sets, supplied explanations, and stable source order; selected questions are removed from standalone Quiz.',
+})
 
 const maximumTopicFrequencyByDomain = Object.fromEntries(
-  [...new Set(topics.map((topic) => topic.domain))].map((domain) => [domain, Math.max(...topics.filter((topic) => topic.domain === domain).map((topic) => topic.quizCount))]),
+  [...new Set(topics.map((topic) => topic.domain))].map((domain) => [domain, Math.max(...topics.filter((topic) => topic.domain === domain).map((topic) => topic.mappedQuestionCount))]),
 )
 
 for (const topic of topics) {
@@ -230,14 +274,13 @@ for (const topic of topics) {
   const maximumDomainTopicFrequency = maximumTopicFrequencyByDomain[topic.domain]
   if (!domainWeightPercent || !maximumSectionDomainWeight || !maximumDomainTopicFrequency) throw new Error(`Missing importance inputs for ${topic.id}`)
   const domainWeightIndex = domainWeightPercent / maximumSectionDomainWeight
-  const topicFrequencyIndex = topic.quizCount / maximumDomainTopicFrequency
+  const topicFrequencyIndex = topic.mappedQuestionCount / maximumDomainTopicFrequency
   const importanceScore = Math.round(100 * (
     IMPORTANCE_MODEL.domainWeightContribution * domainWeightIndex
     + IMPORTANCE_MODEL.topicFrequencyContribution * topicFrequencyIndex
   ))
   Object.assign(topic, {
     domainWeightPercent,
-    mappedQuestionCount: topic.quizCount,
     domainWeightIndex: Number(domainWeightIndex.toFixed(4)),
     topicFrequencyIndex: Number(topicFrequencyIndex.toFixed(4)),
     importanceScore,
@@ -256,11 +299,14 @@ const manifest = {
   exam: 'Digital SAT',
   generatedFrom: 'SAT complete exam-prep materials',
   importanceModel: IMPORTANCE_MODEL,
+  questionInventory: QUESTION_INVENTORY,
   totals: {
     topics: topics.length,
     flashcards: topics.reduce((total, topic) => total + topic.flashcards.length, 0),
-    quizQuestions: quizRows.length,
-    mappedQuizQuestions: quizRows.length - unmatched.length,
+    practiceQuestions: quizRows.length,
+    mappedPracticeQuestions: quizRows.length - unmatched.length,
+    studyGuidePracticeQuestions: QUESTION_INVENTORY.studyGuidePracticeQuestionCount,
+    quizQuestions: QUESTION_INVENTORY.standaloneQuizQuestionCount,
     mockExams: 2,
   },
   sections: [...sectionMap.values()],
@@ -304,6 +350,7 @@ const epPreparation = {
     schemaVersion: 'EP_V2',
     totals: manifest.totals,
     importanceModel: IMPORTANCE_MODEL,
+    questionInventory: QUESTION_INVENTORY,
     note: 'SAT package template generated from the complete Web exam-prep materials.',
   },
   language: 'en',
@@ -362,12 +409,24 @@ function baseTopicContent(topic, contentType, totalCount) {
 
 const epTopicContents = topics.flatMap((topic, topicIndex) => {
   const storage = topicStorage.get(topic.id)
-  const quizQuestions = questionsByTopic.get(topic.id)
+  const studyGuidePracticeQuestions = studyGuidePracticeByTopic.get(topic.id)
+  const quizQuestions = standaloneQuizByTopic.get(topic.id)
   const studyGuide = {
-    ...baseTopicContent(topic, 'studyGuide', 1),
+    ...baseTopicContent(topic, 'studyGuide', studyGuidePracticeQuestions.length),
     payload: {
       content: topic.studyGuide,
-      items: [],
+      items: studyGuidePracticeQuestions.map((question, questionIndex) => ({
+        id: 15000000 + topicIndex * 100 + questionIndex + 1,
+        sourceQuestionId: question.id,
+        topicId: storage.topicId,
+        type: 'CHECK_QUESTION',
+        stem: question.question,
+        options: optionRecord(question.options),
+        correctAnswer: answerValue(question),
+        explanation: quickPracticeExplanation(question),
+        userAnswer: null,
+        isCorrect: -1,
+      })),
       videoLesson: {
         title: topic.video.title,
         coverUrl: topic.video.cover,
@@ -399,6 +458,7 @@ const epTopicContents = topics.flatMap((topic, topicIndex) => {
     payload: {
       questions: quizQuestions.map((question, questionIndex) => ({
         id: 16000000 + topicIndex * 1000 + questionIndex + 1,
+        sourceQuestionId: question.id,
         topicId: storage.topicId,
         type: epResponseType(question.options),
         quizType: 'QUIZ',
@@ -497,7 +557,7 @@ await mkdir(resolve(root, 'public/data/ep-v2/epExams'), { recursive: true })
 await mkdir(resolve(root, 'src/data'), { recursive: true })
 await writeFile(resolve(root, 'public/data/sat/topics.json'), JSON.stringify(manifest))
 for (const topic of topics) {
-  await writeFile(resolve(root, `public/data/sat/quizzes/${topic.id}.json`), JSON.stringify({ topicId: topic.id, questions: questionsByTopic.get(topic.id) }))
+  await writeFile(resolve(root, `public/data/sat/quizzes/${topic.id}.json`), JSON.stringify({ topicId: topic.id, questions: standaloneQuizByTopic.get(topic.id) }))
 }
 await writeFile(resolve(root, 'public/data/sat/quizzes/unmatched.json'), JSON.stringify({ questions: unmatched }))
 await writeFile(resolve(root, 'src/data/satMockExam1.json'), JSON.stringify(mockExam(mockOneRows, 'sat_mock_exam_1')))
@@ -545,6 +605,12 @@ await writeFile(resolve(root, 'public/data/ep-v2/storage-contract.json'), JSON.s
   preparationToMockExam: ['epId', 'outlineId', 'packageId'],
   topicContentUniqueIndex: ['epId', 'outlineId', 'topicId', 'contentType'],
   contentTypes: ['studyGuide', 'flashCard', 'quiz'],
+  questionPlacement: {
+    studyGuidePractice: { contentType: 'studyGuide', path: 'payload.items', type: 'CHECK_QUESTION' },
+    standaloneQuiz: { contentType: 'quiz', path: 'payload.questions', quizType: 'QUIZ' },
+  },
+  questionIdentityField: 'sourceQuestionId',
+  questionInventory: QUESTION_INVENTORY,
   topicImportanceFields: ['importanceScore', 'priority', 'domainWeightPercent', 'mappedQuestionCount', 'domainWeightIndex', 'topicFrequencyIndex'],
   importanceModel: IMPORTANCE_MODEL,
 }))
@@ -552,10 +618,12 @@ const emptyOptions = quizRows.filter((row) => questionParts(row.questionText, ro
 const report = {
   topics: topics.length,
   flashcards: manifest.totals.flashcards,
-  quizQuestions: quizRows.length,
-  mappedQuizQuestions: manifest.totals.mappedQuizQuestions,
-  unmatchedQuizQuestions: unmatched.length,
-  quizQuestionsWithoutOptions: emptyOptions,
+  sourcePracticeQuestions: quizRows.length,
+  mappedPracticeQuestions: manifest.totals.mappedPracticeQuestions,
+  studyGuidePracticeQuestions: QUESTION_INVENTORY.studyGuidePracticeQuestionCount,
+  standaloneQuizQuestions: QUESTION_INVENTORY.standaloneQuizQuestionCount,
+  unmatchedPracticeQuestions: unmatched.length,
+  sourceQuestionsWithoutOptions: emptyOptions,
   mockExamOneQuestions: mockOneRows.length,
   mockExamTwoQuestions: mockTwoRows.length,
   topicsWithoutVideo: topics.filter((topic) => !topic.video.url).length,
@@ -567,5 +635,6 @@ const report = {
     sourceQuestionCount: quizRows.length,
     mappedQuestionCount: quizRows.length - unmatched.length,
   },
+  questionInventory: QUESTION_INVENTORY,
 }
 console.log(JSON.stringify(report, null, 2))

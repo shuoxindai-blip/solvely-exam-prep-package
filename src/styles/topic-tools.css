@@ -53,12 +53,15 @@ body.topic-tool-route main { margin-left: 0; }
 .topic-head-meta { flex: 0 0 auto; }
 .topic-head-meta span { display: grid; min-width: 92px; gap: 3px; padding: 10px 13px; border: 1px solid #e1e6ef; border-radius: 10px; color: #8a94a6; background: #fff; font-size: 8px; text-align: right; }
 .topic-head-meta strong { color: #2765d4; font-size: 16px; }
+.topic-head-meta small { color: #7d899c; font-size: 7px; font-weight: 700; }
 
 .study-guide-view, .flashcard-view, .quiz-view { max-width: 1030px; margin: 0 auto; }
+.study-guide-section-label { margin: 0 0 10px; color: #0060c9; font-family: Poppins, Inter, sans-serif; font-size: 16px; font-weight: 700; line-height: 1.5; }
+.study-guide-section-label.exam-essentials { margin-top: 28px; }
 .topic-video-card { overflow: hidden; border: 1px solid #dde4ee; border-radius: 17px; background: #11182a; box-shadow: 0 10px 28px rgba(22, 36, 65, .1); }
 .topic-video-card > header { display: flex; min-height: 63px; align-items: center; justify-content: space-between; gap: 20px; padding: 12px 17px; color: #fff; background: #11192b; }
 .topic-video-card > header > div { display: grid; gap: 3px; }
-.topic-video-card > header span { color: #85a9ef; font-size: 7px; font-weight: 850; letter-spacing: .1em; }
+.topic-video-card > header span { max-width: 600px; overflow: hidden; color: #9fb0cf; font-size: 8px; font-weight: 500; letter-spacing: 0; text-overflow: ellipsis; white-space: nowrap; }
 .topic-video-card > header h2 { margin: 0; font-size: 13px; font-weight: 700; }
 .topic-video-card > header a { padding: 7px 9px; border: 1px solid #33415d; border-radius: 8px; color: #b7c9ed; font-size: 8px; text-decoration: none; }
 .topic-video-frame { position: relative; aspect-ratio: 16 / 8.8; overflow: hidden; background: #0d1423; }
@@ -83,7 +86,36 @@ body.topic-tool-route main { margin-left: 0; }
 .guide-two-column h2 { font-size: 16px; }
 .guide-recap { margin-top: 30px; padding: 20px 22px; border-radius: 13px; background: #eef8f3; }
 .guide-recap span { color: #19845d; }
-.guide-next-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 9px; margin-top: 32px; padding-top: 23px; border-top: 1px solid #e7ebf1; }
+.study-quick-practice { margin-top: 28px; }
+.study-quick-card { padding: clamp(22px, 4vw, 38px); border: 1px solid #e1e6ed; border-radius: 17px; background: #fff; box-shadow: 0 8px 24px rgba(32, 48, 85, .04); }
+.study-quick-card.loading { display: grid; min-height: 250px; place-content: center; justify-items: center; gap: 13px; color: #8b95a5; }
+.study-quick-card.loading > p { margin: 0; font-size: 9px; }
+.study-quick-card > header { display: grid; gap: 7px; margin-bottom: 20px; }
+.study-quick-card > header > span { color: #989b9e; font-size: 9px; line-height: 1.5; }
+.study-quick-card > header h2 { max-width: 850px; margin: 0; color: #172033; font-family: Poppins, Inter, sans-serif; font-size: clamp(17px, 2vw, 21px); line-height: 1.45; letter-spacing: -.02em; }
+.study-quick-options { display: grid; gap: 11px; }
+.study-quick-options button { display: grid; grid-template-columns: 22px minmax(0, 1fr) 20px; gap: 11px; align-items: center; width: 100%; min-height: 54px; padding: 10px 15px; border: 1px solid #e2ebf5; border-radius: 12px; color: #253044; background: #f4f9ff; box-shadow: 0 4px 0 #dce7f3; font-family: Poppins, Inter, sans-serif; font-size: 10px; font-weight: 600; text-align: left; cursor: pointer; transition: border-color .16s ease, background .16s ease, box-shadow .16s ease, transform .16s ease; }
+.study-quick-options button:not(:disabled):hover { border-color: #a8c7ea; background: #edf6ff; transform: translateY(-1px); }
+.study-quick-options button:disabled { cursor: default; }
+.study-quick-options button.selected { border-color: #6c9fe0; background: #edf5ff; }
+.study-quick-options button.correct { border-color: #7bc4a9; background: #effaf5; box-shadow: 0 4px 0 #bfe1d4; }
+.study-quick-options button.wrong { border-color: #dfa198; background: #fff3f1; box-shadow: 0 4px 0 #efcbc5; }
+.study-quick-options i { display: grid; width: 18px; height: 18px; place-items: center; border: 2px solid #d5e3f2; border-radius: 6px; color: transparent; font-size: 7px; font-style: normal; }
+.study-quick-options button.selected i, .study-quick-options button.correct i, .study-quick-options button.wrong i { color: #3e6eaa; }
+.study-quick-options b { color: #19835e; font-size: 14px; text-align: center; }
+.study-quick-options button.wrong b { color: #b45345; }
+.study-quick-feedback { margin-top: 22px; padding: 19px 20px; border: 1px solid #efc9c3; border-radius: 13px; background: #fff7f5; }
+.study-quick-feedback.success { border-color: #aedcc9; background: #f0faf6; }
+.study-quick-feedback > span { color: #ad4d3e; font-size: 9px; font-weight: 850; text-transform: uppercase; }
+.study-quick-feedback.success > span { color: #147552; }
+.study-quick-feedback h3 { margin: 11px 0 6px; font-size: 12px; }
+.study-quick-feedback p { margin: 0; color: #566478; font-size: 10px; line-height: 1.65; }
+.study-quick-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px; }
+.study-quick-actions button { min-width: 126px; min-height: 40px; padding: 0 16px; border-radius: 9px; font-size: 9px; font-weight: 750; cursor: pointer; }
+.study-quick-actions .secondary { border: 1px solid #d6e1ef; color: #627086; background: #f8fafc; }
+.study-quick-actions .primary { border: 1px solid #176ee8; color: #fff; background: #087dff; box-shadow: 0 5px 12px rgba(0, 96, 201, .18); }
+.study-quick-actions .primary.full { flex: 1; }
+.guide-next-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 9px; margin-top: 28px; padding: 20px 22px; border: 1px solid #e0e6ef; border-radius: 13px; background: #fff; }
 .guide-next-actions > span { margin-right: auto; color: #68758a; font-size: 9px; font-weight: 750; }
 .guide-next-actions button { min-height: 38px; padding: 0 13px; border: 1px solid #cfdcf5; border-radius: 9px; color: #1c60d8; background: #f5f8ff; font-size: 9px; font-weight: 750; cursor: pointer; }
 
@@ -180,6 +212,9 @@ body.topic-tool-route main { margin-left: 0; }
   .topic-video-card > header a { display: none; }
   .topic-video-frame { aspect-ratio: 16 / 10; }
   .guide-article { padding: 22px 19px; }
+  .study-quick-card { padding: 21px 16px; }
+  .study-quick-options button { grid-template-columns: 20px minmax(0, 1fr) 18px; padding-inline: 12px; font-size: 9px; }
+  .study-quick-actions button { min-width: 0; flex: 1; }
   .flashcard-stage { padding-inline: 14px; }
   .flashcard-face { min-height: 290px; padding: 28px 20px; }
   .flashcard-rating { width: 100%; }

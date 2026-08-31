@@ -23,6 +23,13 @@ The shared join keys are `packageId`, `epId`, `outlineId`, `topicGroupId`, and `
 
 `src/data/satData.ts` is the Web adapter over this contract. A production integration can replace its static `fetch` calls with `/ep/detail`, `/ep/outline`, `/ep/outline/topic/learn`, and `/ep/exam` without changing the views. `public/data/sat` remains a generated legacy fixture for compatibility, but is no longer the active page data source.
 
+Study Guide practice and standalone Quiz are deliberately separate inside `epTopicContents`:
+
+- `studyGuide.payload.items[]` contains two `CHECK_QUESTION` items per Topic, shown one at a time after the video and Study Guide body as Quick Practice.
+- `quiz.payload.questions[]` contains only standalone Quiz questions and retains `quizType: "QUIZ"`.
+- `sourceQuestionId` is the shared audit key. The generated sets have zero overlap: 200 Study Guide checks + 3,679 standalone Quiz questions = 3,879 mapped practice questions.
+- `epPreparation.metadata.questionInventory` and `storage-contract.json` expose the counts, placement rules, and zero-overlap contract for iOS and Web.
+
 ## SAT topic importance model
 
 `npm run build:data` generates every Topic's importance metadata from one reproducible model (`SAT_TOPIC_IMPORTANCE_V1`):
@@ -46,7 +53,7 @@ Official references: [Reading and Writing specifications](https://satsuite.colle
 ## Experience scope
 
 - `/` — SAT exam-prep overview, current exam blueprint, 100-topic breakdown, and two mock-exam entries
-- `/topic/:topicId/study-guide` — embedded topic video followed by the complete study guide
+- `/topic/:topicId/study-guide` — Video Lesson → complete Study Guide / Exam Essentials → inline Quick Practice with Try Another, Next Topic, loading, and final Back states
 - `/topic/:topicId/flashcards` — 20-card recall experience with flip, progress, review/mastered, star, shuffle, and list views
 - `/topic/:topicId/quiz` — topic-mapped question bank with multiple-choice and student-produced responses
 - `/mock-exam/1` and `/mock-exam/2` — two 98-question Digital SAT simulations based on the interaction model from commit `d2445da`
@@ -55,5 +62,5 @@ Official references: [Reading and Writing specifications](https://satsuite.colle
 
 - 100 topic videos and study guides
 - 2,000 flashcards
-- 3,879 mapped topic questions
+- 3,879 mapped topic questions: 200 Study Guide Quick Practice checks + 3,679 standalone Quiz questions, with no duplicated source question
 - 2 full-length mock exams, 98 questions each

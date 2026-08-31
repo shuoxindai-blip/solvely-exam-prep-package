@@ -2,7 +2,7 @@
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { loadSatManifest, loadTopicContent, loadTopicQuiz } from '../data/satData'
-import type { EpFlashCardContent, EpStudyGuideContent } from '../types/epV2'
+import type { EpFlashCardContent, EpQuestion, EpStudyGuideContent } from '../types/epV2'
 import type { SatFlashcard, SatManifest, SatQuizQuestion, SatTopic } from '../types/sat'
 
 type ToolMode = 'study-guide' | 'flashcards' | 'quiz'
@@ -19,6 +19,9 @@ const cardView = ref<'card' | 'list'>('card')
 const cardStatuses = ref<Record<string, CardStatus>>({})
 const starredCards = ref(new Set<string>())
 const studyGuideContent = ref<EpStudyGuideContent | null>(null)
+const studyPracticeIndex = ref(0)
+const studyPracticeSelectedAnswer = ref<string | null>(null)
+const studyPracticeLoading = ref(false)
 const flashCardContent = ref<EpFlashCardContent | null>(null)
 const quizQuestions = ref<SatQuizQuestion[]>([])
 const contentLoading = ref(false)
@@ -37,6 +40,10 @@ const topicId = computed(() => String(route.params.topicId || ''))
 const topic = computed(() => manifest.value?.topics.find((item) => item.id === topicId.value) ?? null)
 const studyGuide = computed(() => studyGuideContent.value?.payload.content ?? null)
 const video = computed(() => studyGuideContent.value?.payload.videoLesson ?? null)
+const studyPracticeQuestions = computed<EpQuestion[]>(() => studyGuideContent.value?.payload.items ?? [])
+const studyPracticeQuestion = computed(() => studyPracticeQuestions.value[studyPracticeIndex.value] ?? null)
+const studyPracticeOptions = computed(() => Object.entries(studyPracticeQuestion.value?.options ?? {}).sort(([left], [right]) => left.localeCompare(right)))
+const studyPracticeCorrect = computed(() => studyPracticeSelectedAnswer.value !== null && studyPracticeSelectedAnswer.value === studyPracticeQuestion.value?.correctAnswer)
 const flashcards = computed<SatFlashcard[]>(() => flashCardContent.value?.payload.cards.map((card) => ({
   flashcard_id: String(card.id),
   front: card.info,
@@ -46,6 +53,12 @@ const flashcards = computed<SatFlashcard[]>(() => flashCardContent.value?.payloa
 const currentCard = computed(() => flashcards.value[cardIndex.value] ?? null)
 const currentQuestion = computed(() => quizQuestions.value[quizIndex.value] ?? null)
 const selectedCorrect = computed(() => selectedAnswer.value !== null && selectedAnswer.value === currentQuestion.value?.correctIndex)
+const orderedTopics = computed(() => [...(manifest.value?.topics ?? [])].sort((left, right) => left.order - right.order))
+const currentTopicPosition = computed(() => orderedTopics.value.findIndex((item) => item.id === topic.value?.id))
+const isLastTopic = computed(() => currentTopicPosition.value === orderedTopics.value.length - 1)
+const nextStudyTopic = computed(() => orderedTopics.value[currentTopicPosition.value + 1] ?? null)
+const hasAnotherStudyPractice = computed(() => studyPracticeIndex.value < studyPracticeQuestions.value.length - 1)
+let studyPracticeTimer: number | undefined
 
 const topicsBySection = computed(() => {
   if (!manifest.value) return []
@@ -121,6 +134,52 @@ function chooseAnswer(index: number) {
   selectedAnswer.value = index
 }
 
+function chooseStudyPracticeAnswer(answer: string) {
+  if (studyPracticeSelectedAnswer.value !== null) return
+  studyPracticeSelectedAnswer.value = answer
+}
+
+function clearStudyPracticeTimer() {
+  if (studyPracticeTimer !== undefined) window.clearTimeout(studyPracticeTimer)
+  studyPracticeTimer = undefined
+}
+
+function resetStudyPractice() {
+  clearStudyPracticeTimer()
+  studyPracticeIndex.value = 0
+  studyPracticeSelectedAnswer.value = null
+  studyPracticeLoading.value = false
+}
+
+function tryAnotherStudyPractice() {
+  if (!hasAnotherStudyPractice.value || studyPracticeLoading.value) return
+  clearStudyPracticeTimer()
+  studyPracticeSelectedAnswer.value = null
+  studyPracticeLoading.value = true
+  studyPracticeTimer = window.setTimeout(() => {
+    studyPracticeIndex.value += 1
+    studyPracticeLoading.value = false
+    studyPracticeTimer = undefined
+  }, 650)
+}
+
+function advanceStudyTopic() {
+  if (studyPracticeLoading.value) return
+  if (isLastTopic.value) {
+    void router.push({ name: 'package', query: { tab: 'study' }, hash: '#course-0' })
+    return
+  }
+  if (!nextStudyTopic.value) return
+  clearStudyPracticeTimer()
+  studyPracticeSelectedAnswer.value = null
+  studyPracticeLoading.value = true
+  const targetTopicId = nextStudyTopic.value.id
+  studyPracticeTimer = window.setTimeout(() => {
+    studyPracticeTimer = undefined
+    void router.push({ name: 'study-guide', params: { topicId: targetTopicId } })
+  }, 650)
+}
+
 function checkShortAnswer() {
   if (shortAnswer.value.trim()) shortAnswerChecked.value = true
 }
@@ -191,6 +250,7 @@ watch([topicId, mode], () => {
   cardFlipped.value = false
   cardView.value = 'card'
   iframeLoaded.value = false
+  resetStudyPractice()
   void loadActiveContent()
 })
 
@@ -218,6 +278,7 @@ onMounted(async () => {
 })
 
 onBeforeUnmount(() => {
+  clearStudyPracticeTimer()
   document.body.classList.remove('topic-tool-route')
   window.removeEventListener('keydown', onKeydown)
 })
@@ -274,7 +335,7 @@ onBeforeUnmount(() => {
             <span class="topic-summary">{{ topic.summary }}</span>
           </div>
           <div class="topic-head-meta">
-            <span v-if="mode === 'study-guide'"><strong>{{ studyGuide?.sections.length ?? 0 }}</strong> guide sections</span>
+            <span v-if="mode === 'study-guide'"><strong>{{ studyGuide?.sections.length ?? 0 }}</strong> guide sections<small>{{ topic.studyGuidePracticeCount }} Quick Practice</small></span>
             <span v-else-if="mode === 'flashcards'"><strong>{{ topic.flashcardCount }}</strong> cards</span>
             <span v-else><strong>{{ topic.quizCount }}</strong> questions</span>
           </div>
@@ -283,8 +344,9 @@ onBeforeUnmount(() => {
         <div v-if="contentLoading" class="topic-load-state inline"><span class="topic-loader" /><strong>Loading {{ toolLabel }}…</strong></div>
 
         <article v-else-if="mode === 'study-guide' && studyGuide && video" class="study-guide-view">
+          <p class="study-guide-section-label">Video Lesson</p>
           <section class="topic-video-card" aria-labelledby="topicVideoTitle">
-            <header><div><span>VIDEO LESSON</span><h2 id="topicVideoTitle">{{ video.title }}</h2></div><a :href="video.playbackUrl" target="_blank" rel="noopener">Open video ↗</a></header>
+            <header><div><h2 id="topicVideoTitle">{{ video.title }}</h2><span>{{ video.description }}</span></div><a :href="video.playbackUrl" target="_blank" rel="noopener">Open video ↗</a></header>
             <div class="topic-video-frame" :class="{ loaded: iframeLoaded }">
               <img :src="video.coverUrl" :alt="`${video.title} video cover`" />
               <span class="video-loading">Loading interactive lesson…</span>
@@ -292,6 +354,7 @@ onBeforeUnmount(() => {
             </div>
           </section>
 
+          <p class="study-guide-section-label exam-essentials">Exam Essentials</p>
           <section class="guide-article">
             <div class="guide-overview"><span>OVERVIEW</span><p>{{ studyGuide.overview }}</p></div>
             <section v-if="studyGuide.learning_objectives?.length" class="guide-objectives">
@@ -312,7 +375,34 @@ onBeforeUnmount(() => {
               <section><h2>Exam tips</h2><ul><li v-for="tip in studyGuide.exam_tips" :key="tip">{{ tip }}</li></ul></section>
             </div>
             <section class="guide-recap"><span>KEY TAKEAWAY</span><p>{{ studyGuide.recap }}</p></section>
-            <footer class="guide-next-actions"><span>Reinforce this topic</span><button type="button" @click="toolRoute('flashcards')">Study {{ topic.flashcardCount }} flashcards</button><button type="button" @click="toolRoute('quiz')">Take {{ topic.quizCount }} quiz questions</button></footer>
+          </section>
+
+          <section v-if="studyPracticeQuestion" class="study-quick-practice" aria-labelledby="studyQuickPracticeTitle">
+            <p class="study-guide-section-label">Quick Practice</p>
+            <article v-if="studyPracticeLoading" class="study-quick-card loading" aria-live="polite">
+              <span class="topic-loader" />
+              <p>Generating Question...</p>
+            </article>
+            <article v-else class="study-quick-card">
+              <header>
+                <span>Single choice</span>
+                <h2 id="studyQuickPracticeTitle">{{ studyPracticeQuestion.stem }}</h2>
+              </header>
+              <div class="study-quick-options">
+                <button v-for="([letter, option]) in studyPracticeOptions" :key="`${studyPracticeQuestion.id}-${letter}`" type="button" :disabled="studyPracticeSelectedAnswer !== null" :class="{ selected: studyPracticeSelectedAnswer === letter, correct: studyPracticeSelectedAnswer !== null && studyPracticeQuestion.correctAnswer === letter, wrong: studyPracticeSelectedAnswer === letter && studyPracticeQuestion.correctAnswer !== letter }" @click="chooseStudyPracticeAnswer(letter)">
+                  <i>{{ letter }}</i><span>{{ option }}</span><b v-if="studyPracticeSelectedAnswer !== null && studyPracticeQuestion.correctAnswer === letter">✓</b><b v-else-if="studyPracticeSelectedAnswer === letter">×</b>
+                </button>
+              </div>
+              <section v-if="studyPracticeSelectedAnswer !== null" class="study-quick-feedback" :class="{ success: studyPracticeCorrect }" aria-live="polite">
+                <span>{{ studyPracticeCorrect ? 'Correct' : 'Incorrect' }}</span>
+                <h3>Explanation</h3>
+                <p>{{ studyPracticeQuestion.explanation }}</p>
+              </section>
+              <footer v-if="studyPracticeSelectedAnswer !== null" class="study-quick-actions">
+                <button v-if="hasAnotherStudyPractice" type="button" class="secondary" @click="tryAnotherStudyPractice">Try Another</button>
+                <button type="button" class="primary" :class="{ full: !hasAnotherStudyPractice }" @click="advanceStudyTopic">{{ isLastTopic ? 'Back' : 'Next Topic' }}</button>
+              </footer>
+            </article>
           </section>
         </article>
 

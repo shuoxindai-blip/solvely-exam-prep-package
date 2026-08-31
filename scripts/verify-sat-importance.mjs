@@ -9,9 +9,9 @@ const topics = manifest.topics
 const model = manifest.importanceModel
 
 assert.equal(topics.length, manifest.totals.topics, 'Topic total must match the manifest')
-assert.equal(model.sourceQuestionCount, manifest.totals.quizQuestions, 'Importance source total must match the question bank')
-assert.equal(topics.reduce((sum, topic) => sum + topic.mappedQuestionCount, 0), manifest.totals.mappedQuizQuestions, 'Mapped Topic frequencies must reconcile to the mapped question total')
-assert.equal(manifest.totals.mappedQuizQuestions, manifest.totals.quizQuestions, 'All SAT questions must map to a Topic')
+assert.equal(model.sourceQuestionCount, manifest.totals.practiceQuestions, 'Importance source total must match the complete practice question bank')
+assert.equal(topics.reduce((sum, topic) => sum + topic.mappedQuestionCount, 0), manifest.totals.mappedPracticeQuestions, 'Mapped Topic frequencies must reconcile to the mapped practice total')
+assert.equal(manifest.totals.mappedPracticeQuestions, manifest.totals.practiceQuestions, 'All SAT practice questions must map to a Topic')
 
 const maximumTopicFrequencyByDomain = Object.fromEntries(
   [...new Set(topics.map((topic) => topic.domain))].map((domain) => [domain, Math.max(...topics.filter((topic) => topic.domain === domain).map((topic) => topic.mappedQuestionCount))]),
@@ -30,7 +30,7 @@ for (const topic of topics) {
   const expectedPriority = expectedScore >= model.thresholds.core ? 'CORE' : expectedScore >= model.thresholds.likely ? 'LIKELY' : 'POSSIBLE'
   assert.equal(topic.importanceScore, expectedScore, `${topic.id} importanceScore must match the model`)
   assert.equal(topic.priority, expectedPriority, `${topic.id} priority must match the score threshold`)
-  assert.equal(topic.mappedQuestionCount, topic.quizCount, `${topic.id} mapped count must match its generated quiz count`)
+  assert.equal(topic.mappedQuestionCount, topic.studyGuidePracticeCount + topic.quizCount, `${topic.id} mapped count must reconcile across Study Guide practice and standalone Quiz`)
   assert.deepEqual(outlineTopics.get(topic.id), {
     id: outlineTopics.get(topic.id).id,
     originTopicId: topic.id,
@@ -52,8 +52,8 @@ assert.deepEqual(preparation.metadata.importanceModel, model, 'The active EP V2 
 
 console.log(JSON.stringify({
   topics: topics.length,
-  mappedQuestions: manifest.totals.mappedQuizQuestions,
-  mappingCoverage: `${Math.round((manifest.totals.mappedQuizQuestions / manifest.totals.quizQuestions) * 100)}%`,
+  mappedQuestions: manifest.totals.mappedPracticeQuestions,
+  mappingCoverage: `${Math.round((manifest.totals.mappedPracticeQuestions / manifest.totals.practiceQuestions) * 100)}%`,
   scoreRange: [Math.min(...topics.map((topic) => topic.importanceScore)), Math.max(...topics.map((topic) => topic.importanceScore))],
   priorityCounts,
 }, null, 2))

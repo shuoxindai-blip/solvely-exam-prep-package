@@ -57,6 +57,7 @@ export function loadSatManifest() {
         importanceScore: topic.importanceScore,
         priority: topic.priority,
         flashcardCount: documents.find((document) => document.contentType === 'flashCard')?.totalCount ?? 0,
+        studyGuidePracticeCount: documents.find((document) => document.contentType === 'studyGuide')?.totalCount ?? 0,
         quizCount: documents.find((document) => document.contentType === 'quiz')?.totalCount ?? 0,
       }
     }))
@@ -65,6 +66,7 @@ export function loadSatManifest() {
       exam: preparation.exam,
       generatedFrom: `${preparation.metadata.schemaVersion} / epPreparations + epTopicContents + epExams`,
       importanceModel: preparation.metadata.importanceModel,
+      questionInventory: preparation.metadata.questionInventory,
       totals: preparation.metadata.totals,
       sections: preparation.outline.topicGroups.map((group) => ({
         id: group.originTopicGroupId,

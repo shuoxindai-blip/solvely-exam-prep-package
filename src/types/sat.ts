@@ -38,6 +38,7 @@ export type SatTopic = {
   importanceScore: number
   priority: 'CORE' | 'LIKELY' | 'POSSIBLE'
   flashcardCount: number
+  studyGuidePracticeCount: number
   quizCount: number
 }
 
@@ -62,7 +63,24 @@ export type SatManifest = {
     thresholds: { core: number; likely: number; possible: number }
     officialDomainWeights: Record<string, number>
   }
-  totals: { topics: number; flashcards: number; quizQuestions: number; mappedQuizQuestions: number; mockExams: number }
+  questionInventory: {
+    schemaVersion: 'SAT_PRACTICE_INVENTORY_V1'
+    sourceQuestionCount: number
+    mappedQuestionCount: number
+    studyGuidePracticeQuestionCount: number
+    standaloneQuizQuestionCount: number
+    overlapQuestionCount: 0
+    selectionRule: string
+  }
+  totals: {
+    topics: number
+    flashcards: number
+    practiceQuestions: number
+    mappedPracticeQuestions: number
+    studyGuidePracticeQuestions: number
+    quizQuestions: number
+    mockExams: number
+  }
   sections: SatSection[]
   topics: SatTopic[]
 }

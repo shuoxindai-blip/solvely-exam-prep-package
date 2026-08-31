@@ -125,6 +125,16 @@ export type EpTopicImportanceModel = {
   officialDomainWeights: Record<string, number>
 }
 
+export type EpQuestionInventory = {
+  schemaVersion: 'SAT_PRACTICE_INVENTORY_V1'
+  sourceQuestionCount: number
+  mappedQuestionCount: number
+  studyGuidePracticeQuestionCount: number
+  standaloneQuizQuestionCount: number
+  overlapQuestionCount: 0
+  selectionRule: string
+}
+
 export type EpPreparation = {
   _id: number
   deviceId: string
@@ -137,8 +147,17 @@ export type EpPreparation = {
   type: string
   metadata: {
     schemaVersion: 'EP_V2'
-    totals: { topics: number; flashcards: number; quizQuestions: number; mappedQuizQuestions: number; mockExams: number }
+    totals: {
+      topics: number
+      flashcards: number
+      practiceQuestions: number
+      mappedPracticeQuestions: number
+      studyGuidePracticeQuestions: number
+      quizQuestions: number
+      mockExams: number
+    }
     importanceModel: EpTopicImportanceModel
+    questionInventory: EpQuestionInventory
     note: string
   }
   language: string
@@ -204,6 +223,7 @@ export type EpFlashCardContent = EpTopicContentBase & {
 
 export type EpQuestion = {
   id: number
+  sourceQuestionId: string
   topicId: number
   type: 'MULTIPLE_CHOICE' | 'STUDENT_PRODUCED_RESPONSE' | 'CHECK_QUESTION'
   quizType?: 'QUIZ'
