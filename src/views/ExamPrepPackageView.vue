@@ -256,6 +256,13 @@ function openCourse(course: Course) {
 
 function closeCourse() { void router.push({ name: 'package', hash: '#examCatalogTitle' }) }
 function selectTab(tab: CourseTab) { activeTab.value = tab; window.scrollTo({ top: 0, behavior: 'smooth' }) }
+function setOverviewState(state: 'first-visit' | 'has-progress') {
+  void router.replace({
+    name: 'package',
+    query: { ...route.query, courseState: state === 'first-visit' ? 'not-started' : 'in-progress' },
+    hash: '#course-0',
+  })
+}
 function toggleSection(id: string) { const next = new Set(collapsedSections.value); next.has(id) ? next.delete(id) : next.add(id); collapsedSections.value = next }
 function openTopic(topic: SatTopic, tool: 'study-guide' | 'flashcards' | 'quiz') { void router.push({ name: tool, params: { topicId: topic.id } }) }
 function improveAnswered(topic: SatTopic) { return Math.min(topic.quizCount, Math.max(0, improvePracticeProgress.value[topic.id] ?? 0)) }
@@ -502,6 +509,13 @@ onBeforeUnmount(() => document.body.classList.remove('package-route', 'dark'))
                 <li><span class="course-about-icon"><svg class="icon" aria-hidden="true"><use href="#i-grid"/></svg></span><span><strong>3,879</strong> practice questions</span></li>
                 <li><span class="course-about-icon"><svg class="icon" aria-hidden="true"><use href="#i-exam"/></svg></span><span><strong>1</strong> full-length practice test with score analysis</span></li>
               </ul>
+            </aside>
+            <aside class="mock-demo-controller" aria-label="Overview demo state controller">
+              <header class="mock-demo-controller-head"><strong>Overview state</strong><span>Not product UI</span></header>
+              <nav class="mock-state-nav" aria-label="Preview overview state">
+                <button :class="['mock-state-button',{ active:!isCourseStarted }]" type="button" :aria-pressed="!isCourseStarted" @click="setOverviewState('first-visit')">First visit</button>
+                <button :class="['mock-state-button',{ active:isCourseStarted }]" type="button" :aria-pressed="isCourseStarted" @click="setOverviewState('has-progress')">Has progress</button>
+              </nav>
             </aside>
           </div>
 
