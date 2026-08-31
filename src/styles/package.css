@@ -1535,17 +1535,8 @@
     .course-weak-row { display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:10px; padding:10px 11px; border-radius:11px; background:var(--surface-soft); }
     .course-weak-row strong { font-size:10px; }
     .course-weak-row span { color:#c46c14; font-size:9px; font-weight:720; }
-    .course-overview-waterfall { width:min(780px,100%); display:grid; gap:14px; margin:0 auto; }
+    .course-overview-waterfall { width:100%; display:grid; gap:14px; }
     .course-overview-waterfall .course-hub-card + .course-hub-card { margin-top:0; }
-    .course-overview-status-list { overflow:hidden; border:1px solid var(--line); border-radius:17px; background:var(--surface); }
-    .course-overview-status-row { width:100%; min-height:86px; display:grid; grid-template-columns:92px 122px minmax(0,1fr) auto; align-items:center; gap:14px; padding:15px 18px; border:0; border-bottom:1px solid var(--line); background:var(--surface); text-align:left; cursor:pointer; transition:background .16s ease; }
-    .course-overview-status-row:last-child { border-bottom:0; }
-    .course-overview-status-row:hover { background:var(--surface-hover); }
-    .course-overview-status-label { color:var(--muted); font-size:9px; font-weight:760; letter-spacing:.06em; text-transform:uppercase; }
-    .course-overview-status-row > strong { font-size:22px; line-height:1; letter-spacing:-.04em; }
-    .course-overview-status-row > strong small { font-size:13px; letter-spacing:-.02em; }
-    .course-overview-status-row p { margin:0; color:var(--muted); font-size:10px; line-height:1.45; }
-    .course-overview-status-row em { color:#2368f0; font-size:10px; font-style:normal; font-weight:730; white-space:nowrap; }
 
     .study-breakdown { display:grid; gap:14px; }
     .study-breakdown-toolbar { min-height:42px; display:flex; align-items:center; justify-content:space-between; gap:16px; }
@@ -1754,16 +1745,11 @@
       .study-topic-row:hover .study-topic-popover,.study-topic-row:focus .study-topic-popover,.study-topic-row:focus-within .study-topic-popover { transform:translateY(0); }
       .study-topic-popover::before { top:-8px; right:36px; left:auto; transform:rotate(135deg); }
       .mock-exam-metrics { grid-template-columns:1fr; }
-      .course-overview-status-row { grid-template-columns:88px 110px minmax(0,1fr); }
-      .course-overview-status-row em { grid-column:2 / -1; }
     }
     @media (max-width:560px) {
       .course-hub-stats { grid-template-columns:1fr; }
       .course-next-task { grid-template-columns:42px minmax(0,1fr); }
       .course-next-task .course-primary-small { grid-column:1 / -1; }
-      .course-overview-status-row { grid-template-columns:minmax(0,1fr) auto; gap:7px 12px; padding:15px; }
-      .course-overview-status-row > strong { grid-column:2; grid-row:1; }
-      .course-overview-status-row p,.course-overview-status-row em { grid-column:1 / -1; }
       .mock-state-nav { grid-template-columns:repeat(2,minmax(0,1fr)); }
       .mock-entry-footer { align-items:stretch; flex-direction:column; }
       .mock-entry-footer button { width:100%; }
