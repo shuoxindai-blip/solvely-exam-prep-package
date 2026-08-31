@@ -14,7 +14,9 @@ const router = createRouter({
     { path: '/topic/:topicId/quiz', name: 'quiz', component: TopicToolView },
     { path: '/:pathMatch(.*)*', redirect: '/' },
   ],
-  scrollBehavior: () => ({ top: 0 }),
+  scrollBehavior: (to) => to.hash === '#examCatalogTitle'
+    ? { el: to.hash, top: window.innerWidth <= 820 ? 64 : 24, behavior: 'smooth' }
+    : { top: 0 },
 })
 
 router.afterEach((to) => {

@@ -254,7 +254,7 @@ function openCourse(course: Course) {
   void router.push({ name: 'package', hash: '#course-0' })
 }
 
-function closeCourse() { void router.push({ name: 'package' }) }
+function closeCourse() { void router.push({ name: 'package', hash: '#examCatalogTitle' }) }
 function selectTab(tab: CourseTab) { activeTab.value = tab; window.scrollTo({ top: 0, behavior: 'smooth' }) }
 function toggleSection(id: string) { const next = new Set(collapsedSections.value); next.has(id) ? next.delete(id) : next.add(id); collapsedSections.value = next }
 function openTopic(topic: SatTopic, tool: 'study-guide' | 'flashcards' | 'quiz') { void router.push({ name: tool, params: { topicId: topic.id } }) }
@@ -440,11 +440,6 @@ onBeforeUnmount(() => document.body.classList.remove('package-route', 'dark'))
             <div class="course-package-copy">
               <h1 id="courseWorkspaceTitle">SAT Prep 2026</h1>
               <p>A focused SAT Prep 2026 plan with topic study tools, realistic mock exams, score reports, and targeted improvement.</p>
-              <div class="course-package-metrics">
-                <span class="course-package-metric"><svg class="icon"><use href="#i-book"/></svg><span><strong>100</strong> video lessons</span></span>
-                <span class="course-package-metric"><svg class="icon"><use href="#i-grid"/></svg><span><strong>3,879</strong> practice questions</span></span>
-                <span class="course-package-metric"><svg class="icon"><use href="#i-exam"/></svg><span><strong>1</strong> full-length practice test with score analysis</span></span>
-              </div>
             </div>
             <aside class="course-progress-summary" aria-label="Course progress">
               <span class="course-progress-watermark" aria-hidden="true">{{ courseProgressPercent }}</span>
@@ -457,7 +452,8 @@ onBeforeUnmount(() => document.body.classList.remove('package-route', 'dark'))
         </header>
         <div class="course-workspace-body">
           <div class="course-package-panel" role="tabpanel" aria-live="polite">
-          <div v-if="activeTab === 'overview'" class="course-overview-waterfall">
+          <div v-if="activeTab === 'overview'" class="course-overview-layout">
+            <div class="course-overview-waterfall">
             <ol v-if="!isCourseStarted" class="course-start-path" aria-label="Your SAT prep path">
               <li class="course-start-step featured">
                 <span class="course-start-number" aria-hidden="true">1</span>
@@ -498,7 +494,15 @@ onBeforeUnmount(() => document.body.classList.remove('package-route', 'dark'))
               <header class="course-hub-head"><div><h2>Topics to improve</h2></div><button class="course-link-button" type="button" @click="selectTab('results')">View all</button></header>
               <div class="course-weak-list"><div v-for="topic in improveTopics.slice(0, 3)" :key="`overview-${topic.id}`" class="course-weak-row"><strong>{{ topic.title }}</strong><span :class="topic.priority.toLowerCase()">{{ topic.importanceScore }}% · {{ priorityLabel(topic.priority) }}</span></div></div>
             </section>
-
+            </div>
+            <aside class="course-about-card" aria-labelledby="courseAboutTitle">
+              <h2 id="courseAboutTitle">About this course</h2>
+              <ul>
+                <li><span class="course-about-icon"><svg class="icon" aria-hidden="true"><use href="#i-book"/></svg></span><span><strong>100</strong> video lessons</span></li>
+                <li><span class="course-about-icon"><svg class="icon" aria-hidden="true"><use href="#i-grid"/></svg></span><span><strong>3,879</strong> practice questions</span></li>
+                <li><span class="course-about-icon"><svg class="icon" aria-hidden="true"><use href="#i-exam"/></svg></span><span><strong>1</strong> full-length practice test with score analysis</span></li>
+              </ul>
+            </aside>
           </div>
 
           <section v-else-if="activeTab === 'study'" class="study-breakdown" aria-label="SAT lessons"><header class="study-breakdown-toolbar" aria-label="Filter lessons"><div class="study-breakdown-filters"><div class="study-filter-group"><span class="study-filter-label">Section</span><div class="study-section-switch" role="group" aria-label="SAT section"><button v-for="section in (['Math','Reading and Writing'] as const)" :key="section" type="button" :aria-pressed="sectionFilter === section" @click="sectionFilter = section">{{ section === 'Reading and Writing' ? 'Reading & Writing' : section }}</button></div></div><div class="study-filter-group importance"><span class="study-filter-label">Importance</span><div class="study-importance-chips" role="group" aria-label="Topic importance"><button v-for="filter in ([['all','All'],['core','Core'],['likely','Likely'],['possible','Possible']] as const)" :key="filter[0]" :class="filter[0]" type="button" :aria-pressed="priorityFilter === filter[0]" @click="priorityFilter = filter[0]"><i v-if="filter[0] !== 'all'"/>{{ filter[1] }}</button></div></div></div></header><div v-if="showLessonImportanceNote" class="study-priority-note"><svg class="icon" aria-hidden="true"><use href="#i-target"/></svg><span>Importance combines the official SAT content-domain weight ({{ Math.round((manifest?.importanceModel.domainWeightContribution ?? 0.65) * 100) }}%) with mapped frequency across {{ (manifest?.importanceModel.sourceQuestionCount ?? 3879).toLocaleString() }} practice questions ({{ Math.round((manifest?.importanceModel.topicFrequencyContribution ?? 0.35) * 100) }}%). Study progress is tracked separately.</span><button class="study-priority-note-close" type="button" aria-label="Dismiss importance explanation" title="Dismiss" @click="dismissImportanceNote('lessons')"><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button></div><div v-if="loadError" class="study-topic-empty">{{ loadError }}</div><div v-else-if="!manifest" class="study-topic-empty">Loading SAT topics…</div><div v-else class="study-topic-sections"><section v-for="section in topicsBySection" :key="section.id" :class="['study-topic-section',{ collapsed:priorityFilter === 'all' && collapsedSections.has(section.id) }]" :aria-labelledby="priorityFilter === 'all' ? section.id : undefined" :aria-label="priorityFilter !== 'all' ? `${priorityFilter} topics sorted by importance` : undefined"><button v-if="priorityFilter === 'all'" class="study-section-head" type="button" :aria-expanded="!collapsedSections.has(section.id)" @click="toggleSection(section.id)"><h3 :id="section.id">{{ section.examSection }} · {{ section.title }}</h3><span class="study-section-meta"><span>{{ section.topics.length }} Topics</span><svg class="icon"><use href="#i-chevron"/></svg></span></button><div v-if="priorityFilter !== 'all' || !collapsedSections.has(section.id)" role="table"><div class="study-topic-table-head" role="row"><span role="columnheader">Topic Area</span><span role="columnheader">Progress</span></div><article v-for="topic in section.topics" :key="topic.id" class="study-topic-row" role="row" tabindex="0"><div class="study-topic-copy" role="cell"><strong>{{ topic.title }}</strong><span>{{ topic.summary }}</span><div class="study-topic-meta"><span :class="['study-topic-importance',topic.priority.toLowerCase()]">{{ topic.importanceScore }}% · {{ priorityLabel(topic.priority) }}</span><span>{{ topic.mappedQuestionCount }} mapped questions</span><span>{{ topic.domain }}</span></div></div><div class="study-topic-progress" role="cell"><span class="study-topic-progress-copy"><strong>{{ topicProgress(topic) ? 'In progress' : 'Not started' }}</strong><span>{{ topicProgressLabel(topic) }}</span></span><span class="study-topic-progress-meter"><strong>{{ topicProgress(topic) }}%</strong><span class="study-topic-progress-track"><i :class="{complete:topicProgress(topic)===100}" :style="{width:`${topicProgress(topic)}%`}"/></span></span></div><aside class="study-topic-popover"><div class="study-topic-popover-head"><h4>{{ topic.title }}</h4><span :class="topic.priority.toLowerCase()">{{ topic.importanceScore }}% · {{ priorityLabel(topic.priority) }}</span></div><p>{{ topic.summary }}</p><p class="study-topic-importance-detail">{{ topic.domainWeightPercent }}% official domain weight · {{ topic.mappedQuestionCount }} mapped questions</p><small>Study with</small><div class="study-topic-actions"><button class="study-topic-tool" type="button" @click="openTopic(topic,'study-guide')"><svg class="icon"><use href="#i-book"/></svg><span>Study Guide</span></button><button class="study-topic-tool" type="button" @click="openTopic(topic,'flashcards')"><svg class="icon"><use href="#i-grid"/></svg><span>Flashcards</span></button><button class="study-topic-tool" type="button" @click="openTopic(topic,'quiz')"><svg class="icon"><use href="#i-exam"/></svg><span>Quiz</span></button></div></aside></article></div></section></div></section>
