@@ -34,6 +34,30 @@ const isCourseOpen = computed(() => route.hash === '#course-0')
 
 const resultReport = computed(() => resultExam.value ? buildSatReport(resultExam.value) : null)
 const reportQuestions = computed(() => resultExam.value && resultReport.value ? buildReviewQuestions(resultExam.value, resultReport.value) : [])
+const confidenceTopics = computed(() => {
+  const groups = new Map<string, { sectionId: string; label: string; correct: number; attempts: number; seconds: number[] }>()
+  reportQuestions.value.forEach((question) => {
+    if (question.status === 'OMITTED') return
+    const key = `${question.sectionId}|${question.officialSkill}`
+    const group = groups.get(key) ?? { sectionId: question.sectionId, label: question.officialSkill, correct: 0, attempts: 0, seconds: [] }
+    group.attempts += 1
+    group.correct += question.status === 'CORRECT' ? 1 : 0
+    if (question.timeSpentSeconds > 0) group.seconds.push(question.timeSpentSeconds)
+    groups.set(key, group)
+  })
+  return [...groups.values()].map((group) => {
+    const orderedSeconds = [...group.seconds].sort((left, right) => left - right)
+    const middle = Math.floor(orderedSeconds.length / 2)
+    const medianSeconds = orderedSeconds.length % 2
+      ? orderedSeconds[middle]
+      : Math.round(((orderedSeconds[middle - 1] ?? 0) + (orderedSeconds[middle] ?? 0)) / 2)
+    return {
+      ...group,
+      accuracy: Math.round((group.correct / Math.max(1, group.attempts)) * 100),
+      medianSeconds,
+    }
+  })
+})
 const filteredReviewQuestions = computed(() => reportQuestions.value.filter((question) => reviewFilter.value === 'ALL' || question.status === reviewFilter.value))
 const visibleReviewQuestions = computed(() => filteredReviewQuestions.value.slice(0, reviewLimit.value))
 const improveTopics = computed(() => {
@@ -161,9 +185,13 @@ function priorityLabel(priority: SatTopic['priority']) { return priority.charAt(
 function syncTabFromRoute() {
   const requestedTab = String(route.query.tab || '')
   activeTab.value = requestedTab === 'study' || requestedTab === 'mock' || requestedTab === 'results' ? requestedTab : 'overview'
+  if (activeTab.value === 'results') {
+    const requestedView = String(route.query.view || '')
+    resultView.value = requestedView === 'review' || requestedView === 'improve' ? requestedView : 'score'
+  }
 }
 
-watch([() => route.hash, () => route.query.tab], () => {
+watch([() => route.hash, () => route.query.tab, () => route.query.view], () => {
   if (route.hash === '#course-0') syncTabFromRoute()
   else activeTab.value = 'overview'
 })
@@ -322,22 +350,22 @@ onBeforeUnmount(() => document.body.classList.remove('package-route', 'dark'))
               </section>
 
               <section class="report-performance-details">
-                <header class="report-section-heading"><div><h3>Performance details</h3><p>Accuracy, module path, timing, and difficulty from this attempt.</p></div><span>{{ resultReport.schemaVersion }} · {{ resultReport.attemptId }}</span></header>
+                <header class="report-section-heading"><div><h3>Performance details</h3><p>See which SAT skills are both accurate and efficient—and where extra review can help.</p></div><span>{{ resultReport.schemaVersion }} · {{ resultReport.attemptId }}</span></header>
                 <div class="report-stat-strip">
                   <div><span>Correct</span><strong>{{ resultReport.correct }}<small>/{{ reportQuestions.length }}</small></strong></div><div><span>Incorrect</span><strong>{{ resultReport.incorrect }}</strong></div><div><span>Unanswered</span><strong>{{ resultReport.omitted }}</strong></div><div><span>Accuracy</span><strong>{{ resultReport.accuracy }}%</strong></div><div><span>Time used</span><strong>{{ formatReportDuration(resultReport.durationSeconds) }}</strong></div>
                 </div>
-                <div class="module-performance-grid">
-                  <article v-for="module in resultReport.modules" :key="`${module.sectionId}-${module.module}`" class="module-performance-card">
-                    <header><div><span>{{ module.sectionTitle }}</span><h4>{{ module.module }}</h4></div><em :class="module.route">{{ module.route === 'harder' ? 'Harder path' : 'Common path' }}</em></header>
-                    <div class="module-performance-counts"><span><b>{{ module.correct }}</b> correct</span><span><b>{{ module.incorrect }}</b> incorrect</span><span><b>{{ module.omitted }}</b> omitted</span></div>
-                    <div class="module-accuracy-track"><i :style="{ width: `${module.accuracy}%` }"/></div>
-                    <footer><span>{{ module.accuracy }}% accuracy</span><span>{{ formatReportTime(module.averageSeconds) }} avg / question</span></footer>
-                  </article>
-                </div>
-                <div class="report-analysis-grid">
-                  <article class="section-accuracy-card"><h4>Section accuracy</h4><div v-for="section in resultReport.sections" :key="`accuracy-${section.sectionId}`" class="section-accuracy-row"><div><strong>{{ section.sectionTitle }}</strong><span>{{ section.correct }} correct · {{ section.incorrect }} wrong · {{ section.omitted }} unanswered</span></div><span class="section-accuracy-track"><i :style="{ width: `${section.accuracy}%` }"/></span><b>{{ section.accuracy }}%</b></div></article>
-                  <article class="difficulty-report-card"><h4>Time by difficulty</h4><div class="difficulty-report-groups"><div v-for="section in resultReport.sections" :key="`difficulty-${section.sectionId}`"><strong>{{ section.sectionTitle }}</strong><span v-for="difficulty in resultReport.difficulties.filter((item) => item.sectionId === section.sectionId)" :key="difficulty.difficulty"><em>{{ difficulty.difficulty }}</em><b>{{ difficulty.accuracy }}%</b><small>{{ formatReportTime(difficulty.averageSeconds) }} avg</small></span></div></div></article>
-                </div>
+                <article class="report-confidence-model" aria-labelledby="reportConfidenceTitle">
+                  <header class="report-confidence-head"><div><h4 id="reportConfidenceTitle">Confidence quadrant</h4><p>Accuracy rises from bottom to top. Time per question increases from left to right. Each dot is an SAT skill.</p></div><div class="report-confidence-axes" aria-hidden="true"><span>↑ Accuracy</span><span>Time →</span></div></header>
+                  <div class="report-confidence-grid">
+                    <section v-for="section in resultReport.sections" :key="`confidence-${section.sectionId}`" class="report-confidence-column">
+                      <header><h5>{{ section.sectionTitle }}</h5><span>{{ confidenceTopics.filter((topic) => topic.sectionId === section.sectionId).length }} skills</span></header>
+                      <div class="report-confidence-chart" role="img" :aria-label="`${section.sectionTitle} confidence quadrant by accuracy and median response time`">
+                        <span class="report-quad-label proficient">Proficient</span><span class="report-quad-label inefficient">Inefficient</span><span class="report-quad-label careless">Careless</span><span class="report-quad-label struggling">Struggling</span>
+                        <i v-for="topic in confidenceTopics.filter((item) => item.sectionId === section.sectionId)" :key="`${section.sectionId}-${topic.label}`" :class="['report-confidence-dot', topic.accuracy >= 75 ? 'strong' : topic.accuracy >= 50 ? 'developing' : 'needs-work']" :style="{ left: `${Math.min(94, Math.max(6, (topic.medianSeconds / 120) * 100))}%`, top: `${Math.min(92, Math.max(8, 100 - topic.accuracy))}%` }" :title="`${topic.label}: ${topic.accuracy}% accuracy · ${formatReportTime(topic.medianSeconds)} median`"/>
+                      </div>
+                    </section>
+                  </div>
+                </article>
               </section>
 
               <footer class="report-footer"><p>SAT® is a registered trademark of the College Board, which is not affiliated with or endorsed by this product. Practice scores are estimates, not official College Board scores.</p><div><button class="report-retake-button" type="button" @click="startMockExam(1)">Retake</button><button class="report-practice-button" type="button" @click="setResultView('improve')">Practice Weak Topics</button></div></footer>

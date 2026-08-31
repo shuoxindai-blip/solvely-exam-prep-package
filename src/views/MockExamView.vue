@@ -416,7 +416,7 @@ function advanceFromReview() {
     return
   }
   if (moduleIndex.value < modules.length - 1) startModule(moduleIndex.value + 1)
-  else stage.value = 'complete'
+  else openPackageScoreReport()
 }
 
 function resumeAfterBreak() {
@@ -444,8 +444,11 @@ function restartExam() {
 }
 
 function openResults() {
-  stage.value = 'results'
-  void nextTick(() => window.scrollTo({ top: 0 }))
+  openPackageScoreReport()
+}
+
+function openPackageScoreReport() {
+  void router.push({ name: 'package', query: { tab: 'results', view: 'score' }, hash: '#course-0' })
 }
 
 function backToCompletion() {
