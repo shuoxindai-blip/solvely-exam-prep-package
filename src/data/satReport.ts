@@ -68,6 +68,7 @@ export function buildSatReport(exam: EpExam): EpExamResult {
   const questions = buildQuestionResults(exam)
   const byQuestionId = new Map(questions.map((question) => [question.questionId, question]))
   const total = aggregate(exam.questions, byQuestionId)
+  const durationSeconds = questions.reduce((sum, question) => sum + question.timeSpentSeconds, 0)
   const sectionMeta: Record<string, Pick<EpExamResultSection, 'score' | 'scoreRange' | 'averageScore' | 'percentile'>> = {
     'reading-writing': { score: 650, scoreRange: [620, 680], averageScore: 520, percentile: 84 },
     math: { score: 630, scoreRange: [600, 660], averageScore: 530, percentile: 78 },
@@ -124,7 +125,7 @@ export function buildSatReport(exam: EpExam): EpExamResult {
     attemptId: 'sat-mock-1-anna-2026-08-21',
     status: 'COMPLETED',
     completedAt: '2026-08-21T10:42:00.000Z',
-    durationSeconds: 7718,
+    durationSeconds,
     totalScore: 1280,
     maximumScore: 1600,
     scoreRange: [1240, 1320],

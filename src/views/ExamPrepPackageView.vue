@@ -52,6 +52,12 @@ const lastActivityDetail = computed(() => lastActivity.value.kind === 'learning'
 const lastActivityCta = computed(() => lastActivity.value.kind === 'learning' ? 'Continue learning' : 'Resume exam')
 
 const resultReport = computed(() => resultExam.value ? buildSatReport(resultExam.value) : null)
+const practiceTestQuestionCount = computed(() => resultExam.value?.questions.length ?? resultExam.value?.totalCount ?? 0)
+const practiceTestModuleCount = computed(() => new Set((resultExam.value?.questions ?? []).map((question) => `${question.sectionId}|${question.module}`)).size)
+const practiceTestDurationMinutes = computed(() => {
+  const sectionIds = new Set((resultExam.value?.questions ?? []).map((question) => question.sectionId))
+  return (sectionIds.has('reading-writing') ? 64 : 0) + (sectionIds.has('math') ? 70 : 0)
+})
 const practiceTestStates: { id: PracticeTestState; label: string }[] = [
   { id: 'not-started', label: 'Not started' },
   { id: 'in-progress', label: 'In progress' },
@@ -60,19 +66,24 @@ const practiceTestStates: { id: PracticeTestState; label: string }[] = [
 ]
 const practiceTestCard = computed(() => {
   const report = resultReport.value
+  const questionCount = practiceTestQuestionCount.value
+  const moduleCount = practiceTestModuleCount.value
+  const durationMinutes = practiceTestDurationMinutes.value
+  const answeredCount = report ? report.correct + report.incorrect : 0
+  const savedAnsweredCount = Math.min(14, questionCount)
   const readingWritingScore = report?.sections.find((section) => section.sectionId === 'reading-writing')?.score ?? 650
   const mathScore = report?.sections.find((section) => section.sectionId === 'math')?.score ?? 630
   if (practiceTestState.value === 'not-started') return {
     stateLabel: 'Not started',
     description: 'Take a realistic full-length Digital SAT with the official section timing and module structure.',
-    metrics: [{ value: '98', label: 'questions' }, { value: '134', label: 'min' }, { value: '4', label: 'modules' }],
+    metrics: [{ value: String(questionCount), label: 'questions' }, { value: String(durationMinutes), label: 'min' }, { value: String(moduleCount), label: 'modules' }],
     progressTitle: 'Progress', progressLabel: 'Ready to start', progressPercent: 0,
     helper: 'Your timer starts after setup', cta: 'Start Practice Test', disabled: false,
   }
   if (practiceTestState.value === 'scoring') return {
     stateLabel: 'Scoring',
     description: 'Your answers were submitted. We are preparing your score report and personalized recommendations.',
-    metrics: [{ value: '98', label: 'answered' }, { value: '2h 09m', label: 'time used' }, { value: '4', label: 'modules' }],
+    metrics: [{ value: String(answeredCount), label: 'answered' }, { value: report ? formatReportDuration(report.durationSeconds) : '—', label: 'time used' }, { value: String(moduleCount), label: 'modules' }],
     progressTitle: 'Status', progressLabel: 'Preparing score report', progressPercent: 36,
     helper: 'Usually ready in under a minute', cta: 'Scoring…', disabled: true,
   }
@@ -86,8 +97,8 @@ const practiceTestCard = computed(() => {
   return {
     stateLabel: 'In progress',
     description: 'Resume your saved attempt from Reading and Writing, Module 1.',
-    metrics: [{ value: '98', label: 'questions' }, { value: '134', label: 'min' }, { value: '4', label: 'modules' }],
-    progressTitle: 'Progress', progressLabel: '14 of 98 answered', progressPercent: 14.3,
+    metrics: [{ value: String(questionCount), label: 'questions' }, { value: String(durationMinutes), label: 'min' }, { value: String(moduleCount), label: 'modules' }],
+    progressTitle: 'Progress', progressLabel: `${savedAnsweredCount} of ${questionCount} answered`, progressPercent: questionCount ? (savedAnsweredCount / questionCount) * 100 : 0,
     helper: 'Answers saved automatically', cta: 'Continue Practice Test', disabled: false,
   }
 })
@@ -122,24 +133,17 @@ const confidenceTopics = computed(() => {
     const accuracyBenchmark = section?.accuracy ?? 75
     const timeBenchmark = section?.averageSeconds ?? 75
     const seed = Math.abs((group.topicId * 9301 + group.sectionId.length * 49297) % 233280)
-    const observedAccuracy = group.attempts ? (group.correct / group.attempts) * 100 : 0
-    let accuracy = 0
-    if (!group.attempts) accuracy = 35 + seed % 20
-    else if (observedAccuracy >= 99) accuracy = accuracyBenchmark + 3 + seed % Math.max(2, 97 - accuracyBenchmark)
-    else if (observedAccuracy >= 50) accuracy = accuracyBenchmark - 12 + seed % 17
-    else accuracy = 38 + seed % Math.max(4, accuracyBenchmark - 40)
-    accuracy = Math.min(99, Math.max(34, Math.round(accuracy)))
-
-    const recordedAverage = group.seconds.length ? Math.round(group.seconds.reduce((sum, seconds) => sum + seconds, 0) / group.seconds.length) : timeBenchmark + 28
-    const averageSeconds = Math.min(135, Math.max(45, recordedAverage + ((seed >> 4) % 15) - 7))
+    const accuracy = group.attempts ? Math.round((group.correct / group.attempts) * 100) : 0
+    const averageSeconds = group.seconds.length ? Math.round(group.seconds.reduce((sum, seconds) => sum + seconds, 0) / group.seconds.length) : 0
+    const plottedSeconds = averageSeconds || timeBenchmark + 30
     const highAccuracy = accuracy >= accuracyBenchmark
-    const fastPace = averageSeconds <= timeBenchmark
+    const fastPace = averageSeconds > 0 && averageSeconds <= timeBenchmark
     const accuracyRange = highAccuracy
       ? (99 - accuracy) / Math.max(1, 99 - accuracyBenchmark)
-      : (accuracyBenchmark - accuracy) / Math.max(1, accuracyBenchmark - 34)
+      : (accuracyBenchmark - accuracy) / Math.max(1, accuracyBenchmark)
     const paceRange = fastPace
-      ? (averageSeconds - 45) / Math.max(1, timeBenchmark - 45)
-      : (averageSeconds - timeBenchmark) / Math.max(1, 135 - timeBenchmark)
+      ? (plottedSeconds - 42) / Math.max(1, timeBenchmark - 42)
+      : (plottedSeconds - timeBenchmark) / Math.max(1, 135 - timeBenchmark)
     const xJitter = ((seed % 9) - 4) * .42
     const yJitter = (((seed >> 6) % 9) - 4) * .42
     const left = Math.min(fastPace ? 47 : 93, Math.max(fastPace ? 7 : 53, (fastPace ? 8 : 53) + Math.min(1, Math.max(0, paceRange)) * 39 + xJitter))
@@ -584,7 +588,7 @@ onBeforeUnmount(() => document.body.classList.remove('package-route', 'dark'))
             <header class="results-experience-head">
               <div class="results-view-switch" role="tablist" aria-label="Result views">
                 <button type="button" role="tab" :aria-selected="resultView === 'score'" @click="setResultView('score')"><span class="results-view-icon"><svg class="icon" aria-hidden="true"><use href="#i-chart"/></svg></span><span class="results-view-copy"><strong>Score Report</strong><small>Scores &amp; performance</small></span></button>
-                <button type="button" role="tab" :aria-selected="resultView === 'review'" @click="setResultView('review')"><span class="results-view-icon"><svg class="icon" aria-hidden="true"><use href="#i-exam"/></svg></span><span class="results-view-copy"><strong>Question Review</strong><small>{{ reportQuestions.length || 98 }} questions</small></span></button>
+                <button type="button" role="tab" :aria-selected="resultView === 'review'" @click="setResultView('review')"><span class="results-view-icon"><svg class="icon" aria-hidden="true"><use href="#i-exam"/></svg></span><span class="results-view-copy"><strong>Question Review</strong><small>{{ reportQuestions.length }} questions</small></span></button>
                 <button type="button" role="tab" :aria-selected="resultView === 'improve'" @click="setResultView('improve')"><span class="results-view-icon"><svg class="icon" aria-hidden="true"><use href="#i-target"/></svg></span><span class="results-view-copy"><strong>Topics to Improve</strong><small>Adaptive practice</small></span></button>
               </div>
             </header>
@@ -638,8 +642,8 @@ onBeforeUnmount(() => document.body.classList.remove('package-route', 'dark'))
                       <header><h5>{{ section.sectionTitle }}</h5><span>{{ confidenceTopics.filter((topic) => topic.sectionId === section.sectionId).length }} topics</span></header>
                       <div class="report-confidence-chart" role="group" :aria-label="`${section.sectionTitle} topic confidence quadrant by accuracy and average response time`">
                         <span class="report-quad-label proficient">Proficient</span><span class="report-quad-label inefficient">Inefficient</span><span class="report-quad-label careless">Careless</span><span class="report-quad-label struggling">Struggling</span>
-                        <button v-for="topic in confidenceTopics.filter((item) => item.sectionId === section.sectionId)" :key="topic.topicId" type="button" :class="['report-confidence-dot',topic.quadrant,{ 'edge-right':topic.edgeRight,'edge-bottom':topic.edgeBottom }]" :style="{ left: `${topic.left}%`, top: `${topic.top}%` }" :aria-label="`${topic.label}: ${topic.accuracy}% accuracy, ${topic.averageSeconds ? formatReportTime(topic.averageSeconds) : 'no recorded time'} average time`" :aria-describedby="`confidence-tooltip-${topic.topicId}`">
-                          <span :id="`confidence-tooltip-${topic.topicId}`" class="report-confidence-tooltip" role="tooltip"><strong>{{ topic.label }}</strong><em>{{ topic.domain }}</em><span><small>Accuracy</small><b>{{ topic.accuracy }}%</b></span><span><small>Average time</small><b>{{ topic.averageSeconds ? formatReportTime(topic.averageSeconds) : '—' }}</b></span><span><small>Questions</small><b>{{ topic.attempts }}/{{ topic.total }} answered</b></span></span>
+                        <button v-for="topic in confidenceTopics.filter((item) => item.sectionId === section.sectionId)" :key="topic.topicId" type="button" :class="['report-confidence-dot',topic.quadrant,{ 'edge-right':topic.edgeRight,'edge-bottom':topic.edgeBottom }]" :style="{ left: `${topic.left}%`, top: `${topic.top}%` }" :aria-label="`${topic.label}: ${topic.accuracy}% accuracy, ${topic.correct} of ${topic.attempts} answered questions correct, ${topic.averageSeconds ? formatReportTime(topic.averageSeconds) : 'no recorded time'} average time`" :aria-describedby="`confidence-tooltip-${topic.topicId}`">
+                          <span :id="`confidence-tooltip-${topic.topicId}`" class="report-confidence-tooltip" role="tooltip"><strong>{{ topic.label }}</strong><em>{{ topic.domain }}</em><span><small>Accuracy</small><b>{{ topic.accuracy }}%</b></span><span><small>Average time</small><b>{{ topic.averageSeconds ? formatReportTime(topic.averageSeconds) : '—' }}</b></span><span><small>Correct</small><b>{{ topic.correct }}/{{ topic.attempts }}</b></span><span><small>Answered</small><b>{{ topic.attempts }}/{{ topic.total }}</b></span></span>
                         </button>
                       </div>
                     </section>
