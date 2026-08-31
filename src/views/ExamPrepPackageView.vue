@@ -10,6 +10,7 @@ import type { SatManifest, SatTopic } from '../types/sat'
 type CourseTab = 'overview' | 'study' | 'mock' | 'results'
 type ResultView = 'score' | 'review' | 'improve'
 type ReviewFilter = 'ALL' | 'INCORRECT' | 'CORRECT' | 'OMITTED'
+type ReviewSectionFilter = 'ALL' | 'reading-writing' | 'math'
 type Course = { family: string; label: string; title: string; topics: string; videos: string; questions: string; search: string }
 type LastActivity =
   | { kind: 'learning'; examTitle: string; sectionTitle: string; itemTitle: string; resourceLabel: string; progressPercent: number; topicId: string }
@@ -30,7 +31,8 @@ const resultExam = ref<EpExam | null>(null)
 const resultLoadError = ref('')
 const resultView = ref<ResultView>('score')
 const reviewFilter = ref<ReviewFilter>('ALL')
-const reviewLimit = ref(6)
+const reviewSectionFilter = ref<ReviewSectionFilter>('ALL')
+const selectedReviewQuestionId = ref<number | null>(null)
 const improveSection = ref<'math' | 'reading-writing'>('math')
 const improvePriority = ref<'ALL' | SatTopic['priority']>('ALL')
 const lastActivity = ref<LastActivity>({ kind: 'learning', examTitle: 'SAT Prep 2026', sectionTitle: 'Advanced Math', itemTitle: 'Expansion, factoring, and completing the square', resourceLabel: 'Study Guide', progressPercent: 62, topicId: 'sat_math_advanced_equivalent_expressions_01' })
@@ -66,8 +68,20 @@ const confidenceTopics = computed(() => {
     }
   })
 })
-const filteredReviewQuestions = computed(() => reportQuestions.value.filter((question) => reviewFilter.value === 'ALL' || question.status === reviewFilter.value))
-const visibleReviewQuestions = computed(() => filteredReviewQuestions.value.slice(0, reviewLimit.value))
+const sectionReviewQuestions = computed(() => reportQuestions.value.filter((question) => reviewSectionFilter.value === 'ALL' || question.sectionId === reviewSectionFilter.value))
+const filteredReviewQuestions = computed(() => sectionReviewQuestions.value.filter((question) => reviewFilter.value === 'ALL' || question.status === reviewFilter.value))
+const selectedReviewQuestion = computed(() => filteredReviewQuestions.value.find((question) => question.questionId === selectedReviewQuestionId.value) ?? filteredReviewQuestions.value[0] ?? null)
+const selectedReviewQuestionPosition = computed(() => selectedReviewQuestion.value ? filteredReviewQuestions.value.findIndex((question) => question.questionId === selectedReviewQuestion.value?.questionId) : -1)
+const reviewQuestionGroups = computed(() => {
+  const groups = new Map<string, { key: string; sectionTitle: string; module: string; route: string; questions: SatReportReviewQuestion[] }>()
+  filteredReviewQuestions.value.forEach((question) => {
+    const key = `${question.sectionId}|${question.module}|${question.route}`
+    const group = groups.get(key) ?? { key, sectionTitle: question.sectionTitle, module: question.module, route: question.route, questions: [] }
+    group.questions.push(question)
+    groups.set(key, group)
+  })
+  return [...groups.values()]
+})
 const improveTopics = computed(() => {
   if (!manifest.value || !resultExam.value || !resultReport.value) return []
   const resultByQuestionId = new Map(resultReport.value.questions.map((question) => [question.questionId, question]))
@@ -174,8 +188,25 @@ function resumeLastActivity() {
 function continueOverviewStudy() { void router.push({ name: 'study-guide', params: { topicId: 'sat_math_algebra_systems_linear_01' } }) }
 function startMockExam(examId: number) { void router.push({ name: 'mock-exam', params: { examId } }) }
 function toggleTheme() { document.body.classList.toggle('dark') }
-function setResultView(view: ResultView) { resultView.value = view; reviewLimit.value = 6 }
-function setReviewFilter(filter: ReviewFilter) { reviewFilter.value = filter; reviewLimit.value = 6 }
+function setResultView(view: ResultView) {
+  resultView.value = view
+  if (view === 'review' && selectedReviewQuestionId.value === null) selectedReviewQuestionId.value = reportQuestions.value[0]?.questionId ?? null
+}
+function setReviewFilter(filter: ReviewFilter) {
+  reviewFilter.value = filter
+  selectedReviewQuestionId.value = null
+}
+function setReviewSectionFilter(filter: ReviewSectionFilter) {
+  reviewSectionFilter.value = filter
+  selectedReviewQuestionId.value = null
+}
+function moveReviewQuestion(direction: -1 | 1) {
+  if (!filteredReviewQuestions.value.length) return
+  const current = Math.max(0, selectedReviewQuestionPosition.value)
+  const next = Math.min(filteredReviewQuestions.value.length - 1, Math.max(0, current + direction))
+  selectedReviewQuestionId.value = filteredReviewQuestions.value[next]?.questionId ?? null
+}
+function practiceReviewQuestion(question: SatReportReviewQuestion) { void router.push({ name: 'study-guide', params: { topicId: question.topicId } }) }
 function optionEntries(question: SatReportReviewQuestion) { return Object.entries(question.options).sort(([left], [right]) => left.localeCompare(right)) }
 function optionState(question: SatReportReviewQuestion, answer: string) {
   if (answer === question.correctAnswer) return 'correct'
@@ -388,25 +419,55 @@ onBeforeUnmount(() => document.body.classList.remove('package-route', 'dark'))
 
             <div v-else-if="resultView === 'review'" class="question-review-view">
               <header class="question-review-toolbar">
-                <div class="question-review-filters" role="tablist" aria-label="Filter reviewed questions">
-                  <button v-for="filter in (['ALL','INCORRECT','CORRECT','OMITTED'] as ReviewFilter[])" :key="filter" type="button" role="tab" :aria-selected="reviewFilter === filter" @click="setReviewFilter(filter)">{{ filter === 'ALL' ? 'All Questions' : reviewStatusLabel(filter) }} <span>({{ filter === 'ALL' ? reportQuestions.length : reportQuestions.filter((question) => question.status === filter).length }})</span></button>
-                </div>
-                <p>Every question is connected to the EP V2 section, module, domain, skill, difficulty, response type, score, and explanation fields.</p>
-              </header>
-              <div class="review-question-list">
-                <article v-for="question in visibleReviewQuestions" :key="question.questionId" class="review-question-card">
-                  <header class="review-question-header"><div><span>{{ reviewTypeLabel(question) }}</span><strong>Question {{ question.index + 1 }}</strong></div><div class="review-question-tags"><span>{{ question.sectionTitle }}</span><span>{{ question.module }}</span><span>{{ question.difficulty }}</span><em :class="question.status.toLowerCase()">{{ reviewStatusLabel(question.status) }}</em></div></header>
-                  <h3>{{ question.stem }}</h3>
-                  <div v-if="question.responseType === 'MULTIPLE_CHOICE'" class="review-option-list">
-                    <div v-for="([answer, copy]) in optionEntries(question)" :key="answer" :class="['review-option', optionState(question, answer)]"><i>{{ answer }}</i><span>{{ copy }}</span><b v-if="answer === question.correctAnswer">Correct answer</b><b v-else-if="answer === question.userAnswer">Your answer</b></div>
+                <div class="question-review-filter-group">
+                  <span>Section</span>
+                  <div class="question-review-section-filters" role="tablist" aria-label="Filter by SAT section">
+                    <button v-for="section in ([['ALL','All sections'],['reading-writing','Reading & Writing'],['math','Math']] as const)" :key="section[0]" type="button" role="tab" :aria-selected="reviewSectionFilter === section[0]" @click="setReviewSectionFilter(section[0])">{{ section[1] }}</button>
                   </div>
-                  <div v-else class="review-produced-response"><div><span>Your answer</span><strong :class="question.status.toLowerCase()">{{ question.userAnswer ?? 'No answer' }}</strong></div><div><span>Correct answer</span><strong class="correct">{{ question.correctAnswer }}</strong></div></div>
-                  <section :class="['review-feedback-panel', question.status.toLowerCase()]"><header><span>{{ question.status === 'CORRECT' ? '✓' : question.status === 'INCORRECT' ? '×' : '–' }}</span><strong>{{ reviewStatusLabel(question.status) }}</strong><em>{{ question.earnedRawPoints }}/{{ question.maximumRawPoints }} point</em></header><p><b>Explanation:</b> {{ question.explanation }}</p></section>
-                  <dl class="review-data-grid"><div><dt>Content domain</dt><dd>{{ question.contentDomain }}</dd></div><div><dt>Official skill</dt><dd>{{ question.officialSkill }}</dd></div><div><dt>Teaching topic</dt><dd>{{ question.teachingTopic }}</dd></div><div><dt>Route</dt><dd>{{ question.route }}</dd></div><div><dt>Time spent</dt><dd>{{ question.timeSpentSeconds ? formatReportTime(question.timeSpentSeconds) : '—' }}</dd></div><div><dt>Scoring</dt><dd>{{ question.isScored ? 'Scored' : 'Unscored' }} · {{ question.maximumRawPoints }} raw point</dd></div></dl>
+                </div>
+                <div class="question-review-filter-group">
+                  <span>Answer status</span>
+                  <div class="question-review-filters" role="tablist" aria-label="Filter reviewed questions">
+                    <button v-for="filter in (['ALL','INCORRECT','OMITTED','CORRECT'] as ReviewFilter[])" :key="filter" type="button" role="tab" :aria-selected="reviewFilter === filter" @click="setReviewFilter(filter)">{{ filter === 'ALL' ? 'All' : reviewStatusLabel(filter) }} <span>{{ filter === 'ALL' ? sectionReviewQuestions.length : sectionReviewQuestions.filter((question) => question.status === filter).length }}</span></button>
+                  </div>
+                </div>
+                <p><strong>{{ filteredReviewQuestions.length }}</strong> questions shown</p>
+              </header>
+
+              <div v-if="selectedReviewQuestion" class="question-review-workspace">
+                <aside class="review-question-navigator" aria-label="Question navigator">
+                  <header><div><span>Question map</span><strong>{{ filteredReviewQuestions.length }} shown</strong></div><small>Choose a question to review</small></header>
+                  <div class="review-question-groups">
+                    <section v-for="group in reviewQuestionGroups" :key="group.key" class="review-question-group">
+                      <header><div><strong>{{ group.sectionTitle }}</strong><span>{{ group.module }}</span></div><em>{{ group.route }} path</em></header>
+                      <div class="review-question-number-grid">
+                        <button v-for="question in group.questions" :key="question.questionId" type="button" :class="[question.status.toLowerCase(), { active: selectedReviewQuestion.questionId === question.questionId }]" :aria-label="`Question ${question.index + 1}, ${reviewStatusLabel(question.status)}`" :aria-current="selectedReviewQuestion.questionId === question.questionId ? 'true' : undefined" @click="selectedReviewQuestionId = question.questionId">{{ question.index + 1 }}</button>
+                      </div>
+                    </section>
+                  </div>
+                  <footer><span><i class="incorrect"/>Incorrect</span><span><i class="omitted"/>Unanswered</span><span><i class="correct"/>Correct</span></footer>
+                </aside>
+
+                <article class="review-question-detail">
+                  <header class="review-question-header">
+                    <div class="review-question-identity"><span>{{ reviewTypeLabel(selectedReviewQuestion) }}</span><strong>Question {{ selectedReviewQuestion.index + 1 }}</strong></div>
+                    <div class="review-question-tags"><span>{{ selectedReviewQuestion.sectionTitle }}</span><span>{{ selectedReviewQuestion.module }}</span><span>{{ selectedReviewQuestion.difficulty }}</span><em :class="selectedReviewQuestion.status.toLowerCase()">{{ reviewStatusLabel(selectedReviewQuestion.status) }}</em></div>
+                  </header>
+                  <h3>{{ selectedReviewQuestion.stem }}</h3>
+                  <div v-if="selectedReviewQuestion.responseType === 'MULTIPLE_CHOICE'" class="review-option-list">
+                    <div v-for="([answer, copy]) in optionEntries(selectedReviewQuestion)" :key="answer" :class="['review-option', optionState(selectedReviewQuestion, answer)]"><i>{{ answer }}</i><span>{{ copy }}</span><b v-if="answer === selectedReviewQuestion.correctAnswer">Correct answer</b><b v-else-if="answer === selectedReviewQuestion.userAnswer">Your answer</b></div>
+                  </div>
+                  <div v-else class="review-produced-response"><div><span>Your answer</span><strong :class="selectedReviewQuestion.status.toLowerCase()">{{ selectedReviewQuestion.userAnswer ?? 'No answer' }}</strong></div><div><span>Correct answer</span><strong class="correct">{{ selectedReviewQuestion.correctAnswer }}</strong></div></div>
+                  <section :class="['review-feedback-panel', selectedReviewQuestion.status.toLowerCase()]"><header><span>{{ selectedReviewQuestion.status === 'CORRECT' ? '✓' : selectedReviewQuestion.status === 'INCORRECT' ? '×' : '–' }}</span><strong>{{ selectedReviewQuestion.status === 'CORRECT' ? 'You got it right' : selectedReviewQuestion.status === 'INCORRECT' ? 'Review this answer' : 'You left this unanswered' }}</strong><em>{{ selectedReviewQuestion.earnedRawPoints }}/{{ selectedReviewQuestion.maximumRawPoints }} point</em></header><p><b>Explanation</b>{{ selectedReviewQuestion.explanation }}</p></section>
+                  <section class="review-skill-panel">
+                    <div><span>Skill to review</span><strong>{{ selectedReviewQuestion.officialSkill }}</strong><p>{{ selectedReviewQuestion.contentDomain }} · {{ selectedReviewQuestion.teachingTopic }}</p></div>
+                    <button type="button" @click="practiceReviewQuestion(selectedReviewQuestion)">Practice this skill →</button>
+                  </section>
+                  <dl class="review-data-grid"><div><dt>Time spent</dt><dd>{{ selectedReviewQuestion.timeSpentSeconds ? formatReportTime(selectedReviewQuestion.timeSpentSeconds) : '—' }}</dd></div><div><dt>Route</dt><dd>{{ selectedReviewQuestion.route }} path</dd></div><div><dt>Response type</dt><dd>{{ reviewTypeLabel(selectedReviewQuestion) }}</dd></div><div><dt>Scoring</dt><dd>{{ selectedReviewQuestion.isScored ? 'Scored' : 'Unscored' }} · {{ selectedReviewQuestion.maximumRawPoints }} raw point</dd></div></dl>
+                  <footer class="review-detail-pagination"><button type="button" :disabled="selectedReviewQuestionPosition <= 0" @click="moveReviewQuestion(-1)">← Previous</button><span>{{ selectedReviewQuestionPosition + 1 }} of {{ filteredReviewQuestions.length }} in this view</span><button type="button" :disabled="selectedReviewQuestionPosition >= filteredReviewQuestions.length - 1" @click="moveReviewQuestion(1)">Next →</button></footer>
                 </article>
               </div>
-              <button v-if="reviewLimit < filteredReviewQuestions.length" class="review-load-more" type="button" @click="reviewLimit += 6">Show 6 more questions <span>{{ filteredReviewQuestions.length - reviewLimit }} remaining</span></button>
-              <div v-else-if="!visibleReviewQuestions.length" class="results-empty">No questions match this filter.</div>
+              <div v-else class="results-empty">No questions match these filters.</div>
               <footer class="report-footer"><p>SAT® is a registered trademark of the College Board, which is not affiliated with or endorsed by this product.</p><div><button class="report-retake-button" type="button" @click="startMockExam(1)">Retake</button><button class="report-practice-button" type="button" @click="setResultView('improve')">Practice Weak Topics</button></div></footer>
             </div>
 
