@@ -232,6 +232,36 @@ function topicForQuestion(row) {
   return bestScore >= .45 ? bestTopic : null
 }
 
+function examTopicCandidates(row) {
+  const section = normalize(row.section)
+  const domain = normalize(row.contentDomain)
+  const skill = normalize(row.officialSkill)
+  return topics.filter((topic) => (
+    normalize(topic.section) === section
+    && normalize(topic.domain) === domain
+    && normalize(topic.skill) === skill
+  ))
+}
+
+function topicForExamQuestion(row, usage) {
+  const candidates = examTopicCandidates(row)
+  if (!candidates.length) return topicForQuestion(row)
+  const minimumUse = Math.min(...candidates.map((topic) => usage.get(topic.id) || 0))
+  const available = candidates.filter((topic) => (usage.get(topic.id) || 0) === minimumUse)
+  const ranked = available.map((topic) => ({
+    topic,
+    score: Math.max(
+      tokenScore(row.questionText, topic.title),
+      tokenScore(row.questionText, topic.summary),
+      tokenScore(row.questionText, topic.atomicTopic),
+      tokenScore(row.teachingTopic, topic.atomicTopicZh),
+    ),
+  })).sort((left, right) => right.score - left.score || left.topic.order - right.topic.order)
+  const selected = ranked[0]?.topic ?? available[0]
+  usage.set(selected.id, (usage.get(selected.id) || 0) + 1)
+  return selected
+}
+
 const questionsByTopic = new Map(topics.map((topic) => [topic.id, []]))
 const unmatched = []
 for (const row of quizRows) {
@@ -475,6 +505,7 @@ const epTopicContents = topics.flatMap((topic, topicIndex) => {
 })
 
 function epExam(rows, examIndex) {
+  const topicUsage = new Map()
   return {
     _id: 140001 + examIndex,
     deviceId: '__EP_PACKAGE_TEMPLATE__',
@@ -492,7 +523,7 @@ function epExam(rows, examIndex) {
     totalCount: rows.length,
     questions: rows.map((row, index) => {
       const question = compactQuestion(row)
-      const topic = topicForQuestion(row) || topics.find((item) => item.section === row.section)
+      const topic = topicForExamQuestion(row, topicUsage) || topics.find((item) => item.section === row.section)
       const storage = topicStorage.get(topic.id)
       return {
         id: 15000000 + examIndex * 1000 + index + 1,

@@ -7,6 +7,7 @@ const manifest = JSON.parse(await readFile(resolve(root, 'public/data/sat/topics
 const preparation = JSON.parse(await readFile(resolve(root, 'public/data/ep-v2/epPreparations/2001.json'), 'utf8'))
 const contentIndex = JSON.parse(await readFile(resolve(root, 'public/data/ep-v2/epTopicContents/index.json'), 'utf8'))
 const storageContract = JSON.parse(await readFile(resolve(root, 'public/data/ep-v2/storage-contract.json'), 'utf8'))
+const exams = await Promise.all([1, 2].map(async (examId) => JSON.parse(await readFile(resolve(root, `public/data/ep-v2/epExams/${examId}.json`), 'utf8'))))
 
 const studyDocuments = contentIndex.documents.filter((document) => document.contentType === 'studyGuide')
 const quizDocuments = contentIndex.documents.filter((document) => document.contentType === 'quiz')
@@ -65,10 +66,26 @@ for (const topic of manifest.topics) {
   assert.equal(topic.mappedQuestionCount, topic.studyGuidePracticeCount + topic.quizCount, `${topic.id} mapped count must reconcile without overlap`)
 }
 
+const examTopicCoverage = exams.map((exam) => {
+  assert.equal(exam.questions.length, 98, `EP exam ${exam._id} must contain a full 98-question Digital SAT`)
+  for (const question of exam.questions) {
+    const topic = outlineTopics.find((item) => item.id === question.topicId)
+    const group = preparation.outline.topicGroups.find((item) => item.id === question.topicGroupId)
+    assert.ok(topic, `EP exam question ${question.id} references an unknown Topic`)
+    assert.ok(group, `EP exam question ${question.id} references an unknown Topic Group`)
+    assert.equal(group.sectionTitle, question.sectionTitle, `EP exam question ${question.id} must stay in its SAT section`)
+    assert.equal(group.title, question.contentDomain, `EP exam question ${question.id} must stay in its content domain`)
+  }
+  const coveredTopics = new Set(exam.questions.map((question) => question.topicId)).size
+  assert.ok(coveredTopics >= 70, `EP exam ${exam._id} must cover a realistic breadth of SAT Topics`)
+  return coveredTopics
+})
+
 console.log(JSON.stringify({
   sourceQuestions: inventory.sourceQuestionCount,
   studyGuidePracticeQuestions: studySourceIds.size,
   standaloneQuizQuestions: quizSourceIds.size,
   overlapQuestions: overlap.length,
   reconciledQuestions: studySourceIds.size + quizSourceIds.size,
+  practiceTestTopicCoverage: examTopicCoverage,
 }, null, 2))

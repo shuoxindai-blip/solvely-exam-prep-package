@@ -92,26 +92,50 @@ const practiceTestCard = computed(() => {
 })
 const reportQuestions = computed(() => resultExam.value && resultReport.value ? buildReviewQuestions(resultExam.value, resultReport.value) : [])
 const confidenceTopics = computed(() => {
-  const groups = new Map<string, { sectionId: string; label: string; correct: number; attempts: number; seconds: number[] }>()
+  const topicTitles = new Map((manifest.value?.topics ?? []).map((topic) => [topic.topicId, topic.title]))
+  const groups = new Map<number, { topicId: number; sectionId: string; sectionTitle: string; domain: string; label: string; correct: number; attempts: number; total: number; omitted: number; seconds: number[] }>()
   reportQuestions.value.forEach((question) => {
-    if (question.status === 'OMITTED') return
-    const key = `${question.sectionId}|${question.officialSkill}`
-    const group = groups.get(key) ?? { sectionId: question.sectionId, label: question.officialSkill, correct: 0, attempts: 0, seconds: [] }
-    group.attempts += 1
-    group.correct += question.status === 'CORRECT' ? 1 : 0
-    if (question.timeSpentSeconds > 0) group.seconds.push(question.timeSpentSeconds)
-    groups.set(key, group)
+    const group = groups.get(question.topicId) ?? {
+      topicId: question.topicId,
+      sectionId: question.sectionId,
+      sectionTitle: question.sectionTitle,
+      domain: question.contentDomain,
+      label: topicTitles.get(question.topicId) ?? question.officialSkill,
+      correct: 0,
+      attempts: 0,
+      total: 0,
+      omitted: 0,
+      seconds: [],
+    }
+    group.total += 1
+    if (question.status === 'OMITTED') group.omitted += 1
+    else {
+      group.attempts += 1
+      group.correct += question.status === 'CORRECT' ? 1 : 0
+      if (question.timeSpentSeconds > 0) group.seconds.push(question.timeSpentSeconds)
+    }
+    groups.set(question.topicId, group)
   })
   return [...groups.values()].map((group) => {
-    const orderedSeconds = [...group.seconds].sort((left, right) => left - right)
-    const middle = Math.floor(orderedSeconds.length / 2)
-    const medianSeconds = orderedSeconds.length % 2
-      ? orderedSeconds[middle]
-      : Math.round(((orderedSeconds[middle - 1] ?? 0) + (orderedSeconds[middle] ?? 0)) / 2)
+    const section = resultReport.value?.sections.find((item) => item.sectionId === group.sectionId)
+    const accuracy = group.attempts ? Math.round((group.correct / group.attempts) * 100) : 0
+    const averageSeconds = group.seconds.length ? Math.round(group.seconds.reduce((sum, seconds) => sum + seconds, 0) / group.seconds.length) : 0
+    const accuracyBenchmark = section?.accuracy ?? 75
+    const timeBenchmark = section?.averageSeconds ?? 75
+    const plottedSeconds = averageSeconds || timeBenchmark + 30
+    const left = Math.min(93, Math.max(7, 50 + (plottedSeconds - timeBenchmark) * 1.8))
+    const top = Math.min(92, Math.max(8, 50 + (accuracyBenchmark - accuracy) * 1.35))
+    const highAccuracy = accuracy >= accuracyBenchmark
+    const fastPace = averageSeconds > 0 && averageSeconds <= timeBenchmark
     return {
       ...group,
-      accuracy: Math.round((group.correct / Math.max(1, group.attempts)) * 100),
-      medianSeconds,
+      accuracy,
+      averageSeconds,
+      left,
+      top,
+      quadrant: highAccuracy ? (fastPace ? 'proficient' : 'inefficient') : (fastPace ? 'careless' : 'struggling'),
+      edgeRight: left > 72,
+      edgeBottom: top > 72,
     }
   })
 })
@@ -520,13 +544,15 @@ onBeforeUnmount(() => document.body.classList.remove('package-route', 'dark'))
                   <div><span>Correct</span><strong>{{ resultReport.correct }}<small>/{{ reportQuestions.length }}</small></strong></div><div><span>Incorrect</span><strong>{{ resultReport.incorrect }}</strong></div><div><span>Unanswered</span><strong>{{ resultReport.omitted }}</strong></div><div><span>Accuracy</span><strong>{{ resultReport.accuracy }}%</strong></div><div><span>Time used</span><strong>{{ formatReportDuration(resultReport.durationSeconds) }}</strong></div>
                 </div>
                 <article class="report-confidence-model" aria-labelledby="reportConfidenceTitle">
-                  <header class="report-confidence-head"><div><h4 id="reportConfidenceTitle">Confidence quadrant</h4><p>Accuracy rises from bottom to top. Time per question increases from left to right. Each dot is an SAT skill.</p></div><div class="report-confidence-axes" aria-hidden="true"><span>↑ Accuracy</span><span>Time →</span></div></header>
+                  <header class="report-confidence-head"><div><h4 id="reportConfidenceTitle">Confidence quadrant</h4><p>Each dot is a tested topic, compared with its section's average accuracy and pace. Hover or focus a dot for details.</p></div><div class="report-confidence-axes" aria-hidden="true"><span>↑ Accuracy</span><span>Time →</span></div></header>
                   <div class="report-confidence-grid">
                     <section v-for="section in resultReport.sections" :key="`confidence-${section.sectionId}`" class="report-confidence-column">
-                      <header><h5>{{ section.sectionTitle }}</h5><span>{{ confidenceTopics.filter((topic) => topic.sectionId === section.sectionId).length }} skills</span></header>
-                      <div class="report-confidence-chart" role="img" :aria-label="`${section.sectionTitle} confidence quadrant by accuracy and median response time`">
+                      <header><h5>{{ section.sectionTitle }}</h5><span>{{ confidenceTopics.filter((topic) => topic.sectionId === section.sectionId).length }} topics</span></header>
+                      <div class="report-confidence-chart" role="group" :aria-label="`${section.sectionTitle} topic confidence quadrant by accuracy and average response time`">
                         <span class="report-quad-label proficient">Proficient</span><span class="report-quad-label inefficient">Inefficient</span><span class="report-quad-label careless">Careless</span><span class="report-quad-label struggling">Struggling</span>
-                        <i v-for="topic in confidenceTopics.filter((item) => item.sectionId === section.sectionId)" :key="`${section.sectionId}-${topic.label}`" :class="['report-confidence-dot', topic.accuracy >= 75 ? 'strong' : topic.accuracy >= 50 ? 'developing' : 'needs-work']" :style="{ left: `${Math.min(94, Math.max(6, (topic.medianSeconds / 120) * 100))}%`, top: `${Math.min(92, Math.max(8, 100 - topic.accuracy))}%` }" :title="`${topic.label}: ${topic.accuracy}% accuracy · ${formatReportTime(topic.medianSeconds)} median`"/>
+                        <button v-for="topic in confidenceTopics.filter((item) => item.sectionId === section.sectionId)" :key="topic.topicId" type="button" :class="['report-confidence-dot',topic.quadrant,{ 'edge-right':topic.edgeRight,'edge-bottom':topic.edgeBottom }]" :style="{ left: `${topic.left}%`, top: `${topic.top}%` }" :aria-label="`${topic.label}: ${topic.accuracy}% accuracy, ${topic.averageSeconds ? formatReportTime(topic.averageSeconds) : 'no recorded time'} average time`" :aria-describedby="`confidence-tooltip-${topic.topicId}`">
+                          <span :id="`confidence-tooltip-${topic.topicId}`" class="report-confidence-tooltip" role="tooltip"><strong>{{ topic.label }}</strong><em>{{ topic.domain }}</em><span><small>Accuracy</small><b>{{ topic.accuracy }}%</b></span><span><small>Average time</small><b>{{ topic.averageSeconds ? formatReportTime(topic.averageSeconds) : '—' }}</b></span><span><small>Questions</small><b>{{ topic.attempts }}/{{ topic.total }} answered</b></span></span>
+                        </button>
                       </div>
                     </section>
                   </div>
