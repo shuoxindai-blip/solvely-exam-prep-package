@@ -52,6 +52,10 @@ function openTopic(topic: SatTopic, tool: 'study-guide' | 'flashcards' | 'quiz')
   void router.push({ name: tool, params: { topicId: topic.id } })
 }
 
+function resumeStudy() {
+  void router.push({ name: 'study-guide', params: { topicId: 'sat_math_advanced_equivalent_expressions_01' } })
+}
+
 onMounted(async () => {
   document.body.classList.add('package-route')
   try {
@@ -90,7 +94,7 @@ onBeforeUnmount(() => document.body.classList.remove('package-route'))
               <span><strong>{{ manifest?.totals.topics ?? 100 }}</strong> topics</span><span><strong>{{ manifest?.totals.flashcards ?? 2000 }}</strong> flashcards</span><span><strong>{{ manifest?.totals.quizQuestions ?? 3879 }}</strong> practice questions</span><span><strong>2</strong> mock exams</span>
             </div>
           </div>
-          <aside class="package-progress" aria-label="Course progress"><div class="package-progress-head"><span>Package progress</span><strong>0%</strong></div><div class="package-progress-track"><i /></div><p>Take a baseline exam or start with any SAT topic.</p><button type="button" @click="startMockExam(1)">Start Mock Exam 1 <span>→</span></button></aside>
+          <aside class="package-progress" aria-label="Course progress"><div class="package-progress-head"><span>Package progress</span><strong>52%</strong></div><div class="package-progress-track"><i style="width: 52%" /></div><p>52 of 100 topics started · 46 topics mastered</p><button type="button" @click="resumeStudy">Continue learning <span>→</span></button></aside>
         </header>
 
         <nav class="package-tabs" role="tablist" aria-label="Exam prep package sections"><button v-for="tab in tabs" :key="tab.key" type="button" role="tab" :aria-selected="activeTab === tab.key" @click="selectTab(tab.key)">{{ tab.label }}</button></nav>
@@ -98,7 +102,17 @@ onBeforeUnmount(() => document.body.classList.remove('package-route'))
         <section class="package-panel" role="tabpanel" aria-live="polite">
           <div v-if="activeTab === 'overview'" class="overview-page">
             <div class="overview-layout">
-              <section class="next-action-card"><div class="next-action-copy"><span class="section-eyebrow">YOUR FIRST STEP</span><h2>Build a baseline with a full Digital SAT</h2><p>Practice the real four-module flow with timing, navigation, annotation tools, calculator access, a scheduled break, and results analysis.</p><div class="next-action-meta"><span><strong>98</strong> questions</span><span><strong>4</strong> modules</span><span><strong>2h 14m</strong> testing</span></div></div><button type="button" class="primary-action" @click="startMockExam(1)">Start Mock Exam 1 <span>→</span></button></section>
+              <section class="next-action-card jump-back-in-card">
+                <div class="next-action-copy">
+                  <span class="section-eyebrow">JUMP BACK IN</span>
+                  <p class="resume-path">Math · Advanced Math · Equivalent Expressions</p>
+                  <h2>Expansion, factoring, and completing the square</h2>
+                  <p>Continue the study guide where you left off, then reinforce the topic with flashcards and targeted practice.</p>
+                  <div class="resume-progress"><div><span>Study guide progress</span><strong>62%</strong></div><i><b /></i></div>
+                  <div class="next-action-meta"><span><strong>Study Guide</strong>current activity</span><span><strong>8 min</strong>remaining</span><span><strong>54 of 100</strong>topic</span></div>
+                </div>
+                <button type="button" class="primary-action" @click="resumeStudy">Continue study guide <span>→</span></button>
+              </section>
               <section class="package-path"><header><span class="section-eyebrow">YOUR PACKAGE</span><h2>Learn, recall, apply, measure</h2></header><ol><li class="is-ready"><i>1</i><span><strong>Study a topic</strong><small>Watch the lesson and read its complete guide.</small></span><b>Ready</b></li><li class="is-ready"><i>2</i><span><strong>Recall with flashcards</strong><small>Flip, star, review, and master 20 cards.</small></span><b>Ready</b></li><li class="is-ready"><i>3</i><span><strong>Apply with quizzes</strong><small>Answer real SAT-style questions with explanations.</small></span><b>Ready</b></li><li class="is-ready"><i>4</i><span><strong>Measure with mock exams</strong><small>Complete either 98-question practice test.</small></span><b>Ready</b></li></ol></section>
             </div>
             <section class="exam-blueprint"><header><div><span class="section-eyebrow">CURRENT DIGITAL SAT</span><h2>Exam structure at a glance</h2></div><span class="blueprint-total"><strong>134 min</strong> · 98 questions · 400–1600</span></header><div class="blueprint-grid"><article v-for="item in blueprint" :key="item.title" :class="{ break: item.title === 'Break' }"><span>{{ item.duration }}</span><h3>{{ item.title }}</h3><strong>{{ item.questions }}</strong><b>{{ item.modules }}</b><p>{{ item.domains }}</p></article></div><p class="blueprint-note">Reading and Writing and Math are both adaptive: performance in Module 1 determines the relative difficulty of Module 2. Both modules count toward the section score.</p></section>
