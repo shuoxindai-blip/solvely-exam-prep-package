@@ -1,10 +1,15 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { loadSatManifest } from '../data/satData'
+import { loadEpExam, loadSatManifest } from '../data/satData'
+import { buildReviewQuestions, buildSatReport, satImproveTopics } from '../data/satReport'
+import type { SatImprovePriority, SatReportReviewQuestion } from '../data/satReport'
+import type { EpExam } from '../types/epV2'
 import type { SatManifest, SatTopic } from '../types/sat'
 
 type CourseTab = 'overview' | 'study' | 'mock' | 'results'
+type ResultView = 'score' | 'review' | 'improve'
+type ReviewFilter = 'ALL' | 'INCORRECT' | 'CORRECT' | 'OMITTED'
 type Course = { family: string; label: string; title: string; topics: string; videos: string; questions: string; search: string }
 
 const route = useRoute()
@@ -18,7 +23,23 @@ const familyFilter = ref('all')
 const sectionFilter = ref<'Math' | 'Reading and Writing'>('Math')
 const priorityFilter = ref('all')
 const collapsedSections = ref(new Set<string>())
+const resultExam = ref<EpExam | null>(null)
+const resultLoadError = ref('')
+const resultView = ref<ResultView>('score')
+const reviewFilter = ref<ReviewFilter>('ALL')
+const reviewLimit = ref(6)
+const improveSection = ref<'math' | 'reading-writing'>('math')
+const improvePriority = ref<'ALL' | SatImprovePriority>('ALL')
 const isCourseOpen = computed(() => route.hash === '#course-0')
+
+const resultReport = computed(() => resultExam.value ? buildSatReport(resultExam.value) : null)
+const reportQuestions = computed(() => resultExam.value && resultReport.value ? buildReviewQuestions(resultExam.value, resultReport.value) : [])
+const filteredReviewQuestions = computed(() => reportQuestions.value.filter((question) => reviewFilter.value === 'ALL' || question.status === reviewFilter.value))
+const visibleReviewQuestions = computed(() => filteredReviewQuestions.value.slice(0, reviewLimit.value))
+const improveGroups = computed(() => {
+  const topics = satImproveTopics.filter((topic) => topic.sectionId === improveSection.value && (improvePriority.value === 'ALL' || topic.priority === improvePriority.value))
+  return [...new Set(topics.map((topic) => topic.contentDomain))].map((contentDomain) => ({ contentDomain, topics: topics.filter((topic) => topic.contentDomain === contentDomain) }))
+})
 
 const courses: Course[] = [
   { family: 'sat', label: 'SAT', title: 'SAT Prep 2026', topics: '100', videos: '100', questions: '3,879', search: 'digital college admissions math reading writing' },
@@ -87,6 +108,27 @@ function resumeStudy() { void router.push({ name: 'study-guide', params: { topic
 function continueOverviewStudy() { void router.push({ name: 'study-guide', params: { topicId: 'sat_math_algebra_systems_linear_01' } }) }
 function startMockExam(examId: number) { void router.push({ name: 'mock-exam', params: { examId } }) }
 function toggleTheme() { document.body.classList.toggle('dark') }
+function setResultView(view: ResultView) { resultView.value = view; reviewLimit.value = 6 }
+function setReviewFilter(filter: ReviewFilter) { reviewFilter.value = filter; reviewLimit.value = 6 }
+function optionEntries(question: SatReportReviewQuestion) { return Object.entries(question.options).sort(([left], [right]) => left.localeCompare(right)) }
+function optionState(question: SatReportReviewQuestion, answer: string) {
+  if (answer === question.correctAnswer) return 'correct'
+  if (answer === question.userAnswer && question.status === 'INCORRECT') return 'incorrect'
+  return 'neutral'
+}
+function formatReportTime(seconds: number) {
+  const minutes = Math.floor(seconds / 60)
+  const remaining = seconds % 60
+  return `${minutes}:${String(remaining).padStart(2, '0')}`
+}
+function formatReportDuration(seconds: number) {
+  const hours = Math.floor(seconds / 3600)
+  const minutes = Math.round((seconds % 3600) / 60)
+  return `${hours}h ${minutes}m`
+}
+function formatReportDate(value: string) { return new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).format(new Date(value)) }
+function reviewTypeLabel(question: SatReportReviewQuestion) { return question.responseType === 'STUDENT_PRODUCED_RESPONSE' ? 'Student-produced response' : 'Multiple choice' }
+function reviewStatusLabel(status: ReviewFilter) { return status === 'OMITTED' ? 'Unanswered' : status.charAt(0) + status.slice(1).toLowerCase() }
 
 function syncTabFromRoute() {
   const requestedTab = String(route.query.tab || '')
@@ -103,6 +145,8 @@ onMounted(async () => {
   syncTabFromRoute()
   try { manifest.value = await loadSatManifest() }
   catch (error) { loadError.value = error instanceof Error ? error.message : 'Unable to load SAT materials.' }
+  try { resultExam.value = await loadEpExam(1) }
+  catch (error) { resultLoadError.value = error instanceof Error ? error.message : 'Unable to load the SAT score report.' }
 })
 
 onBeforeUnmount(() => document.body.classList.remove('package-route', 'dark'))
@@ -203,7 +247,109 @@ onBeforeUnmount(() => document.body.classList.remove('package-route', 'dark'))
             </div>
           </div>
 
-          <div v-else class="results-layout"><div class="results-summary-grid"><section class="results-score-card"><span>Latest Mock Exam</span><strong>1280<small>/1600</small></strong><p>70th percentile · Aug 21</p></section><section class="results-ai-card"><span class="course-hub-eyebrow">AI Overview</span><h2>Strong foundation, with two high-impact gaps</h2><p>You are consistent in core algebra and reading evidence. Focus next on nonlinear equations and proportional reasoning.</p></section></div><div class="results-two-column"><section class="results-section-card"><header class="results-card-head"><h2>Section performance</h2><span>Official score scale</span></header><div class="results-performance-row"><strong>Reading & Writing</strong><i><b style="width:81%"/></i><em>650</em></div><div class="results-performance-row"><strong>Math</strong><i><b style="width:79%"/></i><em>630</em></div></section><aside class="improve-card"><h2>Topics to Improve</h2><p>Ordered by recent performance and exam importance.</p><div class="improve-topic-list"><div class="improve-topic"><span><strong>Nonlinear equations</strong><span>92% likely · Not started</span></span><button type="button" @click="selectTab('study')">Practice</button></div><div class="improve-topic"><span><strong>Ratios, rates & proportions</strong><span>89% likely · In progress</span></span><button type="button" @click="selectTab('study')">Continue</button></div></div></aside></div></div>
+          <div v-else class="results-experience">
+            <header class="results-experience-head">
+              <div><span class="course-hub-eyebrow">Latest completed attempt</span><h2>Results &amp; Improve</h2><p>Digital SAT Full-Length Practice Test 1 · {{ resultReport ? `Completed ${formatReportDate(resultReport.completedAt)}` : 'Loading attempt…' }}</p></div>
+              <div class="results-view-switch" role="tablist" aria-label="Result views">
+                <button type="button" role="tab" :aria-selected="resultView === 'score'" @click="setResultView('score')">Score Report</button>
+                <button type="button" role="tab" :aria-selected="resultView === 'review'" @click="setResultView('review')">Question Review</button>
+                <button type="button" role="tab" :aria-selected="resultView === 'improve'" @click="setResultView('improve')">Topics to Improve</button>
+              </div>
+            </header>
+
+            <div v-if="resultLoadError" class="results-empty">{{ resultLoadError }}</div>
+            <div v-else-if="!resultReport" class="results-empty">Loading score report…</div>
+
+            <div v-else-if="resultView === 'score'" class="score-report-view">
+              <section class="score-report-card">
+                <header class="score-report-cover"><span>SAT® Prep 2026</span><small>Score report</small></header>
+                <div class="score-report-main">
+                  <div class="score-report-total">
+                    <span>Total score</span>
+                    <strong>{{ resultReport.totalScore }}<small>/{{ resultReport.maximumScore }}</small></strong>
+                    <div class="score-report-meta"><span>Score range <b>{{ resultReport.scoreRange[0] }}–{{ resultReport.scoreRange[1] }}</b></span><span>Average score <b>{{ resultReport.averageScore }}</b></span><em>{{ resultReport.percentile }}th percentile</em></div>
+                  </div>
+                  <div class="score-report-sections">
+                    <article v-for="section in resultReport.sections" :key="section.sectionId">
+                      <span>{{ section.sectionTitle }}</span><strong>{{ section.score }}<small>/{{ section.maximumScore }}</small></strong>
+                      <p>Score range {{ section.scoreRange[0] }}–{{ section.scoreRange[1] }}<br>Average {{ section.averageScore }}</p>
+                      <em>{{ section.percentile }}th percentile</em>
+                    </article>
+                  </div>
+                </div>
+              </section>
+
+              <section class="report-ai-overview"><span class="report-ai-icon"><svg class="icon"><use href="#i-spark"/></svg></span><div><span>SAT Overview</span><p>{{ resultReport.overview }}</p></div></section>
+
+              <section class="knowledge-report" aria-labelledby="knowledgeReportTitle">
+                <header class="report-section-heading"><div><h3 id="knowledgeReportTitle">Knowledge and Skills</h3><p>Performance across the 8 content domains measured on the SAT.</p></div><span>Mastery scale · 1–5</span></header>
+                <div class="knowledge-section-grid">
+                  <article v-for="section in resultReport.sections" :key="`domain-${section.sectionId}`" class="knowledge-section-card">
+                    <h4>{{ section.sectionTitle }}</h4>
+                    <div v-for="domain in resultReport.domains.filter((item) => item.sectionId === section.sectionId)" :key="domain.contentDomain" class="knowledge-domain-row">
+                      <div><strong>{{ domain.contentDomain }}</strong><span>{{ domain.total }} questions · {{ domain.accuracy }}% accuracy</span></div>
+                      <span class="mastery-segments" :aria-label="`${domain.masteryLevel} of 5 mastery`"><i v-for="level in 5" :key="level" :class="{ active: level <= domain.masteryLevel }"/></span>
+                    </div>
+                  </article>
+                </div>
+              </section>
+
+              <section class="report-performance-details">
+                <header class="report-section-heading"><div><h3>Performance details</h3><p>Accuracy, module path, timing, and difficulty from this attempt.</p></div><span>{{ resultReport.schemaVersion }} · {{ resultReport.attemptId }}</span></header>
+                <div class="report-stat-strip">
+                  <div><span>Correct</span><strong>{{ resultReport.correct }}<small>/{{ reportQuestions.length }}</small></strong></div><div><span>Incorrect</span><strong>{{ resultReport.incorrect }}</strong></div><div><span>Unanswered</span><strong>{{ resultReport.omitted }}</strong></div><div><span>Accuracy</span><strong>{{ resultReport.accuracy }}%</strong></div><div><span>Time used</span><strong>{{ formatReportDuration(resultReport.durationSeconds) }}</strong></div>
+                </div>
+                <div class="module-performance-grid">
+                  <article v-for="module in resultReport.modules" :key="`${module.sectionId}-${module.module}`" class="module-performance-card">
+                    <header><div><span>{{ module.sectionTitle }}</span><h4>{{ module.module }}</h4></div><em :class="module.route">{{ module.route === 'harder' ? 'Harder path' : 'Common path' }}</em></header>
+                    <div class="module-performance-counts"><span><b>{{ module.correct }}</b> correct</span><span><b>{{ module.incorrect }}</b> incorrect</span><span><b>{{ module.omitted }}</b> omitted</span></div>
+                    <div class="module-accuracy-track"><i :style="{ width: `${module.accuracy}%` }"/></div>
+                    <footer><span>{{ module.accuracy }}% accuracy</span><span>{{ formatReportTime(module.averageSeconds) }} avg / question</span></footer>
+                  </article>
+                </div>
+                <div class="report-analysis-grid">
+                  <article class="section-accuracy-card"><h4>Section accuracy</h4><div v-for="section in resultReport.sections" :key="`accuracy-${section.sectionId}`" class="section-accuracy-row"><div><strong>{{ section.sectionTitle }}</strong><span>{{ section.correct }} correct · {{ section.incorrect }} wrong · {{ section.omitted }} unanswered</span></div><span class="section-accuracy-track"><i :style="{ width: `${section.accuracy}%` }"/></span><b>{{ section.accuracy }}%</b></div></article>
+                  <article class="difficulty-report-card"><h4>Time by difficulty</h4><div class="difficulty-report-groups"><div v-for="section in resultReport.sections" :key="`difficulty-${section.sectionId}`"><strong>{{ section.sectionTitle }}</strong><span v-for="difficulty in resultReport.difficulties.filter((item) => item.sectionId === section.sectionId)" :key="difficulty.difficulty"><em>{{ difficulty.difficulty }}</em><b>{{ difficulty.accuracy }}%</b><small>{{ formatReportTime(difficulty.averageSeconds) }} avg</small></span></div></div></article>
+                </div>
+              </section>
+
+              <footer class="report-footer"><p>SAT® is a registered trademark of the College Board, which is not affiliated with or endorsed by this product. Practice scores are estimates, not official College Board scores.</p><div><button class="report-retake-button" type="button" @click="startMockExam(1)">Retake</button><button class="report-practice-button" type="button" @click="setResultView('improve')">Practice Weak Topics</button></div></footer>
+            </div>
+
+            <div v-else-if="resultView === 'review'" class="question-review-view">
+              <header class="question-review-toolbar">
+                <div class="question-review-filters" role="tablist" aria-label="Filter reviewed questions">
+                  <button v-for="filter in (['ALL','INCORRECT','CORRECT','OMITTED'] as ReviewFilter[])" :key="filter" type="button" role="tab" :aria-selected="reviewFilter === filter" @click="setReviewFilter(filter)">{{ filter === 'ALL' ? 'All Questions' : reviewStatusLabel(filter) }} <span>({{ filter === 'ALL' ? reportQuestions.length : reportQuestions.filter((question) => question.status === filter).length }})</span></button>
+                </div>
+                <p>Every question is connected to the EP V2 section, module, domain, skill, difficulty, response type, score, and explanation fields.</p>
+              </header>
+              <div class="review-question-list">
+                <article v-for="question in visibleReviewQuestions" :key="question.questionId" class="review-question-card">
+                  <header class="review-question-header"><div><span>{{ reviewTypeLabel(question) }}</span><strong>Question {{ question.index + 1 }}</strong></div><div class="review-question-tags"><span>{{ question.sectionTitle }}</span><span>{{ question.module }}</span><span>{{ question.difficulty }}</span><em :class="question.status.toLowerCase()">{{ reviewStatusLabel(question.status) }}</em></div></header>
+                  <h3>{{ question.stem }}</h3>
+                  <div v-if="question.responseType === 'MULTIPLE_CHOICE'" class="review-option-list">
+                    <div v-for="([answer, copy]) in optionEntries(question)" :key="answer" :class="['review-option', optionState(question, answer)]"><i>{{ answer }}</i><span>{{ copy }}</span><b v-if="answer === question.correctAnswer">Correct answer</b><b v-else-if="answer === question.userAnswer">Your answer</b></div>
+                  </div>
+                  <div v-else class="review-produced-response"><div><span>Your answer</span><strong :class="question.status.toLowerCase()">{{ question.userAnswer ?? 'No answer' }}</strong></div><div><span>Correct answer</span><strong class="correct">{{ question.correctAnswer }}</strong></div></div>
+                  <section :class="['review-feedback-panel', question.status.toLowerCase()]"><header><span>{{ question.status === 'CORRECT' ? '✓' : question.status === 'INCORRECT' ? '×' : '–' }}</span><strong>{{ reviewStatusLabel(question.status) }}</strong><em>{{ question.earnedRawPoints }}/{{ question.maximumRawPoints }} point</em></header><p><b>Explanation:</b> {{ question.explanation }}</p></section>
+                  <dl class="review-data-grid"><div><dt>Content domain</dt><dd>{{ question.contentDomain }}</dd></div><div><dt>Official skill</dt><dd>{{ question.officialSkill }}</dd></div><div><dt>Teaching topic</dt><dd>{{ question.teachingTopic }}</dd></div><div><dt>Route</dt><dd>{{ question.route }}</dd></div><div><dt>Time spent</dt><dd>{{ question.timeSpentSeconds ? formatReportTime(question.timeSpentSeconds) : '—' }}</dd></div><div><dt>Scoring</dt><dd>{{ question.isScored ? 'Scored' : 'Unscored' }} · {{ question.maximumRawPoints }} raw point</dd></div></dl>
+                </article>
+              </div>
+              <button v-if="reviewLimit < filteredReviewQuestions.length" class="review-load-more" type="button" @click="reviewLimit += 6">Show 6 more questions <span>{{ filteredReviewQuestions.length - reviewLimit }} remaining</span></button>
+              <div v-else-if="!visibleReviewQuestions.length" class="results-empty">No questions match this filter.</div>
+              <footer class="report-footer"><p>SAT® is a registered trademark of the College Board, which is not affiliated with or endorsed by this product.</p><div><button class="report-retake-button" type="button" @click="startMockExam(1)">Retake</button><button class="report-practice-button" type="button" @click="setResultView('improve')">Practice Weak Topics</button></div></footer>
+            </div>
+
+            <div v-else class="topics-improve-view">
+              <header class="topics-improve-toolbar"><div><span class="course-hub-eyebrow">Targeted next steps</span><h3>Topics to Improve</h3><p>Prioritized using question accuracy, time, and SAT exam importance.</p></div><div class="improve-section-switch" role="tablist" aria-label="Choose SAT section"><button type="button" role="tab" :aria-selected="improveSection === 'math'" @click="improveSection = 'math'">Math</button><button type="button" role="tab" :aria-selected="improveSection === 'reading-writing'" @click="improveSection = 'reading-writing'">Reading &amp; Writing</button></div></header>
+              <div class="improve-priority-tabs" role="tablist" aria-label="Filter topic importance"><button v-for="filter in (['ALL','CORE','LIKELY','POSSIBLE'] as const)" :key="filter" type="button" role="tab" :aria-selected="improvePriority === filter" @click="improvePriority = filter">{{ filter.charAt(0) + filter.slice(1).toLowerCase() }}</button></div>
+              <div class="improve-domain-list">
+                <section v-for="group in improveGroups" :key="group.contentDomain" class="improve-domain-group"><header><i/><h4>{{ group.contentDomain }}</h4><span>{{ group.topics.length }} {{ group.topics.length === 1 ? 'topic' : 'topics' }}</span></header><div class="improve-topic-grid"><article v-for="topic in group.topics" :key="topic.id" class="improve-topic-card"><div><h5>{{ topic.title }}</h5><p>{{ topic.description }}</p></div><dl><div><dt>Accuracy</dt><dd>{{ topic.accuracy }}%</dd></div><div><dt>Attempts</dt><dd>{{ topic.attempts }}</dd></div><div><dt>Avg time</dt><dd>{{ formatReportTime(topic.averageSeconds) }}</dd></div></dl><footer><span :class="topic.priority.toLowerCase()">{{ topic.probability }}% · {{ topic.priority.charAt(0) + topic.priority.slice(1).toLowerCase() }}</span><button type="button" @click="selectTab('study')">{{ topic.state === 'REVIEW' ? 'Review' : topic.state === 'CONTINUE' ? 'Continue' : 'Practice' }} →</button></footer></article></div></section>
+              </div>
+              <div v-if="!improveGroups.length" class="results-empty">No topics match this importance filter.</div>
+              <footer class="report-footer"><p>Topic importance is separate from mastery: Core, Likely, and Possible describe exam relevance; accuracy and progress describe your performance.</p><div><button class="report-retake-button" type="button" @click="setResultView('score')">Back to report</button><button class="report-practice-button" type="button" @click="selectTab('study')">Open Study Plan</button></div></footer>
+            </div>
+          </div>
         </div>
       </section>
     </main>

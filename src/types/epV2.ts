@@ -12,6 +12,91 @@ export type EpOutlineTopic = {
   priority: 'CORE' | 'LIKELY'
 }
 
+export type EpReportQuestionStatus = 'CORRECT' | 'INCORRECT' | 'OMITTED'
+
+export type EpExamResultQuestion = {
+  questionId: number
+  userAnswer: string | null
+  correctAnswer: string
+  status: EpReportQuestionStatus
+  earnedRawPoints: number
+  maximumRawPoints: number
+  timeSpentSeconds: number
+}
+
+export type EpExamResultSection = {
+  sectionId: string
+  sectionTitle: string
+  score: number
+  maximumScore: 800
+  scoreRange: [number, number]
+  averageScore: number
+  percentile: number
+  correct: number
+  incorrect: number
+  omitted: number
+  accuracy: number
+  averageSeconds: number
+}
+
+export type EpExamResultModule = {
+  sectionId: string
+  sectionTitle: string
+  module: 'Module 1' | 'Module 2'
+  route: string
+  total: number
+  correct: number
+  incorrect: number
+  omitted: number
+  accuracy: number
+  averageSeconds: number
+}
+
+export type EpExamResultDomain = {
+  sectionId: string
+  sectionTitle: string
+  contentDomain: string
+  total: number
+  correct: number
+  incorrect: number
+  omitted: number
+  accuracy: number
+  masteryLevel: 1 | 2 | 3 | 4 | 5
+  averageSeconds: number
+}
+
+export type EpExamResultDifficulty = {
+  sectionId: string
+  difficulty: string
+  total: number
+  correct: number
+  accuracy: number
+  averageSeconds: number
+}
+
+export type EpExamResult = {
+  schemaVersion: 'EP_REPORT_V1'
+  attemptId: string
+  status: 'COMPLETED'
+  completedAt: string
+  durationSeconds: number
+  totalScore: number
+  maximumScore: 1600
+  scoreRange: [number, number]
+  averageScore: number
+  percentile: number
+  correct: number
+  incorrect: number
+  omitted: number
+  accuracy: number
+  overview: string
+  sections: EpExamResultSection[]
+  modules: EpExamResultModule[]
+  domains: EpExamResultDomain[]
+  difficulties: EpExamResultDifficulty[]
+  questions: EpExamResultQuestion[]
+}
+
 export type EpTopicGroup = {
   id: number
   originTopicGroupId: string
@@ -145,9 +230,13 @@ export type EpExamQuestion = EpQuestion & {
   officialSkill: string
   teachingTopic: string
   difficulty: string
+  secondaryClassification?: string
   isScored: boolean
   maximumRawPoints: number
   responseType: 'MULTIPLE_CHOICE' | 'STUDENT_PRODUCED_RESPONSE'
+  stimulusMaterial?: unknown | null
+  attachments?: unknown[]
+  scoreDetail?: Record<string, unknown> | null
 }
 
 export type EpExam = {
@@ -162,7 +251,7 @@ export type EpExam = {
   overviewStatus: string
   totalCount: number
   questions: EpExamQuestion[]
-  result: unknown
+  result: EpExamResult | null
   submittedAt: string | null
   completedAt: string | null
 }
