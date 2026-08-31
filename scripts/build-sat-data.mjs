@@ -111,11 +111,45 @@ function answerValue(question) {
   return String(question.answer || '').trim()
 }
 
+const OFFICIAL_DOMAIN_WEIGHTS = Object.freeze({
+  'Craft and Structure': 28,
+  'Information and Ideas': 26,
+  'Standard English Conventions': 26,
+  'Expression of Ideas': 20,
+  Algebra: 35,
+  'Advanced Math': 35,
+  'Problem-Solving and Data Analysis': 15,
+  'Geometry and Trigonometry': 15,
+})
+
+const SECTION_MAX_DOMAIN_WEIGHT = Object.freeze({
+  'Reading and Writing': 28,
+  Math: 35,
+})
+
+const IMPORTANCE_MODEL_BASE = Object.freeze({
+  schemaVersion: 'SAT_TOPIC_IMPORTANCE_V1',
+  source: 'College Board Digital SAT operational question distribution + mapped SAT question bank frequency',
+  domainWeightContribution: 0.65,
+  topicFrequencyContribution: 0.35,
+  domainWeightNormalization: 'official domain weight / highest official domain weight in the same SAT section',
+  topicFrequencyNormalization: 'mapped topic question count / highest mapped topic question count in the same content domain',
+  thresholds: { core: 80, likely: 55, possible: 0 },
+  officialDomainWeights: OFFICIAL_DOMAIN_WEIGHTS,
+})
+
+function importancePriority(score) {
+  if (score >= IMPORTANCE_MODEL.thresholds.core) return 'CORE'
+  if (score >= IMPORTANCE_MODEL.thresholds.likely) return 'LIKELY'
+  return 'POSSIBLE'
+}
+
 const guideRows = parseCsv(await readFile(resolve(root, 'resources/sat-study-guides-flashcards.csv'), 'utf8'))
 const videoRows = parseCsv(await readFile(resolve(root, 'resources/sat-video-links.csv'), 'utf8'))
 const quizRows = parseCsv(await readFile(resolve(root, 'resources/sat-master-questions.csv'), 'utf8'))
 const mockOneRows = parseCsv(await readFile(resolve(root, 'resources/sat-mock-exam-1.csv'), 'utf8'))
 const mockTwoRows = parseCsv(await readFile(resolve(root, 'resources/sat-mock-exam-2.csv'), 'utf8'))
+const IMPORTANCE_MODEL = Object.freeze({ ...IMPORTANCE_MODEL_BASE, sourceQuestionCount: quizRows.length })
 
 const topics = guideRows
   .sort((left, right) => Number(left.order) - Number(right.order))
@@ -186,6 +220,31 @@ for (const row of quizRows) {
 }
 for (const topic of topics) topic.quizCount = questionsByTopic.get(topic.id).length
 
+const maximumTopicFrequencyByDomain = Object.fromEntries(
+  [...new Set(topics.map((topic) => topic.domain))].map((domain) => [domain, Math.max(...topics.filter((topic) => topic.domain === domain).map((topic) => topic.quizCount))]),
+)
+
+for (const topic of topics) {
+  const domainWeightPercent = OFFICIAL_DOMAIN_WEIGHTS[topic.domain]
+  const maximumSectionDomainWeight = SECTION_MAX_DOMAIN_WEIGHT[topic.section]
+  const maximumDomainTopicFrequency = maximumTopicFrequencyByDomain[topic.domain]
+  if (!domainWeightPercent || !maximumSectionDomainWeight || !maximumDomainTopicFrequency) throw new Error(`Missing importance inputs for ${topic.id}`)
+  const domainWeightIndex = domainWeightPercent / maximumSectionDomainWeight
+  const topicFrequencyIndex = topic.quizCount / maximumDomainTopicFrequency
+  const importanceScore = Math.round(100 * (
+    IMPORTANCE_MODEL.domainWeightContribution * domainWeightIndex
+    + IMPORTANCE_MODEL.topicFrequencyContribution * topicFrequencyIndex
+  ))
+  Object.assign(topic, {
+    domainWeightPercent,
+    mappedQuestionCount: topic.quizCount,
+    domainWeightIndex: Number(domainWeightIndex.toFixed(4)),
+    topicFrequencyIndex: Number(topicFrequencyIndex.toFixed(4)),
+    importanceScore,
+    priority: importancePriority(importanceScore),
+  })
+}
+
 const sectionMap = new Map()
 for (const topic of topics) {
   const key = `${topic.section}::${topic.domain}`
@@ -196,6 +255,7 @@ for (const topic of topics) {
 const manifest = {
   exam: 'Digital SAT',
   generatedFrom: 'SAT complete exam-prep materials',
+  importanceModel: IMPORTANCE_MODEL,
   totals: {
     topics: topics.length,
     flashcards: topics.reduce((total, topic) => total + topic.flashcards.length, 0),
@@ -243,6 +303,7 @@ const epPreparation = {
   metadata: {
     schemaVersion: 'EP_V2',
     totals: manifest.totals,
+    importanceModel: IMPORTANCE_MODEL,
     note: 'SAT package template generated from the complete Web exam-prep materials.',
   },
   language: 'en',
@@ -258,7 +319,8 @@ const epPreparation = {
       sectionId: group.examSection === 'Math' ? 'math' : 'reading-writing',
       sectionTitle: group.examSection,
       title: group.title,
-      relevanceScore: 100,
+      relevanceScore: Math.round(group.topicIds.reduce((sum, topicId) => sum + topics.find((topic) => topic.id === topicId).importanceScore, 0) / group.topicIds.length),
+      domainWeightPercent: OFFICIAL_DOMAIN_WEIGHTS[group.title],
       topics: group.topicIds.map((topicOriginId) => {
         const topic = topics.find((item) => item.id === topicOriginId)
         const storage = topicStorage.get(topicOriginId)
@@ -267,8 +329,13 @@ const epPreparation = {
           originTopicId: topic.id,
           title: topic.title,
           description: topic.summary,
-          relevanceScore: 100,
-          priority: 'CORE',
+          relevanceScore: topic.importanceScore,
+          importanceScore: topic.importanceScore,
+          domainWeightPercent: topic.domainWeightPercent,
+          mappedQuestionCount: topic.mappedQuestionCount,
+          domainWeightIndex: topic.domainWeightIndex,
+          topicFrequencyIndex: topic.topicFrequencyIndex,
+          priority: topic.priority,
         }
       }),
     })),
@@ -478,6 +545,8 @@ await writeFile(resolve(root, 'public/data/ep-v2/storage-contract.json'), JSON.s
   preparationToMockExam: ['epId', 'outlineId', 'packageId'],
   topicContentUniqueIndex: ['epId', 'outlineId', 'topicId', 'contentType'],
   contentTypes: ['studyGuide', 'flashCard', 'quiz'],
+  topicImportanceFields: ['importanceScore', 'priority', 'domainWeightPercent', 'mappedQuestionCount', 'domainWeightIndex', 'topicFrequencyIndex'],
+  importanceModel: IMPORTANCE_MODEL,
 }))
 const emptyOptions = quizRows.filter((row) => questionParts(row.questionText, row.answer).options.length < 2).length
 const report = {
@@ -492,5 +561,11 @@ const report = {
   topicsWithoutVideo: topics.filter((topic) => !topic.video.url).length,
   topicsWithoutStudyGuide: topics.filter((topic) => !Object.keys(topic.studyGuide || {}).length).length,
   topicsWithoutFlashcards: topics.filter((topic) => !topic.flashcards.length).length,
+  topicImportance: {
+    scoreRange: [Math.min(...topics.map((topic) => topic.importanceScore)), Math.max(...topics.map((topic) => topic.importanceScore))],
+    priorities: Object.fromEntries(['CORE', 'LIKELY', 'POSSIBLE'].map((priority) => [priority, topics.filter((topic) => topic.priority === priority).length])),
+    sourceQuestionCount: quizRows.length,
+    mappedQuestionCount: quizRows.length - unmatched.length,
+  },
 }
 console.log(JSON.stringify(report, null, 2))

@@ -1535,6 +1535,9 @@
     .course-weak-row { display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:10px; padding:10px 11px; border-radius:11px; background:var(--surface-soft); }
     .course-weak-row strong { font-size:10px; }
     .course-weak-row span { color:#c46c14; font-size:9px; font-weight:720; }
+    .course-weak-row span.core { color:#f2385a; }
+    .course-weak-row span.likely { color:#f26522; }
+    .course-weak-row span.possible { color:#b98200; }
     .course-overview-waterfall { width:100%; display:grid; gap:14px; }
     .course-overview-waterfall .course-hub-card + .course-hub-card { margin-top:0; }
 
@@ -1565,7 +1568,7 @@
     .study-topic-copy strong { display:block; overflow:hidden; color:var(--text); font-size:13px; line-height:1.35; text-overflow:ellipsis; white-space:nowrap; }
     .study-topic-copy > span { display:block; overflow:hidden; margin-top:5px; color:var(--muted); font-size:9px; text-overflow:ellipsis; white-space:nowrap; }
     .study-topic-meta { min-width:0; display:flex; align-items:center; gap:8px; margin-top:8px; }
-    .study-topic-meta > span:last-child { overflow:hidden; color:var(--muted); font-size:8px; text-overflow:ellipsis; white-space:nowrap; }
+    .study-topic-meta > span:not(.study-topic-importance) { overflow:hidden; color:var(--muted); font-size:8px; text-overflow:ellipsis; white-space:nowrap; }
     .study-topic-importance { min-height:22px; display:inline-flex; align-items:center; padding:0 8px; border-radius:7px; font-size:8px; font-weight:760; white-space:nowrap; }
     .study-topic-importance.core { background:#fff0f3; color:#f2385a; }
     .study-topic-importance.likely { background:#fff1e6; color:#f26522; }
@@ -1593,6 +1596,7 @@
     .study-topic-popover-head span.likely { background:#fff1e6; color:#f26522; }
     .study-topic-popover-head span.possible { background:#fff8d9; color:#c98700; }
     .study-topic-popover > p { margin:11px 0 17px; color:var(--muted); font-size:10px; line-height:1.55; }
+    .study-topic-popover > p.study-topic-importance-detail { margin:-10px 0 14px; color:#73839a; font-size:8px; font-weight:650; }
     .study-topic-popover > small { display:block; margin-bottom:8px; color:var(--muted); font-size:8px; font-weight:760; letter-spacing:.09em; text-transform:uppercase; }
     .study-topic-actions { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:7px; }
     .study-topic-tool { min-width:0; min-height:58px; display:grid; align-content:center; justify-items:start; gap:7px; padding:9px 10px; border:1px solid var(--line); border-radius:10px; background:var(--surface); color:#147ef5; font-size:9px; font-weight:730; text-align:left; cursor:pointer; }

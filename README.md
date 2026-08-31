@@ -23,6 +23,26 @@ The shared join keys are `packageId`, `epId`, `outlineId`, `topicGroupId`, and `
 
 `src/data/satData.ts` is the Web adapter over this contract. A production integration can replace its static `fetch` calls with `/ep/detail`, `/ep/outline`, `/ep/outline/topic/learn`, and `/ep/exam` without changing the views. `public/data/sat` remains a generated legacy fixture for compatibility, but is no longer the active page data source.
 
+## SAT topic importance model
+
+`npm run build:data` generates every Topic's importance metadata from one reproducible model (`SAT_TOPIC_IMPORTANCE_V1`):
+
+```text
+importanceScore = 100 × (
+  0.65 × officialDomainWeightIndex
+  + 0.35 × mappedTopicFrequencyIndex
+)
+```
+
+- `officialDomainWeightIndex` is the College Board domain weight divided by the highest domain weight in the same SAT section.
+- `mappedTopicFrequencyIndex` is the Topic's mapped question count divided by the largest Topic count in the same content domain.
+- `CORE` is 80–100, `LIKELY` is 55–79, and `POSSIBLE` is 0–54.
+- Official weights: Reading and Writing = Craft and Structure 28%, Information and Ideas 26%, Standard English Conventions 26%, Expression of Ideas 20%; Math = Algebra 35%, Advanced Math 35%, Problem-Solving and Data Analysis 15%, Geometry and Trigonometry 15%.
+
+The generated Topic fields are `importanceScore`, `priority`, `domainWeightPercent`, `mappedQuestionCount`, `domainWeightIndex`, and `topicFrequencyIndex`. The complete model and thresholds are also stored in `epPreparation.metadata.importanceModel` and `storage-contract.json`, so iOS and Web can consume the same payload without duplicating scoring rules.
+
+Official references: [Reading and Writing specifications](https://satsuite.collegeboard.org/k12-educators/about/alignment/reading) and [Math specifications](https://satsuite.collegeboard.org/k12-educators/about/alignment/math).
+
 ## Experience scope
 
 - `/` — SAT exam-prep overview, current exam blueprint, 100-topic breakdown, and two mock-exam entries

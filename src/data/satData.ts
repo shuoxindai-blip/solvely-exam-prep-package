@@ -50,6 +50,11 @@ export function loadSatManifest() {
         atomicTopic: topic.title,
         atomicTopicZh: '',
         strategyName: group.title,
+        domainWeightPercent: topic.domainWeightPercent,
+        mappedQuestionCount: topic.mappedQuestionCount,
+        domainWeightIndex: topic.domainWeightIndex,
+        topicFrequencyIndex: topic.topicFrequencyIndex,
+        importanceScore: topic.importanceScore,
         priority: topic.priority,
         flashcardCount: documents.find((document) => document.contentType === 'flashCard')?.totalCount ?? 0,
         quizCount: documents.find((document) => document.contentType === 'quiz')?.totalCount ?? 0,
@@ -59,6 +64,7 @@ export function loadSatManifest() {
     return {
       exam: preparation.exam,
       generatedFrom: `${preparation.metadata.schemaVersion} / epPreparations + epTopicContents + epExams`,
+      importanceModel: preparation.metadata.importanceModel,
       totals: preparation.metadata.totals,
       sections: preparation.outline.topicGroups.map((group) => ({
         id: group.originTopicGroupId,

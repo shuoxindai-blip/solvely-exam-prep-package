@@ -12,23 +12,6 @@ import type {
 
 export type SatReportReviewQuestion = EpExamQuestion & EpExamResultQuestion
 
-export type SatImprovePriority = 'CORE' | 'LIKELY' | 'POSSIBLE'
-
-export type SatImproveTopic = {
-  id: string
-  sectionId: 'math' | 'reading-writing'
-  sectionTitle: 'Math' | 'Reading and Writing'
-  contentDomain: string
-  title: string
-  description: string
-  probability: number
-  priority: SatImprovePriority
-  accuracy: number
-  attempts: number
-  averageSeconds: number
-  state: 'REVIEW' | 'CONTINUE' | 'PRACTICE'
-}
-
 const incorrectIndexes = new Set(Array.from({ length: 20 }, (_, index) => 1 + index * 4))
 
 function statusFor(index: number): EpReportQuestionStatus {
@@ -164,14 +147,3 @@ export function buildReviewQuestions(exam: EpExam, report: EpExamResult): SatRep
   const results = new Map(report.questions.map((question) => [question.questionId, question]))
   return exam.questions.map((question) => ({ ...question, ...(results.get(question.id) as EpExamResultQuestion) }))
 }
-
-export const satImproveTopics: SatImproveTopic[] = [
-  { id: 'math-advanced-equivalent', sectionId: 'math', sectionTitle: 'Math', contentDomain: 'Advanced Math', title: 'Equivalent transformations of exponential, radical, and rational expressions', description: 'Rewrite nonlinear expressions efficiently and choose equivalent forms.', probability: 96, priority: 'CORE', accuracy: 43, attempts: 7, averageSeconds: 108, state: 'REVIEW' },
-  { id: 'math-advanced-nonlinear', sectionId: 'math', sectionTitle: 'Math', contentDomain: 'Advanced Math', title: 'Solving nonlinear equations in one variable', description: 'Factor, complete the square, and validate solutions to nonlinear equations.', probability: 92, priority: 'CORE', accuracy: 50, attempts: 6, averageSeconds: 104, state: 'PRACTICE' },
-  { id: 'math-data-ratios', sectionId: 'math', sectionTitle: 'Math', contentDomain: 'Problem-Solving and Data Analysis', title: 'Ratios, unit rates, proportions, and scales', description: 'Translate real-world relationships into proportional models.', probability: 89, priority: 'LIKELY', accuracy: 57, attempts: 7, averageSeconds: 97, state: 'CONTINUE' },
-  { id: 'math-data-two-variable', sectionId: 'math', sectionTitle: 'Math', contentDomain: 'Problem-Solving and Data Analysis', title: 'Interpreting two-variable data', description: 'Read scatterplots, lines of best fit, and model predictions.', probability: 81, priority: 'LIKELY', accuracy: 60, attempts: 5, averageSeconds: 91, state: 'PRACTICE' },
-  { id: 'math-geometry-circles', sectionId: 'math', sectionTitle: 'Math', contentDomain: 'Geometry and Trigonometry', title: 'Circle equations, arcs, and sectors', description: 'Connect circle geometry with coordinate equations and angle relationships.', probability: 76, priority: 'POSSIBLE', accuracy: 50, attempts: 4, averageSeconds: 102, state: 'PRACTICE' },
-  { id: 'rw-conventions-boundaries', sectionId: 'reading-writing', sectionTitle: 'Reading and Writing', contentDomain: 'Standard English Conventions', title: 'Sentence boundaries and punctuation', description: 'Repair fragments, fused sentences, and comma splices.', probability: 95, priority: 'CORE', accuracy: 55, attempts: 11, averageSeconds: 67, state: 'REVIEW' },
-  { id: 'rw-evidence-quantitative', sectionId: 'reading-writing', sectionTitle: 'Reading and Writing', contentDomain: 'Information and Ideas', title: 'Command of Evidence — Quantitative', description: 'Connect claims to the strongest evidence in tables and graphs.', probability: 88, priority: 'LIKELY', accuracy: 58, attempts: 12, averageSeconds: 76, state: 'CONTINUE' },
-  { id: 'rw-craft-cross-text', sectionId: 'reading-writing', sectionTitle: 'Reading and Writing', contentDomain: 'Craft and Structure', title: 'Cross-text connections', description: 'Compare claims, evidence, and author responses across paired texts.', probability: 79, priority: 'POSSIBLE', accuracy: 61, attempts: 8, averageSeconds: 83, state: 'PRACTICE' },
-]

@@ -31,7 +31,12 @@ export type SatTopic = {
   atomicTopic: string
   atomicTopicZh: string
   strategyName: string
-  priority: 'CORE' | 'LIKELY'
+  domainWeightPercent: number
+  mappedQuestionCount: number
+  domainWeightIndex: number
+  topicFrequencyIndex: number
+  importanceScore: number
+  priority: 'CORE' | 'LIKELY' | 'POSSIBLE'
   flashcardCount: number
   quizCount: number
 }
@@ -46,6 +51,17 @@ export type SatSection = {
 export type SatManifest = {
   exam: string
   generatedFrom: string
+  importanceModel: {
+    schemaVersion: 'SAT_TOPIC_IMPORTANCE_V1'
+    source: string
+    sourceQuestionCount: number
+    domainWeightContribution: number
+    topicFrequencyContribution: number
+    domainWeightNormalization: string
+    topicFrequencyNormalization: string
+    thresholds: { core: number; likely: number; possible: number }
+    officialDomainWeights: Record<string, number>
+  }
   totals: { topics: number; flashcards: number; quizQuestions: number; mappedQuizQuestions: number; mockExams: number }
   sections: SatSection[]
   topics: SatTopic[]

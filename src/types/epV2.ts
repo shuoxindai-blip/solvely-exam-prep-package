@@ -9,7 +9,12 @@ export type EpOutlineTopic = {
   title: string
   description: string
   relevanceScore: number
-  priority: 'CORE' | 'LIKELY'
+  importanceScore: number
+  domainWeightPercent: number
+  mappedQuestionCount: number
+  domainWeightIndex: number
+  topicFrequencyIndex: number
+  priority: 'CORE' | 'LIKELY' | 'POSSIBLE'
 }
 
 export type EpReportQuestionStatus = 'CORRECT' | 'INCORRECT' | 'OMITTED'
@@ -104,7 +109,20 @@ export type EpTopicGroup = {
   sectionTitle: string
   title: string
   relevanceScore: number
+  domainWeightPercent: number
   topics: EpOutlineTopic[]
+}
+
+export type EpTopicImportanceModel = {
+  schemaVersion: 'SAT_TOPIC_IMPORTANCE_V1'
+  source: string
+  sourceQuestionCount: number
+  domainWeightContribution: number
+  topicFrequencyContribution: number
+  domainWeightNormalization: string
+  topicFrequencyNormalization: string
+  thresholds: { core: number; likely: number; possible: number }
+  officialDomainWeights: Record<string, number>
 }
 
 export type EpPreparation = {
@@ -120,6 +138,7 @@ export type EpPreparation = {
   metadata: {
     schemaVersion: 'EP_V2'
     totals: { topics: number; flashcards: number; quizQuestions: number; mappedQuizQuestions: number; mockExams: number }
+    importanceModel: EpTopicImportanceModel
     note: string
   }
   language: string
