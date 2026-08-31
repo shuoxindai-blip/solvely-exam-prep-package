@@ -432,9 +432,27 @@ onBeforeUnmount(() => document.body.classList.remove('package-route', 'dark'))
       </div>
 
       <section v-else class="course-workspace" aria-labelledby="courseWorkspaceTitle">
-        <button class="course-back" type="button" @click="closeCourse"><svg class="icon"><use href="#i-chevron"/></svg><span>Back to courses</span></button>
-        <header class="course-package-hero"><div class="course-package-copy"><h1 id="courseWorkspaceTitle">SAT Prep 2026</h1><p>A focused SAT Prep 2026 plan with topic study tools, realistic mock exams, score reports, and targeted improvement.</p><div class="course-package-metrics"><span class="course-package-metric"><svg class="icon"><use href="#i-book"/></svg><span><strong>100</strong> video lessons</span></span><span class="course-package-metric"><svg class="icon"><use href="#i-grid"/></svg><span><strong>3,879</strong> practice questions</span></span><span class="course-package-metric"><svg class="icon"><use href="#i-exam"/></svg><span><strong>1</strong> full-length practice test with score analysis</span></span></div></div><aside class="course-progress-summary" aria-label="Course progress"><span class="course-progress-watermark" aria-hidden="true">{{ courseProgressPercent }}</span><div class="course-progress-value"><strong>{{ courseProgressPercent }}%</strong><span>Course Progress</span></div><div class="course-progress-track" role="progressbar" aria-label="Course progress" aria-valuemin="0" aria-valuemax="100" :aria-valuenow="courseProgressPercent"><i :style="{ width: `${courseProgressPercent}%` }"/></div></aside></header>
-        <nav class="course-package-tabs" role="tablist" aria-label="Course sections"><button v-for="tab in ([['overview','Overview'],['study','Lessons'],['mock','Practice Tests'],['results','Results & Improve']] as [CourseTab,string][])" :key="tab[0]" class="course-package-tab" type="button" role="tab" :aria-selected="activeTab === tab[0]" @click="selectTab(tab[0])">{{ tab[1] }}</button></nav>
+        <header class="course-package-hero">
+          <span class="course-package-art" aria-hidden="true"><i/><i/><i/></span>
+          <button class="course-back" type="button" @click="closeCourse"><svg class="icon"><use href="#i-chevron"/></svg><span>Back to courses</span></button>
+          <div class="course-package-hero-main">
+            <div class="course-package-copy">
+              <h1 id="courseWorkspaceTitle">SAT Prep 2026</h1>
+              <p>A focused SAT Prep 2026 plan with topic study tools, realistic mock exams, score reports, and targeted improvement.</p>
+              <div class="course-package-metrics">
+                <span class="course-package-metric"><svg class="icon"><use href="#i-book"/></svg><span><strong>100</strong> video lessons</span></span>
+                <span class="course-package-metric"><svg class="icon"><use href="#i-grid"/></svg><span><strong>3,879</strong> practice questions</span></span>
+                <span class="course-package-metric"><svg class="icon"><use href="#i-exam"/></svg><span><strong>1</strong> full-length practice test with score analysis</span></span>
+              </div>
+            </div>
+            <aside class="course-progress-summary" aria-label="Course progress">
+              <span class="course-progress-watermark" aria-hidden="true">{{ courseProgressPercent }}</span>
+              <div class="course-progress-value"><strong>{{ courseProgressPercent }}%</strong><span>Course Progress</span></div>
+              <div class="course-progress-track" role="progressbar" aria-label="Course progress" aria-valuemin="0" aria-valuemax="100" :aria-valuenow="courseProgressPercent"><i :style="{ width: `${courseProgressPercent}%` }"/></div>
+            </aside>
+          </div>
+          <nav class="course-package-tabs" role="tablist" aria-label="Course sections"><button v-for="tab in ([['overview','Overview'],['study','Lessons'],['mock','Practice Tests'],['results','Results & Improve']] as [CourseTab,string][])" :key="tab[0]" class="course-package-tab" type="button" role="tab" :aria-selected="activeTab === tab[0]" @click="selectTab(tab[0])">{{ tab[1] }}</button></nav>
+        </header>
         <div class="course-package-panel" role="tabpanel" aria-live="polite">
           <div v-if="activeTab === 'overview'" class="course-overview-waterfall">
             <ol v-if="!isCourseStarted" class="course-start-path" aria-label="Your SAT prep path">
