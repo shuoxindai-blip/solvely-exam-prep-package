@@ -11,6 +11,9 @@ type CourseTab = 'overview' | 'study' | 'mock' | 'results'
 type ResultView = 'score' | 'review' | 'improve'
 type ReviewFilter = 'ALL' | 'INCORRECT' | 'CORRECT' | 'OMITTED'
 type Course = { family: string; label: string; title: string; topics: string; videos: string; questions: string; search: string }
+type LastActivity =
+  | { kind: 'learning'; examTitle: string; sectionTitle: string; itemTitle: string; resourceLabel: string; progressPercent: number; topicId: string }
+  | { kind: 'exam'; examTitle: string; sectionTitle: string; itemTitle: string; moduleLabel: string; answered: number; total: number; examId: number }
 
 const route = useRoute()
 const router = useRouter()
@@ -30,7 +33,12 @@ const reviewFilter = ref<ReviewFilter>('ALL')
 const reviewLimit = ref(6)
 const improveSection = ref<'math' | 'reading-writing'>('math')
 const improvePriority = ref<'ALL' | SatTopic['priority']>('ALL')
+const lastActivity = ref<LastActivity>({ kind: 'learning', examTitle: 'SAT Prep 2026', sectionTitle: 'Advanced Math', itemTitle: 'Expansion, factoring, and completing the square', resourceLabel: 'Study Guide', progressPercent: 62, topicId: 'sat_math_advanced_equivalent_expressions_01' })
 const isCourseOpen = computed(() => route.hash === '#course-0')
+const lastActivityDetail = computed(() => lastActivity.value.kind === 'learning'
+  ? `${lastActivity.value.sectionTitle} · ${lastActivity.value.resourceLabel} · ${lastActivity.value.progressPercent}% complete`
+  : `${lastActivity.value.sectionTitle} · ${lastActivity.value.moduleLabel} · ${lastActivity.value.answered} of ${lastActivity.value.total} answered`)
+const lastActivityCta = computed(() => lastActivity.value.kind === 'learning' ? 'Continue learning' : 'Resume exam')
 
 const resultReport = computed(() => resultExam.value ? buildSatReport(resultExam.value) : null)
 const reportQuestions = computed(() => resultExam.value && resultReport.value ? buildReviewQuestions(resultExam.value, resultReport.value) : [])
@@ -155,7 +163,10 @@ function closeCourse() { void router.push({ name: 'package' }) }
 function selectTab(tab: CourseTab) { activeTab.value = tab; window.scrollTo({ top: 0, behavior: 'smooth' }) }
 function toggleSection(id: string) { const next = new Set(collapsedSections.value); next.has(id) ? next.delete(id) : next.add(id); collapsedSections.value = next }
 function openTopic(topic: SatTopic, tool: 'study-guide' | 'flashcards' | 'quiz') { void router.push({ name: tool, params: { topicId: topic.id } }) }
-function resumeStudy() { void router.push({ name: 'study-guide', params: { topicId: 'sat_math_advanced_equivalent_expressions_01' } }) }
+function resumeLastActivity() {
+  if (lastActivity.value.kind === 'learning') void router.push({ name: 'study-guide', params: { topicId: lastActivity.value.topicId } })
+  else startMockExam(lastActivity.value.examId)
+}
 function continueOverviewStudy() { void router.push({ name: 'study-guide', params: { topicId: 'sat_math_algebra_systems_linear_01' } }) }
 function startMockExam(examId: number) { void router.push({ name: 'mock-exam', params: { examId } }) }
 function toggleTheme() { document.body.classList.toggle('dark') }
@@ -259,7 +270,7 @@ onBeforeUnmount(() => document.body.classList.remove('package-route', 'dark'))
           <button class="example-card feature-card sample-disabled" type="button" disabled><span class="example-meta"><span>Assess</span><svg class="icon"><use href="#i-target"/></svg></span><h3>Progress tracking</h3><div class="example-preview exam-feature-visual exam-result-shell"><div class="exam-result-progress"><i/></div><section class="exam-result-summary"><h4>FINAL Exam: Biology 101</h4><div class="exam-result-stats"><span>Points: <strong>21 / 26</strong></span><span>Percentage: <strong>81%</strong></span></div><div class="exam-result-analysis"><strong>Final exam analysis</strong><span>You demonstrated strong understanding of cell structure, genetics, and ecology.</span></div></section><section class="exam-result-question"><small>Multiple Choice · 1/26</small><h5>Where does the electron transport chain occur?</h5><div class="exam-result-answer wrong">A. Cytoplasm</div><div class="exam-result-answer correct">D. Inner mitochondrial membrane</div></section></div></button>
         </div></section>
 
-        <section class="exam-catalog" aria-labelledby="examCatalogTitle"><div class="exam-catalog-heading"><div><h2 id="examCatalogTitle">Standardized test courses</h2></div><p>Topic study, mock exams, results, and targeted improvement.</p></div><section class="diagnostic-entry jump-back-entry" aria-labelledby="jumpBackTitle"><div class="diagnostic-entry-copy"><div class="diagnostic-entry-meta"><span>JUMP BACK IN</span><span>62% COMPLETE</span></div><h3 id="jumpBackTitle">Continue Expansion, factoring, and completing the square</h3><p>Pick up your Study Guide in Advanced Math, then reinforce the topic with flashcards and targeted practice.</p></div><button class="diagnostic-entry-button" type="button" @click="resumeStudy">Continue study guide<svg class="icon"><use href="#i-chevron"/></svg></button></section><div class="exam-catalog-toolbar"><label class="exam-search-wrap"><svg class="icon"><use href="#i-search"/></svg><input v-model="searchQuery" aria-label="Search standardized exam courses" placeholder="Search SAT, ACT, AP, Abitur..." /></label><label class="exam-filter-wrap"><span class="sr-only">Filter exam packages</span><select v-model="familyFilter" aria-label="Filter exam packages"><option value="all">All courses</option><option value="sat">SAT</option><option value="act">ACT</option><option value="ap">AP</option><option value="abitur">Abitur</option></select><svg class="icon"><use href="#i-chevron"/></svg></label></div><div class="course-grid" aria-label="Pre-made exam courses"><button v-for="course in filteredCourses" :key="course.title" :class="['course-card',{ 'sample-course':course.family !== 'sat' }]" type="button" :disabled="course.family !== 'sat'" :aria-label="course.family === 'sat' ? `Open ${course.title} course` : `${course.title} sample unavailable`" @click="openCourse(course)"><span class="course-family">{{ course.label }}</span><h3>{{ course.title }}</h3><p>{{ course.topics }} topics · {{ course.videos }} video lessons<br>{{ course.questions }} practice questions</p><span class="course-stats"><span>Full test</span><span>Score insights</span></span></button></div><p v-if="!filteredCourses.length" class="course-empty">No matching courses. Try another exam name.</p></section>
+        <section class="exam-catalog" aria-labelledby="examCatalogTitle"><div class="exam-catalog-heading"><div><h2 id="examCatalogTitle">Standardized test courses</h2></div><p>Topic study, mock exams, results, and targeted improvement.</p></div><section class="diagnostic-entry jump-back-entry" aria-labelledby="jumpBackTitle"><div class="diagnostic-entry-copy"><div class="diagnostic-entry-meta"><span>JUMP BACK IN</span><span>{{ lastActivity.examTitle }}</span></div><h3 id="jumpBackTitle">{{ lastActivity.itemTitle }}</h3><p>{{ lastActivityDetail }}</p></div><button class="diagnostic-entry-button" type="button" @click="resumeLastActivity">{{ lastActivityCta }}</button></section><div class="exam-catalog-toolbar"><label class="exam-search-wrap"><svg class="icon"><use href="#i-search"/></svg><input v-model="searchQuery" aria-label="Search standardized exam courses" placeholder="Search SAT, ACT, AP, Abitur..." /></label><label class="exam-filter-wrap"><span class="sr-only">Filter exam packages</span><select v-model="familyFilter" aria-label="Filter exam packages"><option value="all">All courses</option><option value="sat">SAT</option><option value="act">ACT</option><option value="ap">AP</option><option value="abitur">Abitur</option></select><svg class="icon"><use href="#i-chevron"/></svg></label></div><div class="course-grid" aria-label="Pre-made exam courses"><button v-for="course in filteredCourses" :key="course.title" :class="['course-card',{ 'sample-course':course.family !== 'sat' }]" type="button" :disabled="course.family !== 'sat'" :aria-label="course.family === 'sat' ? `Open ${course.title} course` : `${course.title} sample unavailable`" @click="openCourse(course)"><span class="course-family">{{ course.label }}</span><h3>{{ course.title }}</h3><p>{{ course.topics }} topics · {{ course.videos }} video lessons<br>{{ course.questions }} practice questions</p><span class="course-stats"><span>Full test</span><span>Score insights</span></span></button></div><p v-if="!filteredCourses.length" class="course-empty">No matching courses. Try another exam name.</p></section>
       </div>
 
       <section v-else class="course-workspace" aria-labelledby="courseWorkspaceTitle">
