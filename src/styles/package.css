@@ -1869,9 +1869,9 @@
     .review-question-navigator > footer i.omitted { background:#dfe3e9; }
     .review-question-detail { min-width:0; display:grid; gap:14px; padding:21px; border:1px solid var(--line); border-radius:18px; background:var(--surface); }
     .review-question-header { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
-    .review-question-identity span,.review-question-identity strong { display:block; }
-    .review-question-identity span { color:var(--muted); font-size:8px; }
-    .review-question-identity strong { margin-top:4px; font-size:10px; }
+    .review-question-identity { display:grid; gap:5px; }
+    .review-question-identity strong { font-size:11px; }
+    .review-question-identity span { color:var(--muted); font-size:8px; font-weight:620; }
     .review-question-tags { display:flex; flex-wrap:wrap; justify-content:flex-end; gap:4px; }
     .review-question-tags span,.review-question-tags em { padding:4px 6px; border-radius:5px; background:var(--surface-soft); color:var(--muted); font-size:7px; font-style:normal; font-weight:670; }
     .review-question-tags em.correct { background:#e7f9f0; color:#16865d; }
@@ -1910,10 +1910,6 @@
     .review-skill-panel strong { font-size:10px; }
     .review-skill-panel p { margin:0; overflow:hidden; color:var(--muted); font-size:8px; text-overflow:ellipsis; white-space:nowrap; }
     .review-skill-panel button { flex:0 0 auto; min-height:33px; padding:0 12px; border:1px solid #087bf1; border-radius:999px; background:#087bf1; color:#fff; font-size:8px; font-weight:700; cursor:pointer; }
-    .review-data-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:1px; margin:0; overflow:hidden; border:1px solid var(--line); border-radius:11px; background:var(--line); }
-    .review-data-grid div { min-width:0; padding:10px 11px; background:#fbfcfe; }
-    .review-data-grid dt { color:var(--muted); font-size:7px; text-transform:uppercase; }
-    .review-data-grid dd { margin:3px 0 0; overflow:hidden; font-size:8px; font-weight:620; line-height:1.35; text-overflow:ellipsis; }
     .review-detail-pagination { display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:10px; padding-top:2px; }
     .review-detail-pagination button { min-height:34px; padding:0 12px; border:1px solid #d6e5f6; border-radius:999px; background:#f3f8fe; color:#087bf1; font-size:8px; font-weight:690; cursor:pointer; }
     .review-detail-pagination button:last-child { justify-self:end; }
@@ -1999,11 +1995,9 @@
       .review-question-header,.review-skill-panel { align-items:flex-start; flex-direction:column; }
       .review-question-tags { justify-content:flex-start; }
       .review-skill-panel button { width:100%; }
-      .review-data-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
       .review-detail-pagination { grid-template-columns:repeat(2,minmax(0,1fr)); }
       .review-detail-pagination span { grid-column:1/-1; grid-row:1; }
       .report-confidence-chart { height:220px; }
-      .review-data-grid { grid-template-columns:1fr; }
       .improve-section-switch { width:100%; }
       .improve-section-switch button { flex:1; }
       .improve-priority-tabs { overflow-x:auto; }

@@ -250,7 +250,6 @@ function formatReportDuration(seconds: number) {
   return `${hours}h ${minutes}m`
 }
 function formatReportDate(value: string) { return new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).format(new Date(value)) }
-function reviewTypeLabel(question: SatReportReviewQuestion) { return question.responseType === 'STUDENT_PRODUCED_RESPONSE' ? 'Student-produced response' : 'Multiple choice' }
 function reviewStatusLabel(status: ReviewFilter) { return status === 'OMITTED' ? 'Unanswered' : status.charAt(0) + status.slice(1).toLowerCase() }
 function priorityLabel(priority: SatTopic['priority']) { return priority.charAt(0) + priority.slice(1).toLowerCase() }
 
@@ -466,7 +465,7 @@ onBeforeUnmount(() => document.body.classList.remove('package-route', 'dark'))
                   <header><div><span>Question map</span><strong>{{ filteredReviewQuestions.length }} shown</strong></div><small>Choose a question to review</small></header>
                   <div class="review-question-groups">
                     <section v-for="group in reviewQuestionGroups" :key="group.key" class="review-question-group">
-                      <header><div><strong>{{ group.sectionTitle }}</strong><span>{{ group.module }}</span></div><em>{{ group.route }} path</em></header>
+                      <header><div><strong>{{ group.sectionTitle }}</strong><span>{{ group.module }}</span></div></header>
                       <div class="review-question-number-grid">
                         <button v-for="question in group.questions" :key="question.questionId" type="button" :class="[question.status.toLowerCase(), { active: selectedReviewQuestion.questionId === question.questionId }]" :aria-label="`Question ${question.index + 1}, ${reviewStatusLabel(question.status)}`" :aria-current="selectedReviewQuestion.questionId === question.questionId ? 'true' : undefined" @click="selectedReviewQuestionId = question.questionId">{{ question.index + 1 }}</button>
                       </div>
@@ -477,7 +476,7 @@ onBeforeUnmount(() => document.body.classList.remove('package-route', 'dark'))
 
                 <article class="review-question-detail">
                   <header class="review-question-header">
-                    <div class="review-question-identity"><span>{{ reviewTypeLabel(selectedReviewQuestion) }}</span><strong>Question {{ selectedReviewQuestion.index + 1 }}</strong></div>
+                    <div class="review-question-identity"><strong>Question {{ selectedReviewQuestion.index + 1 }}</strong><span>Time spent · {{ selectedReviewQuestion.timeSpentSeconds ? formatReportTime(selectedReviewQuestion.timeSpentSeconds) : '—' }}</span></div>
                     <div class="review-question-tags"><span>{{ selectedReviewQuestion.sectionTitle }}</span><span>{{ selectedReviewQuestion.module }}</span><span>{{ selectedReviewQuestion.difficulty }}</span><em :class="selectedReviewQuestion.status.toLowerCase()">{{ reviewStatusLabel(selectedReviewQuestion.status) }}</em></div>
                   </header>
                   <h3>{{ selectedReviewQuestion.stem }}</h3>
@@ -490,7 +489,6 @@ onBeforeUnmount(() => document.body.classList.remove('package-route', 'dark'))
                     <div><span>Skill to review</span><strong>{{ selectedReviewQuestion.officialSkill }}</strong><p>{{ selectedReviewQuestion.contentDomain }} · {{ reviewTopicTitle(selectedReviewQuestion) }}</p></div>
                     <button type="button" @click="practiceReviewQuestion(selectedReviewQuestion)">Practice this topic</button>
                   </section>
-                  <dl class="review-data-grid"><div><dt>Time spent</dt><dd>{{ selectedReviewQuestion.timeSpentSeconds ? formatReportTime(selectedReviewQuestion.timeSpentSeconds) : '—' }}</dd></div><div><dt>Route</dt><dd>{{ selectedReviewQuestion.route }} path</dd></div><div><dt>Response type</dt><dd>{{ reviewTypeLabel(selectedReviewQuestion) }}</dd></div><div><dt>Scoring</dt><dd>{{ selectedReviewQuestion.isScored ? 'Scored' : 'Unscored' }} · {{ selectedReviewQuestion.maximumRawPoints }} raw point</dd></div></dl>
                   <footer class="review-detail-pagination"><button type="button" :disabled="selectedReviewQuestionPosition <= 0" @click="moveReviewQuestion(-1)">← Previous</button><span>{{ selectedReviewQuestionPosition + 1 }} of {{ filteredReviewQuestions.length }} in this view</span><button type="button" :disabled="selectedReviewQuestionPosition >= filteredReviewQuestions.length - 1" @click="moveReviewQuestion(1)">Next →</button></footer>
                 </article>
               </div>
