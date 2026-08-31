@@ -98,6 +98,19 @@ function compactQuestion(row) {
   }
 }
 
+function optionRecord(options) {
+  return Object.fromEntries(options.map((option, index) => [String.fromCharCode(65 + index), option]))
+}
+
+function epResponseType(options) {
+  return options.length ? 'MULTIPLE_CHOICE' : 'STUDENT_PRODUCED_RESPONSE'
+}
+
+function answerValue(question) {
+  if (question.options.length && question.correctIndex >= 0) return String.fromCharCode(65 + question.correctIndex)
+  return String(question.answer || '').trim()
+}
+
 const guideRows = parseCsv(await readFile(resolve(root, 'resources/sat-study-guides-flashcards.csv'), 'utf8'))
 const videoRows = parseCsv(await readFile(resolve(root, 'resources/sat-video-links.csv'), 'utf8'))
 const quizRows = parseCsv(await readFile(resolve(root, 'resources/sat-master-questions.csv'), 'utf8'))
@@ -194,6 +207,205 @@ const manifest = {
   topics,
 }
 
+const EP_ID = 100001
+const OUTLINE_ID = 100002
+const PACKAGE_ID = 2001
+const generatedAt = '2026-08-31T00:00:00.000Z'
+const storageGroups = [...sectionMap.values()].map((section, index) => ({
+  ...section,
+  storageId: 110001 + index,
+}))
+const topicStorage = new Map()
+topics.forEach((topic, index) => {
+  const group = storageGroups.find((item) => item.topicIds.includes(topic.id))
+  topicStorage.set(topic.id, {
+    topicId: 120001 + index,
+    topicGroupId: group.storageId,
+    group,
+  })
+})
+
+const epPreparation = {
+  _id: EP_ID,
+  deviceId: '__EP_PACKAGE_TEMPLATE__',
+  platform: 'system',
+  packageId: PACKAGE_ID,
+  exam: 'SAT',
+  examCode: 'SAT',
+  subject: 'SAT',
+  course: { id: null, schoolId: null, name: 'SAT Prep 2026', code: 'SAT' },
+  type: 'PUBLIC-EXAM',
+  examDate: '',
+  days: null,
+  resources: [],
+  questionIds: [],
+  instructions: '',
+  metadata: {
+    schemaVersion: 'EP_V2',
+    totals: manifest.totals,
+    note: 'SAT package template generated from the complete Web exam-prep materials.',
+  },
+  language: 'en',
+  country: 'US',
+  region: '',
+  deletedAt: null,
+  outline: {
+    outlineId: OUTLINE_ID,
+    status: 'READY',
+    topicGroups: storageGroups.map((group) => ({
+      id: group.storageId,
+      originTopicGroupId: group.id,
+      sectionId: group.examSection === 'Math' ? 'math' : 'reading-writing',
+      sectionTitle: group.examSection,
+      title: group.title,
+      relevanceScore: 100,
+      topics: group.topicIds.map((topicOriginId) => {
+        const topic = topics.find((item) => item.id === topicOriginId)
+        const storage = topicStorage.get(topicOriginId)
+        return {
+          id: storage.topicId,
+          originTopicId: topic.id,
+          title: topic.title,
+          description: topic.summary,
+          relevanceScore: 100,
+          priority: 'CORE',
+        }
+      }),
+    })),
+  },
+  createdAt: generatedAt,
+  updatedAt: generatedAt,
+}
+
+function baseTopicContent(topic, contentType, totalCount) {
+  const storage = topicStorage.get(topic.id)
+  return {
+    epId: EP_ID,
+    outlineId: OUTLINE_ID,
+    topicGroupId: storage.topicGroupId,
+    topicId: storage.topicId,
+    packageId: PACKAGE_ID,
+    contentType,
+    contentStatus: 'READY',
+    generationId: '',
+    progress: { totalCount, completedCount: 0, items: {} },
+    platform: 'system',
+  }
+}
+
+const epTopicContents = topics.flatMap((topic, topicIndex) => {
+  const storage = topicStorage.get(topic.id)
+  const quizQuestions = questionsByTopic.get(topic.id)
+  const studyGuide = {
+    ...baseTopicContent(topic, 'studyGuide', 1),
+    payload: {
+      content: topic.studyGuide,
+      items: [],
+      videoLesson: {
+        title: topic.video.title,
+        coverUrl: topic.video.cover,
+        playbackUrl: topic.video.url,
+        durationSeconds: 480,
+        description: topic.summary,
+      },
+    },
+    lastViewedQuestionId: null,
+    lastViewedAt: null,
+  }
+  const flashCard = {
+    ...baseTopicContent(topic, 'flashCard', topic.flashcards.length),
+    payload: {
+      cards: topic.flashcards.map((card, cardIndex) => ({
+        id: 13000000 + topicIndex * 100 + cardIndex + 1,
+        topicId: storage.topicId,
+        type: 'FLASH_CARD',
+        info: card.front,
+        backInfo: card.back,
+        imageMarkdown: card.image_markdown || '',
+        cardType: 'BASIC',
+        userStatus: '',
+      })),
+    },
+  }
+  const quiz = {
+    ...baseTopicContent(topic, 'quiz', quizQuestions.length),
+    payload: {
+      questions: quizQuestions.map((question, questionIndex) => ({
+        id: 16000000 + topicIndex * 1000 + questionIndex + 1,
+        topicId: storage.topicId,
+        type: epResponseType(question.options),
+        quizType: 'QUIZ',
+        stem: question.question,
+        options: optionRecord(question.options),
+        correctAnswer: answerValue(question),
+        explanation: question.explanation || '',
+        userAnswer: null,
+        isCorrect: -1,
+      })),
+    },
+  }
+  return [studyGuide, flashCard, quiz]
+})
+
+function epExam(rows, examIndex) {
+  return {
+    _id: 140001 + examIndex,
+    deviceId: '__EP_PACKAGE_TEMPLATE__',
+    platform: 'system',
+    epId: EP_ID,
+    outlineId: OUTLINE_ID,
+    packageId: PACKAGE_ID,
+    exam: 'SAT',
+    examCode: 'SAT',
+    subject: 'SAT',
+    jurisdiction: 'US',
+    level: 'High School',
+    examStatus: 'READY',
+    overviewStatus: 'DONE',
+    totalCount: rows.length,
+    questions: rows.map((row, index) => {
+      const question = compactQuestion(row)
+      const topic = topicForQuestion(row) || topics.find((item) => item.section === row.section)
+      const storage = topicStorage.get(topic.id)
+      return {
+        id: 15000000 + examIndex * 1000 + index + 1,
+        index,
+        topicGroupId: storage.topicGroupId,
+        topicId: storage.topicId,
+        sectionId: row.section === 'Math' ? 'math' : 'reading-writing',
+        sectionTitle: row.section,
+        module: row.module === 'M2' ? 'Module 2' : 'Module 1',
+        route: String(row.route || 'standard').toLowerCase(),
+        contentDomain: row.contentDomain,
+        officialSkill: row.officialSkill,
+        teachingTopic: row.teachingTopic,
+        difficulty: String(row.difficulty || '').toUpperCase(),
+        secondaryClassification: '',
+        isScored: true,
+        maximumRawPoints: 1,
+        responseType: epResponseType(question.options),
+        type: epResponseType(question.options),
+        stem: question.question,
+        options: optionRecord(question.options),
+        correctAnswer: answerValue(question),
+        explanation: question.explanation || '',
+        stimulusMaterial: null,
+        attachments: [],
+        scoreDetail: null,
+        userAnswer: null,
+        isCorrect: -1,
+      }
+    }),
+    result: null,
+    submittedAt: null,
+    completedAt: null,
+    createdAt: generatedAt,
+    updatedAt: generatedAt,
+  }
+}
+
+const epExams = [epExam(mockOneRows, 0), epExam(mockTwoRows, 1)]
+
 function mockExam(rows, id) {
   return {
     id,
@@ -212,6 +424,9 @@ function mockExam(rows, id) {
 }
 
 await mkdir(resolve(root, 'public/data/sat/quizzes'), { recursive: true })
+await mkdir(resolve(root, 'public/data/ep-v2/epPreparations'), { recursive: true })
+await mkdir(resolve(root, 'public/data/ep-v2/epTopicContents'), { recursive: true })
+await mkdir(resolve(root, 'public/data/ep-v2/epExams'), { recursive: true })
 await mkdir(resolve(root, 'src/data'), { recursive: true })
 await writeFile(resolve(root, 'public/data/sat/topics.json'), JSON.stringify(manifest))
 for (const topic of topics) {
@@ -220,7 +435,50 @@ for (const topic of topics) {
 await writeFile(resolve(root, 'public/data/sat/quizzes/unmatched.json'), JSON.stringify({ questions: unmatched }))
 await writeFile(resolve(root, 'src/data/satMockExam1.json'), JSON.stringify(mockExam(mockOneRows, 'sat_mock_exam_1')))
 await writeFile(resolve(root, 'src/data/satMockExam2.json'), JSON.stringify(mockExam(mockTwoRows, 'sat_mock_exam_2')))
-
+await writeFile(resolve(root, 'public/data/ep-v2/epPreparations/2001.json'), JSON.stringify(epPreparation))
+await writeFile(resolve(root, 'public/data/ep-v2/epTopicContents/index.json'), JSON.stringify({
+  collection: 'epTopicContents',
+  uniqueIndex: ['epId', 'outlineId', 'topicId', 'contentType'],
+  documents: epTopicContents.map((document) => ({
+    epId: document.epId,
+    outlineId: document.outlineId,
+    packageId: document.packageId,
+    topicGroupId: document.topicGroupId,
+    topicId: document.topicId,
+    contentType: document.contentType,
+    contentStatus: document.contentStatus,
+    totalCount: document.progress.totalCount,
+    path: `/data/ep-v2/epTopicContents/${document.topicId}-${document.contentType}.json`,
+  })),
+}))
+for (const document of epTopicContents) {
+  await writeFile(resolve(root, `public/data/ep-v2/epTopicContents/${document.topicId}-${document.contentType}.json`), JSON.stringify(document))
+}
+await writeFile(resolve(root, 'public/data/ep-v2/epExams/index.json'), JSON.stringify({
+  collection: 'epExams',
+  joinKeys: ['epId', 'outlineId', 'packageId'],
+  documents: epExams.map((exam, index) => ({
+    _id: exam._id,
+    epId: exam.epId,
+    outlineId: exam.outlineId,
+    packageId: exam.packageId,
+    totalCount: exam.totalCount,
+    path: `/data/ep-v2/epExams/${index + 1}.json`,
+  })),
+}))
+for (const [index, exam] of epExams.entries()) {
+  await writeFile(resolve(root, `public/data/ep-v2/epExams/${index + 1}.json`), JSON.stringify(exam))
+}
+await writeFile(resolve(root, 'public/data/ep-v2/storage-contract.json'), JSON.stringify({
+  schemaVersion: 'EP_V2',
+  collections: ['epPreparations', 'epTopicContents', 'epExams'],
+  packageTemplateKey: 'packageId',
+  preparationToContent: ['epId', 'outlineId', 'packageId'],
+  topicLocator: ['topicGroupId', 'topicId'],
+  preparationToMockExam: ['epId', 'outlineId', 'packageId'],
+  topicContentUniqueIndex: ['epId', 'outlineId', 'topicId', 'contentType'],
+  contentTypes: ['studyGuide', 'flashCard', 'quiz'],
+}))
 const emptyOptions = quizRows.filter((row) => questionParts(row.questionText, row.answer).options.length < 2).length
 const report = {
   topics: topics.length,

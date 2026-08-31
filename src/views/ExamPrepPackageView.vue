@@ -4,136 +4,176 @@ import { useRoute, useRouter } from 'vue-router'
 import { loadSatManifest } from '../data/satData'
 import type { SatManifest, SatTopic } from '../types/sat'
 
-type PackageTab = 'overview' | 'study' | 'mock' | 'results'
-type SectionFilter = 'all' | 'Reading and Writing' | 'Math'
-
-const tabs: Array<{ key: PackageTab; label: string }> = [
-  { key: 'overview', label: 'Overview' },
-  { key: 'study', label: 'Topic Breakdown' },
-  { key: 'mock', label: 'Mock Exam' },
-  { key: 'results', label: 'Results & Improve' },
-]
-
-const blueprint = [
-  { title: 'Reading and Writing', duration: '64 min', questions: '54 questions', modules: '2 × 32 min', domains: 'Craft and Structure · Information and Ideas · Standard English Conventions · Expression of Ideas' },
-  { title: 'Break', duration: '10 min', questions: 'Between sections', modules: 'Scheduled', domains: 'Take a break before the Math section begins.' },
-  { title: 'Math', duration: '70 min', questions: '44 questions', modules: '2 × 35 min', domains: 'Algebra · Advanced Math · Problem-Solving and Data Analysis · Geometry and Trigonometry' },
-]
+type CourseTab = 'overview' | 'study' | 'mock' | 'results'
+type Course = { family: string; label: string; title: string; topics: string; videos: string; questions: string; search: string }
 
 const route = useRoute()
 const router = useRouter()
 const manifest = ref<SatManifest | null>(null)
 const loadError = ref('')
-const sectionFilter = ref<SectionFilter>('all')
-const allowedTabs = new Set<PackageTab>(tabs.map((tab) => tab.key))
-const tabFromRoute = () => allowedTabs.has(route.query.tab as PackageTab) ? route.query.tab as PackageTab : 'overview'
-const activeTab = ref<PackageTab>(tabFromRoute())
+const sidebarCollapsed = ref(false)
+const activeTab = ref<CourseTab>('overview')
+const searchQuery = ref('')
+const familyFilter = ref('all')
+const sectionFilter = ref('all')
+const priorityFilter = ref('all')
+const collapsedSections = ref(new Set<string>())
+const isCourseOpen = computed(() => route.hash === '#course-0')
+
+const courses: Course[] = [
+  { family: 'sat', label: 'SAT', title: 'SAT Prep 2026', topics: '100', videos: '100', questions: '3,879', search: 'digital college admissions math reading writing' },
+  { family: 'act', label: 'ACT', title: 'ACT Prep 2026', topics: '230+', videos: '230+', questions: '6,600+', search: 'college admissions english math reading science' },
+  { family: 'ap', label: 'AP', title: 'AP Calculus AB', topics: '42+', videos: '42+', questions: '1,200+', search: 'advanced placement math calculus' },
+  { family: 'ap', label: 'AP', title: 'AP Biology', topics: '55+', videos: '55+', questions: '1,600+', search: 'advanced placement biology science' },
+  { family: 'ap', label: 'AP', title: 'AP United States History', topics: '45+', videos: '45+', questions: '1,400+', search: 'advanced placement us history' },
+  { family: 'ap', label: 'AP', title: 'AP World History: Modern', topics: '42+', videos: '42+', questions: '1,300+', search: 'advanced placement world history modern' },
+  { family: 'ap', label: 'AP', title: 'AP Psychology', topics: '40+', videos: '40+', questions: '1,200+', search: 'advanced placement psychology' },
+  { family: 'ap', label: 'AP', title: 'AP Chemistry', topics: '50+', videos: '50+', questions: '1,500+', search: 'advanced placement chemistry science' },
+  { family: 'ap', label: 'AP', title: 'AP Statistics', topics: '38+', videos: '38+', questions: '1,100+', search: 'advanced placement statistics math data' },
+  { family: 'ap', label: 'AP', title: 'AP Human Geography', topics: '35+', videos: '35+', questions: '1,000+', search: 'advanced placement human geography' },
+  { family: 'ap', label: 'AP', title: 'AP English Language and Composition', topics: '32+', videos: '32+', questions: '900+', search: 'advanced placement english language composition' },
+  { family: 'ap', label: 'AP', title: 'AP Computer Science A', topics: '40+', videos: '40+', questions: '1,000+', search: 'advanced placement computer science programming' },
+  { family: 'abitur', label: 'ABITUR', title: 'Abitur Deutsch', topics: '26', videos: '26', questions: '1,100+', search: 'german deutsch germany' },
+  { family: 'abitur', label: 'ABITUR', title: 'Abitur Mathematik', topics: '32', videos: '32', questions: '1,200+', search: 'german mathematik mathematics math germany' },
+  { family: 'abitur', label: 'ABITUR', title: 'Abitur Englisch', topics: '24', videos: '24', questions: '950+', search: 'german englisch english germany' },
+  { family: 'abitur', label: 'ABITUR', title: 'Abitur Französisch', topics: '21', videos: '21', questions: '850+', search: 'german french französisch germany' },
+  { family: 'abitur', label: 'ABITUR', title: 'Abitur Biologie', topics: '25', videos: '25', questions: '1,100+', search: 'german biology biologie germany' },
+  { family: 'abitur', label: 'ABITUR', title: 'Abitur Chemie', topics: '22', videos: '22', questions: '950+', search: 'german chemistry chemie germany' },
+  { family: 'abitur', label: 'ABITUR', title: 'Abitur Physik', topics: '20', videos: '20', questions: '850+', search: 'german physics physik germany' },
+]
+
+const filteredCourses = computed(() => {
+  const terms = searchQuery.value.trim().toLowerCase().split(/\s+/).filter(Boolean)
+  return courses.filter((course) => {
+    const haystack = `${course.title} ${course.search}`.toLowerCase()
+    return (familyFilter.value === 'all' || course.family === familyFilter.value) && terms.every((term) => haystack.includes(term))
+  })
+})
 
 const topicsBySection = computed(() => {
   if (!manifest.value) return []
   const byId = new Map(manifest.value.topics.map((topic) => [topic.id, topic]))
   return manifest.value.sections
-    .filter((section) => sectionFilter.value === 'all' || section.examSection === sectionFilter.value)
     .map((section) => ({ ...section, topics: section.topicIds.map((id) => byId.get(id)).filter(Boolean) as SatTopic[] }))
+    .filter((section) => sectionFilter.value === 'all' || section.examSection === sectionFilter.value)
+    .map((section) => ({ ...section, topics: section.topics.filter((topic) => priorityFilter.value === 'all' || topic.priority.toLowerCase() === priorityFilter.value) }))
+    .filter((section) => section.topics.length)
 })
 
-watch(() => route.query.tab, () => { activeTab.value = tabFromRoute() })
-
-function selectTab(tab: PackageTab) {
-  activeTab.value = tab
-  void router.replace({ name: 'package', query: tab === 'overview' ? {} : { tab } })
+function topicProgress(topic: SatTopic) {
+  if (topic.order <= 46) return 100
+  if (topic.order <= 52) return topic.order === 50 ? 62 : topic.order % 2 ? 33 : 67
+  return 0
 }
 
-function startMockExam(examId = 1) {
-  void router.push({ name: 'mock-exam', params: { examId } })
+function topicProgressLabel(topic: SatTopic) {
+  const progress = topicProgress(topic)
+  if (progress === 100) return '3 of 3 tools complete'
+  if (progress > 0) return progress > 50 ? '2 of 3 tools complete' : '1 of 3 tools complete'
+  return '0 of 3 tools complete'
 }
 
-function openTopic(topic: SatTopic, tool: 'study-guide' | 'flashcards' | 'quiz') {
-  void router.push({ name: tool, params: { topicId: topic.id } })
+function openCourse(course: Course) {
+  if (course.family !== 'sat') return
+  activeTab.value = 'overview'
+  void router.push({ name: 'package', hash: '#course-0' })
 }
 
-function resumeStudy() {
-  void router.push({ name: 'study-guide', params: { topicId: 'sat_math_advanced_equivalent_expressions_01' } })
+function closeCourse() { void router.push({ name: 'package' }) }
+function selectTab(tab: CourseTab) { activeTab.value = tab; window.scrollTo({ top: 0, behavior: 'smooth' }) }
+function toggleSection(id: string) { const next = new Set(collapsedSections.value); next.has(id) ? next.delete(id) : next.add(id); collapsedSections.value = next }
+function openTopic(topic: SatTopic, tool: 'study-guide' | 'flashcards' | 'quiz') { void router.push({ name: tool, params: { topicId: topic.id } }) }
+function resumeStudy() { void router.push({ name: 'study-guide', params: { topicId: 'sat_math_advanced_equivalent_expressions_01' } }) }
+function startMockExam(examId: number) { void router.push({ name: 'mock-exam', params: { examId } }) }
+function toggleTheme() { document.body.classList.toggle('dark') }
+
+function syncTabFromRoute() {
+  const requestedTab = String(route.query.tab || '')
+  activeTab.value = requestedTab === 'study' || requestedTab === 'mock' || requestedTab === 'results' ? requestedTab : 'overview'
 }
+
+watch([() => route.hash, () => route.query.tab], () => {
+  if (route.hash === '#course-0') syncTabFromRoute()
+  else activeTab.value = 'overview'
+})
 
 onMounted(async () => {
   document.body.classList.add('package-route')
-  try {
-    manifest.value = await loadSatManifest()
-  } catch (error) {
-    loadError.value = error instanceof Error ? error.message : 'Unable to load SAT materials.'
-  }
+  syncTabFromRoute()
+  try { manifest.value = await loadSatManifest() }
+  catch (error) { loadError.value = error instanceof Error ? error.message : 'Unable to load SAT materials.' }
 })
-onBeforeUnmount(() => document.body.classList.remove('package-route'))
+
+onBeforeUnmount(() => document.body.classList.remove('package-route', 'dark'))
 </script>
 
 <template>
-  <div class="prep-app-shell">
-    <aside class="prep-sidebar" aria-label="Primary navigation">
-      <div class="prep-brand-row"><img src="/assets/solvely-ai-logo.jpeg" alt="" width="28" height="28" /><strong>Solvely.ai</strong><span class="prep-sidebar-toggle" aria-hidden="true">‹</span></div>
-      <nav class="prep-nav" aria-label="Solvely areas">
-        <span class="prep-nav-item is-muted" aria-disabled="true"><svg viewBox="0 0 24 24"><path d="m3 11 9-8 9 8M5 10v10h14V10M9 20v-6h6v6" /></svg>Home</span>
-        <span class="prep-nav-item is-muted" aria-disabled="true"><svg viewBox="0 0 24 24"><path d="M4 5.5A3.5 3.5 0 0 1 7.5 2H11v18H7.5A3.5 3.5 0 0 0 4 23zM20 5.5A3.5 3.5 0 0 0 16.5 2H13v18h3.5A3.5 3.5 0 0 1 20 23z" /></svg>AI Study</span>
-        <span class="prep-nav-item is-active" aria-current="page"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3" /><path d="M8 8h8M8 12h4M16 14l2 2M18 14l-2 2" /></svg>Exam Prep</span>
-        <span class="prep-nav-item is-muted" aria-disabled="true"><svg viewBox="0 0 24 24"><path d="m15 4 5 5L8 21l-5-5zM6 3l1 3 3 1-3 1-1 3-1-3-3-1 3-1z" /></svg>AI Writing Tools</span>
+  <svg aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden">
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="m3 11 9-8 9 8"/><path d="M5 10v10h14V10M9 20v-6h6v6"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5.5A3.5 3.5 0 0 1 7.5 2H11v18H7.5A3.5 3.5 0 0 0 4 23zM20 5.5A3.5 3.5 0 0 0 16.5 2H13v18h3.5A3.5 3.5 0 0 1 20 23z"/></symbol>
+    <symbol id="i-mic" viewBox="0 0 24 24"><rect x="8" y="2" width="8" height="13" rx="4"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4M8 22h8"/></symbol>
+    <symbol id="i-wand" viewBox="0 0 24 24"><path d="m15 4 5 5L8 21l-5-5zM6 3l1 3 3 1-3 1-1 3-1-3-3-1 3-1z"/></symbol>
+    <symbol id="i-exam" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M8 8h8M8 12h4M16 14l2 2M18 14l-2 2"/></symbol>
+    <symbol id="i-game" viewBox="0 0 24 24"><path d="M7 8h10a5 5 0 0 1 4.6 6.9l-1.2 3a2.5 2.5 0 0 1-4.1.8L14.8 17H9.2l-1.5 1.7a2.5 2.5 0 0 1-4.1-.8l-1.2-3A5 5 0 0 1 7 8Z"/><path d="M7 12v4M5 14h4M16 13h.01M19 15h.01"/></symbol>
+    <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="6" height="6" rx="1"/><rect x="15" y="3" width="6" height="6" rx="1"/><rect x="3" y="15" width="6" height="6" rx="1"/><path d="M18 14v8M14 18h8"/></symbol>
+    <symbol id="i-history" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5M12 7v5l3 2"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 16.5A9 9 0 0 1 7.5 4 8 8 0 1 0 20 16.5Z"/></symbol>
+    <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></symbol>
+    <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V10M10 20V5M16 20v-8M22 20H2"/></symbol>
+    <symbol id="i-spark" viewBox="0 0 24 24"><path d="m12 3 1.6 4.4L18 9l-4.4 1.6L12 15l-1.6-4.4L6 9l4.4-1.6z"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m16.5 16.5 4 4"/></symbol>
+    <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/></symbol>
+    <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="m4 18 5-5 3 3 2-2 6 6"/></symbol>
+    <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m7 10 5 5 5-5"/></symbol>
+  </svg>
+
+  <div :class="['app', 'solvely-home-app', { 'sidebar-collapsed': sidebarCollapsed }]">
+    <aside class="sidebar" aria-label="Primary navigation">
+      <div class="brand-row"><div class="brand-mark"><img class="brand-logo" src="/assets/solvely-ai-logo.jpeg" alt="" width="26" height="26" /></div><div class="brand">Solvely.ai</div><button class="sidebar-collapse" type="button" aria-label="Collapse sidebar" @click="sidebarCollapsed = true"><svg class="icon icon-sm" viewBox="0 0 24 24"><rect x="4.5" y="4.5" width="15" height="15" rx="2.5"/><path d="M9 5v14M14.5 8.5 11 12l3.5 3.5"/></svg></button></div>
+      <nav class="sidebar-nav">
+        <button class="nav-button active" type="button"><svg class="icon"><use href="#i-home"/></svg><span class="nav-label">Home</span></button>
+        <button class="nav-button" type="button" aria-disabled="true"><svg class="icon"><use href="#i-book"/></svg><span class="nav-label">AI Study</span></button>
+        <button class="nav-button" type="button" aria-disabled="true"><svg class="icon"><use href="#i-mic"/></svg><span class="nav-label">AI Live Notes</span></button>
+        <button class="nav-button" type="button" aria-disabled="true"><svg class="icon"><use href="#i-wand"/></svg><span class="nav-label">AI Writing Tools</span></button>
+        <button class="nav-button" type="button" aria-disabled="true"><svg class="icon"><use href="#i-exam"/></svg><span class="nav-label">Exam Predictor</span></button>
+        <button class="nav-button" type="button" aria-disabled="true"><svg class="icon"><use href="#i-game"/></svg><span class="nav-label">Mini Games</span></button>
       </nav>
-      <div class="prep-sidebar-spacer" />
-      <div class="prep-sidebar-note"><span>Focused demo</span><p>Only the SAT exam-prep package is enabled.</p></div>
-      <div class="prep-user-row"><span class="prep-avatar">A</span><span><strong>Anna</strong><small>Student</small></span><span class="prep-user-more">•••</span></div>
+      <div class="sidebar-spacer" />
+      <div class="side-meta"><section class="app-download-card" aria-label="Download the Solvely app"><div class="app-store-links"><span class="app-store-entry"><a class="app-store-link apple-store" href="https://apps.apple.com/us/app/solvely-ai-study-tools/id6446930976" target="_blank" rel="noopener"><img src="/assets/download-on-app-store.svg" alt="Download on the App Store" width="96" height="32" /></a></span><span class="app-store-entry"><a class="app-store-link google-play" href="https://play.google.com/store/apps/details?id=com.solvely.photo.math.solver.calculator.ai" target="_blank" rel="noopener"><img src="/assets/get-it-on-google-play-trimmed.png" alt="Get it on Google Play" width="107" height="32" /></a></span></div><span class="app-qr-popover" role="tooltip"><img src="/assets/solvely-mobile-qr.svg" alt="" width="132" height="132" /><small>Scan to download Solvely</small></span></section><button class="upgrade" type="button" aria-disabled="true"><span class="discount">57%<br>OFF</span><span class="upgrade-label">⬆ Upgrade</span></button><div class="user-row"><div class="avatar"><svg class="icon icon-sm"><use href="#i-user"/></svg></div><span class="user-name">Anna</span><button class="theme-toggle" type="button" aria-label="Toggle dark mode" @click="toggleTheme"><svg class="icon"><use href="#i-moon"/></svg></button></div></div>
     </aside>
 
-    <main class="prep-main">
-      <header class="prep-topbar"><div><span class="prep-mobile-brand">Solvely.ai</span><strong>Exam Prep</strong></div><span class="prep-demo-badge">SAT PACKAGE DEMO</span></header>
-      <section class="prep-workspace" aria-labelledby="packageTitle">
-        <header class="package-hero">
-          <div class="package-hero-copy">
-            <p class="package-breadcrumb"><span>Exam Prep</span><i />Digital SAT</p>
-            <div class="package-title-row"><span class="package-icon"><svg viewBox="0 0 24 24"><path d="M5 4.5h14v15H5zM8 8h8M8 12h5M8 16h3" /></svg></span><div><span class="package-kicker">SOLVELY PREP PACKAGE</span><h1 id="packageTitle">Digital SAT Exam Prep</h1></div></div>
-            <p class="package-description">A complete SAT learning path with video-led study guides, active-recall flashcards, topic quizzes, and realistic full-length mock exams.</p>
-            <div class="package-metrics" aria-label="Package contents">
-              <span><strong>{{ manifest?.totals.topics ?? 100 }}</strong> topics</span><span><strong>{{ manifest?.totals.flashcards ?? 2000 }}</strong> flashcards</span><span><strong>{{ manifest?.totals.quizQuestions ?? 3879 }}</strong> practice questions</span><span><strong>2</strong> mock exams</span>
-            </div>
-          </div>
-          <aside class="package-progress" aria-label="Course progress"><div class="package-progress-head"><span>Package progress</span><strong>52%</strong></div><div class="package-progress-track"><i style="width: 52%" /></div><p>52 of 100 topics started · 46 topics mastered</p><button type="button" @click="resumeStudy">Continue learning <span>→</span></button></aside>
-        </header>
+    <main>
+      <div class="extension-entry" aria-label="Solvely Chrome extension"><a class="extension-cta" href="https://chromewebstore.google.com/detail/aedglnfjjccpifohekdeoogffomjcikm" target="_blank" rel="noopener"><svg class="extension-browser-icon" viewBox="0 0 24 24"><path d="M12 0C8.21 0 4.831 1.757 2.632 4.501l3.953 6.848A5.454 5.454 0 0 1 12 6.545h10.691A12 12 0 0 0 12 0zM1.931 5.47A11.943 11.943 0 0 0 0 12c0 6.012 4.42 10.991 10.189 11.864l3.953-6.847a5.45 5.45 0 0 1-6.865-2.29zm13.342 2.166a5.446 5.446 0 0 1 1.45 7.09l.002.001h-.002l-5.344 9.257c.206.01.413.016.621.016 6.627 0 12-5.373 12-12 0-1.54-.29-3.011-.818-4.364zM12 16.364a4.364 4.364 0 1 1 0-8.728 4.364 4.364 0 0 1 0 8.728Z"/></svg><span>Get the Chrome Extension</span><span class="extension-tooltip">Solve anywhere on the web</span></a></div>
+      <button class="history-entry" type="button" aria-disabled="true"><svg class="icon"><use href="#i-history"/></svg><span>History</span></button>
 
-        <nav class="package-tabs" role="tablist" aria-label="Exam prep package sections"><button v-for="tab in tabs" :key="tab.key" type="button" role="tab" :aria-selected="activeTab === tab.key" @click="selectTab(tab.key)">{{ tab.label }}</button></nav>
+      <div v-if="!isCourseOpen" class="workspace">
+        <header class="hero"><h1>Solvely: Your AI Study Companion</h1><div class="workspace-mode-switch" role="tablist" aria-label="Choose workspace mode"><button class="workspace-mode-button" type="button" role="tab" aria-selected="false" aria-disabled="true"><svg class="icon"><use href="#i-book"/></svg><span>Study</span></button><button class="workspace-mode-button" type="button" role="tab" aria-selected="true"><svg class="icon"><use href="#i-target"/></svg><span>Exam Prep</span></button><button class="workspace-mode-button" type="button" role="tab" aria-selected="false" aria-disabled="true"><svg class="icon"><use href="#i-wand"/></svg><span>Writing</span></button></div></header>
+        <section class="composer-shell" aria-label="Solvely learning composer"><div class="composer-input-wrap"><textarea class="composer-input" aria-label="Tell Solvely what you want to learn" placeholder="Choose an exam or describe what you are preparing for" /></div><div class="composer-toolbar"><button class="tool-button" type="button" aria-label="Attach files" aria-disabled="true"><svg class="icon"><use href="#i-upload"/></svg></button><button class="tool-button" type="button" aria-label="Upload images" aria-disabled="true"><svg class="icon"><use href="#i-image"/></svg></button><span class="toolbar-spacer"/><button class="send-button" type="button" disabled><svg class="icon"><use href="#i-spark"/></svg><span>Create plan</span></button></div></section>
 
-        <section class="package-panel" role="tabpanel" aria-live="polite">
-          <div v-if="activeTab === 'overview'" class="overview-page">
-            <div class="overview-layout">
-              <section class="next-action-card jump-back-in-card">
-                <div class="next-action-copy">
-                  <span class="section-eyebrow">JUMP BACK IN</span>
-                  <p class="resume-path">Math · Advanced Math · Equivalent Expressions</p>
-                  <h2>Expansion, factoring, and completing the square</h2>
-                  <p>Continue the study guide where you left off, then reinforce the topic with flashcards and targeted practice.</p>
-                  <div class="resume-progress"><div><span>Study guide progress</span><strong>62%</strong></div><i><b /></i></div>
-                  <div class="next-action-meta"><span><strong>Study Guide</strong>current activity</span><span><strong>8 min</strong>remaining</span><span><strong>54 of 100</strong>topic</span></div>
-                </div>
-                <button type="button" class="primary-action" @click="resumeStudy">Continue study guide <span>→</span></button>
-              </section>
-              <section class="package-path"><header><span class="section-eyebrow">YOUR PACKAGE</span><h2>Learn, recall, apply, measure</h2></header><ol><li class="is-ready"><i>1</i><span><strong>Study a topic</strong><small>Watch the lesson and read its complete guide.</small></span><b>Ready</b></li><li class="is-ready"><i>2</i><span><strong>Recall with flashcards</strong><small>Flip, star, review, and master 20 cards.</small></span><b>Ready</b></li><li class="is-ready"><i>3</i><span><strong>Apply with quizzes</strong><small>Answer real SAT-style questions with explanations.</small></span><b>Ready</b></li><li class="is-ready"><i>4</i><span><strong>Measure with mock exams</strong><small>Complete either 98-question practice test.</small></span><b>Ready</b></li></ol></section>
-            </div>
-            <section class="exam-blueprint"><header><div><span class="section-eyebrow">CURRENT DIGITAL SAT</span><h2>Exam structure at a glance</h2></div><span class="blueprint-total"><strong>134 min</strong> · 98 questions · 400–1600</span></header><div class="blueprint-grid"><article v-for="item in blueprint" :key="item.title" :class="{ break: item.title === 'Break' }"><span>{{ item.duration }}</span><h3>{{ item.title }}</h3><strong>{{ item.questions }}</strong><b>{{ item.modules }}</b><p>{{ item.domains }}</p></article></div><p class="blueprint-note">Reading and Writing and Math are both adaptive: performance in Module 1 determines the relative difficulty of Module 2. Both modules count toward the section score.</p></section>
-          </div>
+        <section class="examples-section" aria-label="Exam prep examples"><div class="examples-heading"><div class="examples-copy"><h2>Exam prep plan</h2></div><p class="examples-description">Plan, practice, and track your exam progress.</p></div><div class="examples-grid four-up">
+          <button class="example-card feature-card sample-disabled" type="button" disabled><span class="example-meta"><span>Plan</span><svg class="icon"><use href="#i-target"/></svg></span><h3>Daily study plan</h3><div class="example-preview exam-feature-visual exam-plan-visual"><section class="exam-visual-panel"><header class="exam-plan-header"><div><strong>Study Plan</strong><span class="exam-plan-meta">Exam: Aug 31, 2026<i/>6-day plan</span></div></header><div class="exam-plan-calendar"><span v-for="(day, index) in ['24','25','26','27','28','29','30']" :key="day" :class="['exam-plan-day',{ active:index===1 }]"><b>{{ day }}</b></span></div><div class="exam-plan-task-area"><div class="exam-plan-task-head"><span>6 days until exam</span><span>3 tasks</span></div><div class="exam-plan-task"><span class="exam-plan-check"/><span>Model Selection</span></div><div class="exam-plan-task done"><span class="exam-plan-check">✓</span><span>Stationarity Testing</span></div></div></section></div></button>
+          <button class="example-card feature-card sample-disabled" type="button" disabled><span class="example-meta"><span>Review</span><svg class="icon"><use href="#i-target"/></svg></span><h3>Core topics</h3><div class="example-preview exam-feature-visual exam-topics-visual"><div class="exam-topics-table"><div class="exam-topics-head"><span>Topic</span><span>Likelihood</span><span>Mastery</span></div><div v-for="(topicName,index) in ['Model Selection','Stationarity Testing','ARIMA Modeling','SARIMA Modeling','Dynamic Regression']" :key="topicName" class="exam-topic-row"><span>{{ topicName }}</span><strong class="exam-likelihood">{{ 98-index*2 }}%</strong><span class="exam-mastery"><strong>{{ index ? 0 : 30 }}%</strong><span class="exam-mastery-track"><i :style="{width:index ? '0%' : '30%'}"/></span></span></div></div></div></button>
+          <button class="example-card feature-card sample-disabled" type="button" disabled><span class="example-meta"><span>Practice</span><svg class="icon"><use href="#i-target"/></svg></span><h3>Mock exams</h3><div class="example-preview exam-feature-visual exam-mock-visual"><div class="exam-mock-visual-grid"><section v-for="exam in 2" :key="exam" class="exam-mock-visual-card"><span class="exam-mock-visual-icon"><svg class="icon"><use :href="exam === 1 ? '#i-target' : '#i-spark'"/></svg></span><div class="exam-mock-title-row"><strong>Mock Exam {{ exam }}</strong><span class="exam-mock-badge">{{ exam === 1 ? '≥90% likely' : '80–90% likely' }}</span></div><p>The must-know questions. Nail these first</p><p class="exam-mock-meta">34 mins · 25 Questions</p><span class="exam-mock-state">Not started</span><span class="exam-mock-button">Start exam →</span></section></div></div></button>
+          <button class="example-card feature-card sample-disabled" type="button" disabled><span class="example-meta"><span>Assess</span><svg class="icon"><use href="#i-target"/></svg></span><h3>Progress tracking</h3><div class="example-preview exam-feature-visual exam-result-shell"><div class="exam-result-progress"><i/></div><section class="exam-result-summary"><h4>FINAL Exam: Biology 101</h4><div class="exam-result-stats"><span>Points: <strong>21 / 26</strong></span><span>Percentage: <strong>81%</strong></span></div><div class="exam-result-analysis"><strong>Final exam analysis</strong><span>You demonstrated strong understanding of cell structure, genetics, and ecology.</span></div></section><section class="exam-result-question"><small>Multiple Choice · 1/26</small><h5>Where does the electron transport chain occur?</h5><div class="exam-result-answer wrong">A. Cytoplasm</div><div class="exam-result-answer correct">D. Inner mitochondrial membrane</div></section></div></button>
+        </div></section>
 
-          <div v-else-if="activeTab === 'study'" class="study-plan-page">
-            <header class="study-plan-head"><div><span class="section-eyebrow">100-TOPIC SAT CURRICULUM</span><h2>Topic Breakdown</h2><p>Every topic includes its own video lesson, study guide, 20 flashcards, and mapped SAT question bank.</p></div><div class="study-section-filter" role="group" aria-label="Filter topics"><button v-for="filter in (['all', 'Reading and Writing', 'Math'] as SectionFilter[])" :key="filter" type="button" :class="{ active: sectionFilter === filter }" @click="sectionFilter = filter">{{ filter === 'all' ? 'All topics' : filter }}</button></div></header>
-            <div v-if="loadError" class="package-data-state"><strong>Unable to load SAT materials</strong><p>{{ loadError }}</p></div>
-            <div v-else-if="!manifest" class="package-data-state"><span class="package-loader" />Loading all SAT topics…</div>
-            <div v-else class="topic-breakdown">
-              <section v-for="section in topicsBySection" :key="section.id" class="breakdown-section"><header><div><span>{{ section.examSection }}</span><h3>{{ section.title }}</h3></div><b>{{ section.topics.length }} topics</b></header><div class="breakdown-topics"><article v-for="topic in section.topics" :key="topic.id"><span class="topic-number">{{ String(topic.order).padStart(2, '0') }}</span><div class="breakdown-topic-copy"><span>{{ topic.skill }}</span><h4>{{ topic.title }}</h4><p>{{ topic.summary }}</p></div><div class="breakdown-actions"><button type="button" @click="openTopic(topic, 'study-guide')"><b>Study Guide</b><small>Video + lesson</small></button><button type="button" @click="openTopic(topic, 'flashcards')"><b>Flashcards</b><small>{{ topic.flashcards.length }} cards</small></button><button type="button" @click="openTopic(topic, 'quiz')"><b>Quiz</b><small>{{ topic.quizCount }} questions</small></button></div></article></div></section>
-            </div>
-          </div>
+        <section class="exam-catalog" aria-labelledby="examCatalogTitle"><div class="exam-catalog-heading"><div><h2 id="examCatalogTitle">Standardized test courses</h2></div><p>Topic study, mock exams, results, and targeted improvement.</p></div><section class="diagnostic-entry jump-back-entry" aria-labelledby="jumpBackTitle"><div class="diagnostic-entry-copy"><div class="diagnostic-entry-meta"><span>JUMP BACK IN</span><span>62% COMPLETE</span></div><h3 id="jumpBackTitle">Continue Expansion, factoring, and completing the square</h3><p>Pick up your Study Guide in Advanced Math, then reinforce the topic with flashcards and targeted practice.</p></div><button class="diagnostic-entry-button" type="button" @click="resumeStudy">Continue study guide<svg class="icon"><use href="#i-chevron"/></svg></button></section><div class="exam-catalog-toolbar"><label class="exam-search-wrap"><svg class="icon"><use href="#i-search"/></svg><input v-model="searchQuery" aria-label="Search standardized exam courses" placeholder="Search SAT, ACT, AP, Abitur..." /></label><label class="exam-filter-wrap"><span class="sr-only">Filter exam packages</span><select v-model="familyFilter" aria-label="Filter exam packages"><option value="all">All courses</option><option value="sat">SAT</option><option value="act">ACT</option><option value="ap">AP</option><option value="abitur">Abitur</option></select><svg class="icon"><use href="#i-chevron"/></svg></label></div><div class="course-grid" aria-label="Pre-made exam courses"><button v-for="course in filteredCourses" :key="course.title" :class="['course-card',{ 'sample-course':course.family !== 'sat' }]" type="button" :disabled="course.family !== 'sat'" :aria-label="course.family === 'sat' ? `Open ${course.title} course` : `${course.title} sample unavailable`" @click="openCourse(course)"><span class="course-family">{{ course.label }}</span><h3>{{ course.title }}</h3><p>{{ course.topics }} topics · {{ course.videos }} video lessons<br>{{ course.questions }} practice questions</p><span class="course-stats"><span>Full test</span><span>Score insights</span></span></button></div><p v-if="!filteredCourses.length" class="course-empty">No matching courses. Try another exam name.</p></section>
+      </div>
 
-          <div v-else-if="activeTab === 'mock'" class="mock-library">
-            <header class="mock-library-head"><span class="section-eyebrow">FULL-LENGTH PRACTICE</span><h2>Digital SAT Mock Exams</h2><p>Each form contains 98 unique questions across the official four-module structure.</p></header>
-            <div class="mock-exam-grid"><article v-for="examId in 2" :key="examId" class="mock-entry-card"><span class="mock-status">READY TO START</span><h2>Digital SAT Mock Exam {{ examId }}</h2><p>Complete Reading and Writing, the scheduled break, and Math in a test-day interface.</p><div class="mock-entry-metrics"><div><span>Questions</span><strong>98</strong></div><div><span>Modules</span><strong>4</strong></div><div><span>Test time</span><strong>134 min</strong></div></div><button type="button" class="primary-action mock-start" @click="startMockExam(examId)">Start exam {{ examId }} <span>→</span></button></article></div>
-          </div>
+      <section v-else class="course-workspace" aria-labelledby="courseWorkspaceTitle">
+        <button class="course-back" type="button" @click="closeCourse"><svg class="icon"><use href="#i-chevron"/></svg><span>Back to courses</span></button>
+        <header class="course-package-hero"><div class="course-package-copy"><p class="course-package-breadcrumb"><span>Exam Prep</span><i/><span>SAT</span></p><h1 id="courseWorkspaceTitle">SAT Prep 2026</h1><p>A focused SAT Prep 2026 plan with topic study tools, realistic mock exams, score reports, and targeted improvement.</p><div class="course-package-metrics"><span class="course-package-metric"><svg class="icon"><use href="#i-book"/></svg><span><strong>100</strong> topics</span></span><span class="course-package-metric"><svg class="icon"><use href="#i-grid"/></svg><span><strong>3</strong> study tools</span></span><span class="course-package-metric"><svg class="icon"><use href="#i-exam"/></svg><span><strong>2</strong> full mock exams</span></span></div></div><aside class="course-progress-summary" aria-label="Course progress"><div class="course-progress-summary-head"><span>Course progress</span><strong>52%</strong></div><div class="course-progress-track" aria-label="52 percent complete"><i style="width:52%"/></div><p>52 topics started · Next: continue Equivalent expressions</p></aside></header>
+        <nav class="course-package-tabs" role="tablist" aria-label="Course sections"><button v-for="tab in ([['overview','Overview'],['study','Study Plan'],['mock','Mock Exam'],['results','Results & Improve']] as [CourseTab,string][])" :key="tab[0]" class="course-package-tab" type="button" role="tab" :aria-selected="activeTab === tab[0]" @click="selectTab(tab[0])">{{ tab[1] }}</button></nav>
+        <div class="course-package-panel" role="tabpanel" aria-live="polite">
+          <div v-if="activeTab === 'overview'" class="course-overview-grid"><div><section class="course-hub-card"><header class="course-hub-head"><div><span class="course-hub-eyebrow">Continue learning</span><h2>Pick up where you left off</h2><p>Your next study action is ready.</p></div><button class="course-link-button" type="button" @click="selectTab('study')">View plan</button></header><div class="course-next-task"><span class="course-next-icon"><svg class="icon"><use href="#i-book"/></svg></span><div class="course-next-copy"><strong>Expansion, factoring, and completing the square</strong><span>Study Guide · 62% complete</span><div class="course-progress-inline"><i style="width:62%"/></div></div><button class="course-primary-small" type="button" @click="resumeStudy">Continue</button></div></section><section class="course-hub-card"><header class="course-hub-head"><div><span class="course-hub-eyebrow">Needs attention</span><h2>Topics to improve</h2><p>Based on your latest quiz and mock exam.</p></div><button class="course-link-button" type="button" @click="selectTab('results')">View all</button></header><div class="course-weak-list"><div class="course-weak-row"><strong>Nonlinear equations</strong><span>92% likely</span></div><div class="course-weak-row"><strong>Ratios, rates & proportions</strong><span>89% likely</span></div><div class="course-weak-row"><strong>Two-variable data</strong><span>81% likely</span></div></div></section></div><div class="course-hub-stats"><button class="course-hub-stat" type="button" @click="startMockExam(1)"><span>Mock Exam</span><strong>14 / 98</strong><p>Attempt in progress · answers saved</p><em>Continue exam →</em></button><button class="course-hub-stat" type="button" @click="selectTab('results')"><span>Latest score</span><strong>1280<small>/1600</small></strong><p>70th percentile · completed Aug 21</p><em>View report →</em></button><button class="course-hub-stat" type="button" @click="selectTab('study')"><span>Study Plan</span><strong>52%</strong><p>52 of 100 topics started</p><em>Open plan →</em></button><button class="course-hub-stat" type="button" @click="selectTab('results')"><span>Weak topics</span><strong>3</strong><p>Prioritized by recent performance and exam importance</p><em>Start improving →</em></button></div></div>
 
-          <div v-else class="locked-panel results-empty"><span class="locked-icon results"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V5M16 20v-8M22 20H2" /></svg></span><span class="section-eyebrow">NO RESULT YET</span><h2>Your score report will appear here</h2><p>Finish a mock exam to unlock section scores, answer review, pacing insights, and the topics most likely to improve your score.</p><button type="button" class="primary-action" @click="startMockExam(1)">Start mock exam <span>→</span></button></div>
-        </section>
+          <section v-else-if="activeTab === 'study'" class="study-breakdown" aria-labelledby="studyBreakdownTitle"><header class="study-breakdown-toolbar"><h2 id="studyBreakdownTitle">Topic Breakdown</h2><div class="study-breakdown-filters"><label class="study-filter-control section"><select v-model="sectionFilter"><option value="all">Section: All</option><option value="Reading and Writing">Section: Reading & Writing</option><option value="Math">Section: Math</option></select></label><label class="study-filter-control importance"><select v-model="priorityFilter"><option value="all">Importance: All</option><option value="core">Importance: Core</option><option value="likely">Importance: Likely</option></select></label></div></header><div class="study-priority-note"><svg class="icon"><use href="#i-target"/></svg><span>Solvely prioritizes exam topics from your materials and the exam format. Importance and study progress are tracked separately.</span></div><div v-if="loadError" class="study-topic-empty">{{ loadError }}</div><div v-else-if="!manifest" class="study-topic-empty">Loading SAT topics…</div><div v-else class="study-topic-sections"><section v-for="section in topicsBySection" :key="section.id" :class="['study-topic-section',{ collapsed:collapsedSections.has(section.id) }]" :aria-labelledby="section.id"><button class="study-section-head" type="button" :aria-expanded="!collapsedSections.has(section.id)" @click="toggleSection(section.id)"><h3 :id="section.id">{{ section.examSection }} · {{ section.title }}</h3><span class="study-section-meta"><span>{{ section.topics.length }} Topics</span><svg class="icon"><use href="#i-chevron"/></svg></span></button><div v-if="!collapsedSections.has(section.id)" role="table"><div class="study-topic-table-head" role="row"><span role="columnheader">Topic Area</span><span role="columnheader">Progress</span></div><article v-for="topic in section.topics" :key="topic.id" class="study-topic-row" role="row" tabindex="0"><div class="study-topic-copy" role="cell"><strong>{{ topic.title }}</strong><span>{{ topic.summary }}</span><div class="study-topic-meta"><span :class="['study-topic-importance',topic.priority.toLowerCase()]">{{ topic.order <= 70 ? '95% · ' : '84% · ' }}{{ topic.priority === 'CORE' ? 'Core' : 'Likely' }}</span><span>{{ topic.domain }}</span></div></div><div class="study-topic-progress" role="cell"><span class="study-topic-progress-copy"><strong>{{ topicProgress(topic) ? 'In progress' : 'Not started' }}</strong><span>{{ topicProgressLabel(topic) }}</span></span><span class="study-topic-progress-meter"><strong>{{ topicProgress(topic) }}%</strong><span class="study-topic-progress-track"><i :class="{complete:topicProgress(topic)===100}" :style="{width:`${topicProgress(topic)}%`}"/></span></span></div><aside class="study-topic-popover"><div class="study-topic-popover-head"><h4>{{ topic.title }}</h4><span :class="topic.priority.toLowerCase()">{{ topic.priority === 'CORE' ? '95% · Core' : '84% · Likely' }}</span></div><p>{{ topic.summary }}</p><small>Study with</small><div class="study-topic-actions"><button class="study-topic-tool" type="button" @click="openTopic(topic,'study-guide')"><svg class="icon"><use href="#i-book"/></svg><span>Study Guide</span></button><button class="study-topic-tool" type="button" @click="openTopic(topic,'flashcards')"><svg class="icon"><use href="#i-grid"/></svg><span>Flashcards</span></button><button class="study-topic-tool" type="button" @click="openTopic(topic,'quiz')"><svg class="icon"><use href="#i-exam"/></svg><span>Quiz</span></button></div></aside></article></div></section></div></section>
+
+          <div v-else-if="activeTab === 'mock'" class="mock-state-shell"><div class="mock-state-nav" role="tablist"><button class="mock-state-button active" type="button">Available exams</button><button class="mock-state-button" type="button" aria-disabled="true">In progress</button><button class="mock-state-button" type="button" aria-disabled="true">Completed</button><button class="mock-state-button" type="button" aria-disabled="true">Reports</button></div><div class="mock-exam-stage"><section class="mock-exam-card"><span class="mock-exam-status">READY</span><h2>Digital SAT Full-Length Practice Tests</h2><p>Two complete 98-question tests with the official four-module structure, timer, calculator, break, answer review, and score insights.</p><div class="mock-exam-metrics"><div class="mock-exam-metric"><span>Questions</span><strong>98 each</strong></div><div class="mock-exam-metric"><span>Time</span><strong>134 min</strong></div><div class="mock-exam-metric"><span>Sections</span><strong>2 · 4 modules</strong></div></div><div class="mock-exam-actions"><button class="mock-primary-action" type="button" @click="startMockExam(1)">Continue Mock Exam 1</button><button class="mock-secondary-action" type="button" @click="startMockExam(2)">Start Mock Exam 2</button></div></section><aside class="mock-benefit-card"><h3>What this exam gives you</h3><div class="mock-benefit-list"><div class="mock-benefit-item"><i>1</i><span><strong>Real exam simulation</strong><span>Official structure, timing, and score scale.</span></span></div><div class="mock-benefit-item"><i>2</i><span><strong>Saved progress</strong><span>Resume the same attempt without losing answers.</span></span></div><div class="mock-benefit-item"><i>3</i><span><strong>Actionable report</strong><span>Section scores, explanations, and targeted improvement.</span></span></div></div></aside></div></div>
+
+          <div v-else class="results-layout"><div class="results-summary-grid"><section class="results-score-card"><span>Latest Mock Exam</span><strong>1280<small>/1600</small></strong><p>70th percentile · Aug 21</p></section><section class="results-ai-card"><span class="course-hub-eyebrow">AI Overview</span><h2>Strong foundation, with two high-impact gaps</h2><p>You are consistent in core algebra and reading evidence. Focus next on nonlinear equations and proportional reasoning.</p></section></div><div class="results-two-column"><section class="results-section-card"><header class="results-card-head"><h2>Section performance</h2><span>Official score scale</span></header><div class="results-performance-row"><strong>Reading & Writing</strong><i><b style="width:81%"/></i><em>650</em></div><div class="results-performance-row"><strong>Math</strong><i><b style="width:79%"/></i><em>630</em></div></section><aside class="improve-card"><h2>Topics to Improve</h2><p>Ordered by recent performance and exam importance.</p><div class="improve-topic-list"><div class="improve-topic"><span><strong>Nonlinear equations</strong><span>92% likely · Not started</span></span><button type="button" @click="selectTab('study')">Practice</button></div><div class="improve-topic"><span><strong>Ratios, rates & proportions</strong><span>89% likely · In progress</span></span><button type="button" @click="selectTab('study')">Continue</button></div></div></aside></div></div>
+        </div>
       </section>
     </main>
   </div>

@@ -20,7 +20,8 @@ export type SatStudyGuide = {
 
 export type SatTopic = {
   id: string
-  topicId: string
+  topicId: number
+  topicGroupId: number
   order: number
   section: string
   domain: string
@@ -30,9 +31,8 @@ export type SatTopic = {
   atomicTopic: string
   atomicTopicZh: string
   strategyName: string
-  studyGuide: SatStudyGuide
-  flashcards: SatFlashcard[]
-  video: { id: string; title: string; url: string; cover: string }
+  priority: 'CORE' | 'LIKELY'
+  flashcardCount: number
   quizCount: number
 }
 

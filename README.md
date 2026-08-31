@@ -11,6 +11,18 @@ npm run dev
 
 Run `npm run build:data` after replacing source CSVs and `npm run verify` before deployment.
 
+## EP V2 data contract
+
+The demo runtime now follows the same layered storage contract as the iOS exam-prep package. The generated fixture data lives under `public/data/ep-v2`:
+
+- `epPreparations/2001.json` — package metadata and outline only (Section → Topic Group → Topic)
+- `epTopicContents/` — one `studyGuide`, `flashCard`, and `quiz` document per topic; the unique key is `epId + outlineId + topicId + contentType`
+- `epExams/` — complete mock-exam documents, stored separately from the topic outline and learning content
+
+The shared join keys are `packageId`, `epId`, `outlineId`, `topicGroupId`, and `topicId`. Topic pages load only the active content type, matching the iOS request pattern instead of downloading every study guide, flashcard, quiz, and mock exam with the package shell.
+
+`src/data/satData.ts` is the Web adapter over this contract. A production integration can replace its static `fetch` calls with `/ep/detail`, `/ep/outline`, `/ep/outline/topic/learn`, and `/ep/exam` without changing the views. `public/data/sat` remains a generated legacy fixture for compatibility, but is no longer the active page data source.
+
 ## Experience scope
 
 - `/` — SAT exam-prep overview, current exam blueprint, 100-topic breakdown, and two mock-exam entries

@@ -19,10 +19,13 @@ body,
 }
 
 body.mock-exam-route {
+  --sidebar-width: 0px;
   min-width: 320px;
   overflow: hidden;
   background: #fff;
 }
+
+body.mock-exam-route main { margin-left: 0; }
 
 button {
   color: inherit;

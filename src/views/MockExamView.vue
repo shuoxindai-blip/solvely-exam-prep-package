@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import HighlightablePassage from '../components/HighlightablePassage.vue'
 import MathReferenceSheet from '../components/MathReferenceSheet.vue'
 import ScientificCalculator from '../components/ScientificCalculator.vue'
-import satMockExam1 from '../data/satMockExam1.json'
-import satMockExam2 from '../data/satMockExam2.json'
+import { loadEpExam } from '../data/satData'
+import type { EpExam } from '../types/epV2'
 
 type SectionKind = 'reading' | 'math'
 type ExamStage = 'exam' | 'review' | 'break' | 'complete' | 'results'
@@ -72,7 +72,54 @@ const modules: ModuleDefinition[] = [
 const route = useRoute()
 const router = useRouter()
 const examId = computed(() => String(route.params.examId) === '2' ? 2 : 1)
-const activeExam = computed<SourceExam>(() => (examId.value === 2 ? satMockExam2 : satMockExam1) as SourceExam)
+const activeEpExam = ref<EpExam | null>(null)
+const examLoadError = ref('')
+
+function adaptEpExam(exam: EpExam, index: number): SourceExam {
+  const moduleCounts = new Map<string, number>()
+  return {
+    id: String(exam._id),
+    title: `Digital SAT Full-Length Practice Test ${index + 1}`,
+    questions: exam.questions.map((question) => {
+      const module = question.module === 'Module 2' ? 'M2' : 'M1'
+      const moduleKey = `${question.sectionTitle}:${module}`
+      const questionNumber = (moduleCounts.get(moduleKey) ?? 0) + 1
+      moduleCounts.set(moduleKey, questionNumber)
+      const optionEntries = Object.entries(question.options).sort(([left], [right]) => left.localeCompare(right))
+      return {
+        question: question.stem,
+        options: optionEntries.map(([, option]) => option),
+        correctIndex: optionEntries.findIndex(([letter]) => letter === question.correctAnswer),
+        answer: question.correctAnswer,
+        explanation: question.explanation,
+        difficulty: question.difficulty,
+        section: question.sectionTitle,
+        domain: question.contentDomain,
+        skill: question.officialSkill,
+        teachingTopic: question.teachingTopic,
+        module,
+        questionNumber,
+        responseType: question.responseType,
+      }
+    }),
+  }
+}
+
+const activeExam = computed<SourceExam>(() => activeEpExam.value
+  ? adaptEpExam(activeEpExam.value, examId.value - 1)
+  : { id: '', title: 'Loading Digital SAT Mock Exam…', questions: [] })
+
+async function loadActiveExam() {
+  examLoadError.value = ''
+  activeEpExam.value = null
+  try {
+    activeEpExam.value = await loadEpExam(examId.value)
+  } catch (error) {
+    examLoadError.value = error instanceof Error ? error.message : 'Unable to load the mock exam.'
+  }
+}
+
+watch(examId, () => { void loadActiveExam() })
 
 function sourceQuestionFor(module: ModuleDefinition, number: number) {
   const section = module.section === 'reading' ? 'Reading and Writing' : 'Math'
@@ -407,7 +454,7 @@ function backToCompletion() {
 }
 
 function exitExam() {
-  void router.push({ name: 'package', query: { tab: 'mock' } })
+  void router.push({ name: 'package', query: { tab: 'mock' }, hash: '#course-0' })
 }
 
 function submitFeedback() {
@@ -495,8 +542,9 @@ function onKeydown(event: KeyboardEvent) {
   }
 }
 
-onMounted(() => {
+onMounted(async () => {
   document.body.classList.add('mock-exam-route')
+  await loadActiveExam()
   countdownId = window.setInterval(() => {
     if ((stage.value === 'exam' || stage.value === 'review') && timeRemaining.value > 0) timeRemaining.value -= 1
     if (stage.value === 'exam') questionTimeSeconds[questionKey.value] = (questionTimeSeconds[questionKey.value] ?? 0) + 1
@@ -514,7 +562,15 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <main v-if="stage === 'break'" class="break-screen">
+  <main v-if="examLoadError" class="completion-page">
+    <section class="completion-card"><h1>Unable to load this mock exam</h1><p>{{ examLoadError }}</p><button class="view-results-button" type="button" @click="exitExam">Back to SAT package</button></section>
+  </main>
+
+  <main v-else-if="!activeEpExam" class="completion-page">
+    <section class="completion-card"><p>Loading Digital SAT Mock Exam {{ examId }}…</p></section>
+  </main>
+
+  <main v-else-if="stage === 'break'" class="break-screen">
     <button class="save-leave-button" type="button" @click="exitExam"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 5H5v14h5M14 8l4 4-4 4M8 12h10" /></svg>Save and Leave</button>
     <div class="break-layout">
       <section class="break-timer-column">

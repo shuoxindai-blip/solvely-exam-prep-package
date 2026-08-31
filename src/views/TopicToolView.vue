@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { loadSatManifest, loadTopicQuiz } from '../data/satData'
-import type { SatManifest, SatQuizQuestion, SatTopic } from '../types/sat'
+import { loadSatManifest, loadTopicContent, loadTopicQuiz } from '../data/satData'
+import type { EpFlashCardContent, EpStudyGuideContent } from '../types/epV2'
+import type { SatFlashcard, SatManifest, SatQuizQuestion, SatTopic } from '../types/sat'
 
 type ToolMode = 'study-guide' | 'flashcards' | 'quiz'
 type CardStatus = 'unseen' | 'review' | 'mastered'
@@ -17,7 +18,10 @@ const cardFlipped = ref(false)
 const cardView = ref<'card' | 'list'>('card')
 const cardStatuses = ref<Record<string, CardStatus>>({})
 const starredCards = ref(new Set<string>())
+const studyGuideContent = ref<EpStudyGuideContent | null>(null)
+const flashCardContent = ref<EpFlashCardContent | null>(null)
 const quizQuestions = ref<SatQuizQuestion[]>([])
+const contentLoading = ref(false)
 const quizLoading = ref(false)
 const quizIndex = ref(0)
 const selectedAnswer = ref<number | null>(null)
@@ -31,7 +35,15 @@ const mode = computed<ToolMode>(() => {
 })
 const topicId = computed(() => String(route.params.topicId || ''))
 const topic = computed(() => manifest.value?.topics.find((item) => item.id === topicId.value) ?? null)
-const currentCard = computed(() => topic.value?.flashcards[cardIndex.value] ?? null)
+const studyGuide = computed(() => studyGuideContent.value?.payload.content ?? null)
+const video = computed(() => studyGuideContent.value?.payload.videoLesson ?? null)
+const flashcards = computed<SatFlashcard[]>(() => flashCardContent.value?.payload.cards.map((card) => ({
+  flashcard_id: String(card.id),
+  front: card.info,
+  back: card.backInfo,
+  image_markdown: card.imageMarkdown,
+})) ?? [])
+const currentCard = computed(() => flashcards.value[cardIndex.value] ?? null)
 const currentQuestion = computed(() => quizQuestions.value[quizIndex.value] ?? null)
 const selectedCorrect = computed(() => selectedAnswer.value !== null && selectedAnswer.value === currentQuestion.value?.correctIndex)
 
@@ -44,7 +56,7 @@ const topicsBySection = computed(() => {
 const toolLabel = computed(() => mode.value === 'study-guide' ? 'Study Guide' : mode.value === 'flashcards' ? 'Flashcards' : 'Quiz')
 const cardStatusCounts = computed(() => {
   const counts = { unseen: 0, review: 0, mastered: 0 }
-  for (const card of topic.value?.flashcards ?? []) counts[cardStatuses.value[card.flashcard_id] || 'unseen'] += 1
+  for (const card of flashcards.value) counts[cardStatuses.value[card.flashcard_id] || 'unseen'] += 1
   return counts
 })
 
@@ -66,24 +78,24 @@ function toggleSection(id: string) {
 function markCard(status: CardStatus) {
   if (!currentCard.value) return
   cardStatuses.value = { ...cardStatuses.value, [currentCard.value.flashcard_id]: status }
-  if (cardIndex.value < (topic.value?.flashcards.length ?? 1) - 1) nextCard()
+  if (cardIndex.value < flashcards.value.length - 1) nextCard()
 }
 
 function nextCard() {
-  if (!topic.value) return
-  cardIndex.value = (cardIndex.value + 1) % topic.value.flashcards.length
+  if (!flashcards.value.length) return
+  cardIndex.value = (cardIndex.value + 1) % flashcards.value.length
   cardFlipped.value = false
 }
 
 function previousCard() {
-  if (!topic.value) return
-  cardIndex.value = (cardIndex.value - 1 + topic.value.flashcards.length) % topic.value.flashcards.length
+  if (!flashcards.value.length) return
+  cardIndex.value = (cardIndex.value - 1 + flashcards.value.length) % flashcards.value.length
   cardFlipped.value = false
 }
 
 function shuffleCards() {
-  if (!topic.value) return
-  cardIndex.value = Math.floor(Math.random() * topic.value.flashcards.length)
+  if (!flashcards.value.length) return
+  cardIndex.value = Math.floor(Math.random() * flashcards.value.length)
   cardFlipped.value = false
 }
 
@@ -94,7 +106,7 @@ function toggleStar() {
   starredCards.value = next
 }
 
-function toggleCardStar(card: SatTopic['flashcards'][number]) {
+function toggleCardStar(card: SatFlashcard) {
   const next = new Set(starredCards.value)
   next.has(card.flashcard_id) ? next.delete(card.flashcard_id) : next.add(card.flashcard_id)
   starredCards.value = next
@@ -152,12 +164,34 @@ async function loadQuiz() {
   }
 }
 
+async function loadActiveContent() {
+  if (!topic.value) return
+  loadError.value = ''
+  if (mode.value === 'quiz') {
+    await loadQuiz()
+    return
+  }
+
+  contentLoading.value = true
+  try {
+    if (mode.value === 'study-guide') {
+      studyGuideContent.value = await loadTopicContent(topic.value.id, 'studyGuide') as EpStudyGuideContent
+    } else {
+      flashCardContent.value = await loadTopicContent(topic.value.id, 'flashCard') as EpFlashCardContent
+    }
+  } catch (error) {
+    loadError.value = error instanceof Error ? error.message : `Unable to load ${toolLabel.value}.`
+  } finally {
+    contentLoading.value = false
+  }
+}
+
 watch([topicId, mode], () => {
   cardIndex.value = 0
   cardFlipped.value = false
   cardView.value = 'card'
   iframeLoaded.value = false
-  void loadQuiz()
+  void loadActiveContent()
 })
 
 function onKeydown(event: KeyboardEvent) {
@@ -177,7 +211,7 @@ onMounted(async () => {
   try {
     manifest.value = await loadSatManifest()
     if (!topic.value && manifest.value.topics[0]) await router.replace({ name: mode.value, params: { topicId: manifest.value.topics[0].id } })
-    await loadQuiz()
+    await loadActiveContent()
   } catch (error) {
     loadError.value = error instanceof Error ? error.message : 'Unable to load SAT materials.'
   }
@@ -192,8 +226,8 @@ onBeforeUnmount(() => {
 <template>
   <div class="topic-tool-shell">
     <header class="topic-tool-header">
-      <button class="topic-back-button" type="button" @click="router.push({ name: 'package', query: { tab: 'study' } })" aria-label="Back to SAT exam prep">←</button>
-      <button class="topic-package-button" type="button" @click="router.push({ name: 'package', query: { tab: 'study' } })">
+      <button class="topic-back-button" type="button" @click="router.push({ name: 'package', query: { tab: 'study' }, hash: '#course-0' })" aria-label="Back to SAT exam prep">←</button>
+      <button class="topic-package-button" type="button" @click="router.push({ name: 'package', query: { tab: 'study' }, hash: '#course-0' })">
         <img src="/assets/solvely-ai-logo.jpeg" alt="" width="27" height="27" />
         <span><strong>Digital SAT Exam Prep</strong><small>{{ toolLabel }}</small></span>
       </button>
@@ -225,7 +259,7 @@ onBeforeUnmount(() => {
             <div v-if="!collapsedSections.has(section.id)" class="topic-sidebar-list">
               <button v-for="item in section.topics" :key="item.id" type="button" :class="{ active: item.id === topic.id }" @click="chooseTopic(item)">
                 <span class="topic-state-dot" />
-                <span><strong>{{ item.title }}</strong><small>{{ mode === 'study-guide' ? item.strategyName : mode === 'flashcards' ? `${item.flashcards.length} cards` : `${item.quizCount} questions` }}</small></span>
+                <span><strong>{{ item.title }}</strong><small>{{ mode === 'study-guide' ? item.strategyName : mode === 'flashcards' ? `${item.flashcardCount} cards` : `${item.quizCount} questions` }}</small></span>
               </button>
             </div>
           </section>
@@ -240,68 +274,70 @@ onBeforeUnmount(() => {
             <span class="topic-summary">{{ topic.summary }}</span>
           </div>
           <div class="topic-head-meta">
-            <span v-if="mode === 'study-guide'"><strong>{{ topic.studyGuide.sections.length }}</strong> guide sections</span>
-            <span v-else-if="mode === 'flashcards'"><strong>{{ topic.flashcards.length }}</strong> cards</span>
+            <span v-if="mode === 'study-guide'"><strong>{{ studyGuide?.sections.length ?? 0 }}</strong> guide sections</span>
+            <span v-else-if="mode === 'flashcards'"><strong>{{ topic.flashcardCount }}</strong> cards</span>
             <span v-else><strong>{{ topic.quizCount }}</strong> questions</span>
           </div>
         </header>
 
-        <article v-if="mode === 'study-guide'" class="study-guide-view">
+        <div v-if="contentLoading" class="topic-load-state inline"><span class="topic-loader" /><strong>Loading {{ toolLabel }}…</strong></div>
+
+        <article v-else-if="mode === 'study-guide' && studyGuide && video" class="study-guide-view">
           <section class="topic-video-card" aria-labelledby="topicVideoTitle">
-            <header><div><span>VIDEO LESSON</span><h2 id="topicVideoTitle">{{ topic.video.title }}</h2></div><a :href="topic.video.url" target="_blank" rel="noopener">Open video ↗</a></header>
+            <header><div><span>VIDEO LESSON</span><h2 id="topicVideoTitle">{{ video.title }}</h2></div><a :href="video.playbackUrl" target="_blank" rel="noopener">Open video ↗</a></header>
             <div class="topic-video-frame" :class="{ loaded: iframeLoaded }">
-              <img :src="topic.video.cover" :alt="`${topic.video.title} video cover`" />
+              <img :src="video.coverUrl" :alt="`${video.title} video cover`" />
               <span class="video-loading">Loading interactive lesson…</span>
-              <iframe :src="topic.video.url" :title="topic.video.title" loading="eager" allow="fullscreen" @load="iframeLoaded = true" />
+              <iframe :src="video.playbackUrl" :title="video.title" loading="eager" allow="fullscreen" @load="iframeLoaded = true" />
             </div>
           </section>
 
           <section class="guide-article">
-            <div class="guide-overview"><span>OVERVIEW</span><p>{{ topic.studyGuide.overview }}</p></div>
-            <section v-if="topic.studyGuide.learning_objectives?.length" class="guide-objectives">
+            <div class="guide-overview"><span>OVERVIEW</span><p>{{ studyGuide.overview }}</p></div>
+            <section v-if="studyGuide.learning_objectives?.length" class="guide-objectives">
               <h2>What you'll learn</h2>
-              <ul><li v-for="objective in topic.studyGuide.learning_objectives" :key="objective">{{ objective }}</li></ul>
+              <ul><li v-for="objective in studyGuide.learning_objectives" :key="objective">{{ objective }}</li></ul>
             </section>
-            <section v-for="section in topic.studyGuide.sections" :key="section.title" class="guide-section">
+            <section v-for="section in studyGuide.sections" :key="section.title" class="guide-section">
               <h2>{{ section.title }}</h2>
               <p v-html="inlineMarkup(section.content)" />
             </section>
-            <section v-for="(example, index) in topic.studyGuide.worked_examples" :key="example.question" class="worked-example">
+            <section v-for="(example, index) in studyGuide.worked_examples" :key="example.question" class="worked-example">
               <span>WORKED EXAMPLE {{ index + 1 }}</span>
               <h3>{{ example.question }}</h3>
               <p v-html="inlineMarkup(example.solution)" />
             </section>
             <div class="guide-two-column">
-              <section><h2>Common mistakes</h2><ul><li v-for="mistake in topic.studyGuide.common_mistakes" :key="mistake">{{ mistake }}</li></ul></section>
-              <section><h2>Exam tips</h2><ul><li v-for="tip in topic.studyGuide.exam_tips" :key="tip">{{ tip }}</li></ul></section>
+              <section><h2>Common mistakes</h2><ul><li v-for="mistake in studyGuide.common_mistakes" :key="mistake">{{ mistake }}</li></ul></section>
+              <section><h2>Exam tips</h2><ul><li v-for="tip in studyGuide.exam_tips" :key="tip">{{ tip }}</li></ul></section>
             </div>
-            <section class="guide-recap"><span>KEY TAKEAWAY</span><p>{{ topic.studyGuide.recap }}</p></section>
-            <footer class="guide-next-actions"><span>Reinforce this topic</span><button type="button" @click="toolRoute('flashcards')">Study {{ topic.flashcards.length }} flashcards</button><button type="button" @click="toolRoute('quiz')">Take {{ topic.quizCount }} quiz questions</button></footer>
+            <section class="guide-recap"><span>KEY TAKEAWAY</span><p>{{ studyGuide.recap }}</p></section>
+            <footer class="guide-next-actions"><span>Reinforce this topic</span><button type="button" @click="toolRoute('flashcards')">Study {{ topic.flashcardCount }} flashcards</button><button type="button" @click="toolRoute('quiz')">Take {{ topic.quizCount }} quiz questions</button></footer>
           </section>
         </article>
 
-        <section v-else-if="mode === 'flashcards'" class="flashcard-view">
+        <section v-else-if="mode === 'flashcards' && flashCardContent" class="flashcard-view">
           <div class="tool-view-toolbar">
-            <div><strong>{{ cardView === 'card' ? `${cardIndex + 1}/${topic.flashcards.length} Cards` : `${topic.flashcards.length} Cards` }}</strong><span>{{ cardStatusCounts.review }} Need Review · {{ cardStatusCounts.mastered }} Mastered</span></div>
+            <div><strong>{{ cardView === 'card' ? `${cardIndex + 1}/${flashcards.length} Cards` : `${flashcards.length} Cards` }}</strong><span>{{ cardStatusCounts.review }} Need Review · {{ cardStatusCounts.mastered }} Mastered</span></div>
             <div class="view-mode-buttons"><button type="button" :class="{ active: cardView === 'card' }" @click="cardView = 'card'">Card</button><button type="button" :class="{ active: cardView === 'list' }" @click="cardView = 'list'">List</button></div>
           </div>
 
           <div v-if="cardView === 'card' && currentCard" class="flashcard-stage">
-            <div class="flashcard-progress"><i :style="{ width: `${((cardIndex + 1) / topic.flashcards.length) * 100}%` }" /></div>
+            <div class="flashcard-progress"><i :style="{ width: `${((cardIndex + 1) / flashcards.length) * 100}%` }" /></div>
             <button type="button" class="flashcard-star" :class="{ active: starredCards.has(currentCard.flashcard_id) }" :aria-label="starredCards.has(currentCard.flashcard_id) ? 'Unstar card' : 'Star card'" @click="toggleStar">★</button>
             <button type="button" class="flashcard-face" :class="{ flipped: cardFlipped }" @click="cardFlipped = !cardFlipped">
               <span>{{ cardFlipped ? 'ANSWER' : 'QUESTION' }}</span>
               <h2>{{ cardFlipped ? currentCard.back : currentCard.front }}</h2>
               <small>{{ cardFlipped ? 'Click to see the question' : 'Press Space or click to flip' }}</small>
             </button>
-            <div class="flashcard-nav"><button type="button" @click="previousCard">←</button><span>{{ cardIndex + 1 }} of {{ topic.flashcards.length }}</span><button type="button" @click="nextCard">→</button></div>
+            <div class="flashcard-nav"><button type="button" @click="previousCard">←</button><span>{{ cardIndex + 1 }} of {{ flashcards.length }}</span><button type="button" @click="nextCard">→</button></div>
             <div class="flashcard-rating"><button type="button" class="review" @click="markCard('review')">Need to review</button><button type="button" class="mastered" @click="markCard('mastered')">Mastered</button></div>
             <button type="button" class="flashcard-shuffle" @click="shuffleCards">↻ Shuffle</button>
           </div>
 
           <div v-else class="flashcard-list">
-            <div class="flashcard-list-filters"><span>All {{ topic.flashcards.length }}</span><span>Mastered {{ cardStatusCounts.mastered }}</span><span>Need Review {{ cardStatusCounts.review }}</span><span>Unseen {{ cardStatusCounts.unseen }}</span></div>
-            <article v-for="card in topic.flashcards" :key="card.flashcard_id">
+            <div class="flashcard-list-filters"><span>All {{ flashcards.length }}</span><span>Mastered {{ cardStatusCounts.mastered }}</span><span>Need Review {{ cardStatusCounts.review }}</span><span>Unseen {{ cardStatusCounts.unseen }}</span></div>
+            <article v-for="card in flashcards" :key="card.flashcard_id">
               <span :class="['card-list-status', cardStatuses[card.flashcard_id] || 'unseen']">{{ cardStatuses[card.flashcard_id] || 'unseen' }}</span>
               <div><h2>{{ card.front }}</h2><p>{{ card.back }}</p></div>
               <button type="button" :class="{ active: starredCards.has(card.flashcard_id) }" @click="toggleCardStar(card)">★</button>

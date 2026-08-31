@@ -6,4 +6,5 @@ tmp
 .vercel
 .playwright-cli
 output
+.ui-evidence
 *.log

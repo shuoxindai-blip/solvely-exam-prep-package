@@ -1,0 +1,168 @@
+import type { SatStudyGuide } from './sat'
+
+export type EpContentType = 'studyGuide' | 'flashCard' | 'quiz'
+export type EpContentStatus = 'NOT_GENERATED' | 'GENERATING' | 'READY' | 'IN_PROGRESS' | 'COMPLETED' | 'FAIL'
+
+export type EpOutlineTopic = {
+  id: number
+  originTopicId: string
+  title: string
+  description: string
+  relevanceScore: number
+  priority: 'CORE' | 'LIKELY'
+}
+
+export type EpTopicGroup = {
+  id: number
+  originTopicGroupId: string
+  sectionId: string
+  sectionTitle: string
+  title: string
+  relevanceScore: number
+  topics: EpOutlineTopic[]
+}
+
+export type EpPreparation = {
+  _id: number
+  deviceId: string
+  platform: string
+  packageId: number
+  exam: string
+  examCode: string
+  subject: string
+  course: { id: number | null; schoolId: number | null; name: string; code: string }
+  type: string
+  metadata: {
+    schemaVersion: 'EP_V2'
+    totals: { topics: number; flashcards: number; quizQuestions: number; mappedQuizQuestions: number; mockExams: number }
+    note: string
+  }
+  language: string
+  country: string
+  region: string
+  deletedAt: string | null
+  outline: { outlineId: number; status: 'NOT_GENERATED' | 'GENERATING' | 'READY' | 'FAIL'; topicGroups: EpTopicGroup[] }
+  createdAt: string
+  updatedAt: string
+}
+
+export type EpProgress = {
+  totalCount: number
+  completedCount: number
+  items: Record<string, unknown>
+}
+
+export type EpTopicContentBase = {
+  epId: number
+  outlineId: number
+  topicGroupId: number
+  topicId: number
+  packageId: number
+  contentType: EpContentType
+  contentStatus: EpContentStatus
+  generationId: string
+  progress: EpProgress
+  platform: string
+}
+
+export type EpStudyGuideContent = EpTopicContentBase & {
+  contentType: 'studyGuide'
+  payload: {
+    content: SatStudyGuide
+    items: EpQuestion[]
+    videoLesson: {
+      title: string
+      coverUrl: string
+      playbackUrl: string
+      durationSeconds: number
+      description: string
+    }
+  }
+  lastViewedQuestionId: number | null
+  lastViewedAt: string | null
+}
+
+export type EpFlashCard = {
+  id: number
+  topicId: number
+  type: 'FLASH_CARD'
+  info: string
+  backInfo: string
+  imageMarkdown: string
+  cardType: 'BASIC'
+  userStatus: string
+}
+
+export type EpFlashCardContent = EpTopicContentBase & {
+  contentType: 'flashCard'
+  payload: { cards: EpFlashCard[] }
+}
+
+export type EpQuestion = {
+  id: number
+  topicId: number
+  type: 'MULTIPLE_CHOICE' | 'STUDENT_PRODUCED_RESPONSE' | 'CHECK_QUESTION'
+  quizType?: 'QUIZ'
+  stem: string
+  options: Record<string, string>
+  correctAnswer: string
+  explanation: string
+  userAnswer: string | null
+  isCorrect: -1 | 0 | 1
+}
+
+export type EpQuizContent = EpTopicContentBase & {
+  contentType: 'quiz'
+  payload: { questions: EpQuestion[] }
+}
+
+export type EpTopicContent = EpStudyGuideContent | EpFlashCardContent | EpQuizContent
+
+export type EpTopicContentIndex = {
+  collection: 'epTopicContents'
+  uniqueIndex: ['epId', 'outlineId', 'topicId', 'contentType']
+  documents: Array<{
+    epId: number
+    outlineId: number
+    packageId: number
+    topicGroupId: number
+    topicId: number
+    contentType: EpContentType
+    contentStatus: EpContentStatus
+    totalCount: number
+    path: string
+  }>
+}
+
+export type EpExamQuestion = EpQuestion & {
+  index: number
+  topicGroupId: number
+  sectionId: string
+  sectionTitle: string
+  module: 'Module 1' | 'Module 2'
+  route: string
+  contentDomain: string
+  officialSkill: string
+  teachingTopic: string
+  difficulty: string
+  isScored: boolean
+  maximumRawPoints: number
+  responseType: 'MULTIPLE_CHOICE' | 'STUDENT_PRODUCED_RESPONSE'
+}
+
+export type EpExam = {
+  _id: number
+  epId: number
+  outlineId: number
+  packageId: number
+  exam: string
+  examCode: string
+  subject: string
+  examStatus: string
+  overviewStatus: string
+  totalCount: number
+  questions: EpExamQuestion[]
+  result: unknown
+  submittedAt: string | null
+  completedAt: string | null
+}
