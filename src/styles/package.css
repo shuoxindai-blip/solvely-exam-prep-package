@@ -1542,7 +1542,7 @@
     .course-overview-waterfall .course-hub-card + .course-hub-card { margin-top:0; }
 
     .study-breakdown { display:grid; gap:14px; }
-    .study-breakdown-toolbar { min-height:42px; display:flex; align-items:center; justify-content:space-between; gap:16px; }
+    .study-breakdown-toolbar { min-height:42px; display:flex; align-items:center; justify-content:flex-end; gap:16px; }
     .study-breakdown-toolbar h2 { margin:0; font-size:18px; line-height:1.2; letter-spacing:-.025em; }
     .study-breakdown-filters { display:flex; flex-wrap:wrap; justify-content:flex-end; gap:8px; }
     .study-filter-control { position:relative; min-width:110px; height:36px; display:flex; align-items:center; gap:7px; padding:0 28px 0 11px; border:1px solid var(--line); border-radius:10px; background:var(--surface); box-shadow:0 3px 9px rgba(31,45,69,.06); color:var(--text); }
