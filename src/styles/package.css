@@ -1785,6 +1785,7 @@
 
     .results-experience { display:grid; gap:18px; color:var(--text); }
     .results-experience-head { display:flex; align-items:flex-end; justify-content:space-between; gap:24px; padding:3px 2px 0; }
+    .results-experience-head.results-switch-only { justify-content:flex-end; }
     .results-experience-head h2 { margin:4px 0 0; font:650 23px/1.25 Poppins,Inter,sans-serif; letter-spacing:-.025em; }
     .results-experience-head p { margin:6px 0 0; color:var(--muted); font-size:10px; }
     .results-view-switch { display:grid; grid-template-columns:repeat(3,auto); gap:3px; padding:4px; border:1px solid var(--line); border-radius:12px; background:var(--surface-soft); }

@@ -492,8 +492,7 @@ onBeforeUnmount(() => document.body.classList.remove('package-route', 'dark'))
           </div>
 
           <div v-else class="results-experience">
-            <header class="results-experience-head">
-              <div><span class="course-hub-eyebrow">Latest completed attempt</span><p>Digital SAT Full-Length Practice Test 1 · {{ resultReport ? `Completed ${formatReportDate(resultReport.completedAt)}` : 'Loading attempt…' }}</p></div>
+            <header class="results-experience-head results-switch-only">
               <div class="results-view-switch" role="tablist" aria-label="Result views">
                 <button type="button" role="tab" :aria-selected="resultView === 'score'" @click="setResultView('score')">Score Report</button>
                 <button type="button" role="tab" :aria-selected="resultView === 'review'" @click="setResultView('review')">Question Review</button>
@@ -526,7 +525,7 @@ onBeforeUnmount(() => document.body.classList.remove('package-route', 'dark'))
               <section class="report-ai-overview"><span class="report-ai-icon"><svg class="icon"><use href="#i-spark"/></svg></span><div><span>SAT Overview</span><p>{{ resultReport.overview }}</p></div></section>
 
               <section class="knowledge-report" aria-labelledby="knowledgeReportTitle">
-                <header class="report-section-heading"><div><h3 id="knowledgeReportTitle">Knowledge and Skills</h3><p>Performance across the 8 content domains measured on the SAT.</p></div><span>Mastery scale · 1–5</span></header>
+                <header class="report-section-heading"><div><h3 id="knowledgeReportTitle">Knowledge and Skills</h3><p>Performance across the 8 content domains measured on the SAT.</p></div></header>
                 <div class="knowledge-section-grid">
                   <article v-for="section in resultReport.sections" :key="`domain-${section.sectionId}`" class="knowledge-section-card">
                     <h4>{{ section.sectionTitle }}</h4>
@@ -539,7 +538,7 @@ onBeforeUnmount(() => document.body.classList.remove('package-route', 'dark'))
               </section>
 
               <section class="report-performance-details">
-                <header class="report-section-heading"><div><h3>Performance details</h3><p>See which SAT skills are both accurate and efficient—and where extra review can help.</p></div><span>{{ resultReport.schemaVersion }} · {{ resultReport.attemptId }}</span></header>
+                <header class="report-section-heading"><div><h3>Performance details</h3><p>See which SAT skills are both accurate and efficient—and where extra review can help.</p></div></header>
                 <div class="report-stat-strip">
                   <div><span>Correct</span><strong>{{ resultReport.correct }}<small>/{{ reportQuestions.length }}</small></strong></div><div><span>Incorrect</span><strong>{{ resultReport.incorrect }}</strong></div><div><span>Unanswered</span><strong>{{ resultReport.omitted }}</strong></div><div><span>Accuracy</span><strong>{{ resultReport.accuracy }}%</strong></div><div><span>Time used</span><strong>{{ formatReportDuration(resultReport.durationSeconds) }}</strong></div>
                 </div>
