@@ -152,8 +152,6 @@ const eliminationMode = ref(false)
 const calculatorOpen = ref(false)
 const referenceOpen = ref(false)
 const navigatorOpen = ref(false)
-const directionsOpen = ref(false)
-const moreOpen = ref(false)
 const timerVisible = ref(true)
 const toastMessage = ref('')
 const recommendationRating = ref<number | null>(null)
@@ -479,25 +477,20 @@ function toggleReview() {
 
 function toggleHighlightMode() {
   highlighterEnabled.value = !highlighterEnabled.value
-  moreOpen.value = false
 }
 
 function toggleCalculator() {
   calculatorOpen.value = !calculatorOpen.value
-  moreOpen.value = false
 }
 
 function toggleReference() {
   referenceOpen.value = !referenceOpen.value
-  moreOpen.value = false
 }
 
 function closeTransientTools() {
   calculatorOpen.value = false
   referenceOpen.value = false
   highlighterEnabled.value = false
-  directionsOpen.value = false
-  moreOpen.value = false
 }
 
 function updateHighlights(value: TextHighlight[]) {
@@ -529,8 +522,6 @@ function onKeydown(event: KeyboardEvent) {
   const target = event.target as HTMLElement | null
   if (event.key === 'Escape') {
     navigatorOpen.value = false
-    directionsOpen.value = false
-    moreOpen.value = false
     referenceOpen.value = false
     return
   }
@@ -705,15 +696,12 @@ onBeforeUnmount(() => {
     <header class="exam-header">
       <div class="header-left">
         <button class="package-exit-control" type="button" aria-label="Back to SAT package" @click="exitExam">←</button>
-        <button class="directions-button" type="button" :aria-expanded="directionsOpen" @click="directionsOpen = !directionsOpen">Directions<svg viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4" /></svg></button>
-        <div v-if="directionsOpen" class="header-popover directions-popover"><strong>{{ currentModule.title }}</strong><p v-if="currentModule.section === 'reading'">Choose the best answer to each question. You can return to any question before the module ends.</p><p v-else>Solve each problem and choose the best answer. Calculator and reference tools are available for this section.</p></div>
       </div>
       <div class="timer-wrap"><strong v-if="timerVisible" class="timer" aria-live="polite">{{ timeLabel }}</strong><span v-else class="timer-placeholder">Timer hidden</span><button type="button" @click="timerVisible = !timerVisible">{{ timerVisible ? 'Hide' : 'Show' }}</button></div>
       <div class="header-tools">
-        <button class="tool-button" :class="{ active: highlighterEnabled }" type="button" :aria-pressed="highlighterEnabled" :aria-label="highlighterEnabled ? 'Turn off highlight mode' : 'Turn on highlight mode'" @click="toggleHighlightMode"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 16 9.8-9.8a2 2 0 0 1 2.8 0l.2.2a2 2 0 0 1 0 2.8L8 19H5v-3Z" /><path d="M13.5 7.5 16.5 10.5M4 21h16" /></svg><span>Highlight</span></button>
         <button v-if="currentModule.section === 'math'" class="tool-button" :class="{ active: calculatorOpen }" type="button" :aria-pressed="calculatorOpen" @click="toggleCalculator"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="3" width="12" height="18" rx="2" /><path d="M8.5 6h7v3h-7zM9 13h.01M12 13h.01M15 13h.01M9 17h.01M12 17h.01M15 17h.01" /></svg><span>Calculator</span></button>
         <button v-if="currentModule.section === 'math'" class="tool-button" :class="{ active: referenceOpen }" type="button" :aria-pressed="referenceOpen" @click="toggleReference"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h8l3 3v15H7zM15 3v4h4M10 11h5M10 15h5" /></svg><span>Reference</span></button>
-        <div class="more-wrap"><button class="tool-button" type="button" :aria-expanded="moreOpen" @click="moreOpen = !moreOpen"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5" r="1.3" fill="currentColor" /><circle cx="12" cy="12" r="1.3" fill="currentColor" /><circle cx="12" cy="19" r="1.3" fill="currentColor" /></svg><span>More</span></button><div v-if="moreOpen" class="header-popover more-popover"><button type="button">Line reader</button><button type="button">Question text size</button><button type="button">Keyboard shortcuts</button></div></div>
+        <button class="tool-button" :class="{ active: highlighterEnabled }" type="button" :aria-pressed="highlighterEnabled" :aria-label="highlighterEnabled ? 'Turn off highlight mode' : 'Turn on highlight mode'" @click="toggleHighlightMode"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 16 9.8-9.8a2 2 0 0 1 2.8 0l.2.2a2 2 0 0 1 0 2.8L8 19H5v-3Z" /><path d="M13.5 7.5 16.5 10.5M4 21h16" /></svg><span>Highlight</span></button>
       </div>
     </header>
 
