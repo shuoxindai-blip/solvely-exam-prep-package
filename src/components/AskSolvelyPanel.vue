@@ -220,26 +220,10 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <footer class="solvely-tutor-bar" aria-label="AI Tutor controls">
-    <div class="solvely-tutor-brand">
-      <span class="solvely-tutor-book" aria-hidden="true">♧</span>
-      <span><strong>AI Tutor</strong><small>00:00 / 00:00</small></span>
-    </div>
-    <div class="solvely-tutor-player" aria-label="Lesson audio controls">
-      <button type="button" aria-label="Previous audio segment" disabled>◁</button>
-      <button type="button" class="solvely-play-button" aria-label="Play lesson audio">▶</button>
-      <button type="button" aria-label="Next audio segment">▷</button>
-    </div>
-    <div class="solvely-tutor-actions">
-      <button type="button" class="solvely-settings-button" aria-label="AI Tutor settings">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8.8a3.2 3.2 0 1 0 0 6.4 3.2 3.2 0 0 0 0-6.4Z"/><path d="M19.4 13.5c.05-.49.05-1.01 0-1.5l1.55-1.2-1.8-3.1-1.86.75a7.7 7.7 0 0 0-1.3-.75l-.27-1.98h-3.58l-.28 1.98c-.46.2-.9.45-1.3.75L8.7 7.7l-1.8 3.1L8.46 12a8.1 8.1 0 0 0 0 1.5L6.9 14.7l1.8 3.1 1.86-.75c.4.3.84.55 1.3.75l.28 1.98h3.58l.27-1.98c.46-.2.9-.45 1.3-.75l1.86.75 1.8-3.1-1.55-1.2Z"/></svg>
-      </button>
-      <button type="button" class="solvely-ask-button" :class="{ 'is-open': open }" :aria-expanded="open" @click="togglePanel">
-        <img v-if="!open" src="/assets/solvely-ai-logo.jpeg" alt="" />
-        <span>{{ open ? 'Hide Solvely' : 'Ask Solvely' }}</span>
-      </button>
-    </div>
-  </footer>
+  <button type="button" class="solvely-ask-button solvely-chat-launch" :class="{ 'is-open': open }" :aria-expanded="open" @click="togglePanel">
+    <img v-if="!open" src="/assets/solvely-ai-logo.jpeg" alt="" />
+    <span>{{ open ? 'Hide Solvely' : 'Ask Solvely' }}</span>
+  </button>
 
   <div v-if="open && !floating" class="solvely-chat-resize" role="separator" aria-label="Resize chat panel" aria-orientation="vertical" @pointerdown="beginResize" />
 
@@ -302,7 +286,7 @@ onBeforeUnmount(() => {
       </button>
       <span class="solvely-composer-divider" />
       <button type="button" class="solvely-voice-button" aria-label="Voice" title="Use Conversation Mode" @click="startVoice">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.4 5.5a7.5 7.5 0 0 0 0 13M16.6 5.5a7.5 7.5 0 0 1 0 13"/><path d="M9.7 8.6a4.2 4.2 0 0 0 0 6.8M14.3 8.6a4.2 4.2 0 0 1 0 6.8"/><circle cx="12" cy="12" r="1.3"/></svg>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.1 3.8 10 6.7 8.2 9.2c1.45 2.85 3.75 5.15 6.6 6.6l2.5-1.8 2.9 2.9-1.55 2.25c-.58.84-1.65 1.2-2.61.86C10.08 17.95 6.05 13.92 3.99 7.96c-.34-.96.02-2.03.86-2.61Z"/></svg>
       </button>
     </form>
   </aside>
