@@ -41,6 +41,7 @@ const improvePracticeProgress = ref<Record<string, number>>({})
 const showLessonImportanceNote = ref(true)
 const showImproveImportanceNote = ref(true)
 const practiceTestState = ref<PracticeTestState>('in-progress')
+let scoringTimer: number | null = null
 const retakeDialog = ref<HTMLDialogElement | null>(null)
 const lastActivity = ref<LastActivity>({ kind: 'learning', examTitle: 'SAT Prep 2026', sectionTitle: 'Advanced Math', itemTitle: 'Expansion, factoring, and completing the square', resourceLabel: 'Study Guide', progressPercent: 62, topicId: 'sat_math_advanced_equivalent_expressions_01' })
 const isCourseOpen = computed(() => route.hash === '#course-0')
@@ -335,9 +336,27 @@ function requestRetake() {
   if (retakeDialog.value && !retakeDialog.value.open) retakeDialog.value.showModal()
 }
 function closeRetakeConfirm() { retakeDialog.value?.close() }
+function clearScoringTimer() {
+  if (scoringTimer !== null) window.clearTimeout(scoringTimer)
+  scoringTimer = null
+}
+function setPracticeTestState(state: PracticeTestState) {
+  clearScoringTimer()
+  practiceTestState.value = state
+  if (state !== 'scoring') return
+  scoringTimer = window.setTimeout(() => {
+    scoringTimer = null
+    practiceTestState.value = 'results'
+    void router.replace({
+      name: 'package',
+      query: { ...route.query, tab: 'mock', practiceState: 'results' },
+      hash: '#course-0',
+    })
+  }, 2000)
+}
 function confirmRetake() {
   closeRetakeConfirm()
-  practiceTestState.value = 'not-started'
+  setPracticeTestState('not-started')
   startMockExam(1)
 }
 function handlePracticeTestAction() {
@@ -398,13 +417,17 @@ function priorityLabel(priority: SatTopic['priority']) { return priority.charAt(
 function syncTabFromRoute() {
   const requestedTab = String(route.query.tab || '')
   activeTab.value = requestedTab === 'study' || requestedTab === 'mock' || requestedTab === 'results' ? requestedTab : 'overview'
+  const requestedPracticeState = String(route.query.practiceState || '')
+  if (requestedPracticeState === 'not-started' || requestedPracticeState === 'in-progress' || requestedPracticeState === 'scoring' || requestedPracticeState === 'results') {
+    setPracticeTestState(requestedPracticeState)
+  }
   if (activeTab.value === 'results') {
     const requestedView = String(route.query.view || '')
     resultView.value = requestedView === 'review' || requestedView === 'improve' ? requestedView : 'score'
   }
 }
 
-watch([() => route.hash, () => route.query.tab, () => route.query.view], () => {
+watch([() => route.hash, () => route.query.tab, () => route.query.view, () => route.query.practiceState], () => {
   if (route.hash === '#course-0') syncTabFromRoute()
   else activeTab.value = 'overview'
 })
@@ -423,7 +446,10 @@ onMounted(async () => {
   catch (error) { resultLoadError.value = error instanceof Error ? error.message : 'Unable to load the SAT score report.' }
 })
 
-onBeforeUnmount(() => document.body.classList.remove('package-route', 'dark'))
+onBeforeUnmount(() => {
+  clearScoringTimer()
+  document.body.classList.remove('package-route', 'dark')
+})
 </script>
 
 <template>
@@ -579,7 +605,7 @@ onBeforeUnmount(() => document.body.classList.remove('package-route', 'dark'))
             <aside class="mock-demo-controller" aria-label="Practice test demo state controller">
               <header class="mock-demo-controller-head"><strong>Demo control</strong><span>Not product UI</span></header>
               <nav class="mock-state-nav" aria-label="Preview practice test card state">
-                <button v-for="state in practiceTestStates" :key="state.id" :class="['mock-state-button',{ active:practiceTestState === state.id }]" type="button" :aria-pressed="practiceTestState === state.id" @click="practiceTestState = state.id">{{ state.label }}</button>
+                <button v-for="state in practiceTestStates" :key="state.id" :class="['mock-state-button',{ active:practiceTestState === state.id }]" type="button" :aria-pressed="practiceTestState === state.id" @click="setPracticeTestState(state.id)">{{ state.label }}</button>
               </nav>
             </aside>
           </div>
