@@ -741,6 +741,47 @@ const topicsBySection = computed(() => {
   ];
 });
 
+const recommendedStartTopic = computed(() =>
+  [...(manifest.value?.topics ?? [])]
+    .filter((topic) => topic.section === "Math")
+    .sort(
+      (left, right) =>
+        right.importanceScore - left.importanceScore ||
+        right.mappedQuestionCount - left.mappedQuestionCount ||
+        left.order - right.order,
+    )[0] ?? null,
+);
+
+const courseStartTopic = computed(() => {
+  const activity = lastActivity.value;
+  if (isCourseStarted.value && activity.kind === "learning") {
+    const recentTopic = manifest.value?.topics.find(
+      (topic) => topic.id === activity.topicId,
+    );
+    if (recentTopic) return recentTopic;
+  }
+  return recommendedStartTopic.value;
+});
+
+const courseStartModule = computed(() => {
+  const topic = courseStartTopic.value;
+  if (!topic) return null;
+  const activity = lastActivity.value;
+  const isContinuing =
+    isCourseStarted.value &&
+    activity.kind === "learning" &&
+    activity.topicId === topic.id;
+  return {
+    label: isContinuing ? "Continue learning" : "Recommended start",
+    title: topic.title,
+    domain: topic.domain,
+    detail: isContinuing && activity.kind === "learning"
+      ? `${activity.progressPercent}% complete`
+      : `${topic.importanceScore}% ${priorityLabel(topic.priority)} priority`,
+    cta: isContinuing ? "Continue learning" : "Start learning",
+  };
+});
+
 function topicProgress(topic: SatTopic) {
   if (topic.order <= 46) return 100;
   if (topic.order <= 52)
@@ -786,6 +827,11 @@ function openTopic(
     params: { topicId: topic.id },
     query: { access: accessState.value },
   });
+}
+
+function openCourseStartTopic() {
+  const topic = courseStartTopic.value;
+  if (topic) openTopic(topic, "study-guide");
 }
 
 function openCommercialPaywall(context: string, action?: () => void) {
@@ -1758,6 +1804,51 @@ onBeforeUnmount(() => {
               aria-label="SAT lessons and practice test"
             >
               <section class="study-breakdown" aria-label="SAT lessons">
+                <section
+                  v-if="courseStartModule"
+                  class="course-kickoff"
+                  :aria-labelledby="`courseKickoffTitle-${courseStartTopic?.id}`"
+                >
+                  <span class="course-kickoff-icon" aria-hidden="true">
+                    <svg class="icon"><use href="#i-target" /></svg>
+                  </span>
+                  <div class="course-kickoff-copy">
+                    <span class="course-kickoff-label">{{
+                      courseStartModule.label
+                    }}</span>
+                    <h2 :id="`courseKickoffTitle-${courseStartTopic?.id}`">
+                      {{ courseStartModule.title }}
+                    </h2>
+                    <div class="course-kickoff-meta">
+                      <span>{{ courseStartModule.domain }}</span>
+                      <span>{{ courseStartModule.detail }}</span>
+                    </div>
+                  </div>
+                  <button
+                    class="course-kickoff-action"
+                    type="button"
+                    @click="openCourseStartTopic"
+                  >
+                    <span>{{ courseStartModule.cta }}</span>
+                    <svg class="icon" aria-hidden="true">
+                      <use href="#i-chevron" />
+                    </svg>
+                  </button>
+                </section>
+                <section
+                  v-else
+                  class="course-kickoff course-kickoff-loading"
+                  aria-label="Loading recommended lesson"
+                  aria-busy="true"
+                >
+                  <span class="course-kickoff-skeleton icon" />
+                  <div class="course-kickoff-copy">
+                    <span class="course-kickoff-skeleton label" />
+                    <span class="course-kickoff-skeleton title" />
+                    <span class="course-kickoff-skeleton meta" />
+                  </div>
+                  <span class="course-kickoff-skeleton action" />
+                </section>
                 <header
                   class="study-breakdown-toolbar"
                   aria-label="Filter lessons"
