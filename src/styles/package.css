@@ -1616,7 +1616,7 @@
     .study-section-meta { display:flex; align-items:center; gap:18px; color:var(--muted); font-size:9px; }
     .study-section-meta .icon { width:14px; height:14px; transition:transform .16s ease; }
     .study-topic-section.collapsed .study-section-meta .icon { transform:rotate(-90deg); }
-    .study-topic-table-head,.study-topic-row { display:grid; grid-template-columns:minmax(180px,1fr) 96px 246px; align-items:center; gap:20px; }
+    .study-topic-table-head,.study-topic-row { display:grid; grid-template-columns:minmax(220px,1fr) 112px 160px; align-items:center; gap:24px; }
     .study-topic-table-head { min-height:44px; padding:0 30px; color:var(--muted); font-size:8px; font-weight:740; letter-spacing:.06em; text-transform:uppercase; }
     .study-topic-row { position:relative; z-index:1; min-height:96px; padding:13px 26px; border-top:1px solid var(--line); outline:0; transition:background .16s ease,box-shadow .16s ease; }
     .study-topic-row:hover,.study-topic-row:focus-within,.study-topic-row:focus { z-index:18; background:rgba(35,104,240,.025); box-shadow:inset 3px 0 #2368f0; }
@@ -1634,11 +1634,8 @@
     .study-topic-status.continue { background:#edf5ff; color:#2368f0; }
     .study-topic-status.not-started { background:transparent; color:#99a2b0; }
     .study-topic-status .icon { width:11px; height:11px; }
-    .study-topic-progress { min-width:0; display:grid; grid-template-columns:minmax(92px,1fr) 130px; align-items:center; justify-content:end; gap:16px; }
-    .study-topic-progress-copy { min-width:0; text-align:right; }
-    .study-topic-progress-copy strong { display:block; color:var(--text); font-size:10px; line-height:1.2; }
-    .study-topic-progress-copy span { display:block; overflow:hidden; margin-top:4px; color:var(--muted); font-size:8px; text-overflow:ellipsis; white-space:nowrap; }
-    .study-topic-progress-meter { display:grid; grid-template-columns:34px minmax(48px,1fr); align-items:center; gap:9px; color:#9ba6b8; font-size:10px; font-weight:700; }
+    .study-topic-progress { min-width:0; display:flex; align-items:center; }
+    .study-topic-progress-meter { width:100%; display:grid; grid-template-columns:38px minmax(72px,1fr); align-items:center; gap:10px; color:#9ba6b8; font-size:10px; font-weight:700; }
     .study-topic-progress-meter strong { color:#147ef5; font-size:10px; }
     .study-topic-progress-track { height:5px; overflow:hidden; border-radius:99px; background:#e7e9ed; }
     .study-topic-progress-track i { display:block; height:100%; border-radius:inherit; background:#63a8ee; }
@@ -2122,8 +2119,7 @@
       .question-navigator { position:static; }
       .study-breakdown-toolbar { align-items:flex-start; }
       .study-breakdown-filters { justify-content:space-between; }
-      .study-topic-table-head,.study-topic-row { grid-template-columns:minmax(160px,1fr) 88px 210px; padding-inline:20px; }
-      .study-topic-progress { grid-template-columns:minmax(80px,1fr) 112px; gap:10px; }
+      .study-topic-table-head,.study-topic-row { grid-template-columns:minmax(180px,1fr) 100px 150px; gap:18px; padding-inline:20px; }
       .study-topic-popover { top:calc(100% - 5px); right:14px; left:14px; width:auto; transform:translateY(8px); }
       .study-topic-row:hover .study-topic-popover,.study-topic-row:focus .study-topic-popover,.study-topic-row:focus-within .study-topic-popover { transform:translateY(0); }
       .study-topic-popover::before { top:-8px; right:36px; left:auto; transform:rotate(135deg); }
@@ -2161,12 +2157,11 @@
       .study-importance-chips::-webkit-scrollbar { display:none; }
       .study-section-head { padding-inline:15px; }
       .study-topic-table-head { display:none; }
-      .study-topic-row { min-height:82px; grid-template-columns:minmax(0,1fr) 102px; gap:10px; padding:14px 16px; }
+      .study-topic-row { min-height:82px; grid-template-columns:minmax(0,1fr) 118px; gap:10px; padding:14px 16px; }
       .study-topic-copy { grid-column:1; grid-row:1; }
       .study-topic-priority-cell { grid-column:1; grid-row:2; align-self:start; }
-      .study-topic-progress { grid-column:2; grid-row:1 / span 2; grid-template-columns:1fr; gap:8px; }
-      .study-topic-progress-copy { display:none; }
-      .study-topic-progress-meter { width:102px; }
+      .study-topic-progress { grid-column:2; grid-row:1 / span 2; }
+      .study-topic-progress-meter { width:118px; grid-template-columns:34px minmax(68px,1fr); }
       .improve-topic-action button { width:100%; padding:0 8px; }
       .study-topic-popover { right:10px; left:10px; }
       .study-topic-actions { grid-template-columns:1fr; }

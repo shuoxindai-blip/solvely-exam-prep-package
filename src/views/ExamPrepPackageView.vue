@@ -721,21 +721,6 @@ function topicProgress(topic: SatTopic) {
   return 0;
 }
 
-function topicProgressLabel(topic: SatTopic) {
-  const progress = topicProgress(topic);
-  if (progress === 100) return "3 of 3 tools complete";
-  if (progress > 0)
-    return progress > 50 ? "2 of 3 tools complete" : "1 of 3 tools complete";
-  return "0 of 3 tools complete";
-}
-
-function topicProgressState(topic: SatTopic) {
-  const progress = topicProgress(topic);
-  if (progress === 100) return "Complete";
-  if (progress > 0) return "In progress";
-  return "Not started";
-}
-
 function initializeSectionDisclosure() {
   if (!manifest.value) return;
   const sectionIds = manifest.value.sections
@@ -1802,10 +1787,7 @@ onBeforeUnmount(() => {
                           >
                         </div>
                         <div class="study-topic-progress" role="cell">
-                          <span class="study-topic-progress-copy"
-                            ><strong>{{ topicProgressState(topic) }}</strong
-                            ><span>{{ topicProgressLabel(topic) }}</span></span
-                          ><span class="study-topic-progress-meter"
+                          <span class="study-topic-progress-meter"
                             ><strong>{{ topicProgress(topic) }}%</strong
                             ><span class="study-topic-progress-track"
                               ><i
