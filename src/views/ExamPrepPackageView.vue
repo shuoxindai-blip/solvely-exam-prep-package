@@ -3687,7 +3687,7 @@ onBeforeUnmount(() => {
                 </div>
               </section>
               <footer
-                v-if="resultView === 'full'"
+                v-if="resultView === 'full' || resultView === 'improve'"
                 class="report-footer full-report-footer"
               >
                 <p>
@@ -3706,13 +3706,6 @@ onBeforeUnmount(() => {
                         ? "Retake Diagnostic"
                         : "Retake"
                     }}
-                  </button>
-                  <button
-                    class="report-practice-button"
-                    type="button"
-                    @click="setResultView('improve')"
-                  >
-                    Practice Weak Topics
                   </button>
                 </div>
               </footer>
