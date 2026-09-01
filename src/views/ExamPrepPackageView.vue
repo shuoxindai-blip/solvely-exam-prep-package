@@ -2551,6 +2551,12 @@ onBeforeUnmount(() => {
 
             <div v-else class="results-experience">
               <nav class="results-source-filter" aria-label="Select test results">
+                <div class="results-source-intro">
+                  <h2>Your test results</h2>
+                  <p>
+                    Review scores, answers, and next steps for each assessment.
+                  </p>
+                </div>
                 <div
                   :class="[
                     'results-source-switch',
