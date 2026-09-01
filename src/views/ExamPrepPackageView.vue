@@ -288,8 +288,8 @@ const diagnosticTestCard = computed(() => {
       description:
         "Your answers were submitted. We are calculating your total and section score predictions; results are usually ready in a few seconds.",
       metrics: [
-        { value: String(questionCount), label: "answered" },
-        { value: "Untimed", label: "time limit" },
+        { value: String(questionCount), label: "questions" },
+        { value: "Untimed", label: "" },
         { value: "2", label: "sections" },
       ],
       progressTitle: "Status",
@@ -304,9 +304,9 @@ const diagnosticTestCard = computed(() => {
       description:
         "Continue your quick SAT score and skill check. Your answers are saved automatically.",
       metrics: [
-        { value: "10", label: "Reading & Writing" },
-        { value: "10", label: "Math" },
-        { value: "Untimed", label: "time limit" },
+        { value: String(questionCount), label: "questions" },
+        { value: "Untimed", label: "" },
+        { value: "2", label: "sections" },
       ],
       progressTitle: "Progress",
       progressLabel: `4 of ${questionCount} answered`,
@@ -319,9 +319,9 @@ const diagnosticTestCard = computed(() => {
     description:
       "Get an instant score estimate, skill breakdown, and points within reach when time is short. This quick check does not replace the full-length test.",
     metrics: [
-      { value: "10", label: "Reading & Writing" },
-      { value: "10", label: "Math" },
-      { value: "Untimed", label: "time limit" },
+      { value: String(questionCount), label: "questions" },
+      { value: "Untimed", label: "" },
+      { value: "2", label: "sections" },
     ],
     progressTitle: "Access",
     progressLabel: "Free for everyone",
@@ -2384,6 +2384,10 @@ onBeforeUnmount(() => {
                     'compact',
                     'diagnostic-entry-card',
                     diagnosticTestState,
+                    {
+                      'is-clickable': !diagnosticTestCard.disabled,
+                      'is-disabled': diagnosticTestCard.disabled,
+                    },
                   ]"
                 >
                   <div class="mock-entry-content">
@@ -2402,13 +2406,22 @@ onBeforeUnmount(() => {
                       <h3>Free SAT Diagnostic Test</h3>
                       <p>{{ diagnosticTestCard.description }}</p>
                     </div>
-                    <div class="mock-entry-metrics">
-                      <span
-                        v-for="metric in diagnosticTestCard.metrics"
-                        :key="metric.label"
-                        ><strong>{{ metric.value }}</strong
-                        >{{ metric.label }}</span
+                    <div class="mock-entry-details" aria-label="Test details">
+                      <template
+                        v-for="(metric, index) in diagnosticTestCard.metrics"
+                        :key="`${metric.value}-${metric.label}`"
                       >
+                        <span
+                          ><strong>{{ metric.value }}</strong
+                          ><template v-if="metric.label">
+                            {{ metric.label }}</template
+                          ></span
+                        ><i
+                          v-if="index < diagnosticTestCard.metrics.length - 1"
+                          aria-hidden="true"
+                          >·</i
+                        >
+                      </template>
                     </div>
                     <div
                       v-if="diagnosticTestState !== 'results'"
@@ -2430,20 +2443,36 @@ onBeforeUnmount(() => {
                     </div>
                   </div>
                   <footer class="mock-entry-footer">
-                    <button
-                      class="mock-primary-action"
-                      type="button"
-                      :disabled="diagnosticTestCard.disabled"
-                      @click="handleDiagnosticTestAction"
+                    <span
+                      :class="[
+                        'mock-card-link',
+                        { disabled: diagnosticTestCard.disabled },
+                      ]"
                     >
-                      <svg class="icon" aria-hidden="true">
-                        <use href="#i-spark" /></svg
-                      ><span>{{ diagnosticTestCard.cta }}</span>
-                    </button>
+                      <span>{{ diagnosticTestCard.cta }}</span
+                      ><span class="mock-card-link-arrow" aria-hidden="true"
+                        >→</span
+                      >
+                    </span>
                   </footer>
+                  <button
+                    class="mock-card-click-target"
+                    type="button"
+                    :aria-label="diagnosticTestCard.cta"
+                    :disabled="diagnosticTestCard.disabled"
+                    @click="handleDiagnosticTestAction"
+                  ></button>
                 </article>
                 <article
-                  :class="['mock-entry-card', 'compact', practiceTestState]"
+                  :class="[
+                    'mock-entry-card',
+                    'compact',
+                    practiceTestState,
+                    {
+                      'is-clickable': !practiceTestCard.disabled,
+                      'is-disabled': practiceTestCard.disabled,
+                    },
+                  ]"
                 >
                   <div class="mock-entry-content">
                     <header class="mock-entry-head">
@@ -2456,13 +2485,20 @@ onBeforeUnmount(() => {
                       <h3>SAT Full-Length Practice Test</h3>
                       <p>{{ practiceTestCard.description }}</p>
                     </div>
-                    <div class="mock-entry-metrics">
-                      <span
-                        v-for="metric in practiceTestCard.metrics"
-                        :key="metric.label"
-                        ><strong>{{ metric.value }}</strong
-                        >{{ metric.label }}</span
+                    <div class="mock-entry-details" aria-label="Test details">
+                      <template
+                        v-for="(metric, index) in practiceTestCard.metrics"
+                        :key="`${metric.value}-${metric.label}`"
                       >
+                        <span
+                          ><strong>{{ metric.value }}</strong>
+                          {{ metric.label }}</span
+                        ><i
+                          v-if="index < practiceTestCard.metrics.length - 1"
+                          aria-hidden="true"
+                          >·</i
+                        >
+                      </template>
                     </div>
                     <div
                       v-if="practiceTestState !== 'results'"
@@ -2484,17 +2520,25 @@ onBeforeUnmount(() => {
                     </div>
                   </div>
                   <footer class="mock-entry-footer">
-                    <button
-                      class="mock-primary-action"
-                      type="button"
-                      :disabled="practiceTestCard.disabled"
-                      @click="handlePracticeTestAction"
+                    <span
+                      :class="[
+                        'mock-card-link',
+                        { disabled: practiceTestCard.disabled },
+                      ]"
                     >
-                      <svg class="icon" aria-hidden="true">
-                        <use href="#i-spark" /></svg
-                      ><span>{{ practiceTestCard.cta }}</span>
-                    </button>
+                      <span>{{ practiceTestCard.cta }}</span
+                      ><span class="mock-card-link-arrow" aria-hidden="true"
+                        >→</span
+                      >
+                    </span>
                   </footer>
+                  <button
+                    class="mock-card-click-target"
+                    type="button"
+                    :aria-label="practiceTestCard.cta"
+                    :disabled="practiceTestCard.disabled"
+                    @click="handlePracticeTestAction"
+                  ></button>
                 </article>
               </aside>
             </section>
