@@ -2418,7 +2418,10 @@ onBeforeUnmount(() => {
                       </template>
                     </div>
                     <div
-                      v-if="diagnosticTestState !== 'results'"
+                      v-if="
+                        diagnosticTestState !== 'results' &&
+                        diagnosticTestState !== 'not-started'
+                      "
                       class="mock-entry-progress"
                     >
                       <div>
@@ -2432,7 +2435,10 @@ onBeforeUnmount(() => {
                           }"
                       /></span>
                     </div>
-                    <div v-else class="mock-entry-completed">
+                    <div
+                      v-else-if="diagnosticTestState === 'results'"
+                      class="mock-entry-completed"
+                    >
                       {{ diagnosticTestCard.progressLabel }}
                     </div>
                   </div>
@@ -2495,7 +2501,10 @@ onBeforeUnmount(() => {
                       </template>
                     </div>
                     <div
-                      v-if="practiceTestState !== 'results'"
+                      v-if="
+                        practiceTestState !== 'results' &&
+                        practiceTestState !== 'not-started'
+                      "
                       class="mock-entry-progress"
                     >
                       <div>
@@ -2509,7 +2518,10 @@ onBeforeUnmount(() => {
                           }"
                       /></span>
                     </div>
-                    <div v-else class="mock-entry-completed">
+                    <div
+                      v-else-if="practiceTestState === 'results'"
+                      class="mock-entry-completed"
+                    >
                       Completed {{ practiceTestCard.progressLabel }}
                     </div>
                   </div>
