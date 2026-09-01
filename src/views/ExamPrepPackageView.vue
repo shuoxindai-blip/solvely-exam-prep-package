@@ -790,6 +790,7 @@ const courseStartModule = computed(() => {
 });
 
 function topicProgress(topic: SatTopic) {
+  if (!isCourseStarted.value) return 0;
   if (topic.order <= 46) return 100;
   if (topic.order <= 52)
     return topic.order === 50 ? 62 : topic.order % 2 ? 33 : 67;
@@ -964,6 +965,9 @@ function setCourseEntryState(state: CourseEntryState) {
       ...route.query,
       tab: "study",
       courseState: state === "first-visit" ? "not-started" : "in-progress",
+      ...(state === "first-visit"
+        ? { practiceState: "not-started", resultState: "locked" }
+        : {}),
     },
     hash: "#course-0",
   });
@@ -1770,6 +1774,7 @@ onBeforeUnmount(() => {
                 </div>
               </div>
               <aside
+                v-if="isCourseStarted"
                 class="course-progress-summary"
                 aria-label="Course progress"
               >
@@ -1790,6 +1795,15 @@ onBeforeUnmount(() => {
                 >
                   <i :style="{ width: `${courseProgressPercent}%` }" />
                 </div>
+              </aside>
+              <aside
+                v-else
+                class="course-journey-start"
+                aria-label="Start your SAT journey"
+              >
+                <span class="course-journey-kicker">Ready to begin</span>
+                <strong>Start your SAT journey</strong>
+                <small>Your first Core lesson is ready</small>
               </aside>
             </div>
             <nav
