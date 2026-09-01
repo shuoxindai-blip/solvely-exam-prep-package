@@ -446,7 +446,7 @@ function openResults() {
 }
 
 function openPackageScoreReport() {
-  void router.push({ name: 'package', query: { tab: 'mock', practiceState: 'scoring' }, hash: '#course-0' })
+  void router.push({ name: 'package', query: { tab: 'study', practiceState: 'scoring' }, hash: '#course-0' })
 }
 
 function backToCompletion() {
@@ -455,7 +455,7 @@ function backToCompletion() {
 }
 
 function exitExam() {
-  void router.push({ name: 'package', query: { tab: 'mock' }, hash: '#course-0' })
+  void router.push({ name: 'package', query: { tab: 'study' }, hash: '#course-0' })
 }
 
 function submitFeedback() {
