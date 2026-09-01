@@ -1272,6 +1272,11 @@ function setResultSource(source: ResultSource) {
     hash: "#course-0",
   });
 }
+function setResultSourceFromEvent(event: Event) {
+  setResultSource(
+    (event.target as HTMLSelectElement).value as ResultSource,
+  );
+}
 function setReviewFilter(filter: ReviewFilter) {
   reviewFilter.value = filter;
   selectedReviewQuestionId.value = null;
@@ -2554,24 +2559,24 @@ onBeforeUnmount(() => {
                 class="results-navigation-bar"
                 aria-label="Results and practice navigation"
               >
-                <div
-                  :class="[
-                    'results-source-switch',
-                    `source-${resultSource}`,
-                  ]"
-                  role="group"
-                  aria-label="Test results"
-                >
-                  <button
+                <label class="results-source-select">
+                  <select
+                    :value="resultSource"
+                    aria-label="Select test results"
+                    @change="setResultSourceFromEvent"
+                  >
+                    <option
                     v-for="source in resultSources"
                     :key="source.id"
-                    type="button"
-                    :aria-pressed="resultSource === source.id"
-                    @click="setResultSource(source.id)"
+                    :value="source.id"
                   >
-                    <strong>{{ source.label }}</strong>
-                  </button>
-                </div>
+                      {{ source.label }}
+                    </option>
+                  </select>
+                  <svg class="icon" aria-hidden="true">
+                    <use href="#i-chevron" />
+                  </svg>
+                </label>
                 <span class="results-navigation-divider" aria-hidden="true" />
                 <div
                   class="results-view-switch"
