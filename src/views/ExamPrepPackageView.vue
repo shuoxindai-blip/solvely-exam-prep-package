@@ -2314,7 +2314,7 @@ onBeforeUnmount(() => {
                     is not affiliated with or endorsed by this product. Practice
                     scores are estimates, not official College Board scores.
                   </p>
-                  <div>
+                  <div v-if="!resultsLocked">
                     <button
                       class="report-retake-button"
                       type="button"
@@ -2633,7 +2633,7 @@ onBeforeUnmount(() => {
                     SAT® is a registered trademark of the College Board, which
                     is not affiliated with or endorsed by this product.
                   </p>
-                  <div>
+                  <div v-if="!resultsLocked">
                     <button
                       class="report-retake-button"
                       type="button"
