@@ -223,6 +223,11 @@ const resultViews: { id: ResultView; label: string }[] = [
   { id: "review", label: "Question Review" },
   { id: "improve", label: "Targeted Practice" },
 ];
+const retakeActionLabel = computed(() =>
+  resultSource.value === "diagnostic"
+    ? "Retake Diagnostic Test"
+    : "Retake Full-Length Practice Test",
+);
 const commercialAccessStates = [
   { id: "free", label: "非会员" },
   { id: "member", label: "Pro 会员" },
@@ -3126,11 +3131,7 @@ onBeforeUnmount(() => {
                       type="button"
                       @click="requestRetake"
                     >
-                      {{
-                        resultSource === "diagnostic"
-                          ? "Retake Diagnostic"
-                          : "Retake"
-                      }}</button
+                      {{ retakeActionLabel }}</button
                     ><button
                       class="report-practice-button"
                       type="button"
@@ -3445,11 +3446,7 @@ onBeforeUnmount(() => {
                       type="button"
                       @click="requestRetake"
                     >
-                      {{
-                        resultSource === "diagnostic"
-                          ? "Retake Diagnostic"
-                          : "Retake"
-                      }}</button
+                      {{ retakeActionLabel }}</button
                     ><button
                       class="report-practice-button"
                       type="button"
@@ -3701,11 +3698,7 @@ onBeforeUnmount(() => {
                     type="button"
                     @click="requestRetake"
                   >
-                    {{
-                      resultSource === "diagnostic"
-                        ? "Retake Diagnostic"
-                        : "Retake"
-                    }}
+                    {{ retakeActionLabel }}
                   </button>
                 </div>
               </footer>
