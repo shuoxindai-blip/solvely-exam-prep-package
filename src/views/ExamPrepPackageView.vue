@@ -13,7 +13,9 @@ import type { SatManifest, SatTopic } from "../types/sat";
 
 type CourseTab = "study" | "results";
 type ResultView = "score" | "review" | "improve";
+type ResultSource = "diagnostic" | "practice";
 type CourseEntryState = "first-visit" | "in-progress";
+type DiagnosticTestState = "not-started" | "in-progress" | "results";
 type PracticeTestState = "not-started" | "in-progress" | "scoring" | "results";
 type ResultsAccessState = "locked" | "unlocked";
 type ReviewFilter = "ALL" | "INCORRECT" | "CORRECT" | "OMITTED";
@@ -70,6 +72,8 @@ const improveSection = ref<"math" | "reading-writing">("math");
 const improvePriority = ref<"ALL" | SatTopic["priority"]>("ALL");
 const improvePracticeProgress = ref<Record<string, number>>({});
 const showImproveImportanceNote = ref(true);
+const resultSource = ref<ResultSource>("practice");
+const diagnosticTestState = ref<DiagnosticTestState>("not-started");
 const practiceTestState = ref<PracticeTestState>("in-progress");
 const resultsAccessState = ref<ResultsAccessState>("locked");
 const paywallOpen = ref(false);
@@ -100,8 +104,62 @@ const lastActivityCta = computed(() =>
   lastActivity.value.kind === "learning" ? "Continue learning" : "Resume exam",
 );
 
-const resultReport = computed(() =>
+const practiceResultReport = computed(() =>
   resultExam.value ? buildSatReport(resultExam.value) : null,
+);
+const diagnosticExam = computed<EpExam | null>(() => {
+  const exam = resultExam.value;
+  if (!exam) return null;
+  const questions = ["reading-writing", "math"].flatMap((sectionId) => {
+    const sectionQuestions = exam.questions.filter(
+      (question) => question.sectionId === sectionId,
+    );
+    const selected = [] as typeof sectionQuestions;
+    const usedTopics = new Set<number>();
+    for (const question of sectionQuestions) {
+      if (usedTopics.has(question.topicId)) continue;
+      selected.push(question);
+      usedTopics.add(question.topicId);
+      if (selected.length === 5) break;
+    }
+    if (selected.length < 5) {
+      for (const question of sectionQuestions) {
+        if (selected.includes(question)) continue;
+        selected.push(question);
+        if (selected.length === 5) break;
+      }
+    }
+    return selected;
+  }).map((question, index) => ({ ...question, index: index + 1 }));
+  return {
+    ...exam,
+    _id: 10,
+    exam: "Free SAT Diagnostic Test",
+    examCode: "SAT-DIAGNOSTIC",
+    totalCount: questions.length,
+    questions,
+    result: null,
+  };
+});
+const diagnosticResultReport = computed(() => {
+  if (!diagnosticExam.value) return null;
+  const report = buildSatReport(diagnosticExam.value);
+  return {
+    ...report,
+    attemptId: "sat-diagnostic-anna-2026-08-21",
+    overview:
+      "Your diagnostic shows a solid starting point in Reading and Writing. Begin with the highest-priority Math topics, then use targeted practice to close the biggest gaps.",
+  };
+});
+const activeResultExam = computed(() =>
+  resultSource.value === "diagnostic"
+    ? diagnosticExam.value
+    : resultExam.value,
+);
+const resultReport = computed(() =>
+  resultSource.value === "diagnostic"
+    ? diagnosticResultReport.value
+    : practiceResultReport.value,
 );
 const practiceTestQuestionCount = computed(
   () => resultExam.value?.questions.length ?? resultExam.value?.totalCount ?? 0,
@@ -129,6 +187,15 @@ const practiceTestStates: { id: PracticeTestState; label: string }[] = [
   { id: "scoring", label: "Scoring" },
   { id: "results", label: "Results ready" },
 ];
+const diagnosticTestStates: { id: DiagnosticTestState; label: string }[] = [
+  { id: "not-started", label: "Not started" },
+  { id: "in-progress", label: "In progress" },
+  { id: "results", label: "Results ready" },
+];
+const resultSources: { id: ResultSource; label: string; helper: string }[] = [
+  { id: "diagnostic", label: "Diagnostic Test", helper: "10 min · Free report" },
+  { id: "practice", label: "Practice Test", helper: "Full-length" },
+];
 const commercialAccessStates = [
   { id: "free", label: "Non-member" },
   { id: "member", label: "Pro" },
@@ -144,22 +211,94 @@ const resultsAccessStates: { id: ResultsAccessState; label: string }[] = [
   { id: "locked", label: "Locked" },
   { id: "unlocked", label: "Unlocked" },
 ];
-const resultsCommercialLocked = computed(() => !isProMember.value);
+const activeAssessmentComplete = computed(() =>
+  resultSource.value === "diagnostic"
+    ? diagnosticTestState.value === "results"
+    : resultsAccessState.value === "unlocked",
+);
+const resultsRequirePro = computed(
+  () => resultSource.value === "practice" || resultView.value === "improve",
+);
+const resultsCommercialLocked = computed(
+  () => resultsRequirePro.value && !isProMember.value,
+);
+const showResultsUnlockAction = computed(
+  () => resultsCommercialLocked.value && activeAssessmentComplete.value,
+);
 const resultsLocked = computed(
-  () => resultsAccessState.value === "locked" || resultsCommercialLocked.value,
+  () => !activeAssessmentComplete.value || resultsCommercialLocked.value,
 );
-const resultsLockTitle = computed(() =>
-  resultsCommercialLocked.value
-    ? "Unlock with Solvely Pro"
-    : "Complete the Practice Test to unlock",
-);
-const resultsLockDescription = computed(() =>
-  resultsCommercialLocked.value
-    ? "Get your full score report, every explanation, and adaptive topics to improve."
-    : "Finish the full-length SAT Practice Test to unlock this report.",
-);
+const resultsLockTitle = computed(() => {
+  if (!activeAssessmentComplete.value)
+    return resultSource.value === "diagnostic"
+      ? "Complete the Free Diagnostic Test to unlock"
+      : "Complete the Practice Test to unlock";
+  return resultSource.value === "diagnostic"
+    ? "Unlock Topics to Improve with Solvely Pro"
+    : "Unlock with Solvely Pro";
+});
+const resultsLockDescription = computed(() => {
+  if (!activeAssessmentComplete.value)
+    return resultSource.value === "diagnostic"
+      ? "Finish the 10-minute diagnostic to see your free Score Report and Question Review."
+      : "Finish the full-length SAT Practice Test to unlock this report.";
+  return resultSource.value === "diagnostic"
+    ? "Upgrade to turn your diagnostic results into prioritized topics and adaptive practice."
+    : "Get your full score report, every explanation, and adaptive topics to improve.";
+});
+const diagnosticTestCard = computed(() => {
+  const report = diagnosticResultReport.value;
+  const questionCount = diagnosticExam.value?.questions.length ?? 10;
+  if (diagnosticTestState.value === "results")
+    return {
+      stateLabel: "Results ready",
+      description:
+        "Your starting-point report, answer review, and recommended next steps are ready.",
+      metrics: [
+        { value: `${report?.correct ?? 7}/${questionCount}`, label: "correct" },
+        { value: `${report?.accuracy ?? 70}%`, label: "accuracy" },
+        { value: "10", label: "min" },
+      ],
+      progressTitle: "Completed",
+      progressLabel: "Report ready",
+      progressPercent: 100,
+      helper: "Score Report and Question Review are free",
+      cta: "View Free Results",
+    };
+  if (diagnosticTestState.value === "in-progress")
+    return {
+      stateLabel: "In progress",
+      description:
+        "Continue your quick SAT check. Your answers are saved automatically.",
+      metrics: [
+        { value: String(questionCount), label: "questions" },
+        { value: "10", label: "min" },
+        { value: "2", label: "sections" },
+      ],
+      progressTitle: "Progress",
+      progressLabel: `4 of ${questionCount} answered`,
+      progressPercent: 40,
+      helper: "No Pro membership required",
+      cta: "Continue Diagnostic",
+    };
+  return {
+    stateLabel: "Free",
+    description:
+      "Find your starting point with a focused 10-minute SAT check.",
+    metrics: [
+      { value: String(questionCount), label: "questions" },
+      { value: "10", label: "min" },
+      { value: "2", label: "sections" },
+    ],
+    progressTitle: "Access",
+    progressLabel: "Free for everyone",
+    progressPercent: 0,
+    helper: "Get a free Score Report and Question Review",
+    cta: "Start Free Diagnostic",
+  };
+});
 const practiceTestCard = computed(() => {
-  const report = resultReport.value;
+  const report = practiceResultReport.value;
   const questionCount = practiceTestQuestionCount.value;
   const moduleCount = practiceTestModuleCount.value;
   const durationMinutes = practiceTestDurationMinutes.value;
@@ -246,8 +385,8 @@ const practiceTestCard = computed(() => {
   };
 });
 const reportQuestions = computed(() =>
-  resultExam.value && resultReport.value
-    ? buildReviewQuestions(resultExam.value, resultReport.value)
+  activeResultExam.value && resultReport.value
+    ? buildReviewQuestions(activeResultExam.value, resultReport.value)
     : [],
 );
 const confidenceTopics = computed(() => {
@@ -443,7 +582,8 @@ const reviewQuestionGroups = computed(() => {
   return [...groups.values()];
 });
 const improveTopics = computed(() => {
-  if (!manifest.value || !resultExam.value || !resultReport.value) return [];
+  if (!manifest.value || !activeResultExam.value || !resultReport.value)
+    return [];
   const resultByQuestionId = new Map(
     resultReport.value.questions.map((question) => [
       question.questionId,
@@ -453,7 +593,7 @@ const improveTopics = computed(() => {
   return manifest.value.topics
     .map((topic) => {
       const questions =
-        resultExam.value?.questions.filter(
+        activeResultExam.value?.questions.filter(
           (question) => question.topicId === topic.topicId,
         ) ?? [];
       const results = questions
@@ -928,6 +1068,21 @@ function startMockExam(examId: number) {
   });
 }
 function requestRetake() {
+  if (resultSource.value === "diagnostic") {
+    diagnosticTestState.value = "not-started";
+    activeTab.value = "study";
+    void router.push({
+      name: "package",
+      query: {
+        ...route.query,
+        tab: "study",
+        diagnosticState: "not-started",
+        reportSource: "diagnostic",
+      },
+      hash: "#course-0",
+    });
+    return;
+  }
   if (!isProMember.value) {
     openCommercialPaywall("Practice Test retakes and your saved score history", requestRetake);
     return;
@@ -958,6 +1113,10 @@ function setPracticeTestState(state: PracticeTestState) {
     });
   }, 2000);
 }
+function setDiagnosticTestState(state: DiagnosticTestState) {
+  diagnosticTestState.value = state;
+  if (state === "results") resultSource.value = "diagnostic";
+}
 function setCourseEntryState(state: CourseEntryState) {
   void router.replace({
     name: "package",
@@ -966,7 +1125,11 @@ function setCourseEntryState(state: CourseEntryState) {
       tab: "study",
       courseState: state === "first-visit" ? "not-started" : "in-progress",
       ...(state === "first-visit"
-        ? { practiceState: "not-started", resultState: "locked" }
+        ? {
+            diagnosticState: "not-started",
+            practiceState: "not-started",
+            resultState: "locked",
+          }
         : {}),
     },
     hash: "#course-0",
@@ -997,16 +1160,53 @@ function handlePracticeTestAction() {
     return;
   }
   if (practiceTestState.value === "results") {
+    resultSource.value = "practice";
     resultView.value = "score";
     activeTab.value = "results";
     void router.push({
       name: "package",
-      query: { tab: "results", resultState: "unlocked" },
+      query: {
+        tab: "results",
+        resultState: "unlocked",
+        reportSource: "practice",
+      },
       hash: "#course-0",
     });
     return;
   }
   startMockExam(1);
+}
+function handleDiagnosticTestAction() {
+  if (diagnosticTestState.value === "results") {
+    resultSource.value = "diagnostic";
+    resultView.value = "score";
+    activeTab.value = "results";
+    void router.push({
+      name: "package",
+      query: {
+        ...route.query,
+        tab: "results",
+        view: "score",
+        reportSource: "diagnostic",
+        diagnosticState: "results",
+      },
+      hash: "#course-0",
+    });
+    return;
+  }
+  const nextState =
+    diagnosticTestState.value === "not-started" ? "in-progress" : "results";
+  diagnosticTestState.value = nextState;
+  void router.replace({
+    name: "package",
+    query: {
+      ...route.query,
+      tab: "study",
+      reportSource: "diagnostic",
+      diagnosticState: nextState,
+    },
+    hash: "#course-0",
+  });
 }
 function toggleTheme() {
   document.body.classList.toggle("dark");
@@ -1016,6 +1216,17 @@ function setResultView(view: ResultView) {
   if (view === "review" && selectedReviewQuestionId.value === null)
     selectedReviewQuestionId.value =
       reportQuestions.value[0]?.questionId ?? null;
+}
+function setResultSource(source: ResultSource) {
+  resultSource.value = source;
+  selectedReviewQuestionId.value = null;
+  reviewFilter.value = "ALL";
+  reviewSectionFilter.value = "ALL";
+  void router.replace({
+    name: "package",
+    query: { ...route.query, tab: "results", reportSource: source },
+    hash: "#course-0",
+  });
 }
 function setReviewFilter(filter: ReviewFilter) {
   reviewFilter.value = filter;
@@ -1100,6 +1311,18 @@ function priorityLabel(priority: SatTopic["priority"]) {
 function syncTabFromRoute() {
   const requestedTab = String(route.query.tab || "");
   activeTab.value = requestedTab === "results" ? "results" : "study";
+  const requestedResultSource = String(route.query.reportSource || "");
+  resultSource.value =
+    requestedResultSource === "diagnostic" ? "diagnostic" : "practice";
+  const requestedDiagnosticState = String(
+    route.query.diagnosticState || "",
+  );
+  if (
+    requestedDiagnosticState === "not-started" ||
+    requestedDiagnosticState === "in-progress" ||
+    requestedDiagnosticState === "results"
+  )
+    diagnosticTestState.value = requestedDiagnosticState;
   const requestedPracticeState = String(route.query.practiceState || "");
   if (
     requestedPracticeState === "not-started" ||
@@ -1131,6 +1354,8 @@ watch(
     () => route.hash,
     () => route.query.tab,
     () => route.query.view,
+    () => route.query.reportSource,
+    () => route.query.diagnosticState,
     () => route.query.practiceState,
     () => route.query.resultState,
   ],
@@ -2075,6 +2300,69 @@ onBeforeUnmount(() => {
               </section>
               <aside class="practice-test-rail" aria-label="SAT practice test">
                 <article
+                  :class="[
+                    'mock-entry-card',
+                    'compact',
+                    'diagnostic-entry-card',
+                    diagnosticTestState,
+                  ]"
+                >
+                  <div class="mock-entry-content">
+                    <header class="mock-entry-head">
+                      <span class="mock-entry-number">Diagnostic Test</span
+                      ><span
+                        :class="[
+                          'mock-entry-state',
+                          diagnosticTestState,
+                          'free-diagnostic',
+                        ]"
+                        ><i />{{ diagnosticTestCard.stateLabel }}</span
+                      >
+                    </header>
+                    <div class="mock-entry-copy">
+                      <h3>Free SAT Diagnostic Test</h3>
+                      <p>{{ diagnosticTestCard.description }}</p>
+                    </div>
+                    <div class="mock-entry-metrics">
+                      <span
+                        v-for="metric in diagnosticTestCard.metrics"
+                        :key="metric.label"
+                        ><strong>{{ metric.value }}</strong
+                        >{{ metric.label }}</span
+                      >
+                    </div>
+                    <div
+                      v-if="diagnosticTestState !== 'results'"
+                      class="mock-entry-progress"
+                    >
+                      <div>
+                        <span>{{ diagnosticTestCard.progressTitle }}</span
+                        ><strong>{{ diagnosticTestCard.progressLabel }}</strong>
+                      </div>
+                      <span class="mock-entry-progress-track"
+                        ><i
+                          :style="{
+                            width: `${diagnosticTestCard.progressPercent}%`,
+                          }"
+                      /></span>
+                    </div>
+                    <div v-else class="mock-entry-completed">
+                      {{ diagnosticTestCard.progressLabel }}
+                    </div>
+                  </div>
+                  <footer class="mock-entry-footer">
+                    <button
+                      class="mock-primary-action"
+                      type="button"
+                      @click="handleDiagnosticTestAction"
+                    >
+                      <svg class="icon" aria-hidden="true">
+                        <use href="#i-spark" /></svg
+                      ><span>{{ diagnosticTestCard.cta }}</span></button
+                    ><span>{{ diagnosticTestCard.helper }}</span>
+                  </footer>
+                </article>
+                <article
                   :class="['mock-entry-card', 'compact', practiceTestState]"
                 >
                   <div class="mock-entry-content">
@@ -2132,6 +2420,31 @@ onBeforeUnmount(() => {
             </section>
 
             <div v-else class="results-experience">
+              <nav class="results-source-filter" aria-label="Select test results">
+                <span>Results for</span>
+                <div class="results-source-switch" role="tablist">
+                  <button
+                    v-for="source in resultSources"
+                    :key="source.id"
+                    type="button"
+                    role="tab"
+                    :aria-selected="resultSource === source.id"
+                    @click="setResultSource(source.id)"
+                  >
+                    <span class="results-source-icon" aria-hidden="true"
+                      ><svg class="icon">
+                        <use
+                          :href="
+                            source.id === 'diagnostic' ? '#i-spark' : '#i-exam'
+                          "
+                        /></svg></span
+                    ><span
+                      ><strong>{{ source.label }}</strong
+                      ><small>{{ source.helper }}</small></span
+                    >
+                  </button>
+                </div>
+              </nav>
               <header class="results-experience-head">
                 <div
                   class="results-view-switch"
@@ -2191,8 +2504,8 @@ onBeforeUnmount(() => {
                     'results-preview-content',
                     { 'is-locked': resultsLocked },
                   ]"
-                  :inert="resultsLocked && !resultsCommercialLocked"
-                  :aria-hidden="resultsLocked && !resultsCommercialLocked"
+                  :inert="resultsLocked && !showResultsUnlockAction"
+                  :aria-hidden="resultsLocked && !showResultsUnlockAction"
                 >
               <div v-if="resultLoadError" class="results-empty">
                 {{ resultLoadError }}
@@ -2210,18 +2523,43 @@ onBeforeUnmount(() => {
                 >
                 <section class="score-report-card">
                   <header class="score-report-cover">
-                    <span>SAT® Prep 2026</span><small>Score report</small>
+                    <span>SAT® Prep 2026</span
+                    ><small>{{
+                      resultSource === "diagnostic"
+                        ? "Diagnostic result"
+                        : "Score report"
+                    }}</small>
                   </header>
                   <div class="score-report-main">
                     <div class="score-report-total">
-                      <span>Total score</span>
+                      <span>{{
+                        resultSource === "diagnostic"
+                          ? "Diagnostic score"
+                          : "Total score"
+                      }}</span>
                       <strong
-                        >{{ resultReport.totalScore
+                        >{{
+                          resultSource === "diagnostic"
+                            ? resultReport.correct
+                            : resultReport.totalScore
                         }}<small
-                          >/{{ resultReport.maximumScore }}</small
+                          >/{{
+                            resultSource === "diagnostic"
+                              ? reportQuestions.length
+                              : resultReport.maximumScore
+                          }}</small
                         ></strong
                       >
-                      <div class="score-report-meta">
+                      <div
+                        v-if="resultSource === 'diagnostic'"
+                        class="score-report-meta"
+                      >
+                        <span
+                          >Accuracy <b>{{ resultReport.accuracy }}%</b></span
+                        ><span>Time limit <b>10 min</b></span
+                        ><em>Free report</em>
+                      </div>
+                      <div v-else class="score-report-meta">
                         <span
                           >Score range
                           <b
@@ -2242,15 +2580,36 @@ onBeforeUnmount(() => {
                       >
                         <span>{{ section.sectionTitle }}</span
                         ><strong
-                          >{{ section.score
-                          }}<small>/{{ section.maximumScore }}</small></strong
+                          >{{
+                            resultSource === "diagnostic"
+                              ? section.correct
+                              : section.score
+                          }}<small
+                            >/{{
+                              resultSource === "diagnostic"
+                                ? section.correct +
+                                  section.incorrect +
+                                  section.omitted
+                                : section.maximumScore
+                            }}</small
+                          ></strong
                         >
-                        <p>
+                        <p v-if="resultSource === 'diagnostic'">
+                          {{ section.accuracy }}% accuracy<br />{{
+                            formatReportTime(section.averageSeconds)
+                          }}
+                          average per question
+                        </p>
+                        <p v-else>
                           Score range {{ section.scoreRange[0] }}–{{
                             section.scoreRange[1]
                           }}<br />Average {{ section.averageScore }}
                         </p>
-                        <em>{{ section.percentile }}th percentile</em>
+                        <em>{{
+                          resultSource === "diagnostic"
+                            ? "Starting point"
+                            : section.percentile + "th percentile"
+                        }}</em>
                       </article>
                     </div>
                   </div>
@@ -2261,17 +2620,21 @@ onBeforeUnmount(() => {
                     ><svg class="icon"><use href="#i-spark" /></svg
                   ></span>
                   <div>
-                    <span>SAT Overview</span>
+                    <span>{{
+                      resultSource === "diagnostic"
+                        ? "Diagnostic Overview"
+                        : "SAT Overview"
+                    }}</span>
                     <p>{{ resultReport.overview }}</p>
                   </div>
                 </section>
-                  <div v-if="resultsLocked" :class="['results-subsection-lock', { 'has-commercial-action': resultsCommercialLocked }]">
+                  <div v-if="resultsLocked" :class="['results-subsection-lock', { 'has-commercial-action': showResultsUnlockAction }]">
                     <span aria-hidden="true"
                       ><svg class="icon"><use href="#i-lock" /></svg
                     ></span>
                     <strong>{{ resultsLockTitle }}</strong>
                     <small>{{ resultsLockDescription }}</small>
-                    <button v-if="resultsCommercialLocked" type="button" @click="openCommercialPaywall('your complete SAT score report')">Unlock report</button>
+                    <button v-if="showResultsUnlockAction" type="button" @click="openCommercialPaywall('your complete SAT score report')">Unlock report</button>
                   </div>
                 </div>
 
@@ -2286,8 +2649,14 @@ onBeforeUnmount(() => {
                     <div>
                       <h3 id="knowledgeReportTitle">Knowledge and Skills</h3>
                       <p>
-                        Performance across the 8 content domains measured on the
-                        SAT.
+                        Performance across the
+                        {{ resultReport.domains.length }} content domains measured
+                        in this
+                        {{
+                          resultSource === "diagnostic"
+                            ? "diagnostic"
+                            : "SAT"
+                        }}.
                       </p>
                     </div>
                   </header>
@@ -2323,13 +2692,13 @@ onBeforeUnmount(() => {
                       </div>
                     </article>
                   </div>
-                  <div v-if="resultsLocked" :class="['results-subsection-lock', { 'has-commercial-action': resultsCommercialLocked }]">
+                  <div v-if="resultsLocked" :class="['results-subsection-lock', { 'has-commercial-action': showResultsUnlockAction }]">
                     <span aria-hidden="true"
                       ><svg class="icon"><use href="#i-lock" /></svg
                     ></span>
                     <strong>{{ resultsLockTitle }}</strong>
                     <small>{{ resultsLockDescription }}</small>
-                    <button v-if="resultsCommercialLocked" type="button" @click="openCommercialPaywall('your SAT knowledge and skills breakdown')">Unlock report</button>
+                    <button v-if="showResultsUnlockAction" type="button" @click="openCommercialPaywall('your SAT knowledge and skills breakdown')">Unlock report</button>
                   </div>
                 </section>
 
@@ -2480,13 +2849,13 @@ onBeforeUnmount(() => {
                       </section>
                     </div>
                   </article>
-                  <div v-if="resultsLocked" :class="['results-subsection-lock', { 'has-commercial-action': resultsCommercialLocked }]">
+                  <div v-if="resultsLocked" :class="['results-subsection-lock', { 'has-commercial-action': showResultsUnlockAction }]">
                     <span aria-hidden="true"
                       ><svg class="icon"><use href="#i-lock" /></svg
                     ></span>
                     <strong>{{ resultsLockTitle }}</strong>
                     <small>{{ resultsLockDescription }}</small>
-                    <button v-if="resultsCommercialLocked" type="button" @click="openCommercialPaywall('detailed SAT performance insights')">Unlock report</button>
+                    <button v-if="showResultsUnlockAction" type="button" @click="openCommercialPaywall('detailed SAT performance insights')">Unlock report</button>
                   </div>
                 </section>
 
@@ -2502,7 +2871,11 @@ onBeforeUnmount(() => {
                       type="button"
                       @click="requestRetake"
                     >
-                      Retake</button
+                      {{
+                        resultSource === "diagnostic"
+                          ? "Retake Diagnostic"
+                          : "Retake"
+                      }}</button
                     ><button
                       class="report-practice-button"
                       type="button"
@@ -2799,13 +3172,13 @@ onBeforeUnmount(() => {
                       </button>
                     </footer>
                   </article>
-                  <div v-if="resultsLocked" :class="['results-subsection-lock', { 'has-commercial-action': resultsCommercialLocked }]">
+                  <div v-if="resultsLocked" :class="['results-subsection-lock', { 'has-commercial-action': showResultsUnlockAction }]">
                     <span aria-hidden="true"
                       ><svg class="icon"><use href="#i-lock" /></svg
                     ></span>
                     <strong>{{ resultsLockTitle }}</strong>
                     <small>{{ resultsLockDescription }}</small>
-                    <button v-if="resultsCommercialLocked" type="button" @click="openCommercialPaywall('every answer, explanation, and skill review')">Unlock review</button>
+                    <button v-if="showResultsUnlockAction" type="button" @click="openCommercialPaywall('every answer, explanation, and skill review')">Unlock review</button>
                   </div>
                 </div>
                 <div v-else class="results-empty">
@@ -2822,7 +3195,11 @@ onBeforeUnmount(() => {
                       type="button"
                       @click="requestRetake"
                     >
-                      Retake</button
+                      {{
+                        resultSource === "diagnostic"
+                          ? "Retake Diagnostic"
+                          : "Retake"
+                      }}</button
                     ><button
                       class="report-practice-button"
                       type="button"
@@ -2991,13 +3368,13 @@ onBeforeUnmount(() => {
                         </div>
                       </article>
                     </div>
-                    <div v-if="resultsLocked" :class="['results-subsection-lock', { 'has-commercial-action': resultsCommercialLocked }]">
+                    <div v-if="resultsLocked" :class="['results-subsection-lock', { 'has-commercial-action': showResultsUnlockAction }]">
                       <span aria-hidden="true"
                         ><svg class="icon"><use href="#i-lock" /></svg
                       ></span>
                       <strong>{{ resultsLockTitle }}</strong>
                       <small>{{ resultsLockDescription }}</small>
-                      <button v-if="resultsCommercialLocked" type="button" @click="openCommercialPaywall('prioritized topics and adaptive SAT practice')">Unlock practice</button>
+                      <button v-if="showResultsUnlockAction" type="button" @click="openCommercialPaywall('prioritized topics and adaptive SAT practice')">Unlock practice</button>
                     </div>
                   </section>
                 </div>
@@ -3069,6 +3446,24 @@ onBeforeUnmount(() => {
           </nav>
         </section>
         <section class="mock-demo-controller-group">
+          <span class="mock-demo-controller-label">Diagnostic test</span>
+          <nav class="mock-state-nav" aria-label="Preview diagnostic test card state">
+            <button
+              v-for="state in diagnosticTestStates"
+              :key="state.id"
+              :class="[
+                'mock-state-button',
+                { active: diagnosticTestState === state.id },
+              ]"
+              type="button"
+              :aria-pressed="diagnosticTestState === state.id"
+              @click="setDiagnosticTestState(state.id)"
+            >
+              {{ state.label }}
+            </button>
+          </nav>
+        </section>
+        <section class="mock-demo-controller-group">
           <span class="mock-demo-controller-label">Practice test</span>
           <nav class="mock-state-nav" aria-label="Preview practice test card state">
             <button
@@ -3087,24 +3482,65 @@ onBeforeUnmount(() => {
           </nav>
         </section>
       </template>
-      <section v-else class="mock-demo-controller-group">
-        <span class="mock-demo-controller-label">Results access</span>
-        <nav class="mock-state-nav" aria-label="Preview results access">
-          <button
-            v-for="state in resultsAccessStates"
-            :key="state.id"
-            :class="[
-              'mock-state-button',
-              { active: resultsAccessState === state.id },
-            ]"
-            type="button"
-            :aria-pressed="resultsAccessState === state.id"
-            @click="setResultsAccessState(state.id)"
-          >
-            {{ state.label }}
-          </button>
-        </nav>
-      </section>
+      <template v-else>
+        <section class="mock-demo-controller-group">
+          <span class="mock-demo-controller-label">Report source</span>
+          <nav class="mock-state-nav" aria-label="Preview result source">
+            <button
+              v-for="source in resultSources"
+              :key="source.id"
+              :class="[
+                'mock-state-button',
+                { active: resultSource === source.id },
+              ]"
+              type="button"
+              :aria-pressed="resultSource === source.id"
+              @click="setResultSource(source.id)"
+            >
+              {{ source.id === "diagnostic" ? "Diagnostic" : "Practice" }}
+            </button>
+          </nav>
+        </section>
+        <section
+          v-if="resultSource === 'diagnostic'"
+          class="mock-demo-controller-group"
+        >
+          <span class="mock-demo-controller-label">Diagnostic test</span>
+          <nav class="mock-state-nav" aria-label="Preview diagnostic result state">
+            <button
+              v-for="state in diagnosticTestStates"
+              :key="state.id"
+              :class="[
+                'mock-state-button',
+                { active: diagnosticTestState === state.id },
+              ]"
+              type="button"
+              :aria-pressed="diagnosticTestState === state.id"
+              @click="setDiagnosticTestState(state.id)"
+            >
+              {{ state.label }}
+            </button>
+          </nav>
+        </section>
+        <section v-else class="mock-demo-controller-group">
+          <span class="mock-demo-controller-label">Practice results</span>
+          <nav class="mock-state-nav" aria-label="Preview practice results access">
+            <button
+              v-for="state in resultsAccessStates"
+              :key="state.id"
+              :class="[
+                'mock-state-button',
+                { active: resultsAccessState === state.id },
+              ]"
+              type="button"
+              :aria-pressed="resultsAccessState === state.id"
+              @click="setResultsAccessState(state.id)"
+            >
+              {{ state.label }}
+            </button>
+          </nav>
+        </section>
+      </template>
     </aside>
     <ProPaywall
       :open="paywallOpen"
