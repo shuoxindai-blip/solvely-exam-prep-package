@@ -2146,108 +2146,98 @@ onBeforeUnmount(() => {
               class="study-practice-layout"
               aria-label="SAT lessons and practice test"
             >
-              <section class="study-breakdown" aria-label="SAT lessons">
+              <div class="course-study-column">
                 <section
-                  v-if="courseStartModule"
-                  class="course-kickoff"
-                  :aria-labelledby="`courseKickoffTitle-${courseStartTopic?.id}`"
+                  class="course-content-region course-todays-plan"
+                  aria-labelledby="todaysPlanTitle"
                 >
-                  <span class="course-kickoff-icon" aria-hidden="true">
-                    <svg class="icon"><use href="#i-target" /></svg>
-                  </span>
-                  <div class="course-kickoff-copy">
-                    <span class="course-kickoff-label">{{
-                      courseStartModule.label
-                    }}</span>
-                    <h2 :id="`courseKickoffTitle-${courseStartTopic?.id}`">
-                      {{ courseStartModule.title }}
-                    </h2>
-                    <div class="course-kickoff-meta">
-                      <span>{{ courseStartModule.domain }}</span>
-                      <span>{{ courseStartModule.detail }}</span>
-                    </div>
-                  </div>
-                  <button
-                    class="course-kickoff-action"
-                    type="button"
-                    @click="openCourseStartTopic"
+                  <header class="course-region-heading">
+                    <h2 id="todaysPlanTitle">Today's Plan</h2>
+                  </header>
+                  <section
+                    v-if="courseStartModule"
+                    class="course-kickoff"
+                    :aria-labelledby="`courseKickoffTitle-${courseStartTopic?.id}`"
                   >
-                    <span>{{ courseStartModule.cta }}</span>
-                    <svg class="icon" aria-hidden="true">
-                      <use href="#i-chevron" />
-                    </svg>
-                  </button>
-                </section>
-                <section
-                  v-else
-                  class="course-kickoff course-kickoff-loading"
-                  aria-label="Loading recommended lesson"
-                  aria-busy="true"
-                >
-                  <span class="course-kickoff-skeleton icon" />
-                  <div class="course-kickoff-copy">
-                    <span class="course-kickoff-skeleton label" />
-                    <span class="course-kickoff-skeleton title" />
-                    <span class="course-kickoff-skeleton meta" />
-                  </div>
-                  <span class="course-kickoff-skeleton action" />
-                </section>
-                <header
-                  class="study-breakdown-toolbar"
-                  aria-label="Filter lessons"
-                >
-                  <div class="study-breakdown-filters">
-                    <div class="study-filter-group">
-                      <span class="study-filter-label">Section</span>
-                      <label class="study-section-select">
-                        <select
-                          v-model="sectionFilter"
-                          aria-label="Filter lessons by section"
-                        >
-                          <option value="Math">Math</option>
-                          <option value="Reading and Writing">
-                            Reading &amp; Writing
-                          </option>
-                        </select>
-                        <svg class="icon" aria-hidden="true">
-                          <use href="#i-chevron" />
-                        </svg>
-                      </label>
-                    </div>
-                    <div class="study-filter-group importance">
-                      <span class="study-filter-label">Priority</span
-                      ><button
-                        class="study-filter-info"
-                        type="button"
-                        aria-label="How topic priority is calculated"
-                        data-tooltip="Priority combines official SAT content-domain weight (65%) and frequency across 3,879 practice questions (35%). Progress is tracked separately."
-                      >
-                        <svg class="icon" aria-hidden="true">
-                          <use href="#i-info" />
-                        </svg>
-                      </button>
-                      <div
-                        class="study-importance-chips"
-                        role="group"
-                        aria-label="Topic priority"
-                      >
-                        <button
-                          v-for="filter in [
-                            ['all', 'All'],
-                            ['core', 'Core'],
-                            ['likely', 'Likely'],
-                            ['possible', 'Possible'],
-                          ] as const"
-                          :key="filter[0]"
-                          :class="filter[0]"
-                          type="button"
-                          :aria-pressed="priorityFilter === filter[0]"
-                          @click="priorityFilter = filter[0]"
-                        >
-                          <i v-if="filter[0] !== 'all'" />{{ filter[1] }}
-                        </button>
+                    <span class="course-kickoff-icon" aria-hidden="true">
+                      <svg class="icon"><use href="#i-target" /></svg>
+                    </span>
+                    <div class="course-kickoff-copy">
+                      <span class="course-kickoff-label">{{
+                        courseStartModule.label
+                      }}</span>
+                      <h2 :id="`courseKickoffTitle-${courseStartTopic?.id}`">
+                        {{ courseStartModule.title }}
+                      </h2>
+                      <div class="course-kickoff-meta">
+                        <span>{{ courseStartModule.domain }}</span>
+                        <span>{{ courseStartModule.detail }}</span>
                       </div>
                     </div>
+                    <button
+                      class="course-kickoff-action"
+                      type="button"
+                      @click="openCourseStartTopic"
+                    >
+                      <span>{{ courseStartModule.cta }}</span>
+                      <svg class="icon" aria-hidden="true">
+                        <use href="#i-chevron" />
+                      </svg>
+                    </button>
+                  </section>
+                  <section
+                    v-else
+                    class="course-kickoff course-kickoff-loading"
+                    aria-label="Loading recommended lesson"
+                    aria-busy="true"
+                  >
+                    <span class="course-kickoff-skeleton icon" />
+                    <div class="course-kickoff-copy">
+                      <span class="course-kickoff-skeleton label" />
+                      <span class="course-kickoff-skeleton title" />
+                      <span class="course-kickoff-skeleton meta" />
+                    </div>
+                    <span class="course-kickoff-skeleton action" />
+                  </section>
+                </section>
+                <section
+                  class="study-breakdown course-content-region"
+                  aria-labelledby="topicsTitle"
+                >
+                <header
+                  class="course-region-heading course-topics-heading"
+                  aria-label="Filter lessons"
+                >
+                  <h2 id="topicsTitle">Topics</h2>
+                  <div class="course-topic-filters">
+                    <label class="course-topic-select">
+                      <select
+                        v-model="sectionFilter"
+                        aria-label="Filter topics by section"
+                      >
+                        <option value="Math">Section: Math</option>
+                        <option value="Reading and Writing">
+                          Section: Reading &amp; Writing
+                        </option>
+                      </select>
+                      <svg class="icon" aria-hidden="true">
+                        <use href="#i-chevron" />
+                      </svg>
+                    </label>
+                    <label class="course-topic-select priority">
+                      <select
+                        v-model="priorityFilter"
+                        aria-label="Filter topics by priority"
+                      >
+                        <option value="all">Priority: All</option>
+                        <option value="core">Priority: Core</option>
+                        <option value="likely">Priority: Likely</option>
+                        <option value="possible">Priority: Possible</option>
+                      </select>
+                      <svg class="icon" aria-hidden="true">
+                        <use href="#i-chevron" />
+                      </svg>
+                    </label>
                   </div>
                 </header>
                 <div v-if="loadError" class="study-topic-empty">
@@ -2375,8 +2365,12 @@ onBeforeUnmount(() => {
                     </div>
                   </section>
                 </div>
-              </section>
-              <aside class="practice-test-rail" aria-label="SAT practice test">
+                </section>
+              </div>
+              <aside class="practice-test-rail" aria-labelledby="testsTitle">
+                <header class="course-region-heading course-tests-heading">
+                  <h2 id="testsTitle">Tests</h2>
+                </header>
                 <article
                   :class="[
                     'mock-entry-card',
