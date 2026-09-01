@@ -1,12 +1,12 @@
 import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
-export type ExamPlusAccess = 'free' | 'member'
+export type ProAccess = 'free' | 'member'
 
-const sharedAccess = ref<ExamPlusAccess>('free')
+const sharedAccess = ref<ProAccess>('free')
 let initialized = false
 
-export function useExamPlusAccess() {
+export function useProAccess() {
   const route = useRoute()
   const router = useRouter()
 
@@ -15,9 +15,9 @@ export function useExamPlusAccess() {
     initialized = true
   }
 
-  const isExamPlusMember = computed(() => sharedAccess.value === 'member')
+  const isProMember = computed(() => sharedAccess.value === 'member')
 
-  function setExamPlusAccess(access: ExamPlusAccess) {
+  function setProAccess(access: ProAccess) {
     sharedAccess.value = access
     void router.replace({
       query: { ...route.query, access },
@@ -27,7 +27,7 @@ export function useExamPlusAccess() {
 
   return {
     accessState: sharedAccess,
-    isExamPlusMember,
-    setExamPlusAccess,
+    isProMember,
+    setProAccess,
   }
 }

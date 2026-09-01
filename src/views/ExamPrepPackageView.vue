@@ -2,8 +2,8 @@
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import CommercialDemoController from "../components/CommercialDemoController.vue";
-import ExamPlusPaywall from "../components/ExamPlusPaywall.vue";
-import { useExamPlusAccess } from "../composables/useExamPlusAccess";
+import ProPaywall from "../components/ProPaywall.vue";
+import { useProAccess } from "../composables/useProAccess";
 import { loadEpExam, loadSatManifest } from "../data/satData";
 import { buildReviewQuestions, buildSatReport } from "../data/satReport";
 import { loadImprovePracticeProgress } from "../data/improvePracticeProgress";
@@ -49,7 +49,7 @@ type LastActivity =
 
 const route = useRoute();
 const router = useRouter();
-const { accessState, isExamPlusMember, setExamPlusAccess } = useExamPlusAccess();
+const { accessState, isProMember, setProAccess } = useProAccess();
 const manifest = ref<SatManifest | null>(null);
 const loadError = ref("");
 const sidebarCollapsed = ref(false);
@@ -132,13 +132,13 @@ const resultsAccessStates: { id: ResultsAccessState; label: string }[] = [
   { id: "locked", label: "Locked" },
   { id: "unlocked", label: "Unlocked" },
 ];
-const resultsCommercialLocked = computed(() => !isExamPlusMember.value);
+const resultsCommercialLocked = computed(() => !isProMember.value);
 const resultsLocked = computed(
   () => resultsAccessState.value === "locked" || resultsCommercialLocked.value,
 );
 const resultsLockTitle = computed(() =>
   resultsCommercialLocked.value
-    ? "Unlock with Exam Plus"
+    ? "Unlock with Solvely Pro"
     : "Complete the Practice Test to unlock",
 );
 const resultsLockDescription = computed(() =>
@@ -845,11 +845,11 @@ function closeCommercialPaywall() {
   pendingCommercialAction = null;
 }
 
-function unlockExamPlus() {
+function unlockPro() {
   const action = pendingCommercialAction;
   pendingCommercialAction = null;
   paywallOpen.value = false;
-  setExamPlusAccess("member");
+  setProAccess("member");
   if (action) void nextTick(action);
 }
 function improveAnswered(topic: SatTopic) {
@@ -875,7 +875,7 @@ function improvePracticeLabel(topic: SatTopic) {
       : "Practice";
 }
 function openImprovePractice(topic: SatTopic) {
-  if (!isExamPlusMember.value) {
+  if (!isProMember.value) {
     openCommercialPaywall("adaptive practice for your priority SAT topics", () =>
       openImprovePractice(topic),
     );
@@ -907,7 +907,7 @@ function resumeLastActivity() {
   else startMockExam(lastActivity.value.examId);
 }
 function startMockExam(examId: number) {
-  if (!isExamPlusMember.value) {
+  if (!isProMember.value) {
     openCommercialPaywall("the SAT Full-Length Practice Test", () =>
       startMockExam(examId),
     );
@@ -920,7 +920,7 @@ function startMockExam(examId: number) {
   });
 }
 function requestRetake() {
-  if (!isExamPlusMember.value) {
+  if (!isProMember.value) {
     openCommercialPaywall("Practice Test retakes and your saved score history", requestRetake);
     return;
   }
@@ -965,7 +965,7 @@ function confirmRetake() {
 }
 function handlePracticeTestAction() {
   if (practiceTestState.value === "scoring") return;
-  if (!isExamPlusMember.value) {
+  if (!isProMember.value) {
     openCommercialPaywall(
       practiceTestState.value === "results"
         ? "your complete SAT score report"
@@ -1024,7 +1024,7 @@ function reviewTopicTitle(question: SatReportReviewQuestion) {
   return reviewTopic(question)?.title ?? question.officialSkill;
 }
 function practiceReviewQuestion(question: SatReportReviewQuestion) {
-  if (!isExamPlusMember.value) {
+  if (!isProMember.value) {
     openCommercialPaywall("question review and targeted SAT practice", () =>
       practiceReviewQuestion(question),
     );
@@ -3037,13 +3037,13 @@ onBeforeUnmount(() => {
     </main>
     <CommercialDemoController
       :model-value="accessState"
-      @update:model-value="setExamPlusAccess"
+      @update:model-value="setProAccess"
     />
-    <ExamPlusPaywall
+    <ProPaywall
       :open="paywallOpen"
       :context="paywallContext"
       @close="closeCommercialPaywall"
-      @unlock="unlockExamPlus"
+      @unlock="unlockPro"
     />
     <dialog
       ref="retakeDialog"
