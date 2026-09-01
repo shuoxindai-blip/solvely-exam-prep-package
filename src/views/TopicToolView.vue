@@ -4,6 +4,9 @@ import { useRoute, useRouter } from 'vue-router'
 import { loadSatManifest, loadTopicContent, loadTopicQuiz } from '../data/satData'
 import { loadImprovePracticeProgress, saveImprovePracticeProgress } from '../data/improvePracticeProgress'
 import AskSolvelyPanel from '../components/AskSolvelyPanel.vue'
+import CommercialDemoController from '../components/CommercialDemoController.vue'
+import ExamPlusPaywall from '../components/ExamPlusPaywall.vue'
+import { useExamPlusAccess } from '../composables/useExamPlusAccess'
 import type { EpFlashCardContent, EpQuestion, EpStudyGuideContent } from '../types/epV2'
 import type { SatFlashcard, SatManifest, SatQuizQuestion, SatTopic } from '../types/sat'
 
@@ -13,6 +16,7 @@ type TopicPriorityFilter = 'ALL' | SatTopic['priority']
 
 const route = useRoute()
 const router = useRouter()
+const { accessState, isExamPlusMember, setExamPlusAccess } = useExamPlusAccess()
 const manifest = ref<SatManifest | null>(null)
 const loadError = ref('')
 const collapsedSections = ref(new Set<string>())
@@ -38,6 +42,9 @@ const improvePracticeProgress = ref(0)
 const askSolvelyOpen = ref(false)
 const askSolvelyPanelWidth = ref(344)
 const topicPriorityFilter = ref<TopicPriorityFilter>('ALL')
+const paywallOpen = ref(false)
+const paywallContext = ref('the complete SAT learning experience')
+let pendingCommercialAction: (() => void) | null = null
 
 const mode = computed<ToolMode>(() => {
   const name = String(route.name)
@@ -103,13 +110,32 @@ const cardStatusCounts = computed(() => {
 
 function toolRoute(tool: ToolMode, target = topic.value) {
   if (!target) return
-  void router.push({ name: tool, params: { topicId: target.id } })
+  void router.push({ name: tool, params: { topicId: target.id }, query: { access: accessState.value } })
+}
+
+function openCommercialPaywall(context: string, action?: () => void) {
+  paywallContext.value = context
+  pendingCommercialAction = action ?? null
+  paywallOpen.value = true
+}
+
+function closeCommercialPaywall() {
+  paywallOpen.value = false
+  pendingCommercialAction = null
+}
+
+function unlockExamPlus() {
+  const action = pendingCommercialAction
+  pendingCommercialAction = null
+  paywallOpen.value = false
+  setExamPlusAccess('member')
+  if (action) void nextTick(action)
 }
 
 function backToPackage() {
   void router.push(isImprovePractice.value
-    ? { name: 'package', query: { tab: 'results', view: 'improve' }, hash: '#course-0' }
-    : { name: 'package', query: { tab: 'study' }, hash: '#course-0' })
+    ? { name: 'package', query: { tab: 'results', view: 'improve', access: accessState.value }, hash: '#course-0' }
+    : { name: 'package', query: { tab: 'study', access: accessState.value }, hash: '#course-0' })
 }
 
 function chooseTopic(target: SatTopic) {
@@ -138,20 +164,40 @@ function markCard(status: CardStatus) {
 
 function nextCard() {
   if (!flashcards.value.length) return
+  if (!isExamPlusMember.value && flashcards.value.length > 1) {
+    openCommercialPaywall('all flashcards for this SAT topic', nextCard)
+    return
+  }
   cardIndex.value = (cardIndex.value + 1) % flashcards.value.length
   cardFlipped.value = false
 }
 
 function previousCard() {
   if (!flashcards.value.length) return
+  if (!isExamPlusMember.value && flashcards.value.length > 1) {
+    openCommercialPaywall('all flashcards for this SAT topic', previousCard)
+    return
+  }
   cardIndex.value = (cardIndex.value - 1 + flashcards.value.length) % flashcards.value.length
   cardFlipped.value = false
 }
 
 function shuffleCards() {
   if (!flashcards.value.length) return
+  if (!isExamPlusMember.value && flashcards.value.length > 1) {
+    openCommercialPaywall('all flashcards for this SAT topic', shuffleCards)
+    return
+  }
   cardIndex.value = Math.floor(Math.random() * flashcards.value.length)
   cardFlipped.value = false
+}
+
+function setCardView(view: 'card' | 'list') {
+  if (view === 'list' && !isExamPlusMember.value) {
+    openCommercialPaywall('the complete flashcard deck', () => setCardView(view))
+    return
+  }
+  cardView.value = view
 }
 
 function toggleStar() {
@@ -238,6 +284,10 @@ function recordImprovePracticeAnswer() {
 
 function nextQuestion() {
   if (!quizQuestions.value.length) return
+  if (!isExamPlusMember.value && quizIndex.value === 0) {
+    openCommercialPaywall('the remaining questions and explanations in this Topic Quiz', nextQuestion)
+    return
+  }
   if (isImprovePractice.value && isLastQuizQuestion.value) {
     improvePracticeProgress.value = quizQuestions.value.length
     if (topic.value) saveImprovePracticeProgress(topic.value.id, improvePracticeProgress.value)
@@ -427,7 +477,9 @@ onBeforeUnmount(() => {
           </section>
 
           <p class="study-guide-section-label exam-essentials">Exam Essentials</p>
-          <section class="guide-article">
+          <div :class="['study-guide-content-gate', { locked: !isExamPlusMember }]">
+            <div class="study-guide-gated-content" :inert="!isExamPlusMember">
+            <section class="guide-article">
             <div class="guide-overview"><span>OVERVIEW</span><p>{{ studyGuide.overview }}</p></div>
             <section v-if="studyGuide.learning_objectives?.length" class="guide-objectives">
               <h2>What you'll learn</h2>
@@ -447,9 +499,9 @@ onBeforeUnmount(() => {
               <section><h2>Exam tips</h2><ul><li v-for="tip in studyGuide.exam_tips" :key="tip">{{ tip }}</li></ul></section>
             </div>
             <section class="guide-recap"><span>KEY TAKEAWAY</span><p>{{ studyGuide.recap }}</p></section>
-          </section>
+            </section>
 
-          <section v-if="studyPracticeQuestion" class="study-quick-practice" aria-labelledby="studyQuickPracticeTitle">
+            <section v-if="studyPracticeQuestion" class="study-quick-practice" aria-labelledby="studyQuickPracticeTitle">
             <p class="study-guide-section-label">Quick Practice</p>
             <article v-if="studyPracticeLoading" class="study-quick-card loading" aria-live="polite">
               <span class="topic-loader" />
@@ -475,13 +527,23 @@ onBeforeUnmount(() => {
                 <button type="button" class="primary" :class="{ full: !hasAnotherStudyPractice }" @click="advanceStudyTopic">{{ isLastTopic ? 'Back' : 'Next Topic' }}</button>
               </footer>
             </article>
-          </section>
+            </section>
+            </div>
+            <div v-if="!isExamPlusMember" class="study-guide-inline-gate">
+              <section class="study-guide-inline-gate-card">
+                <span aria-hidden="true">x²</span>
+                <strong>Keep learning with Exam Plus</strong>
+                <small>Unlock the full written guide, worked examples, exam tips, and Quick Practice.</small>
+                <button type="button" @click="openCommercialPaywall('the full Study Guide and Quick Practice')">Unlock Study Guide</button>
+              </section>
+            </div>
+          </div>
         </article>
 
         <section v-else-if="mode === 'flashcards' && flashCardContent" class="flashcard-view">
           <div class="tool-view-toolbar">
-            <div><strong>{{ cardView === 'card' ? `${cardIndex + 1}/${flashcards.length} Cards` : `${flashcards.length} Cards` }}</strong><span>{{ cardStatusCounts.review }} Need Review · {{ cardStatusCounts.mastered }} Mastered</span></div>
-            <div class="view-mode-buttons"><button type="button" :class="{ active: cardView === 'card' }" @click="cardView = 'card'">Card</button><button type="button" :class="{ active: cardView === 'list' }" @click="cardView = 'list'">List</button></div>
+            <div><strong>{{ cardView === 'card' ? `${cardIndex + 1}/${flashcards.length} Cards` : `${flashcards.length} Cards` }}<span v-if="!isExamPlusMember" class="tool-free-preview-badge">Card 1 preview</span></strong><span>{{ cardStatusCounts.review }} Need Review · {{ cardStatusCounts.mastered }} Mastered</span></div>
+            <div class="view-mode-buttons"><button type="button" :class="{ active: cardView === 'card' }" @click="setCardView('card')">Card</button><button type="button" :class="{ active: cardView === 'list' }" @click="setCardView('list')">List</button></div>
           </div>
 
           <div v-if="cardView === 'card' && currentCard" class="flashcard-stage">
@@ -510,7 +572,7 @@ onBeforeUnmount(() => {
         <section v-else class="quiz-view">
           <div v-if="quizLoading" class="topic-load-state inline"><span class="topic-loader" /><strong>Loading {{ topic.quizCount }} questions…</strong></div>
           <template v-else-if="currentQuestion">
-            <div class="quiz-progress-row"><span>Question {{ quizIndex + 1 }} of {{ quizQuestions.length }}</span><div><i :style="{ width: `${((quizIndex + 1) / quizQuestions.length) * 100}%` }" /></div><b>{{ currentQuestion.difficulty }}</b></div>
+            <div class="quiz-progress-row"><span>Question {{ quizIndex + 1 }} of {{ quizQuestions.length }}<em v-if="!isExamPlusMember" class="tool-free-preview-badge">Question 1 preview</em></span><div><i :style="{ width: `${((quizIndex + 1) / quizQuestions.length) * 100}%` }" /></div><b>{{ currentQuestion.difficulty }}</b></div>
             <article class="quiz-card">
               <span class="quiz-kicker">{{ currentQuestion.domain }} · {{ currentQuestion.skill }}</span>
               <h2>{{ currentQuestion.question }}</h2>
@@ -541,6 +603,16 @@ onBeforeUnmount(() => {
       v-model:panel-width="askSolvelyPanelWidth"
       :context-title="topic.title"
       context-detail="Digital SAT Exam Prep"
+    />
+    <CommercialDemoController
+      :model-value="accessState"
+      @update:model-value="setExamPlusAccess"
+    />
+    <ExamPlusPaywall
+      :open="paywallOpen"
+      :context="paywallContext"
+      @close="closeCommercialPaywall"
+      @unlock="unlockExamPlus"
     />
   </div>
 </template>

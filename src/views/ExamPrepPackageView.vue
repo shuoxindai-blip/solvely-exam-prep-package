@@ -1,6 +1,9 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import CommercialDemoController from "../components/CommercialDemoController.vue";
+import ExamPlusPaywall from "../components/ExamPlusPaywall.vue";
+import { useExamPlusAccess } from "../composables/useExamPlusAccess";
 import { loadEpExam, loadSatManifest } from "../data/satData";
 import { buildReviewQuestions, buildSatReport } from "../data/satReport";
 import { loadImprovePracticeProgress } from "../data/improvePracticeProgress";
@@ -46,6 +49,7 @@ type LastActivity =
 
 const route = useRoute();
 const router = useRouter();
+const { accessState, isExamPlusMember, setExamPlusAccess } = useExamPlusAccess();
 const manifest = ref<SatManifest | null>(null);
 const loadError = ref("");
 const sidebarCollapsed = ref(false);
@@ -67,6 +71,9 @@ const improvePracticeProgress = ref<Record<string, number>>({});
 const showImproveImportanceNote = ref(true);
 const practiceTestState = ref<PracticeTestState>("in-progress");
 const resultsAccessState = ref<ResultsAccessState>("locked");
+const paywallOpen = ref(false);
+const paywallContext = ref("the complete SAT Prep 2026 package");
+let pendingCommercialAction: (() => void) | null = null;
 let scoringTimer: number | null = null;
 const retakeDialog = ref<HTMLDialogElement | null>(null);
 const lastActivity = ref<LastActivity>({
@@ -125,7 +132,20 @@ const resultsAccessStates: { id: ResultsAccessState; label: string }[] = [
   { id: "locked", label: "Locked" },
   { id: "unlocked", label: "Unlocked" },
 ];
-const resultsLocked = computed(() => resultsAccessState.value === "locked");
+const resultsCommercialLocked = computed(() => !isExamPlusMember.value);
+const resultsLocked = computed(
+  () => resultsAccessState.value === "locked" || resultsCommercialLocked.value,
+);
+const resultsLockTitle = computed(() =>
+  resultsCommercialLocked.value
+    ? "Unlock with Exam Plus"
+    : "Complete the Practice Test to unlock",
+);
+const resultsLockDescription = computed(() =>
+  resultsCommercialLocked.value
+    ? "Get your full score report, every explanation, and adaptive topics to improve."
+    : "Finish the full-length SAT Practice Test to unlock this report.",
+);
 const practiceTestCard = computed(() => {
   const report = resultReport.value;
   const questionCount = practiceTestQuestionCount.value;
@@ -761,7 +781,30 @@ function openTopic(
   topic: SatTopic,
   tool: "study-guide" | "flashcards" | "quiz",
 ) {
-  void router.push({ name: tool, params: { topicId: topic.id } });
+  void router.push({
+    name: tool,
+    params: { topicId: topic.id },
+    query: { access: accessState.value },
+  });
+}
+
+function openCommercialPaywall(context: string, action?: () => void) {
+  paywallContext.value = context;
+  pendingCommercialAction = action ?? null;
+  paywallOpen.value = true;
+}
+
+function closeCommercialPaywall() {
+  paywallOpen.value = false;
+  pendingCommercialAction = null;
+}
+
+function unlockExamPlus() {
+  const action = pendingCommercialAction;
+  pendingCommercialAction = null;
+  paywallOpen.value = false;
+  setExamPlusAccess("member");
+  if (action) void nextTick(action);
 }
 function improveAnswered(topic: SatTopic) {
   return Math.min(
@@ -786,10 +829,16 @@ function improvePracticeLabel(topic: SatTopic) {
       : "Practice";
 }
 function openImprovePractice(topic: SatTopic) {
+  if (!isExamPlusMember.value) {
+    openCommercialPaywall("adaptive practice for your priority SAT topics", () =>
+      openImprovePractice(topic),
+    );
+    return;
+  }
   void router.push({
     name: "quiz",
     params: { topicId: topic.id },
-    query: { source: "improve" },
+    query: { source: "improve", access: accessState.value },
   });
 }
 function dismissImportanceNote(note: "improve") {
@@ -812,9 +861,23 @@ function resumeLastActivity() {
   else startMockExam(lastActivity.value.examId);
 }
 function startMockExam(examId: number) {
-  void router.push({ name: "mock-exam", params: { examId } });
+  if (!isExamPlusMember.value) {
+    openCommercialPaywall("the SAT Full-Length Practice Test", () =>
+      startMockExam(examId),
+    );
+    return;
+  }
+  void router.push({
+    name: "mock-exam",
+    params: { examId },
+    query: { access: accessState.value },
+  });
 }
 function requestRetake() {
+  if (!isExamPlusMember.value) {
+    openCommercialPaywall("Practice Test retakes and your saved score history", requestRetake);
+    return;
+  }
   if (retakeDialog.value && !retakeDialog.value.open)
     retakeDialog.value.showModal();
 }
@@ -856,6 +919,15 @@ function confirmRetake() {
 }
 function handlePracticeTestAction() {
   if (practiceTestState.value === "scoring") return;
+  if (!isExamPlusMember.value) {
+    openCommercialPaywall(
+      practiceTestState.value === "results"
+        ? "your complete SAT score report"
+        : "the SAT Full-Length Practice Test",
+      handlePracticeTestAction,
+    );
+    return;
+  }
   if (practiceTestState.value === "results") {
     resultView.value = "score";
     activeTab.value = "results";
@@ -906,8 +978,19 @@ function reviewTopicTitle(question: SatReportReviewQuestion) {
   return reviewTopic(question)?.title ?? question.officialSkill;
 }
 function practiceReviewQuestion(question: SatReportReviewQuestion) {
+  if (!isExamPlusMember.value) {
+    openCommercialPaywall("question review and targeted SAT practice", () =>
+      practiceReviewQuestion(question),
+    );
+    return;
+  }
   const topic = reviewTopic(question);
-  if (topic) void router.push({ name: "quiz", params: { topicId: topic.id } });
+  if (topic)
+    void router.push({
+      name: "quiz",
+      params: { topicId: topic.id },
+      query: { access: accessState.value },
+    });
 }
 function optionEntries(question: SatReportReviewQuestion) {
   return Object.entries(question.options).sort(([left], [right]) =>
@@ -2011,8 +2094,8 @@ onBeforeUnmount(() => {
                     'results-preview-content',
                     { 'is-locked': resultsLocked },
                   ]"
-                  :inert="resultsLocked"
-                  :aria-hidden="resultsLocked"
+                  :inert="resultsLocked && !resultsCommercialLocked"
+                  :aria-hidden="resultsLocked && !resultsCommercialLocked"
                 >
               <div v-if="resultLoadError" class="results-empty">
                 {{ resultLoadError }}
@@ -2085,12 +2168,13 @@ onBeforeUnmount(() => {
                     <p>{{ resultReport.overview }}</p>
                   </div>
                 </section>
-                  <div v-if="resultsLocked" class="results-subsection-lock">
+                  <div v-if="resultsLocked" :class="['results-subsection-lock', { 'has-commercial-action': resultsCommercialLocked }]">
                     <span aria-hidden="true"
                       ><svg class="icon"><use href="#i-lock" /></svg
                     ></span>
-                    <strong>Complete the Practice Test to unlock</strong>
-                    <small>Unlock your score and personalized overview.</small>
+                    <strong>{{ resultsLockTitle }}</strong>
+                    <small>{{ resultsLockDescription }}</small>
+                    <button v-if="resultsCommercialLocked" type="button" @click="openCommercialPaywall('your complete SAT score report')">Unlock report</button>
                   </div>
                 </div>
 
@@ -2142,12 +2226,13 @@ onBeforeUnmount(() => {
                       </div>
                     </article>
                   </div>
-                  <div v-if="resultsLocked" class="results-subsection-lock">
+                  <div v-if="resultsLocked" :class="['results-subsection-lock', { 'has-commercial-action': resultsCommercialLocked }]">
                     <span aria-hidden="true"
                       ><svg class="icon"><use href="#i-lock" /></svg
                     ></span>
-                    <strong>Complete the Practice Test to unlock</strong>
-                    <small>Unlock your SAT knowledge and skills breakdown.</small>
+                    <strong>{{ resultsLockTitle }}</strong>
+                    <small>{{ resultsLockDescription }}</small>
+                    <button v-if="resultsCommercialLocked" type="button" @click="openCommercialPaywall('your SAT knowledge and skills breakdown')">Unlock report</button>
                   </div>
                 </section>
 
@@ -2298,12 +2383,13 @@ onBeforeUnmount(() => {
                       </section>
                     </div>
                   </article>
-                  <div v-if="resultsLocked" class="results-subsection-lock">
+                  <div v-if="resultsLocked" :class="['results-subsection-lock', { 'has-commercial-action': resultsCommercialLocked }]">
                     <span aria-hidden="true"
                       ><svg class="icon"><use href="#i-lock" /></svg
                     ></span>
-                    <strong>Complete the Practice Test to unlock</strong>
-                    <small>Unlock detailed accuracy, pacing, and topic insights.</small>
+                    <strong>{{ resultsLockTitle }}</strong>
+                    <small>{{ resultsLockDescription }}</small>
+                    <button v-if="resultsCommercialLocked" type="button" @click="openCommercialPaywall('detailed SAT performance insights')">Unlock report</button>
                   </div>
                 </section>
 
@@ -2616,12 +2702,13 @@ onBeforeUnmount(() => {
                       </button>
                     </footer>
                   </article>
-                  <div v-if="resultsLocked" class="results-subsection-lock">
+                  <div v-if="resultsLocked" :class="['results-subsection-lock', { 'has-commercial-action': resultsCommercialLocked }]">
                     <span aria-hidden="true"
                       ><svg class="icon"><use href="#i-lock" /></svg
                     ></span>
-                    <strong>Complete the Practice Test to unlock</strong>
-                    <small>Unlock every answer, explanation, and skill review.</small>
+                    <strong>{{ resultsLockTitle }}</strong>
+                    <small>{{ resultsLockDescription }}</small>
+                    <button v-if="resultsCommercialLocked" type="button" @click="openCommercialPaywall('every answer, explanation, and skill review')">Unlock review</button>
                   </div>
                 </div>
                 <div v-else class="results-empty">
@@ -2807,12 +2894,13 @@ onBeforeUnmount(() => {
                         </div>
                       </article>
                     </div>
-                    <div v-if="resultsLocked" class="results-subsection-lock">
+                    <div v-if="resultsLocked" :class="['results-subsection-lock', { 'has-commercial-action': resultsCommercialLocked }]">
                       <span aria-hidden="true"
                         ><svg class="icon"><use href="#i-lock" /></svg
                       ></span>
-                      <strong>Complete the Practice Test to unlock</strong>
-                      <small>Unlock prioritized topics and adaptive practice.</small>
+                      <strong>{{ resultsLockTitle }}</strong>
+                      <small>{{ resultsLockDescription }}</small>
+                      <button v-if="resultsCommercialLocked" type="button" @click="openCommercialPaywall('prioritized topics and adaptive SAT practice')">Unlock practice</button>
                     </div>
                   </section>
                 </div>
@@ -2824,12 +2912,8 @@ onBeforeUnmount(() => {
                   role="status"
                   aria-live="polite"
                 >
-                  <h2>Complete the Practice Test to unlock</h2>
-                  <p>
-                    Finish the full-length SAT Practice Test to access your
-                    score report, question review, and personalized topics to
-                    improve.
-                  </p>
+                  <h2>{{ resultsLockTitle }}</h2>
+                  <p>{{ resultsLockDescription }}</p>
                 </section>
               </div>
               <aside
@@ -2860,6 +2944,16 @@ onBeforeUnmount(() => {
         </div>
       </section>
     </main>
+    <CommercialDemoController
+      :model-value="accessState"
+      @update:model-value="setExamPlusAccess"
+    />
+    <ExamPlusPaywall
+      :open="paywallOpen"
+      :context="paywallContext"
+      @close="closeCommercialPaywall"
+      @unlock="unlockExamPlus"
+    />
     <dialog
       ref="retakeDialog"
       class="retake-confirm-dialog"
