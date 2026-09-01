@@ -657,7 +657,7 @@ onBeforeUnmount(() => {
               </section>
 
               <section class="report-performance-details">
-                <header class="report-section-heading"><div><h3>Performance details</h3><p>See which SAT skills are both accurate and efficient—and where extra review can help.</p></div></header>
+                <header class="report-section-heading"><div><h3>Performance details</h3><p>See which SAT skills are both accurate and efficient, and identify where extra review can help.</p></div></header>
                 <div class="report-stat-strip">
                   <div><span>Correct</span><strong>{{ resultReport.correct }}<small>/{{ reportQuestions.length }}</small></strong></div><div><span>Incorrect</span><strong>{{ resultReport.incorrect }}</strong></div><div><span>Unanswered</span><strong>{{ resultReport.omitted }}</strong></div><div><span>Accuracy</span><strong>{{ resultReport.accuracy }}%</strong></div><div><span>Time used</span><strong>{{ formatReportDuration(resultReport.durationSeconds) }}</strong></div>
                 </div>
