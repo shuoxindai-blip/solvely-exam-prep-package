@@ -11,6 +11,7 @@ import type { SatManifest, SatTopic } from "../types/sat";
 type CourseTab = "study" | "results";
 type ResultView = "score" | "review" | "improve";
 type PracticeTestState = "not-started" | "in-progress" | "scoring" | "results";
+type ResultsAccessState = "locked" | "unlocked";
 type ReviewFilter = "ALL" | "INCORRECT" | "CORRECT" | "OMITTED";
 type ReviewSectionFilter = "ALL" | "reading-writing" | "math";
 type Course = {
@@ -65,6 +66,7 @@ const improvePriority = ref<"ALL" | SatTopic["priority"]>("ALL");
 const improvePracticeProgress = ref<Record<string, number>>({});
 const showImproveImportanceNote = ref(true);
 const practiceTestState = ref<PracticeTestState>("in-progress");
+const resultsAccessState = ref<ResultsAccessState>("locked");
 let scoringTimer: number | null = null;
 const retakeDialog = ref<HTMLDialogElement | null>(null);
 const lastActivity = ref<LastActivity>({
@@ -119,6 +121,11 @@ const practiceTestStates: { id: PracticeTestState; label: string }[] = [
   { id: "scoring", label: "Scoring" },
   { id: "results", label: "Results ready" },
 ];
+const resultsAccessStates: { id: ResultsAccessState; label: string }[] = [
+  { id: "locked", label: "Locked" },
+  { id: "unlocked", label: "Unlocked" },
+];
+const resultsLocked = computed(() => resultsAccessState.value === "locked");
 const practiceTestCard = computed(() => {
   const report = resultReport.value;
   const questionCount = practiceTestQuestionCount.value;
@@ -821,16 +828,40 @@ function clearScoringTimer() {
 function setPracticeTestState(state: PracticeTestState) {
   clearScoringTimer();
   practiceTestState.value = state;
+  resultsAccessState.value = state === "results" ? "unlocked" : "locked";
   if (state !== "scoring") return;
   scoringTimer = window.setTimeout(() => {
     scoringTimer = null;
     practiceTestState.value = "results";
+    resultsAccessState.value = "unlocked";
     void router.replace({
       name: "package",
       query: { ...route.query, tab: "study", practiceState: "results" },
       hash: "#course-0",
     });
   }, 2000);
+}
+function setResultsAccessState(state: ResultsAccessState) {
+  resultsAccessState.value = state;
+  void router.replace({
+    name: "package",
+    query: { ...route.query, tab: "results", resultState: state },
+    hash: "#course-0",
+  });
+}
+function goToPracticeTest() {
+  activeTab.value = "study";
+  setPracticeTestState("not-started");
+  void router.push({
+    name: "package",
+    query: {
+      ...route.query,
+      tab: "study",
+      practiceState: "not-started",
+      resultState: "locked",
+    },
+    hash: "#course-0",
+  });
 }
 function confirmRetake() {
   closeRetakeConfirm();
@@ -844,7 +875,7 @@ function handlePracticeTestAction() {
     activeTab.value = "results";
     void router.push({
       name: "package",
-      query: { tab: "results" },
+      query: { tab: "results", resultState: "unlocked" },
       hash: "#course-0",
     });
     return;
@@ -947,6 +978,14 @@ function syncTabFromRoute() {
       requestedView === "review" || requestedView === "improve"
         ? requestedView
         : "score";
+    const requestedResultState = String(route.query.resultState || "");
+    resultsAccessState.value =
+      requestedResultState === "locked" ||
+      requestedResultState === "unlocked"
+        ? requestedResultState
+        : practiceTestState.value === "results"
+          ? "unlocked"
+          : "locked";
   }
 }
 
@@ -956,6 +995,7 @@ watch(
     () => route.query.tab,
     () => route.query.view,
     () => route.query.practiceState,
+    () => route.query.resultState,
   ],
   () => {
     if (route.hash === "#course-0") syncTabFromRoute();
@@ -1040,6 +1080,10 @@ onBeforeUnmount(() => {
     <symbol id="i-history" viewBox="0 0 24 24">
       <path d="M3 12a9 9 0 1 0 3-6.7L3 8" />
       <path d="M3 3v5h5M12 7v5l3 2" />
+    </symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24">
+      <rect x="5" y="10" width="14" height="11" rx="3" />
+      <path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3" />
     </symbol>
     <symbol id="i-user" viewBox="0 0 24 24">
       <circle cx="12" cy="8" r="4" />
@@ -1976,6 +2020,15 @@ onBeforeUnmount(() => {
                 </div>
               </header>
 
+              <div class="results-preview-shell">
+                <div
+                  :class="[
+                    'results-preview-content',
+                    { 'is-locked': resultsLocked },
+                  ]"
+                  :inert="resultsLocked"
+                  :aria-hidden="resultsLocked"
+                >
               <div v-if="resultLoadError" class="results-empty">
                 {{ resultLoadError }}
               </div>
@@ -2723,6 +2776,50 @@ onBeforeUnmount(() => {
                   </section>
                 </div>
               </section>
+                </div>
+                <section
+                  v-if="resultsLocked"
+                  class="results-lock-overlay"
+                  role="status"
+                  aria-live="polite"
+                >
+                  <span class="results-lock-icon" aria-hidden="true"
+                    ><svg class="icon"><use href="#i-lock" /></svg
+                  ></span>
+                  <h2>Complete the Practice Test to unlock</h2>
+                  <p>
+                    Finish the full-length SAT Practice Test to access your
+                    score report, question review, and personalized topics to
+                    improve.
+                  </p>
+                  <button type="button" @click="goToPracticeTest">
+                    Go to Practice Test
+                  </button>
+                </section>
+              </div>
+              <aside
+                class="mock-demo-controller results-demo-controller"
+                aria-label="Results demo access controller"
+              >
+                <header class="mock-demo-controller-head">
+                  <strong>Results access</strong><span>Not product UI</span>
+                </header>
+                <nav class="mock-state-nav" aria-label="Preview results access">
+                  <button
+                    v-for="state in resultsAccessStates"
+                    :key="state.id"
+                    :class="[
+                      'mock-state-button',
+                      { active: resultsAccessState === state.id },
+                    ]"
+                    type="button"
+                    :aria-pressed="resultsAccessState === state.id"
+                    @click="setResultsAccessState(state.id)"
+                  >
+                    {{ state.label }}
+                  </button>
+                </nav>
+              </aside>
             </div>
           </div>
         </div>
