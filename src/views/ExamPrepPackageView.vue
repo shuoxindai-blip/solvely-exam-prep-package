@@ -13,7 +13,7 @@ import type { EpExam } from "../types/epV2";
 import type { SatManifest, SatTopic } from "../types/sat";
 
 type CourseTab = "study" | "results";
-type ResultView = "score" | "review" | "improve";
+type ResultView = "full" | "score" | "review" | "improve";
 type ResultSource = "diagnostic" | "practice";
 type CourseEntryState = "first-visit" | "in-progress";
 type DiagnosticTestState =
@@ -69,7 +69,7 @@ const priorityFilter = ref("all");
 const collapsedSections = ref(new Set<string>());
 const resultExam = ref<EpExam | null>(null);
 const resultLoadError = ref("");
-const resultView = ref<ResultView>("score");
+const resultView = ref<ResultView>("full");
 const reviewFilter = ref<ReviewFilter>("ALL");
 const reviewSectionFilter = ref<ReviewSectionFilter>("ALL");
 const selectedReviewQuestionId = ref<number | null>(null);
@@ -201,6 +201,12 @@ const resultSources: {
     label: "Full-Length Practice Test",
   },
 ];
+const resultViews: { id: ResultView; label: string }[] = [
+  { id: "full", label: "Full Report" },
+  { id: "score", label: "Score Analysis" },
+  { id: "review", label: "Question Review" },
+  { id: "improve", label: "Targeted Practice" },
+];
 const commercialAccessStates = [
   { id: "free", label: "非会员" },
   { id: "member", label: "Pro 会员" },
@@ -232,6 +238,12 @@ const showResultsUnlockAction = computed(
 );
 const resultsLocked = computed(
   () => !activeAssessmentComplete.value || resultsCommercialLocked.value,
+);
+const targetedPracticeLocked = computed(
+  () => !activeAssessmentComplete.value || !isProMember.value,
+);
+const showTargetedPracticeUnlockAction = computed(
+  () => activeAssessmentComplete.value && !isProMember.value,
 );
 const resultsLockTitle = computed(() => {
   if (!activeAssessmentComplete.value)
@@ -1208,7 +1220,7 @@ function handlePracticeTestAction() {
   }
   if (practiceTestState.value === "results") {
     resultSource.value = "practice";
-    resultView.value = "score";
+    resultView.value = "full";
     activeTab.value = "results";
     void router.push({
       name: "package",
@@ -1227,14 +1239,14 @@ function handleDiagnosticTestAction() {
   if (diagnosticTestState.value === "scoring") return;
   if (diagnosticTestState.value === "results") {
     resultSource.value = "diagnostic";
-    resultView.value = "score";
+    resultView.value = "full";
     activeTab.value = "results";
     void router.push({
       name: "package",
       query: {
         ...route.query,
         tab: "results",
-        view: "score",
+        view: "full",
         reportSource: "diagnostic",
         diagnosticState: "results",
       },
@@ -1257,9 +1269,27 @@ function toggleTheme() {
 }
 function setResultView(view: ResultView) {
   resultView.value = view;
-  if (view === "review" && selectedReviewQuestionId.value === null)
+  if (
+    (view === "review" || view === "full") &&
+    selectedReviewQuestionId.value === null
+  )
     selectedReviewQuestionId.value =
       reportQuestions.value[0]?.questionId ?? null;
+  void router.replace({
+    name: "package",
+    query: { ...route.query, tab: "results", view },
+    hash: "#course-0",
+  });
+}
+function setResultViewFromEvent(event: Event) {
+  setResultView((event.target as HTMLSelectElement).value as ResultView);
+}
+function handleDownloadFullReport() {
+  if (!isProMember.value) {
+    openCommercialPaywall("a downloadable full SAT performance report");
+    return;
+  }
+  window.print();
 }
 function setResultSource(source: ResultSource) {
   resultSource.value = source;
@@ -1395,9 +1425,12 @@ function syncTabFromRoute() {
   if (activeTab.value === "results") {
     const requestedView = String(route.query.view || "");
     resultView.value =
-      requestedView === "review" || requestedView === "improve"
+      requestedView === "score" ||
+      requestedView === "review" ||
+      requestedView === "improve" ||
+      requestedView === "full"
         ? requestedView
-        : "score";
+        : "full";
     const requestedResultState = String(route.query.resultState || "");
     resultsAccessState.value =
       requestedResultState === "locked" ||
@@ -2549,69 +2582,59 @@ onBeforeUnmount(() => {
             </section>
 
             <div v-else class="results-experience">
-              <nav
-                class="results-navigation-bar"
-                aria-label="Results and practice navigation"
-              >
-                <label class="results-source-select">
-                  <select
-                    :value="resultSource"
-                    aria-label="Select test results"
-                    @change="setResultSourceFromEvent"
-                  >
-                    <option
-                    v-for="source in resultSources"
-                    :key="source.id"
-                    :value="source.id"
-                  >
-                      {{ source.label }}
-                    </option>
-                  </select>
-                  <svg class="icon" aria-hidden="true">
-                    <use href="#i-chevron" />
-                  </svg>
-                </label>
-                <span class="results-navigation-divider" aria-hidden="true" />
+              <header class="course-region-heading results-page-heading">
+                <h2>Test Results</h2>
                 <div
-                  class="results-view-switch"
-                  role="tablist"
-                  aria-label="Result views"
+                  class="course-topic-filters"
+                  aria-label="Filter test results"
                 >
-                  <button
-                    type="button"
-                    role="tab"
-                    :aria-selected="resultView === 'score'"
-                    @click="setResultView('score')"
-                  >
-                    <strong>Score Report</strong>
-                  </button>
-                  <button
-                    type="button"
-                    role="tab"
-                    :aria-selected="resultView === 'review'"
-                    @click="setResultView('review')"
-                  >
-                    <strong>Question Review</strong>
-                    <span class="results-view-count">{{
-                      reportQuestions.length
-                    }}</span>
-                  </button>
-                  <button
-                    type="button"
-                    role="tab"
-                    :aria-selected="resultView === 'improve'"
-                    @click="setResultView('improve')"
-                  >
-                    <strong>Targeted Practice</strong>
-                  </button>
+                  <label class="course-topic-select results-test-select">
+                    <select
+                      :value="resultSource"
+                      aria-label="Select test results"
+                      @change="setResultSourceFromEvent"
+                    >
+                      <option
+                        v-for="source in resultSources"
+                        :key="source.id"
+                        :value="source.id"
+                      >
+                        Test: {{ source.label }}
+                      </option>
+                    </select>
+                    <svg class="icon" aria-hidden="true">
+                      <use href="#i-chevron" />
+                    </svg>
+                  </label>
+                  <label class="course-topic-select results-view-select">
+                    <select
+                      :value="resultView"
+                      aria-label="Select result section"
+                      @change="setResultViewFromEvent"
+                    >
+                      <option
+                        v-for="view in resultViews"
+                        :key="view.id"
+                        :value="view.id"
+                      >
+                        Section: {{ view.label }}
+                      </option>
+                    </select>
+                    <svg class="icon" aria-hidden="true">
+                      <use href="#i-chevron" />
+                    </svg>
+                  </label>
                 </div>
-              </nav>
+              </header>
 
               <div class="results-preview-shell">
                 <div
                   :class="[
                     'results-preview-content',
-                    { 'is-locked': resultsLocked },
+                    {
+                      'is-locked': resultsLocked,
+                      'full-report': resultView === 'full',
+                    },
                   ]"
                   :inert="resultsLocked && !showResultsUnlockAction"
                   :aria-hidden="resultsLocked && !showResultsUnlockAction"
@@ -2623,7 +2646,29 @@ onBeforeUnmount(() => {
                 Loading score report…
               </div>
 
-              <div v-else-if="resultView === 'score'" class="score-report-view">
+              <template v-else>
+              <div
+                v-if="resultView === 'full' || resultView === 'score'"
+                :class="[
+                  'score-report-view',
+                  { 'results-waterfall-module': resultView === 'full' },
+                ]"
+              >
+                <header
+                  v-if="resultView === 'full'"
+                  class="results-waterfall-heading"
+                >
+                  <h2>Score Analysis</h2>
+                  <button
+                    class="results-download-button"
+                    type="button"
+                    @click="handleDownloadFullReport"
+                  >
+                    <span aria-hidden="true">↓</span>
+                    Download full report
+                    <em v-if="!isProMember">Pro</em>
+                  </button>
+                </header>
                 <div
                   :class="[
                     'results-score-overview-group',
@@ -2962,7 +3007,7 @@ onBeforeUnmount(() => {
                   </div>
                 </section>
 
-                <footer class="report-footer">
+                <footer v-if="resultView !== 'full'" class="report-footer">
                   <p>
                     SAT® is a registered trademark of the College Board, which
                     is not affiliated with or endorsed by this product. Practice
@@ -2991,9 +3036,19 @@ onBeforeUnmount(() => {
               </div>
 
               <div
-                v-else-if="resultView === 'review'"
-                class="question-review-view"
+                v-if="resultView === 'full' || resultView === 'review'"
+                :class="[
+                  'question-review-view',
+                  { 'results-waterfall-module': resultView === 'full' },
+                ]"
               >
+                <header
+                  v-if="resultView === 'full'"
+                  class="results-waterfall-heading"
+                >
+                  <h2>Question Review</h2>
+                  <span>{{ reportQuestions.length }} questions</span>
+                </header>
                 <header
                   class="study-breakdown-toolbar question-review-toolbar"
                   aria-label="Filter reviewed questions"
@@ -3284,7 +3339,7 @@ onBeforeUnmount(() => {
                 <div v-else class="results-empty">
                   No questions match these filters.
                 </div>
-                <footer class="report-footer">
+                <footer v-if="resultView !== 'full'" class="report-footer">
                   <p>
                     SAT® is a registered trademark of the College Board, which
                     is not affiliated with or endorsed by this product.
@@ -3312,10 +3367,20 @@ onBeforeUnmount(() => {
               </div>
 
               <section
-                v-else
-                class="topics-improve-view study-breakdown"
+                v-if="resultView === 'full' || resultView === 'improve'"
+                :class="[
+                  'topics-improve-view',
+                  'study-breakdown',
+                  { 'results-waterfall-module': resultView === 'full' },
+                ]"
                 aria-label="Topics to improve"
               >
+                <header
+                  v-if="resultView === 'full'"
+                  class="results-waterfall-heading"
+                >
+                  <h2>Targeted Practice</h2>
+                </header>
                 <header
                   class="study-breakdown-toolbar"
                   aria-label="Filter improvement topics"
@@ -3400,7 +3465,8 @@ onBeforeUnmount(() => {
                     'study-topic-sections',
                     {
                       'results-locked-subsection diagnostic-improve-lock':
-                        resultsLocked && resultSource === 'diagnostic',
+                        targetedPracticeLocked &&
+                        resultSource === 'diagnostic',
                     },
                   ]"
                 >
@@ -3411,7 +3477,8 @@ onBeforeUnmount(() => {
                       'study-topic-section',
                       {
                         'results-locked-subsection':
-                          resultsLocked && resultSource !== 'diagnostic',
+                          targetedPracticeLocked &&
+                          resultSource !== 'diagnostic',
                       },
                     ]"
                     :aria-labelledby="
@@ -3475,10 +3542,16 @@ onBeforeUnmount(() => {
                       </article>
                     </div>
                     <div
-                      v-if="resultsLocked && resultSource !== 'diagnostic'"
+                      v-if="
+                        targetedPracticeLocked &&
+                        resultSource !== 'diagnostic'
+                      "
                       :class="[
                         'results-subsection-lock',
-                        { 'has-commercial-action': showResultsUnlockAction },
+                        {
+                          'has-commercial-action':
+                            showTargetedPracticeUnlockAction,
+                        },
                       ]"
                     >
                       <span aria-hidden="true"
@@ -3487,7 +3560,7 @@ onBeforeUnmount(() => {
                       <strong>{{ resultsLockTitle }}</strong>
                       <small>{{ resultsLockDescription }}</small>
                       <button
-                        v-if="showResultsUnlockAction"
+                        v-if="showTargetedPracticeUnlockAction"
                         type="button"
                         @click="
                           openCommercialPaywall(
@@ -3500,10 +3573,15 @@ onBeforeUnmount(() => {
                     </div>
                   </section>
                   <div
-                    v-if="resultsLocked && resultSource === 'diagnostic'"
+                    v-if="
+                      targetedPracticeLocked && resultSource === 'diagnostic'
+                    "
                     :class="[
                       'results-subsection-lock',
-                      { 'has-commercial-action': showResultsUnlockAction },
+                      {
+                        'has-commercial-action':
+                          showTargetedPracticeUnlockAction,
+                      },
                     ]"
                   >
                     <span aria-hidden="true"
@@ -3512,7 +3590,7 @@ onBeforeUnmount(() => {
                     <strong>{{ resultsLockTitle }}</strong>
                     <small>{{ resultsLockDescription }}</small>
                     <button
-                      v-if="showResultsUnlockAction"
+                      v-if="showTargetedPracticeUnlockAction"
                       type="button"
                       @click="
                         openCommercialPaywall(
@@ -3525,6 +3603,37 @@ onBeforeUnmount(() => {
                   </div>
                 </div>
               </section>
+              <footer
+                v-if="resultView === 'full'"
+                class="report-footer full-report-footer"
+              >
+                <p>
+                  SAT® is a registered trademark of the College Board, which
+                  is not affiliated with or endorsed by this product. Practice
+                  scores are estimates, not official College Board scores.
+                </p>
+                <div v-if="!resultsLocked">
+                  <button
+                    class="report-retake-button"
+                    type="button"
+                    @click="requestRetake"
+                  >
+                    {{
+                      resultSource === "diagnostic"
+                        ? "Retake Diagnostic"
+                        : "Retake"
+                    }}
+                  </button>
+                  <button
+                    class="report-practice-button"
+                    type="button"
+                    @click="setResultView('improve')"
+                  >
+                    Practice Weak Topics
+                  </button>
+                </div>
+              </footer>
+              </template>
                 </div>
                 <section
                   v-if="resultsLocked"
