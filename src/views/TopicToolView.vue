@@ -119,6 +119,10 @@ function openCommercialPaywall(context: string, action?: () => void) {
   paywallOpen.value = true
 }
 
+function openStudyGuidePaywall() {
+  openCommercialPaywall('the complete video lesson, Study Guide, and Quick Practice')
+}
+
 function closeCommercialPaywall() {
   paywallOpen.value = false
   pendingCommercialAction = null
@@ -467,13 +471,14 @@ onBeforeUnmount(() => {
 
         <article v-else-if="mode === 'study-guide' && studyGuide && video" class="study-guide-view">
           <p class="study-guide-section-label">Video Lesson</p>
-          <section class="topic-video-card" aria-labelledby="topicVideoTitle">
+          <section :class="['topic-video-card', { 'commercial-locked': !isProMember }]" aria-labelledby="topicVideoTitle">
             <header><div><h2 id="topicVideoTitle">{{ video.title }}</h2><span>{{ video.description }}</span></div><a :href="video.playbackUrl" target="_blank" rel="noopener">Open video ↗</a></header>
-            <div class="topic-video-frame" :class="{ loaded: iframeLoaded }">
+            <div class="topic-video-frame" :class="{ loaded: iframeLoaded && isProMember }">
               <img :src="video.coverUrl" :alt="`${video.title} video cover`" />
-              <span class="video-loading">Loading interactive lesson…</span>
-              <iframe :src="video.playbackUrl" :title="video.title" loading="eager" allow="fullscreen" @load="iframeLoaded = true" />
+              <span v-if="isProMember" class="video-loading">Loading interactive lesson…</span>
+              <iframe v-if="isProMember" :src="video.playbackUrl" :title="video.title" loading="eager" allow="fullscreen" @load="iframeLoaded = true" />
             </div>
+            <button v-if="!isProMember" class="topic-video-paywall-hitarea" type="button" aria-label="Unlock this video lesson with Solvely Pro" @click="openStudyGuidePaywall" />
           </section>
 
           <p class="study-guide-section-label exam-essentials">Exam Essentials</p>
@@ -534,7 +539,7 @@ onBeforeUnmount(() => {
                 <span aria-hidden="true">x²</span>
                 <strong>Keep Learning with Solvely Pro</strong>
                 <small>Unlock the full written guide, worked examples, exam tips, and Quick Practice.</small>
-                <button type="button" @click="openCommercialPaywall('the full Study Guide and Quick Practice')">Unlock Study Guide</button>
+                <button type="button" @click="openStudyGuidePaywall">Unlock Study Guide</button>
               </section>
             </div>
           </div>
