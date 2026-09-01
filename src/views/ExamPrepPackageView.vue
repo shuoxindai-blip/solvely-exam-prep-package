@@ -2125,7 +2125,7 @@ onBeforeUnmount(() => {
               <button
                 v-for="tab in [
                   ['study', 'Course Content'],
-                  ['results', 'Results & Improve'],
+                  ['results', 'Performance & Insights'],
                 ] as [CourseTab, string][]"
                 :key="tab[0]"
                 class="course-package-tab"
