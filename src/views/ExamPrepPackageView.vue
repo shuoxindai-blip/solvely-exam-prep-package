@@ -239,7 +239,7 @@ const resultsLockTitle = computed(() => {
       ? "Complete the Free Diagnostic Test to unlock"
       : "Complete the Practice Test to unlock";
   return resultSource.value === "diagnostic"
-    ? "Unlock Topics to Improve with Solvely Pro"
+    ? "Unlock Targeted Practice with Solvely Pro"
     : "Unlock with Solvely Pro";
 });
 const resultsLockDescription = computed(() => {
@@ -2550,35 +2550,29 @@ onBeforeUnmount(() => {
             </section>
 
             <div v-else class="results-experience">
-              <nav class="results-source-filter" aria-label="Select test results">
-                <div class="results-source-intro">
-                  <h2>Your test results</h2>
-                  <p>
-                    Review scores, answers, and next steps for each assessment.
-                  </p>
-                </div>
+              <nav
+                class="results-navigation-bar"
+                aria-label="Results and practice navigation"
+              >
                 <div
                   :class="[
                     'results-source-switch',
                     `source-${resultSource}`,
                   ]"
-                  role="tablist"
+                  role="group"
+                  aria-label="Test results"
                 >
-                  <span class="results-source-indicator" aria-hidden="true" />
                   <button
                     v-for="source in resultSources"
                     :key="source.id"
                     type="button"
-                    role="tab"
-                    :aria-selected="resultSource === source.id"
+                    :aria-pressed="resultSource === source.id"
                     @click="setResultSource(source.id)"
                   >
-                    <i aria-hidden="true" />
                     <strong>{{ source.label }}</strong>
                   </button>
                 </div>
-              </nav>
-              <header class="results-experience-head">
+                <span class="results-navigation-divider" aria-hidden="true" />
                 <div
                   class="results-view-switch"
                   role="tablist"
@@ -2609,10 +2603,10 @@ onBeforeUnmount(() => {
                     :aria-selected="resultView === 'improve'"
                     @click="setResultView('improve')"
                   >
-                    <strong>Topics to Improve</strong>
+                    <strong>Targeted Practice</strong>
                   </button>
                 </div>
-              </header>
+              </nav>
 
               <div class="results-preview-shell">
                 <div
