@@ -849,20 +849,6 @@ function setResultsAccessState(state: ResultsAccessState) {
     hash: "#course-0",
   });
 }
-function goToPracticeTest() {
-  activeTab.value = "study";
-  setPracticeTestState("not-started");
-  void router.push({
-    name: "package",
-    query: {
-      ...route.query,
-      tab: "study",
-      practiceState: "not-started",
-      resultState: "locked",
-    },
-    hash: "#course-0",
-  });
-}
 function confirmRetake() {
   closeRetakeConfirm();
   setPracticeTestState("not-started");
@@ -2037,6 +2023,12 @@ onBeforeUnmount(() => {
               </div>
 
               <div v-else-if="resultView === 'score'" class="score-report-view">
+                <div
+                  :class="[
+                    'results-score-overview-group',
+                    { 'results-locked-subsection': resultsLocked },
+                  ]"
+                >
                 <section class="score-report-card">
                   <header class="score-report-cover">
                     <span>SAT® Prep 2026</span><small>Score report</small>
@@ -2094,9 +2086,20 @@ onBeforeUnmount(() => {
                     <p>{{ resultReport.overview }}</p>
                   </div>
                 </section>
+                  <div v-if="resultsLocked" class="results-subsection-lock">
+                    <span aria-hidden="true"
+                      ><svg class="icon"><use href="#i-lock" /></svg
+                    ></span>
+                    <strong>Complete the Practice Test to unlock</strong>
+                    <small>Unlock your score and personalized overview.</small>
+                  </div>
+                </div>
 
                 <section
-                  class="knowledge-report"
+                  :class="[
+                    'knowledge-report',
+                    { 'results-locked-subsection': resultsLocked },
+                  ]"
                   aria-labelledby="knowledgeReportTitle"
                 >
                   <header class="report-section-heading">
@@ -2140,9 +2143,21 @@ onBeforeUnmount(() => {
                       </div>
                     </article>
                   </div>
+                  <div v-if="resultsLocked" class="results-subsection-lock">
+                    <span aria-hidden="true"
+                      ><svg class="icon"><use href="#i-lock" /></svg
+                    ></span>
+                    <strong>Complete the Practice Test to unlock</strong>
+                    <small>Unlock your SAT knowledge and skills breakdown.</small>
+                  </div>
                 </section>
 
-                <section class="report-performance-details">
+                <section
+                  :class="[
+                    'report-performance-details',
+                    { 'results-locked-subsection': resultsLocked },
+                  ]"
+                >
                   <header class="report-section-heading">
                     <div>
                       <h3>Performance details</h3>
@@ -2284,6 +2299,13 @@ onBeforeUnmount(() => {
                       </section>
                     </div>
                   </article>
+                  <div v-if="resultsLocked" class="results-subsection-lock">
+                    <span aria-hidden="true"
+                      ><svg class="icon"><use href="#i-lock" /></svg
+                    ></span>
+                    <strong>Complete the Practice Test to unlock</strong>
+                    <small>Unlock detailed accuracy, pacing, and topic insights.</small>
+                  </div>
                 </section>
 
                 <footer class="report-footer">
@@ -2379,7 +2401,10 @@ onBeforeUnmount(() => {
 
                 <div
                   v-if="selectedReviewQuestion"
-                  class="question-review-workspace"
+                  :class="[
+                    'question-review-workspace',
+                    { 'results-locked-subsection': resultsLocked },
+                  ]"
                 >
                   <aside
                     class="review-question-navigator"
@@ -2592,6 +2617,13 @@ onBeforeUnmount(() => {
                       </button>
                     </footer>
                   </article>
+                  <div v-if="resultsLocked" class="results-subsection-lock">
+                    <span aria-hidden="true"
+                      ><svg class="icon"><use href="#i-lock" /></svg
+                    ></span>
+                    <strong>Complete the Practice Test to unlock</strong>
+                    <small>Unlock every answer, explanation, and skill review.</small>
+                  </div>
                 </div>
                 <div v-else class="results-empty">
                   No questions match these filters.
@@ -2712,7 +2744,10 @@ onBeforeUnmount(() => {
                   <section
                     v-for="section in improveTopicSections"
                     :key="section.id"
-                    class="study-topic-section"
+                    :class="[
+                      'study-topic-section',
+                      { 'results-locked-subsection': resultsLocked },
+                    ]"
                     :aria-labelledby="
                       improvePriority === 'ALL' ? section.id : undefined
                     "
@@ -2773,6 +2808,13 @@ onBeforeUnmount(() => {
                         </div>
                       </article>
                     </div>
+                    <div v-if="resultsLocked" class="results-subsection-lock">
+                      <span aria-hidden="true"
+                        ><svg class="icon"><use href="#i-lock" /></svg
+                      ></span>
+                      <strong>Complete the Practice Test to unlock</strong>
+                      <small>Unlock prioritized topics and adaptive practice.</small>
+                    </div>
                   </section>
                 </div>
               </section>
@@ -2783,18 +2825,12 @@ onBeforeUnmount(() => {
                   role="status"
                   aria-live="polite"
                 >
-                  <span class="results-lock-icon" aria-hidden="true"
-                    ><svg class="icon"><use href="#i-lock" /></svg
-                  ></span>
                   <h2>Complete the Practice Test to unlock</h2>
                   <p>
                     Finish the full-length SAT Practice Test to access your
                     score report, question review, and personalized topics to
                     improve.
                   </p>
-                  <button type="button" @click="goToPracticeTest">
-                    Go to Practice Test
-                  </button>
                 </section>
               </div>
               <aside
