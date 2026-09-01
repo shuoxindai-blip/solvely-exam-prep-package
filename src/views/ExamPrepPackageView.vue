@@ -1601,8 +1601,8 @@ onBeforeUnmount(() => {
               <div class="course-package-copy">
                 <h1 id="courseWorkspaceTitle">SAT Prep 2026</h1>
                 <p>
-                  A focused SAT Prep 2026 plan with topic study tools, realistic
-                  mock exams, score reports, and targeted improvement.
+                  SAT Prep 2026 with focused study tools, a realistic mock exam,
+                  a score report, and targeted practice.
                 </p>
                 <div class="course-package-stats" aria-label="Course contents">
                   <span
