@@ -519,7 +519,7 @@ onBeforeUnmount(() => {
               <div class="course-progress-track" role="progressbar" aria-label="Course progress" aria-valuemin="0" aria-valuemax="100" :aria-valuenow="courseProgressPercent"><i :style="{ width: `${courseProgressPercent}%` }"/></div>
             </aside>
           </div>
-          <nav class="course-package-tabs" role="tablist" aria-label="Course sections"><button v-for="tab in ([['study','Study & Practice'],['results','Results & Improve']] as [CourseTab,string][])" :key="tab[0]" class="course-package-tab" type="button" role="tab" :aria-selected="activeTab === tab[0]" @click="selectTab(tab[0])">{{ tab[1] }}</button></nav>
+          <nav class="course-package-tabs" role="tablist" aria-label="Course sections"><button v-for="tab in ([['study','Course Content'],['results','Results & Improve']] as [CourseTab,string][])" :key="tab[0]" class="course-package-tab" type="button" role="tab" :aria-selected="activeTab === tab[0]" @click="selectTab(tab[0])">{{ tab[1] }}</button></nav>
           </div>
         </header>
         <div class="course-workspace-body">
