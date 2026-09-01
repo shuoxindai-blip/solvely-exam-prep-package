@@ -1618,8 +1618,7 @@ onBeforeUnmount(() => {
                   <span
                     ><svg class="icon" aria-hidden="true">
                       <use href="#i-exam" /></svg
-                    ><strong>1</strong> full-length practice test with score
-                    analysis</span
+                    ><strong>1</strong> full-length test</span
                   >
                 </div>
               </div>
