@@ -2728,7 +2728,7 @@ onBeforeUnmount(() => {
                   <label class="course-topic-select results-view-select">
                     <select
                       :value="resultView"
-                      aria-label="Select result section"
+                      aria-label="Select result view"
                       @change="setResultViewFromEvent"
                     >
                       <option
@@ -2736,7 +2736,7 @@ onBeforeUnmount(() => {
                         :key="view.id"
                         :value="view.id"
                       >
-                        Section: {{ view.label }}
+                        View: {{ view.label }}
                       </option>
                     </select>
                     <svg class="icon" aria-hidden="true">
