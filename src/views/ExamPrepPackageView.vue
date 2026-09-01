@@ -191,20 +191,14 @@ const diagnosticTestStates: { id: DiagnosticTestState; label: string }[] = [
 const resultSources: {
   id: ResultSource;
   label: string;
-  helper: string;
-  access: string;
 }[] = [
   {
     id: "diagnostic",
     label: "Diagnostic Test",
-    helper: "20 questions · Untimed",
-    access: "Free",
   },
   {
     id: "practice",
-    label: "Practice Test",
-    helper: "Full-length",
-    access: "Pro",
+    label: "Full-Length Practice Test",
   },
 ];
 const commercialAccessStates = [
@@ -317,7 +311,7 @@ const diagnosticTestCard = computed(() => {
   return {
     stateLabel: "Free",
     description:
-      "Get an instant score estimate, skill breakdown, and points within reach when time is short. This quick check does not replace the full-length test.",
+      "Get an instant score estimate and skill breakdown to see where you can gain points fast.",
     metrics: [
       { value: String(questionCount), label: "questions" },
       { value: "Untimed", label: "" },
@@ -347,7 +341,7 @@ const practiceTestCard = computed(() => {
     return {
       stateLabel: "Pro",
       description:
-        "Take a realistic full-length Digital SAT with official section timing and module structure. Timing begins after setup.",
+        "Take a realistic full-length Digital SAT with official timing and module structure.",
       metrics: [
         { value: String(questionCount), label: "questions" },
         { value: String(durationMinutes), label: "min" },
@@ -2545,8 +2539,14 @@ onBeforeUnmount(() => {
 
             <div v-else class="results-experience">
               <nav class="results-source-filter" aria-label="Select test results">
-                <span>Results from</span>
-                <div class="results-source-switch" role="tablist">
+                <div
+                  :class="[
+                    'results-source-switch',
+                    `source-${resultSource}`,
+                  ]"
+                  role="tablist"
+                >
+                  <span class="results-source-indicator" aria-hidden="true" />
                   <button
                     v-for="source in resultSources"
                     :key="source.id"
@@ -2555,15 +2555,8 @@ onBeforeUnmount(() => {
                     :aria-selected="resultSource === source.id"
                     @click="setResultSource(source.id)"
                   >
-                    <span class="results-source-copy"
-                      ><strong>{{ source.label }}</strong
-                      ><small>{{ source.helper }}</small></span
-                    >
-                    <em
-                      class="results-source-access"
-                      :class="source.id"
-                      >{{ source.access }}</em
-                    >
+                    <i aria-hidden="true" />
+                    <strong>{{ source.label }}</strong>
                   </button>
                 </div>
               </nav>
