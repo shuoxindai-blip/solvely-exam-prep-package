@@ -188,13 +188,24 @@ const diagnosticTestStates: { id: DiagnosticTestState; label: string }[] = [
   { id: "scoring", label: "Scoring" },
   { id: "results", label: "Results ready" },
 ];
-const resultSources: { id: ResultSource; label: string; helper: string }[] = [
+const resultSources: {
+  id: ResultSource;
+  label: string;
+  helper: string;
+  access: string;
+}[] = [
   {
     id: "diagnostic",
     label: "Diagnostic Test",
     helper: "20 questions · Untimed",
+    access: "Free",
   },
-  { id: "practice", label: "Practice Test", helper: "Full-length" },
+  {
+    id: "practice",
+    label: "Practice Test",
+    helper: "Full-length",
+    access: "Pro",
+  },
 ];
 const commercialAccessStates = [
   { id: "free", label: "Non-member" },
@@ -1359,8 +1370,6 @@ function syncTabFromRoute() {
   const requestedTab = String(route.query.tab || "");
   activeTab.value = requestedTab === "results" ? "results" : "study";
   const requestedResultSource = String(route.query.reportSource || "");
-  resultSource.value =
-    requestedResultSource === "diagnostic" ? "diagnostic" : "practice";
   const requestedDiagnosticState = String(
     route.query.diagnosticState || "",
   );
@@ -1380,6 +1389,13 @@ function syncTabFromRoute() {
   ) {
     setPracticeTestState(requestedPracticeState);
   }
+  resultSource.value =
+    requestedResultSource === "diagnostic" ||
+    requestedResultSource === "practice"
+      ? requestedResultSource
+      : requestedDiagnosticState === "results"
+        ? "diagnostic"
+        : "practice";
   if (activeTab.value === "results") {
     const requestedView = String(route.query.view || "");
     resultView.value =
@@ -2496,7 +2512,7 @@ onBeforeUnmount(() => {
 
             <div v-else class="results-experience">
               <nav class="results-source-filter" aria-label="Select test results">
-                <span>Results for</span>
+                <span>Results from</span>
                 <div class="results-source-switch" role="tablist">
                   <button
                     v-for="source in resultSources"
@@ -2506,16 +2522,14 @@ onBeforeUnmount(() => {
                     :aria-selected="resultSource === source.id"
                     @click="setResultSource(source.id)"
                   >
-                    <span class="results-source-icon" aria-hidden="true"
-                      ><svg class="icon">
-                        <use
-                          :href="
-                            source.id === 'diagnostic' ? '#i-spark' : '#i-exam'
-                          "
-                        /></svg></span
-                    ><span
+                    <span class="results-source-copy"
                       ><strong>{{ source.label }}</strong
                       ><small>{{ source.helper }}</small></span
+                    >
+                    <em
+                      class="results-source-access"
+                      :class="source.id"
+                      >{{ source.access }}</em
                     >
                   </button>
                 </div>
@@ -2532,13 +2546,7 @@ onBeforeUnmount(() => {
                     :aria-selected="resultView === 'score'"
                     @click="setResultView('score')"
                   >
-                    <span class="results-view-icon"
-                      ><svg class="icon" aria-hidden="true">
-                        <use href="#i-chart" /></svg></span
-                    ><span class="results-view-copy"
-                      ><strong>Score Report</strong
-                      ><small>Scores &amp; performance</small></span
-                    >
+                    <strong>Score Report</strong>
                   </button>
                   <button
                     type="button"
@@ -2546,15 +2554,10 @@ onBeforeUnmount(() => {
                     :aria-selected="resultView === 'review'"
                     @click="setResultView('review')"
                   >
-                    <span class="results-view-icon"
-                      ><svg class="icon" aria-hidden="true">
-                        <use href="#i-exam" /></svg></span
-                    ><span class="results-view-copy"
-                      ><strong>Question Review</strong
-                      ><small
-                        >{{ reportQuestions.length }} questions</small
-                      ></span
-                    >
+                    <strong>Question Review</strong>
+                    <span class="results-view-count">{{
+                      reportQuestions.length
+                    }}</span>
                   </button>
                   <button
                     type="button"
@@ -2562,13 +2565,7 @@ onBeforeUnmount(() => {
                     :aria-selected="resultView === 'improve'"
                     @click="setResultView('improve')"
                   >
-                    <span class="results-view-icon"
-                      ><svg class="icon" aria-hidden="true">
-                        <use href="#i-target" /></svg></span
-                    ><span class="results-view-copy"
-                      ><strong>Topics to Improve</strong
-                      ><small>Adaptive practice</small></span
-                    >
+                    <strong>Topics to Improve</strong>
                   </button>
                 </div>
               </header>
