@@ -1677,6 +1677,9 @@
     .mock-demo-controller-head { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:9px; color:#fff; }
     .mock-demo-controller-head strong { font-size:9px; letter-spacing:.04em; text-transform:uppercase; }
     .mock-demo-controller-head span { color:#9da9bb; font-size:8px; }
+    .mock-demo-controller-group { display:grid; gap:7px; }
+    .mock-demo-controller-group + .mock-demo-controller-group { margin-top:10px; padding-top:10px; border-top:1px solid rgba(255,255,255,.1); }
+    .mock-demo-controller-label { color:#9da9bb; font-size:8px; font-weight:720; letter-spacing:.06em; text-transform:uppercase; }
     .mock-state-nav { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:6px; }
     .mock-state-button { min-height:32px; border:1px solid rgba(255,255,255,.1); border-radius:8px; background:rgba(255,255,255,.06); color:#b7c2d1; font-size:9px; font-weight:710; cursor:pointer; }
     .mock-state-button.active { border-color:#4b85f3; background:#2368f0; color:#fff; box-shadow:0 5px 14px rgba(35,104,240,.3); }

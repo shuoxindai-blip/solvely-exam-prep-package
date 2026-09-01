@@ -13,6 +13,7 @@ import type { SatManifest, SatTopic } from "../types/sat";
 
 type CourseTab = "study" | "results";
 type ResultView = "score" | "review" | "improve";
+type CourseEntryState = "first-visit" | "in-progress";
 type PracticeTestState = "not-started" | "in-progress" | "scoring" | "results";
 type ResultsAccessState = "locked" | "unlocked";
 type ReviewFilter = "ALL" | "INCORRECT" | "CORRECT" | "OMITTED";
@@ -128,6 +129,17 @@ const practiceTestStates: { id: PracticeTestState; label: string }[] = [
   { id: "scoring", label: "Scoring" },
   { id: "results", label: "Results ready" },
 ];
+const commercialAccessStates = [
+  { id: "free", label: "Non-member" },
+  { id: "member", label: "Pro" },
+] as const;
+const courseEntryStates: { id: CourseEntryState; label: string }[] = [
+  { id: "first-visit", label: "First visit" },
+  { id: "in-progress", label: "In progress" },
+];
+const courseEntryState = computed<CourseEntryState>(() =>
+  isCourseStarted.value ? "in-progress" : "first-visit",
+);
 const resultsAccessStates: { id: ResultsAccessState; label: string }[] = [
   { id: "locked", label: "Locked" },
   { id: "unlocked", label: "Unlocked" },
@@ -743,13 +755,8 @@ const topicsBySection = computed(() => {
 
 const recommendedStartTopic = computed(() =>
   [...(manifest.value?.topics ?? [])]
-    .filter((topic) => topic.section === "Math")
-    .sort(
-      (left, right) =>
-        right.importanceScore - left.importanceScore ||
-        right.mappedQuestionCount - left.mappedQuestionCount ||
-        left.order - right.order,
-    )[0] ?? null,
+    .filter((topic) => topic.section === "Math" && topic.priority === "CORE")
+    .sort((left, right) => left.order - right.order)[0] ?? null,
 );
 
 const courseStartTopic = computed(() => {
@@ -949,6 +956,17 @@ function setPracticeTestState(state: PracticeTestState) {
       hash: "#course-0",
     });
   }, 2000);
+}
+function setCourseEntryState(state: CourseEntryState) {
+  void router.replace({
+    name: "package",
+    query: {
+      ...route.query,
+      tab: "study",
+      courseState: state === "first-visit" ? "not-started" : "in-progress",
+    },
+    hash: "#course-0",
+  });
 }
 function setResultsAccessState(state: ResultsAccessState) {
   resultsAccessState.value = state;
@@ -2097,32 +2115,6 @@ onBeforeUnmount(() => {
                   </footer>
                 </article>
               </aside>
-              <aside
-                class="mock-demo-controller"
-                aria-label="Practice test demo state controller"
-              >
-                <header class="mock-demo-controller-head">
-                  <strong>Demo control</strong><span>Not product UI</span>
-                </header>
-                <nav
-                  class="mock-state-nav"
-                  aria-label="Preview practice test card state"
-                >
-                  <button
-                    v-for="state in practiceTestStates"
-                    :key="state.id"
-                    :class="[
-                      'mock-state-button',
-                      { active: practiceTestState === state.id },
-                    ]"
-                    type="button"
-                    :aria-pressed="practiceTestState === state.id"
-                    @click="setPracticeTestState(state.id)"
-                  >
-                    {{ state.label }}
-                  </button>
-                </nav>
-              </aside>
             </section>
 
             <div v-else class="results-experience">
@@ -3007,38 +2999,99 @@ onBeforeUnmount(() => {
                   <p>{{ resultsLockDescription }}</p>
                 </section>
               </div>
-              <aside
-                class="mock-demo-controller results-demo-controller"
-                aria-label="Results demo access controller"
-              >
-                <header class="mock-demo-controller-head">
-                  <strong>Results access</strong><span>Not product UI</span>
-                </header>
-                <nav class="mock-state-nav" aria-label="Preview results access">
-                  <button
-                    v-for="state in resultsAccessStates"
-                    :key="state.id"
-                    :class="[
-                      'mock-state-button',
-                      { active: resultsAccessState === state.id },
-                    ]"
-                    type="button"
-                    :aria-pressed="resultsAccessState === state.id"
-                    @click="setResultsAccessState(state.id)"
-                  >
-                    {{ state.label }}
-                  </button>
-                </nav>
-              </aside>
             </div>
           </div>
         </div>
       </section>
     </main>
     <CommercialDemoController
+      v-if="!isCourseOpen"
       :model-value="accessState"
       @update:model-value="setProAccess"
     />
+    <aside
+      v-else
+      class="mock-demo-controller unified-demo-controller"
+      aria-label="Exam prep package demo state controller"
+    >
+      <header class="mock-demo-controller-head">
+        <strong>Demo control</strong><span>Not product UI</span>
+      </header>
+      <section class="mock-demo-controller-group">
+        <span class="mock-demo-controller-label">Commercial access</span>
+        <nav class="mock-state-nav" aria-label="Preview membership state">
+          <button
+            v-for="state in commercialAccessStates"
+            :key="state.id"
+            :class="[
+              'mock-state-button',
+              { active: accessState === state.id },
+            ]"
+            type="button"
+            :aria-pressed="accessState === state.id"
+            @click="setProAccess(state.id)"
+          >
+            {{ state.label }}
+          </button>
+        </nav>
+      </section>
+      <template v-if="activeTab === 'study'">
+        <section class="mock-demo-controller-group">
+          <span class="mock-demo-controller-label">Course entry</span>
+          <nav class="mock-state-nav" aria-label="Preview course entry state">
+            <button
+              v-for="state in courseEntryStates"
+              :key="state.id"
+              :class="[
+                'mock-state-button',
+                { active: courseEntryState === state.id },
+              ]"
+              type="button"
+              :aria-pressed="courseEntryState === state.id"
+              @click="setCourseEntryState(state.id)"
+            >
+              {{ state.label }}
+            </button>
+          </nav>
+        </section>
+        <section class="mock-demo-controller-group">
+          <span class="mock-demo-controller-label">Practice test</span>
+          <nav class="mock-state-nav" aria-label="Preview practice test card state">
+            <button
+              v-for="state in practiceTestStates"
+              :key="state.id"
+              :class="[
+                'mock-state-button',
+                { active: practiceTestState === state.id },
+              ]"
+              type="button"
+              :aria-pressed="practiceTestState === state.id"
+              @click="setPracticeTestState(state.id)"
+            >
+              {{ state.label }}
+            </button>
+          </nav>
+        </section>
+      </template>
+      <section v-else class="mock-demo-controller-group">
+        <span class="mock-demo-controller-label">Results access</span>
+        <nav class="mock-state-nav" aria-label="Preview results access">
+          <button
+            v-for="state in resultsAccessStates"
+            :key="state.id"
+            :class="[
+              'mock-state-button',
+              { active: resultsAccessState === state.id },
+            ]"
+            type="button"
+            :aria-pressed="resultsAccessState === state.id"
+            @click="setResultsAccessState(state.id)"
+          >
+            {{ state.label }}
+          </button>
+        </nav>
+      </section>
+    </aside>
     <ProPaywall
       :open="paywallOpen"
       :context="paywallContext"
