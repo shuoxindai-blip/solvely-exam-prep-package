@@ -2024,11 +2024,12 @@ onBeforeUnmount(() => {
               <aside
                 v-else
                 class="course-journey-start"
-                aria-label="Start your SAT journey"
+                aria-label="Start your prep journey"
               >
-                <span class="course-journey-kicker">Ready to begin</span>
-                <strong>Start your SAT journey</strong>
-                <small>Your first Core lesson is ready</small>
+                <span class="course-journey-mark" aria-hidden="true">
+                  <svg class="icon"><use href="#i-target" /></svg>
+                </span>
+                <strong>Start your prep journey</strong>
               </aside>
             </div>
             <nav
