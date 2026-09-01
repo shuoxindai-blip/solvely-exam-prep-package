@@ -5,6 +5,7 @@ import HighlightablePassage from '../components/HighlightablePassage.vue'
 import MathReferenceSheet from '../components/MathReferenceSheet.vue'
 import ScientificCalculator from '../components/ScientificCalculator.vue'
 import { loadEpExam } from '../data/satData'
+import { buildSatDiagnosticExam, SAT_DIAGNOSTIC_QUESTIONS_PER_SECTION } from '../data/satDiagnostic'
 import type { EpExam } from '../types/epV2'
 
 type SectionKind = 'reading' | 'math'
@@ -62,24 +63,32 @@ type SourceQuestion = {
 
 type SourceExam = { id: string; title: string; questions: SourceQuestion[] }
 
-const modules: ModuleDefinition[] = [
+const fullLengthModules: ModuleDefinition[] = [
   { id: 'reading-1', sectionNumber: 1, moduleNumber: 1, section: 'reading', title: 'Reading and Writing', total: 27, duration: 32 * 60 },
   { id: 'reading-2', sectionNumber: 1, moduleNumber: 2, section: 'reading', title: 'Reading and Writing', total: 27, duration: 32 * 60 },
   { id: 'math-1', sectionNumber: 2, moduleNumber: 1, section: 'math', title: 'Math', total: 22, duration: 35 * 60 },
   { id: 'math-2', sectionNumber: 2, moduleNumber: 2, section: 'math', title: 'Math', total: 22, duration: 35 * 60 },
 ]
+const diagnosticModules: ModuleDefinition[] = [
+  { id: 'diagnostic-reading', sectionNumber: 1, moduleNumber: 1, section: 'reading', title: 'Reading and Writing', total: SAT_DIAGNOSTIC_QUESTIONS_PER_SECTION, duration: 0 },
+  { id: 'diagnostic-math', sectionNumber: 2, moduleNumber: 1, section: 'math', title: 'Math', total: SAT_DIAGNOSTIC_QUESTIONS_PER_SECTION, duration: 0 },
+]
 
 const route = useRoute()
 const router = useRouter()
+const isDiagnostic = computed(() => String(route.query.mode || '') === 'diagnostic')
+const modules = computed(() => isDiagnostic.value ? diagnosticModules : fullLengthModules)
 const examId = computed(() => String(route.params.examId) === '2' ? 2 : 1)
 const activeEpExam = ref<EpExam | null>(null)
 const examLoadError = ref('')
 
-function adaptEpExam(exam: EpExam, index: number): SourceExam {
+function adaptEpExam(exam: EpExam, index: number, diagnostic = false): SourceExam {
   const moduleCounts = new Map<string, number>()
   return {
     id: String(exam._id),
-    title: `Digital SAT Full-Length Practice Test ${index + 1}`,
+    title: diagnostic
+      ? 'Free SAT Diagnostic Test'
+      : `Digital SAT Full-Length Practice Test ${index + 1}`,
     questions: exam.questions.map((question) => {
       const module = question.module === 'Module 2' ? 'M2' : 'M1'
       const moduleKey = `${question.sectionTitle}:${module}`
@@ -106,7 +115,13 @@ function adaptEpExam(exam: EpExam, index: number): SourceExam {
 }
 
 const activeExam = computed<SourceExam>(() => activeEpExam.value
-  ? adaptEpExam(activeEpExam.value, examId.value - 1)
+  ? adaptEpExam(
+      isDiagnostic.value
+        ? buildSatDiagnosticExam(activeEpExam.value)
+        : activeEpExam.value,
+      examId.value - 1,
+      isDiagnostic.value,
+    )
   : { id: '', title: 'Loading Digital SAT Mock Exam…', questions: [] })
 
 async function loadActiveExam() {
@@ -158,7 +173,7 @@ const recommendationRating = ref<number | null>(null)
 const challengeRating = ref<number | null>(null)
 const feedbackText = ref('')
 const feedbackSubmitted = ref(false)
-const timeRemaining = ref(modules[0].duration)
+const timeRemaining = ref(modules.value[0].duration)
 const breakRemaining = ref(9 * 60 + 52)
 const questionTimeSeconds = reactive<Record<string, number>>({})
 const leftWidth = ref(47.25)
@@ -167,11 +182,21 @@ const questionScroller = ref<HTMLElement | null>(null)
 let countdownId: number | undefined
 let toastId: number | undefined
 
-const currentModule = computed(() => modules[moduleIndex.value])
+const currentModule = computed(() => modules.value[moduleIndex.value])
 const currentSourceQuestion = computed(() => sourceQuestionFor(currentModule.value, currentNumber.value))
 const currentQuestion = computed<Question>(() => displayQuestion(currentSourceQuestion.value))
 const questionKey = computed(() => `${currentModule.value.id}-${currentNumber.value}`)
-const sectionLabel = computed(() => `Section ${currentModule.value.sectionNumber}, Module ${currentModule.value.moduleNumber}`)
+const sectionLabel = computed(() =>
+  isDiagnostic.value
+    ? `Section ${currentModule.value.sectionNumber}`
+    : `Section ${currentModule.value.sectionNumber}, Module ${currentModule.value.moduleNumber}`,
+)
+const primaryActionLabel = computed(() => {
+  if (stage.value !== 'review' || !isDiagnostic.value) return 'Next'
+  return moduleIndex.value === modules.value.length - 1
+    ? 'Submit Diagnostic'
+    : 'Next Section'
+})
 const timeLabel = computed(() => formatTime(timeRemaining.value))
 const breakTimeLabel = computed(() => formatTime(breakRemaining.value))
 const answeredNumbers = computed(() => {
@@ -214,7 +239,7 @@ function median(values: number[]) {
 }
 
 const moduleStats = computed(() =>
-  modules.map((module) => {
+  modules.value.map((module) => {
     let correct = 0
     let incorrect = 0
     let seconds = 0
@@ -283,7 +308,7 @@ const totalStats = computed(() => {
 
 const topicStats = computed(() => {
   const groups = new Map<string, { section: SectionKind; label: string; attempts: number; correct: number; seconds: number[] }>()
-  for (const module of modules) {
+  for (const module of modules.value) {
     for (let number = 1; number <= module.total; number += 1) {
       const label = topicFor(module, number)
       const group = groups.get(label) ?? { section: module.section, label, attempts: 0, correct: 0, seconds: [] }
@@ -310,7 +335,7 @@ const weakestTopics = computed(() =>
 const difficultyStats = computed(() =>
   (['reading', 'math'] as SectionKind[]).map((section) => {
     const buckets = ['Easy', 'Medium', 'Hard'].map((label) => ({ label, seconds: [] as number[] }))
-    modules
+    modules.value
       .filter((module) => module.section === section)
       .forEach((module) => {
         for (let number = 1; number <= module.total; number += 1) {
@@ -400,7 +425,7 @@ function openReview() {
 function startModule(index: number) {
   moduleIndex.value = index
   currentNumber.value = 1
-  timeRemaining.value = modules[index].duration
+  timeRemaining.value = modules.value[index].duration
   stage.value = 'exam'
   navigatorOpen.value = false
   timerVisible.value = true
@@ -408,12 +433,12 @@ function startModule(index: number) {
 }
 
 function advanceFromReview() {
-  if (moduleIndex.value === 1) {
+  if (!isDiagnostic.value && moduleIndex.value === 1) {
     stage.value = 'break'
     navigatorOpen.value = false
     return
   }
-  if (moduleIndex.value < modules.length - 1) startModule(moduleIndex.value + 1)
+  if (moduleIndex.value < modules.value.length - 1) startModule(moduleIndex.value + 1)
   else openPackageScoreReport()
 }
 
@@ -435,7 +460,7 @@ function restartExam() {
   eliminationMode.value = false
   moduleIndex.value = 0
   currentNumber.value = 1
-  timeRemaining.value = modules[0].duration
+  timeRemaining.value = modules.value[0].duration
   breakRemaining.value = 9 * 60 + 52
   stage.value = 'exam'
   closeTransientTools()
@@ -446,7 +471,17 @@ function openResults() {
 }
 
 function openPackageScoreReport() {
-  void router.push({ name: 'package', query: { tab: 'study', practiceState: 'scoring' }, hash: '#course-0' })
+  void router.push({
+    name: 'package',
+    query: isDiagnostic.value
+      ? {
+          tab: 'study',
+          reportSource: 'diagnostic',
+          diagnosticState: 'scoring',
+        }
+      : { tab: 'study', practiceState: 'scoring' },
+    hash: '#course-0',
+  })
 }
 
 function backToCompletion() {
@@ -455,7 +490,17 @@ function backToCompletion() {
 }
 
 function exitExam() {
-  void router.push({ name: 'package', query: { tab: 'study' }, hash: '#course-0' })
+  void router.push({
+    name: 'package',
+    query: isDiagnostic.value
+      ? {
+          tab: 'study',
+          reportSource: 'diagnostic',
+          diagnosticState: 'in-progress',
+        }
+      : { tab: 'study' },
+    hash: '#course-0',
+  })
 }
 
 function submitFeedback() {
@@ -561,7 +606,7 @@ onBeforeUnmount(() => {
   </main>
 
   <main v-else-if="!activeEpExam" class="completion-page">
-    <section class="completion-card"><p>Loading Digital SAT Mock Exam {{ examId }}…</p></section>
+    <section class="completion-card"><p>Loading {{ isDiagnostic ? 'Free SAT Diagnostic Test' : 'Digital SAT Mock Exam ' + examId }}…</p></section>
   </main>
 
   <main v-else-if="stage === 'break'" class="break-screen">
@@ -696,8 +741,19 @@ onBeforeUnmount(() => {
     <header class="exam-header">
       <div class="header-left">
         <button class="package-exit-control" type="button" aria-label="Back to SAT package" @click="exitExam">←</button>
+        <span v-if="isDiagnostic" class="diagnostic-mode-label">
+          <b>Free Diagnostic</b>
+          <small>{{ sectionLabel }} of 2 · {{ currentModule.title }}</small>
+        </span>
       </div>
-      <div class="timer-wrap"><strong v-if="timerVisible" class="timer" aria-live="polite">{{ timeLabel }}</strong><span v-else class="timer-placeholder">Timer hidden</span><button type="button" @click="timerVisible = !timerVisible">{{ timerVisible ? 'Hide' : 'Show' }}</button></div>
+      <div class="timer-wrap">
+        <strong v-if="isDiagnostic" class="timer untimed" aria-label="This diagnostic is untimed">Untimed</strong>
+        <template v-else>
+          <strong v-if="timerVisible" class="timer" aria-live="polite">{{ timeLabel }}</strong>
+          <span v-else class="timer-placeholder">Timer hidden</span>
+          <button type="button" @click="timerVisible = !timerVisible">{{ timerVisible ? 'Hide' : 'Show' }}</button>
+        </template>
+      </div>
       <div class="header-tools">
         <button v-if="currentModule.section === 'math'" class="tool-button" :class="{ active: calculatorOpen }" type="button" :aria-pressed="calculatorOpen" @click="toggleCalculator"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="3" width="12" height="18" rx="2" /><path d="M8.5 6h7v3h-7zM9 13h.01M12 13h.01M15 13h.01M9 17h.01M12 17h.01M15 17h.01" /></svg><span>Calculator</span></button>
         <button v-if="currentModule.section === 'math'" class="tool-button" :class="{ active: referenceOpen }" type="button" :aria-pressed="referenceOpen" @click="toggleReference"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h8l3 3v15H7zM15 3v4h4M10 11h5M10 15h5" /></svg><span>Reference</span></button>
@@ -746,14 +802,16 @@ onBeforeUnmount(() => {
     </template>
 
     <section v-else-if="stage === 'review'" class="review-page"><div class="review-shell">
-      <h1>Check Your Work</h1><p>On test day, you won't be able to move on to the next module until time expires.<br />For these practice questions, you can click <strong>Next</strong> when you're ready to move on.</p>
+      <h1>Check Your Work</h1>
+      <p v-if="isDiagnostic">Review the 10 questions in this section. You can return to any question before moving on.</p>
+      <p v-else>On test day, you won't be able to move on to the next module until time expires.<br />For these practice questions, you can click <strong>Next</strong> when you're ready to move on.</p>
       <section class="review-card" :aria-label="`${sectionLabel}: ${currentModule.title}`"><div class="review-card-header"><h2>{{ sectionLabel }}: {{ currentModule.title }}</h2><div class="review-legend"><span><i class="unanswered-key" />Unanswered</span><span><i class="review-key" />For Review</span></div></div><div class="review-grid"><button v-for="number in currentModule.total" :key="number" type="button" :class="{ answered: answeredNumbers.has(number), current: currentNumber === number, review: review.has(keyFor(number)) }" @click="stage = 'exam'; goToQuestion(number)">{{ number }}</button></div></section>
     </div></section>
 
     <footer class="exam-footer">
       <button class="question-count" type="button" :aria-expanded="navigatorOpen" @click="navigatorOpen = !navigatorOpen">{{ currentNumber }} of {{ currentModule.total }}<svg viewBox="0 0 18 18" aria-hidden="true"><path :d="navigatorOpen ? 'm4 11 5-5 5 5' : 'm4 7 5 5 5-5'" /></svg></button>
       <div v-if="navigatorOpen" class="navigator-card"><button class="navigator-close" type="button" aria-label="Close question navigator" @click="navigatorOpen = false">×</button><h2>{{ sectionLabel }}:<br />{{ currentModule.title }}</h2><div class="navigator-rule" /><div class="navigator-legend"><span><i class="unanswered-key" />Unanswered</span><span><i class="review-key" />For Review</span></div><div class="question-grid"><button v-for="number in currentModule.total" :key="number" type="button" :class="{ answered: answeredNumbers.has(number), current: currentNumber === number, review: review.has(keyFor(number)) }" @click="stage = 'exam'; goToQuestion(number)">{{ number }}</button></div></div>
-      <div class="footer-actions"><button v-if="stage === 'review'" type="button" @click="previousQuestion">Back</button><button v-else type="button" :disabled="currentNumber <= 1" @click="previousQuestion">Previous</button><button type="button" @click="stage === 'review' ? advanceFromReview() : nextQuestion()">Next</button></div>
+      <div class="footer-actions"><button v-if="stage === 'review'" type="button" @click="previousQuestion">Back</button><button v-else type="button" :disabled="currentNumber <= 1" @click="previousQuestion">Previous</button><button type="button" @click="stage === 'review' ? advanceFromReview() : nextQuestion()">{{ primaryActionLabel }}</button></div>
     </footer>
     <MathReferenceSheet v-if="referenceOpen && currentModule.section === 'math'" @close="referenceOpen = false" />
     <div v-if="toastMessage" class="toast" role="status">{{ toastMessage }}</div>

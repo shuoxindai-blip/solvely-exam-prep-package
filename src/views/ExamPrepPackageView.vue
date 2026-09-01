@@ -5,6 +5,7 @@ import CommercialDemoController from "../components/CommercialDemoController.vue
 import ProPaywall from "../components/ProPaywall.vue";
 import { useProAccess } from "../composables/useProAccess";
 import { loadEpExam, loadSatManifest } from "../data/satData";
+import { buildSatDiagnosticExam } from "../data/satDiagnostic";
 import { buildReviewQuestions, buildSatReport } from "../data/satReport";
 import { loadImprovePracticeProgress } from "../data/improvePracticeProgress";
 import type { SatReportReviewQuestion } from "../data/satReport";
@@ -15,7 +16,11 @@ type CourseTab = "study" | "results";
 type ResultView = "score" | "review" | "improve";
 type ResultSource = "diagnostic" | "practice";
 type CourseEntryState = "first-visit" | "in-progress";
-type DiagnosticTestState = "not-started" | "in-progress" | "results";
+type DiagnosticTestState =
+  | "not-started"
+  | "in-progress"
+  | "scoring"
+  | "results";
 type PracticeTestState = "not-started" | "in-progress" | "scoring" | "results";
 type ResultsAccessState = "locked" | "unlocked";
 type ReviewFilter = "ALL" | "INCORRECT" | "CORRECT" | "OMITTED";
@@ -79,7 +84,8 @@ const resultsAccessState = ref<ResultsAccessState>("locked");
 const paywallOpen = ref(false);
 const paywallContext = ref("the complete SAT Prep 2026 package");
 let pendingCommercialAction: (() => void) | null = null;
-let scoringTimer: number | null = null;
+let practiceScoringTimer: number | null = null;
+let diagnosticScoringTimer: number | null = null;
 const retakeDialog = ref<HTMLDialogElement | null>(null);
 const lastActivity = ref<LastActivity>({
   kind: "learning",
@@ -110,42 +116,31 @@ const practiceResultReport = computed(() =>
 const diagnosticExam = computed<EpExam | null>(() => {
   const exam = resultExam.value;
   if (!exam) return null;
-  const questions = ["reading-writing", "math"].flatMap((sectionId) => {
-    const sectionQuestions = exam.questions.filter(
-      (question) => question.sectionId === sectionId,
-    );
-    const selected = [] as typeof sectionQuestions;
-    const usedTopics = new Set<number>();
-    for (const question of sectionQuestions) {
-      if (usedTopics.has(question.topicId)) continue;
-      selected.push(question);
-      usedTopics.add(question.topicId);
-      if (selected.length === 5) break;
-    }
-    if (selected.length < 5) {
-      for (const question of sectionQuestions) {
-        if (selected.includes(question)) continue;
-        selected.push(question);
-        if (selected.length === 5) break;
-      }
-    }
-    return selected;
-  }).map((question, index) => ({ ...question, index: index + 1 }));
-  return {
-    ...exam,
-    _id: 10,
-    exam: "Free SAT Diagnostic Test",
-    examCode: "SAT-DIAGNOSTIC",
-    totalCount: questions.length,
-    questions,
-    result: null,
-  };
+  return buildSatDiagnosticExam(exam);
 });
 const diagnosticResultReport = computed(() => {
   if (!diagnosticExam.value) return null;
   const report = buildSatReport(diagnosticExam.value);
+  const sections = report.sections.map((section) => {
+    const score = Math.round((200 + section.accuracy * 6) / 10) * 10;
+    return {
+      ...section,
+      score,
+      scoreRange: [
+        Math.max(200, score - 30),
+        Math.min(section.maximumScore, score + 30),
+      ] as [number, number],
+    };
+  });
+  const totalScore = sections.reduce((sum, section) => sum + section.score, 0);
   return {
     ...report,
+    totalScore,
+    scoreRange: [
+      Math.max(400, totalScore - 60),
+      Math.min(report.maximumScore, totalScore + 60),
+    ] as [number, number],
+    sections,
     attemptId: "sat-diagnostic-anna-2026-08-21",
     overview:
       "Your diagnostic shows a solid starting point in Reading and Writing. Begin with the highest-priority Math topics, then use targeted practice to close the biggest gaps.",
@@ -190,10 +185,15 @@ const practiceTestStates: { id: PracticeTestState; label: string }[] = [
 const diagnosticTestStates: { id: DiagnosticTestState; label: string }[] = [
   { id: "not-started", label: "Not started" },
   { id: "in-progress", label: "In progress" },
+  { id: "scoring", label: "Scoring" },
   { id: "results", label: "Results ready" },
 ];
 const resultSources: { id: ResultSource; label: string; helper: string }[] = [
-  { id: "diagnostic", label: "Diagnostic Test", helper: "10 min · Free report" },
+  {
+    id: "diagnostic",
+    label: "Diagnostic Test",
+    helper: "20 questions · Untimed",
+  },
   { id: "practice", label: "Practice Test", helper: "Full-length" },
 ];
 const commercialAccessStates = [
@@ -240,7 +240,7 @@ const resultsLockTitle = computed(() => {
 const resultsLockDescription = computed(() => {
   if (!activeAssessmentComplete.value)
     return resultSource.value === "diagnostic"
-      ? "Finish the 10-minute diagnostic to see your free Score Report and Question Review."
+      ? "Complete all 20 diagnostic questions to see your free Score Report and Question Review."
       : "Finish the full-length SAT Practice Test to unlock this report.";
   return resultSource.value === "diagnostic"
     ? "Upgrade to turn your diagnostic results into prioritized topics and adaptive practice."
@@ -248,53 +248,79 @@ const resultsLockDescription = computed(() => {
 });
 const diagnosticTestCard = computed(() => {
   const report = diagnosticResultReport.value;
-  const questionCount = diagnosticExam.value?.questions.length ?? 10;
+  const questionCount = diagnosticExam.value?.questions.length ?? 20;
+  const readingWritingScore =
+    report?.sections.find((section) => section.sectionId === "reading-writing")
+      ?.score ?? 650;
+  const mathScore =
+    report?.sections.find((section) => section.sectionId === "math")?.score ??
+    630;
   if (diagnosticTestState.value === "results")
     return {
       stateLabel: "Results ready",
       description:
-        "Your starting-point report, answer review, and recommended next steps are ready.",
+        "Your predicted SAT score and free answer review are ready.",
       metrics: [
-        { value: `${report?.correct ?? 7}/${questionCount}`, label: "correct" },
-        { value: `${report?.accuracy ?? 70}%`, label: "accuracy" },
-        { value: "10", label: "min" },
+        { value: String(report?.totalScore ?? 1280), label: "predicted total" },
+        { value: String(readingWritingScore), label: "Reading & Writing" },
+        { value: String(mathScore), label: "Math" },
       ],
       progressTitle: "Completed",
       progressLabel: "Report ready",
       progressPercent: 100,
-      helper: "Score Report and Question Review are free",
+      helper: "Estimate only; not a replacement for the full-length test",
       cta: "View Free Results",
+      disabled: false,
+    };
+  if (diagnosticTestState.value === "scoring")
+    return {
+      stateLabel: "Scoring",
+      description:
+        "Your answers were submitted. We are calculating your total and section score predictions.",
+      metrics: [
+        { value: String(questionCount), label: "answered" },
+        { value: "Untimed", label: "time limit" },
+        { value: "2", label: "sections" },
+      ],
+      progressTitle: "Status",
+      progressLabel: "Calculating score prediction",
+      progressPercent: 36,
+      helper: "Usually ready in a few seconds",
+      cta: "Scoring…",
+      disabled: true,
     };
   if (diagnosticTestState.value === "in-progress")
     return {
       stateLabel: "In progress",
       description:
-        "Continue your quick SAT check. Your answers are saved automatically.",
+        "Continue your SAT check. Your answers are saved automatically.",
       metrics: [
-        { value: String(questionCount), label: "questions" },
-        { value: "10", label: "min" },
-        { value: "2", label: "sections" },
+        { value: "10", label: "Reading & Writing" },
+        { value: "10", label: "Math" },
+        { value: "Untimed", label: "time limit" },
       ],
       progressTitle: "Progress",
       progressLabel: `4 of ${questionCount} answered`,
-      progressPercent: 40,
+      progressPercent: (4 / questionCount) * 100,
       helper: "No Pro membership required",
       cta: "Continue Diagnostic",
+      disabled: false,
     };
   return {
     stateLabel: "Free",
     description:
-      "Find your starting point with a focused 10-minute SAT check.",
+      "Estimate your SAT score with 10 Reading and Writing and 10 Math questions.",
     metrics: [
-      { value: String(questionCount), label: "questions" },
-      { value: "10", label: "min" },
-      { value: "2", label: "sections" },
+      { value: "10", label: "Reading & Writing" },
+      { value: "10", label: "Math" },
+      { value: "Untimed", label: "time limit" },
     ],
     progressTitle: "Access",
     progressLabel: "Free for everyone",
     progressPercent: 0,
-    helper: "Get a free Score Report and Question Review",
+    helper: "Estimate only; not a replacement for the full-length test",
     cta: "Start Free Diagnostic",
+    disabled: false,
   };
 });
 const practiceTestCard = computed(() => {
@@ -312,7 +338,7 @@ const practiceTestCard = computed(() => {
     630;
   if (practiceTestState.value === "not-started")
     return {
-      stateLabel: "Not started",
+      stateLabel: "Pro",
       description:
         "Take a realistic full-length Digital SAT with the official section timing and module structure.",
       metrics: [
@@ -1093,17 +1119,23 @@ function requestRetake() {
 function closeRetakeConfirm() {
   retakeDialog.value?.close();
 }
-function clearScoringTimer() {
-  if (scoringTimer !== null) window.clearTimeout(scoringTimer);
-  scoringTimer = null;
+function clearPracticeScoringTimer() {
+  if (practiceScoringTimer !== null)
+    window.clearTimeout(practiceScoringTimer);
+  practiceScoringTimer = null;
+}
+function clearDiagnosticScoringTimer() {
+  if (diagnosticScoringTimer !== null)
+    window.clearTimeout(diagnosticScoringTimer);
+  diagnosticScoringTimer = null;
 }
 function setPracticeTestState(state: PracticeTestState) {
-  clearScoringTimer();
+  clearPracticeScoringTimer();
   practiceTestState.value = state;
   resultsAccessState.value = state === "results" ? "unlocked" : "locked";
   if (state !== "scoring") return;
-  scoringTimer = window.setTimeout(() => {
-    scoringTimer = null;
+  practiceScoringTimer = window.setTimeout(() => {
+    practiceScoringTimer = null;
     practiceTestState.value = "results";
     resultsAccessState.value = "unlocked";
     void router.replace({
@@ -1114,8 +1146,26 @@ function setPracticeTestState(state: PracticeTestState) {
   }, 2000);
 }
 function setDiagnosticTestState(state: DiagnosticTestState) {
+  clearDiagnosticScoringTimer();
   diagnosticTestState.value = state;
   if (state === "results") resultSource.value = "diagnostic";
+  if (state !== "scoring") return;
+  resultSource.value = "diagnostic";
+  diagnosticScoringTimer = window.setTimeout(() => {
+    diagnosticScoringTimer = null;
+    diagnosticTestState.value = "results";
+    resultSource.value = "diagnostic";
+    void router.replace({
+      name: "package",
+      query: {
+        ...route.query,
+        tab: "study",
+        reportSource: "diagnostic",
+        diagnosticState: "results",
+      },
+      hash: "#course-0",
+    });
+  }, 2000);
 }
 function setCourseEntryState(state: CourseEntryState) {
   void router.replace({
@@ -1177,6 +1227,7 @@ function handlePracticeTestAction() {
   startMockExam(1);
 }
 function handleDiagnosticTestAction() {
+  if (diagnosticTestState.value === "scoring") return;
   if (diagnosticTestState.value === "results") {
     resultSource.value = "diagnostic";
     resultView.value = "score";
@@ -1194,18 +1245,14 @@ function handleDiagnosticTestAction() {
     });
     return;
   }
-  const nextState =
-    diagnosticTestState.value === "not-started" ? "in-progress" : "results";
-  diagnosticTestState.value = nextState;
-  void router.replace({
-    name: "package",
+  setDiagnosticTestState("in-progress");
+  void router.push({
+    name: "mock-exam",
+    params: { examId: 1 },
     query: {
-      ...route.query,
-      tab: "study",
-      reportSource: "diagnostic",
-      diagnosticState: nextState,
+      mode: "diagnostic",
+      diagnosticState: "in-progress",
     },
-    hash: "#course-0",
   });
 }
 function toggleTheme() {
@@ -1320,9 +1367,10 @@ function syncTabFromRoute() {
   if (
     requestedDiagnosticState === "not-started" ||
     requestedDiagnosticState === "in-progress" ||
+    requestedDiagnosticState === "scoring" ||
     requestedDiagnosticState === "results"
   )
-    diagnosticTestState.value = requestedDiagnosticState;
+    setDiagnosticTestState(requestedDiagnosticState);
   const requestedPracticeState = String(route.query.practiceState || "");
   if (
     requestedPracticeState === "not-started" ||
@@ -1397,7 +1445,8 @@ onMounted(async () => {
 });
 
 onBeforeUnmount(() => {
-  clearScoringTimer();
+  clearPracticeScoringTimer();
+  clearDiagnosticScoringTimer();
   document.body.classList.remove("package-route", "dark");
 });
 </script>
@@ -2379,6 +2428,7 @@ onBeforeUnmount(() => {
                     <button
                       class="mock-primary-action"
                       type="button"
+                      :disabled="diagnosticTestCard.disabled"
                       @click="handleDiagnosticTestAction"
                     >
                       <svg class="icon" aria-hidden="true">
@@ -2559,20 +2609,12 @@ onBeforeUnmount(() => {
                     <div class="score-report-total">
                       <span>{{
                         resultSource === "diagnostic"
-                          ? "Diagnostic score"
+                          ? "Predicted total score"
                           : "Total score"
                       }}</span>
                       <strong
-                        >{{
-                          resultSource === "diagnostic"
-                            ? resultReport.correct
-                            : resultReport.totalScore
-                        }}<small
-                          >/{{
-                            resultSource === "diagnostic"
-                              ? reportQuestions.length
-                              : resultReport.maximumScore
-                          }}</small
+                        >{{ resultReport.totalScore }}<small
+                          >/{{ resultReport.maximumScore }}</small
                         ></strong
                       >
                       <div
@@ -2581,7 +2623,7 @@ onBeforeUnmount(() => {
                       >
                         <span
                           >Accuracy <b>{{ resultReport.accuracy }}%</b></span
-                        ><span>Time limit <b>10 min</b></span
+                        ><span>Time limit <b>Untimed</b></span
                         ><em>Free report</em>
                       </div>
                       <div v-else class="score-report-meta">
@@ -2605,25 +2647,19 @@ onBeforeUnmount(() => {
                       >
                         <span>{{ section.sectionTitle }}</span
                         ><strong
-                          >{{
-                            resultSource === "diagnostic"
-                              ? section.correct
-                              : section.score
-                          }}<small
-                            >/{{
-                              resultSource === "diagnostic"
-                                ? section.correct +
-                                  section.incorrect +
-                                  section.omitted
-                                : section.maximumScore
-                            }}</small
+                          >{{ section.score }}<small
+                            >/{{ section.maximumScore }}</small
                           ></strong
                         >
                         <p v-if="resultSource === 'diagnostic'">
-                          {{ section.accuracy }}% accuracy<br />{{
-                            formatReportTime(section.averageSeconds)
+                          Predicted from
+                          {{
+                            section.correct +
+                            section.incorrect +
+                            section.omitted
                           }}
-                          average per question
+                          diagnostic questions<br />{{ section.accuracy }}%
+                          accuracy
                         </p>
                         <p v-else>
                           Score range {{ section.scoreRange[0] }}–{{
@@ -2653,6 +2689,14 @@ onBeforeUnmount(() => {
                     <p>{{ resultReport.overview }}</p>
                   </div>
                 </section>
+                <p
+                  v-if="resultSource === 'diagnostic'"
+                  class="diagnostic-score-disclaimer"
+                >
+                  This predicted score is an estimate based on 20 untimed
+                  questions. It does not replace a full-length SAT Practice
+                  Test.
+                </p>
                   <div v-if="resultsLocked" :class="['results-subsection-lock', { 'has-commercial-action': showResultsUnlockAction }]">
                     <span aria-hidden="true"
                       ><svg class="icon"><use href="#i-lock" /></svg

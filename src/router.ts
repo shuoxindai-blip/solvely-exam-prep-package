@@ -21,7 +21,10 @@ const router = createRouter({
 
 router.afterEach((to) => {
   const labels: Record<string, string> = { 'mock-exam': 'SAT Mock Exam', 'study-guide': 'SAT Study Guide', flashcards: 'SAT Flashcards', quiz: 'SAT Quiz' }
-  document.title = `${labels[String(to.name)] || 'SAT Exam Prep'} — Solvely`
+  const label = to.name === 'mock-exam' && to.query.mode === 'diagnostic'
+    ? 'SAT Diagnostic Test'
+    : labels[String(to.name)] || 'SAT Exam Prep'
+  document.title = `${label} — Solvely`
 })
 
 export default router
