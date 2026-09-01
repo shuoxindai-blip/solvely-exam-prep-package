@@ -87,6 +87,12 @@ let pendingCommercialAction: (() => void) | null = null;
 let practiceScoringTimer: number | null = null;
 let diagnosticScoringTimer: number | null = null;
 const retakeDialog = ref<HTMLDialogElement | null>(null);
+const demoController = ref<HTMLElement | null>(null);
+const demoControllerPosition = ref<{ x: number; y: number } | null>(null);
+const demoControllerDragging = ref(false);
+let demoControllerDrag:
+  | { pointerId: number; offsetX: number; offsetY: number }
+  | null = null;
 const lastActivity = ref<LastActivity>({
   kind: "learning",
   examTitle: "SAT Prep 2026",
@@ -97,6 +103,16 @@ const lastActivity = ref<LastActivity>({
   topicId: "sat_math_advanced_equivalent_expressions_01",
 });
 const isCourseOpen = computed(() => route.hash === "#course-0");
+const demoControllerStyle = computed(() =>
+  demoControllerPosition.value
+    ? {
+        left: `${demoControllerPosition.value.x}px`,
+        top: `${demoControllerPosition.value.y}px`,
+        right: "auto",
+        bottom: "auto",
+      }
+    : undefined,
+);
 const isCourseStarted = computed(
   () => String(route.query.courseState || "") !== "not-started",
 );
@@ -1284,13 +1300,6 @@ function setResultView(view: ResultView) {
 function setResultViewFromEvent(event: Event) {
   setResultView((event.target as HTMLSelectElement).value as ResultView);
 }
-function handleDownloadFullReport() {
-  if (!isProMember.value) {
-    openCommercialPaywall("a downloadable full SAT performance report");
-    return;
-  }
-  window.print();
-}
 function setResultSource(source: ResultSource) {
   resultSource.value = source;
   selectedReviewQuestionId.value = null;
@@ -1310,6 +1319,9 @@ function setResultSourceFromEvent(event: Event) {
 function setReviewFilter(filter: ReviewFilter) {
   reviewFilter.value = filter;
   selectedReviewQuestionId.value = null;
+}
+function setReviewFilterFromEvent(event: Event) {
+  setReviewFilter((event.target as HTMLSelectElement).value as ReviewFilter);
 }
 function setReviewSectionFilter(filter: ReviewSectionFilter) {
   reviewSectionFilter.value = filter;
@@ -1460,8 +1472,113 @@ watch(
 
 watch(sectionFilter, initializeSectionDisclosure);
 
+function clampDemoControllerPosition(x: number, y: number) {
+  const controller = demoController.value;
+  if (!controller) return { x, y };
+
+  const viewportMargin = 8;
+  const maxX = Math.max(
+    viewportMargin,
+    window.innerWidth - controller.offsetWidth - viewportMargin,
+  );
+  const maxY = Math.max(
+    viewportMargin,
+    window.innerHeight - controller.offsetHeight - viewportMargin,
+  );
+
+  return {
+    x: Math.min(Math.max(viewportMargin, x), maxX),
+    y: Math.min(Math.max(viewportMargin, y), maxY),
+  };
+}
+
+function moveDemoController(event: PointerEvent) {
+  if (
+    !demoControllerDrag ||
+    event.pointerId !== demoControllerDrag.pointerId
+  ) {
+    return;
+  }
+
+  demoControllerPosition.value = clampDemoControllerPosition(
+    event.clientX - demoControllerDrag.offsetX,
+    event.clientY - demoControllerDrag.offsetY,
+  );
+}
+
+function stopDemoControllerDrag(event?: PointerEvent) {
+  if (
+    event &&
+    demoControllerDrag &&
+    event.pointerId !== demoControllerDrag.pointerId
+  ) {
+    return;
+  }
+
+  demoControllerDrag = null;
+  demoControllerDragging.value = false;
+  window.removeEventListener("pointermove", moveDemoController);
+  window.removeEventListener("pointerup", stopDemoControllerDrag);
+  window.removeEventListener("pointercancel", stopDemoControllerDrag);
+}
+
+function startDemoControllerDrag(event: PointerEvent) {
+  if (event.button !== 0) return;
+
+  const controller = demoController.value;
+  if (!controller) return;
+
+  const bounds = controller.getBoundingClientRect();
+  demoControllerDrag = {
+    pointerId: event.pointerId,
+    offsetX: event.clientX - bounds.left,
+    offsetY: event.clientY - bounds.top,
+  };
+  demoControllerPosition.value = { x: bounds.left, y: bounds.top };
+  demoControllerDragging.value = true;
+  window.addEventListener("pointermove", moveDemoController);
+  window.addEventListener("pointerup", stopDemoControllerDrag);
+  window.addEventListener("pointercancel", stopDemoControllerDrag);
+  try {
+    (event.currentTarget as HTMLElement).setPointerCapture?.(event.pointerId);
+  } catch {
+    /* Some browser automation emits uncaptured synthetic pointer events. */
+  }
+  event.preventDefault();
+}
+
+function moveDemoControllerWithKeyboard(event: KeyboardEvent) {
+  const controller = demoController.value;
+  if (!controller || !event.key.startsWith("Arrow")) return;
+
+  const distance = event.shiftKey ? 24 : 8;
+  const bounds = controller.getBoundingClientRect();
+  const movement = {
+    ArrowLeft: { x: -distance, y: 0 },
+    ArrowRight: { x: distance, y: 0 },
+    ArrowUp: { x: 0, y: -distance },
+    ArrowDown: { x: 0, y: distance },
+  }[event.key];
+  if (!movement) return;
+
+  demoControllerPosition.value = clampDemoControllerPosition(
+    bounds.left + movement.x,
+    bounds.top + movement.y,
+  );
+  event.preventDefault();
+}
+
+function keepDemoControllerInViewport() {
+  if (!demoControllerPosition.value) return;
+  demoControllerPosition.value = clampDemoControllerPosition(
+    demoControllerPosition.value.x,
+    demoControllerPosition.value.y,
+  );
+}
+
 onMounted(async () => {
   document.body.classList.add("package-route");
+  window.addEventListener("resize", keepDemoControllerInViewport);
   syncTabFromRoute();
   try {
     showImproveImportanceNote.value =
@@ -1492,6 +1609,8 @@ onMounted(async () => {
 onBeforeUnmount(() => {
   clearPracticeScoringTimer();
   clearDiagnosticScoringTimer();
+  stopDemoControllerDrag();
+  window.removeEventListener("resize", keepDemoControllerInViewport);
   document.body.classList.remove("package-route", "dark");
 });
 </script>
@@ -2654,20 +2773,8 @@ onBeforeUnmount(() => {
                   { 'results-waterfall-module': resultView === 'full' },
                 ]"
               >
-                <header
-                  v-if="resultView === 'full'"
-                  class="results-waterfall-heading"
-                >
+                <header class="results-waterfall-heading">
                   <h2>Score Analysis</h2>
-                  <button
-                    class="results-download-button"
-                    type="button"
-                    @click="handleDownloadFullReport"
-                  >
-                    <span aria-hidden="true">↓</span>
-                    Download full report
-                    <em v-if="!isProMember">Pro</em>
-                  </button>
                 </header>
                 <div
                   :class="[
@@ -3043,44 +3150,34 @@ onBeforeUnmount(() => {
                 ]"
               >
                 <header
-                  v-if="resultView === 'full'"
-                  class="results-waterfall-heading"
-                >
-                  <h2>Question Review</h2>
-                  <span>{{ reportQuestions.length }} questions</span>
-                </header>
-                <header
-                  class="study-breakdown-toolbar question-review-toolbar"
+                  class="results-waterfall-heading results-filter-heading"
                   aria-label="Filter reviewed questions"
                 >
-                  <div class="study-breakdown-filters">
-                    <div class="study-filter-group">
-                      <span class="study-filter-label">Section</span>
-                      <label class="study-section-select">
+                  <h2>Question Review</h2>
+                  <div class="course-topic-filters">
+                      <label class="course-topic-select">
                         <select
                           :value="reviewSectionFilter"
                           aria-label="Filter reviewed questions by section"
                           @change="setReviewSectionFilterFromEvent"
                         >
-                          <option value="ALL">All sections</option>
+                          <option value="ALL">Section: All</option>
                           <option value="reading-writing">
-                            Reading &amp; Writing
+                            Section: Reading &amp; Writing
                           </option>
-                          <option value="math">Math</option>
+                          <option value="math">Section: Math</option>
                         </select>
                         <svg class="icon" aria-hidden="true">
                           <use href="#i-chevron" />
                         </svg>
                       </label>
-                    </div>
-                    <div class="study-filter-group importance">
-                      <span class="study-filter-label">Answer status</span>
-                      <div
-                        class="study-importance-chips review-status-chips"
-                        role="group"
-                        aria-label="Filter by answer status"
-                      >
-                        <button
+                      <label class="course-topic-select priority">
+                        <select
+                          :value="reviewFilter"
+                          aria-label="Filter reviewed questions by answer status"
+                          @change="setReviewFilterFromEvent"
+                        >
+                          <option
                           v-for="filter in [
                             'ALL',
                             'INCORRECT',
@@ -3088,24 +3185,22 @@ onBeforeUnmount(() => {
                             'CORRECT',
                           ] as ReviewFilter[]"
                           :key="filter"
-                          :class="filter.toLowerCase()"
-                          type="button"
-                          :aria-pressed="reviewFilter === filter"
-                          @click="setReviewFilter(filter)"
+                          :value="filter"
                         >
-                          <i v-if="filter !== 'ALL'" />{{
-                            filter === "ALL" ? "All" : reviewStatusLabel(filter)
-                          }}
-                          <b>{{
+                          {{ filter === "ALL" ? "Answer: All" : `Answer: ${reviewStatusLabel(filter)}` }}
+                          ({{
                             filter === "ALL"
                               ? sectionReviewQuestions.length
                               : sectionReviewQuestions.filter(
                                   (question) => question.status === filter,
                                 ).length
-                          }}</b>
-                        </button>
-                      </div>
-                    </div>
+                          }})
+                          </option>
+                        </select>
+                        <svg class="icon" aria-hidden="true">
+                          <use href="#i-chevron" />
+                        </svg>
+                      </label>
                   </div>
                 </header>
 
@@ -3376,41 +3471,31 @@ onBeforeUnmount(() => {
                 aria-label="Topics to improve"
               >
                 <header
-                  v-if="resultView === 'full'"
-                  class="results-waterfall-heading"
-                >
-                  <h2>Targeted Practice</h2>
-                </header>
-                <header
-                  class="study-breakdown-toolbar"
+                  class="results-waterfall-heading results-filter-heading"
                   aria-label="Filter improvement topics"
                 >
-                  <div class="study-breakdown-filters">
-                    <div class="study-filter-group">
-                      <span class="study-filter-label">Section</span>
-                      <label class="study-section-select">
+                  <h2>Targeted Practice</h2>
+                  <div class="course-topic-filters">
+                      <label class="course-topic-select">
                         <select
                           v-model="improveSection"
                           aria-label="Filter improvement topics by section"
                         >
-                          <option value="math">Math</option>
+                          <option value="math">Section: Math</option>
                           <option value="reading-writing">
-                            Reading &amp; Writing
+                            Section: Reading &amp; Writing
                           </option>
                         </select>
                         <svg class="icon" aria-hidden="true">
                           <use href="#i-chevron" />
                         </svg>
                       </label>
-                    </div>
-                    <div class="study-filter-group importance">
-                      <span class="study-filter-label">Priority</span>
-                      <div
-                        class="study-importance-chips"
-                        role="group"
-                        aria-label="Topic priority"
-                      >
-                        <button
+                      <label class="course-topic-select priority">
+                        <select
+                          v-model="improvePriority"
+                          aria-label="Filter improvement topics by priority"
+                        >
+                          <option
                           v-for="filter in [
                             'ALL',
                             'CORE',
@@ -3418,17 +3503,15 @@ onBeforeUnmount(() => {
                             'POSSIBLE',
                           ] as const"
                           :key="filter"
-                          :class="filter.toLowerCase()"
-                          type="button"
-                          :aria-pressed="improvePriority === filter"
-                          @click="improvePriority = filter"
+                          :value="filter"
                         >
-                          <i v-if="filter !== 'ALL'" />{{
-                            filter.charAt(0) + filter.slice(1).toLowerCase()
-                          }}
-                        </button>
-                      </div>
-                    </div>
+                          Priority: {{ filter.charAt(0) + filter.slice(1).toLowerCase() }}
+                          </option>
+                        </select>
+                        <svg class="icon" aria-hidden="true">
+                          <use href="#i-chevron" />
+                        </svg>
+                      </label>
                   </div>
                 </header>
                 <div
@@ -3657,11 +3740,28 @@ onBeforeUnmount(() => {
     />
     <aside
       v-else
-      class="mock-demo-controller unified-demo-controller"
+      ref="demoController"
+      :class="[
+        'mock-demo-controller unified-demo-controller',
+        { 'is-dragging': demoControllerDragging },
+      ]"
+      :style="demoControllerStyle"
       aria-label="备考包演示状态控制器"
     >
-      <header class="mock-demo-controller-head">
-        <strong>演示控制器</strong><span>仅供演示</span>
+      <header
+        class="mock-demo-controller-head"
+        role="button"
+        tabindex="0"
+        aria-label="拖动演示控制器，可使用方向键移动"
+        title="拖动调整位置"
+        @pointerdown="startDemoControllerDrag"
+        @keydown="moveDemoControllerWithKeyboard"
+      >
+        <strong>演示控制器</strong>
+        <span
+          ><i class="demo-controller-drag-grip" aria-hidden="true"></i
+          >仅供演示</span
+        >
       </header>
       <section class="mock-demo-controller-group">
         <span class="mock-demo-controller-label">会员状态</span>
