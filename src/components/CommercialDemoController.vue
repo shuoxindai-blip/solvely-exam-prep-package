@@ -6,16 +6,16 @@ const emit = defineEmits<{ 'update:modelValue': [value: ProAccess] }>()
 </script>
 
 <template>
-  <aside class="commercial-demo-controller" aria-label="Solvely Pro demo access controller">
+  <aside class="commercial-demo-controller" aria-label="Solvely Pro 演示会员控制器">
     <header>
-      <strong>Commercial access</strong>
-      <span>Not product UI</span>
+      <strong>会员状态</strong>
+      <span>仅供演示</span>
     </header>
-    <nav aria-label="Preview membership state">
+    <nav aria-label="预览会员状态">
       <button
         v-for="option in [
-          ['free', 'Non-member'],
-          ['member', 'Pro'],
+          ['free', '非会员'],
+          ['member', 'Pro 会员'],
         ] as [ProAccess, string][]"
         :key="option[0]"
         type="button"

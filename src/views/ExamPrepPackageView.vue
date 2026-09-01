@@ -177,16 +177,16 @@ const practiceTestDurationMinutes = computed(() => {
   );
 });
 const practiceTestStates: { id: PracticeTestState; label: string }[] = [
-  { id: "not-started", label: "Not started" },
-  { id: "in-progress", label: "In progress" },
-  { id: "scoring", label: "Scoring" },
-  { id: "results", label: "Results ready" },
+  { id: "not-started", label: "未开始" },
+  { id: "in-progress", label: "进行中" },
+  { id: "scoring", label: "评分中" },
+  { id: "results", label: "结果已生成" },
 ];
 const diagnosticTestStates: { id: DiagnosticTestState; label: string }[] = [
-  { id: "not-started", label: "Not started" },
-  { id: "in-progress", label: "In progress" },
-  { id: "scoring", label: "Scoring" },
-  { id: "results", label: "Results ready" },
+  { id: "not-started", label: "未开始" },
+  { id: "in-progress", label: "进行中" },
+  { id: "scoring", label: "评分中" },
+  { id: "results", label: "结果已生成" },
 ];
 const resultSources: {
   id: ResultSource;
@@ -208,19 +208,19 @@ const resultSources: {
   },
 ];
 const commercialAccessStates = [
-  { id: "free", label: "Non-member" },
-  { id: "member", label: "Pro" },
+  { id: "free", label: "非会员" },
+  { id: "member", label: "Pro 会员" },
 ] as const;
 const courseEntryStates: { id: CourseEntryState; label: string }[] = [
-  { id: "first-visit", label: "First visit" },
-  { id: "in-progress", label: "In progress" },
+  { id: "first-visit", label: "首次进入" },
+  { id: "in-progress", label: "学习中" },
 ];
 const courseEntryState = computed<CourseEntryState>(() =>
   isCourseStarted.value ? "in-progress" : "first-visit",
 );
 const resultsAccessStates: { id: ResultsAccessState; label: string }[] = [
-  { id: "locked", label: "Locked" },
-  { id: "unlocked", label: "Unlocked" },
+  { id: "locked", label: "未解锁" },
+  { id: "unlocked", label: "已解锁" },
 ];
 const activeAssessmentComplete = computed(() =>
   resultSource.value === "diagnostic"
@@ -270,7 +270,7 @@ const diagnosticTestCard = computed(() => {
     return {
       stateLabel: "Results ready",
       description:
-        "Your predicted SAT score and free answer review are ready.",
+        "Your predicted SAT score and free answer review are ready. This estimate does not replace the full-length test.",
       metrics: [
         { value: String(report?.totalScore ?? 1280), label: "predicted total" },
         { value: String(readingWritingScore), label: "Reading & Writing" },
@@ -279,7 +279,6 @@ const diagnosticTestCard = computed(() => {
       progressTitle: "Completed",
       progressLabel: "Report ready",
       progressPercent: 100,
-      helper: "Estimate only; not a replacement for the full-length test",
       cta: "View Free Results",
       disabled: false,
     };
@@ -287,7 +286,7 @@ const diagnosticTestCard = computed(() => {
     return {
       stateLabel: "Scoring",
       description:
-        "Your answers were submitted. We are calculating your total and section score predictions.",
+        "Your answers were submitted. We are calculating your total and section score predictions; results are usually ready in a few seconds.",
       metrics: [
         { value: String(questionCount), label: "answered" },
         { value: "Untimed", label: "time limit" },
@@ -296,7 +295,6 @@ const diagnosticTestCard = computed(() => {
       progressTitle: "Status",
       progressLabel: "Calculating score prediction",
       progressPercent: 36,
-      helper: "Usually ready in a few seconds",
       cta: "Scoring…",
       disabled: true,
     };
@@ -304,7 +302,7 @@ const diagnosticTestCard = computed(() => {
     return {
       stateLabel: "In progress",
       description:
-        "Continue your SAT check. Your answers are saved automatically.",
+        "Continue your quick SAT score and skill check. Your answers are saved automatically.",
       metrics: [
         { value: "10", label: "Reading & Writing" },
         { value: "10", label: "Math" },
@@ -313,14 +311,13 @@ const diagnosticTestCard = computed(() => {
       progressTitle: "Progress",
       progressLabel: `4 of ${questionCount} answered`,
       progressPercent: (4 / questionCount) * 100,
-      helper: "No Pro membership required",
       cta: "Continue Diagnostic",
       disabled: false,
     };
   return {
     stateLabel: "Free",
     description:
-      "Estimate your SAT score with 10 Reading and Writing and 10 Math questions.",
+      "Get an instant score estimate, skill breakdown, and points within reach when time is short. This quick check does not replace the full-length test.",
     metrics: [
       { value: "10", label: "Reading & Writing" },
       { value: "10", label: "Math" },
@@ -329,7 +326,6 @@ const diagnosticTestCard = computed(() => {
     progressTitle: "Access",
     progressLabel: "Free for everyone",
     progressPercent: 0,
-    helper: "Estimate only; not a replacement for the full-length test",
     cta: "Start Free Diagnostic",
     disabled: false,
   };
@@ -351,7 +347,7 @@ const practiceTestCard = computed(() => {
     return {
       stateLabel: "Pro",
       description:
-        "Take a realistic full-length Digital SAT with the official section timing and module structure.",
+        "Take a realistic full-length Digital SAT with official section timing and module structure. Timing begins after setup.",
       metrics: [
         { value: String(questionCount), label: "questions" },
         { value: String(durationMinutes), label: "min" },
@@ -360,7 +356,6 @@ const practiceTestCard = computed(() => {
       progressTitle: "Progress",
       progressLabel: "Ready to start",
       progressPercent: 0,
-      helper: "Your timer starts after setup",
       cta: "Start Practice Test",
       disabled: false,
     };
@@ -368,7 +363,7 @@ const practiceTestCard = computed(() => {
     return {
       stateLabel: "Scoring",
       description:
-        "Your answers were submitted. We are preparing your score report and personalized recommendations.",
+        "Your answers were submitted. We are preparing your score report and personalized recommendations; results are usually ready in under a minute.",
       metrics: [
         { value: String(answeredCount), label: "answered" },
         {
@@ -380,14 +375,13 @@ const practiceTestCard = computed(() => {
       progressTitle: "Status",
       progressLabel: "Preparing score report",
       progressPercent: 36,
-      helper: "Usually ready in under a minute",
       cta: "Scoring…",
       disabled: true,
     };
   if (practiceTestState.value === "results")
     return {
       stateLabel: "Results ready",
-      description: "Your score report and next-step recommendations are ready.",
+      description: `Your score report and next-step recommendations are ready. Your result is in the ${report?.percentile ?? 70}th percentile.`,
       metrics: [
         { value: String(report?.totalScore ?? 1280), label: "total score" },
         { value: String(readingWritingScore), label: "Reading & Writing" },
@@ -398,14 +392,13 @@ const practiceTestCard = computed(() => {
         ? formatReportDate(report.completedAt)
         : "Aug 21, 2026",
       progressPercent: 100,
-      helper: `${report?.percentile ?? 70}th percentile`,
       cta: "View Results",
       disabled: false,
     };
   return {
     stateLabel: "In progress",
     description:
-      "Resume your saved attempt from Reading and Writing, Module 1.",
+      "Resume your saved attempt from Reading and Writing, Module 1. Your answers are saved automatically.",
     metrics: [
       { value: String(questionCount), label: "questions" },
       { value: String(durationMinutes), label: "min" },
@@ -416,7 +409,6 @@ const practiceTestCard = computed(() => {
     progressPercent: questionCount
       ? (savedAnsweredCount / questionCount) * 100
       : 0,
-    helper: "Answers saved automatically",
     cta: "Continue Practice Test",
     disabled: false,
   };
@@ -1293,6 +1285,11 @@ function setReviewFilter(filter: ReviewFilter) {
 function setReviewSectionFilter(filter: ReviewSectionFilter) {
   reviewSectionFilter.value = filter;
   selectedReviewQuestionId.value = null;
+}
+function setReviewSectionFilterFromEvent(event: Event) {
+  setReviewSectionFilter(
+    (event.target as HTMLSelectElement).value as ReviewSectionFilter,
+  );
 }
 function moveReviewQuestion(direction: -1 | 1) {
   if (!filteredReviewQuestions.value.length) return;
@@ -2203,36 +2200,28 @@ onBeforeUnmount(() => {
                   <div class="study-breakdown-filters">
                     <div class="study-filter-group">
                       <span class="study-filter-label">Section</span>
-                      <div
-                        class="study-section-switch"
-                        role="group"
-                        aria-label="SAT section"
-                      >
-                        <button
-                          v-for="section in [
-                            'Math',
-                            'Reading and Writing',
-                          ] as const"
-                          :key="section"
-                          type="button"
-                          :aria-pressed="sectionFilter === section"
-                          @click="sectionFilter = section"
+                      <label class="study-section-select">
+                        <select
+                          v-model="sectionFilter"
+                          aria-label="Filter lessons by section"
                         >
-                          {{
-                            section === "Reading and Writing"
-                              ? "Reading & Writing"
-                              : section
-                          }}
-                        </button>
-                      </div>
+                          <option value="Math">Math</option>
+                          <option value="Reading and Writing">
+                            Reading &amp; Writing
+                          </option>
+                        </select>
+                        <svg class="icon" aria-hidden="true">
+                          <use href="#i-chevron" />
+                        </svg>
+                      </label>
                     </div>
                     <div class="study-filter-group importance">
-                      <span class="study-filter-label">Importance</span
+                      <span class="study-filter-label">Priority</span
                       ><button
                         class="study-filter-info"
                         type="button"
-                        aria-label="How topic importance is calculated"
-                        data-tooltip="Based on official SAT content-domain weight (65%) and frequency across 3,879 practice questions (35%). Progress is tracked separately."
+                        aria-label="How topic priority is calculated"
+                        data-tooltip="Priority combines official SAT content-domain weight (65%) and frequency across 3,879 practice questions (35%). Progress is tracked separately."
                       >
                         <svg class="icon" aria-hidden="true">
                           <use href="#i-info" />
@@ -2241,7 +2230,7 @@ onBeforeUnmount(() => {
                       <div
                         class="study-importance-chips"
                         role="group"
-                        aria-label="Topic importance"
+                        aria-label="Topic priority"
                       >
                         <button
                           v-for="filter in [
@@ -2285,7 +2274,7 @@ onBeforeUnmount(() => {
                     "
                     :aria-label="
                       priorityFilter !== 'all'
-                        ? `${priorityFilter} topics sorted by importance`
+                        ? `${priorityFilter} topics sorted by priority`
                         : undefined
                     "
                   >
@@ -2449,8 +2438,8 @@ onBeforeUnmount(() => {
                     >
                       <svg class="icon" aria-hidden="true">
                         <use href="#i-spark" /></svg
-                      ><span>{{ diagnosticTestCard.cta }}</span></button
-                    ><span>{{ diagnosticTestCard.helper }}</span>
+                      ><span>{{ diagnosticTestCard.cta }}</span>
+                    </button>
                   </footer>
                 </article>
                 <article
@@ -2503,8 +2492,8 @@ onBeforeUnmount(() => {
                     >
                       <svg class="icon" aria-hidden="true">
                         <use href="#i-spark" /></svg
-                      ><span>{{ practiceTestCard.cta }}</span></button
-                    ><span>{{ practiceTestCard.helper }}</span>
+                      ><span>{{ practiceTestCard.cta }}</span>
+                    </button>
                   </footer>
                 </article>
               </aside>
@@ -2964,25 +2953,22 @@ onBeforeUnmount(() => {
                   <div class="study-breakdown-filters">
                     <div class="study-filter-group">
                       <span class="study-filter-label">Section</span>
-                      <div
-                        class="study-section-switch"
-                        role="group"
-                        aria-label="Filter by SAT section"
-                      >
-                        <button
-                          v-for="section in [
-                            ['ALL', 'All sections'],
-                            ['reading-writing', 'Reading & Writing'],
-                            ['math', 'Math'],
-                          ] as const"
-                          :key="section[0]"
-                          type="button"
-                          :aria-pressed="reviewSectionFilter === section[0]"
-                          @click="setReviewSectionFilter(section[0])"
+                      <label class="study-section-select">
+                        <select
+                          :value="reviewSectionFilter"
+                          aria-label="Filter reviewed questions by section"
+                          @change="setReviewSectionFilterFromEvent"
                         >
-                          {{ section[1] }}
-                        </button>
-                      </div>
+                          <option value="ALL">All sections</option>
+                          <option value="reading-writing">
+                            Reading &amp; Writing
+                          </option>
+                          <option value="math">Math</option>
+                        </select>
+                        <svg class="icon" aria-hidden="true">
+                          <use href="#i-chevron" />
+                        </svg>
+                      </label>
                     </div>
                     <div class="study-filter-group importance">
                       <span class="study-filter-label">Answer status</span>
@@ -3289,33 +3275,27 @@ onBeforeUnmount(() => {
                   <div class="study-breakdown-filters">
                     <div class="study-filter-group">
                       <span class="study-filter-label">Section</span>
-                      <div
-                        class="study-section-switch"
-                        role="group"
-                        aria-label="SAT section"
-                      >
-                        <button
-                          v-for="section in [
-                            'math',
-                            'reading-writing',
-                          ] as const"
-                          :key="section"
-                          type="button"
-                          :aria-pressed="improveSection === section"
-                          @click="improveSection = section"
+                      <label class="study-section-select">
+                        <select
+                          v-model="improveSection"
+                          aria-label="Filter improvement topics by section"
                         >
-                          {{
-                            section === "math" ? "Math" : "Reading & Writing"
-                          }}
-                        </button>
-                      </div>
+                          <option value="math">Math</option>
+                          <option value="reading-writing">
+                            Reading &amp; Writing
+                          </option>
+                        </select>
+                        <svg class="icon" aria-hidden="true">
+                          <use href="#i-chevron" />
+                        </svg>
+                      </label>
                     </div>
                     <div class="study-filter-group importance">
-                      <span class="study-filter-label">Importance</span>
+                      <span class="study-filter-label">Priority</span>
                       <div
                         class="study-importance-chips"
                         role="group"
-                        aria-label="Topic importance"
+                        aria-label="Topic priority"
                       >
                         <button
                           v-for="filter in [
@@ -3345,8 +3325,8 @@ onBeforeUnmount(() => {
                   <svg class="icon" aria-hidden="true">
                     <use href="#i-target" /></svg
                   ><span
-                    >Topics are prioritized using your latest practice-test
-                    results and SAT importance. Practice progress is tracked
+                    >Topics are prioritized using your latest test results and
+                    SAT priority. Practice progress is tracked
                     separately from Lessons.</span
                   ><button
                     class="study-priority-note-close"
@@ -3364,22 +3344,34 @@ onBeforeUnmount(() => {
                   v-if="!improveTopicSections.length"
                   class="study-topic-empty"
                 >
-                  No topics match this importance filter.
+                  No topics match this priority filter.
                 </div>
-                <div v-else class="study-topic-sections">
+                <div
+                  v-else
+                  :class="[
+                    'study-topic-sections',
+                    {
+                      'results-locked-subsection diagnostic-improve-lock':
+                        resultsLocked && resultSource === 'diagnostic',
+                    },
+                  ]"
+                >
                   <section
                     v-for="section in improveTopicSections"
                     :key="section.id"
                     :class="[
                       'study-topic-section',
-                      { 'results-locked-subsection': resultsLocked },
+                      {
+                        'results-locked-subsection':
+                          resultsLocked && resultSource !== 'diagnostic',
+                      },
                     ]"
                     :aria-labelledby="
                       improvePriority === 'ALL' ? section.id : undefined
                     "
                     :aria-label="
                       improvePriority !== 'ALL'
-                        ? `${improvePriority} topics sorted by importance`
+                        ? `${improvePriority} topics sorted by priority`
                         : undefined
                     "
                   >
@@ -3434,15 +3426,55 @@ onBeforeUnmount(() => {
                         </div>
                       </article>
                     </div>
-                    <div v-if="resultsLocked" :class="['results-subsection-lock', { 'has-commercial-action': showResultsUnlockAction }]">
+                    <div
+                      v-if="resultsLocked && resultSource !== 'diagnostic'"
+                      :class="[
+                        'results-subsection-lock',
+                        { 'has-commercial-action': showResultsUnlockAction },
+                      ]"
+                    >
                       <span aria-hidden="true"
                         ><svg class="icon"><use href="#i-lock" /></svg
                       ></span>
                       <strong>{{ resultsLockTitle }}</strong>
                       <small>{{ resultsLockDescription }}</small>
-                      <button v-if="showResultsUnlockAction" type="button" @click="openCommercialPaywall('prioritized topics and adaptive SAT practice')">Unlock practice</button>
+                      <button
+                        v-if="showResultsUnlockAction"
+                        type="button"
+                        @click="
+                          openCommercialPaywall(
+                            'prioritized topics and adaptive SAT practice',
+                          )
+                        "
+                      >
+                        Unlock practice
+                      </button>
                     </div>
                   </section>
+                  <div
+                    v-if="resultsLocked && resultSource === 'diagnostic'"
+                    :class="[
+                      'results-subsection-lock',
+                      { 'has-commercial-action': showResultsUnlockAction },
+                    ]"
+                  >
+                    <span aria-hidden="true"
+                      ><svg class="icon"><use href="#i-lock" /></svg
+                    ></span>
+                    <strong>{{ resultsLockTitle }}</strong>
+                    <small>{{ resultsLockDescription }}</small>
+                    <button
+                      v-if="showResultsUnlockAction"
+                      type="button"
+                      @click="
+                        openCommercialPaywall(
+                          'prioritized topics and adaptive SAT practice',
+                        )
+                      "
+                    >
+                      Unlock practice
+                    </button>
+                  </div>
                 </div>
               </section>
                 </div>
@@ -3469,14 +3501,14 @@ onBeforeUnmount(() => {
     <aside
       v-else
       class="mock-demo-controller unified-demo-controller"
-      aria-label="Exam prep package demo state controller"
+      aria-label="备考包演示状态控制器"
     >
       <header class="mock-demo-controller-head">
-        <strong>Demo control</strong><span>Not product UI</span>
+        <strong>演示控制器</strong><span>仅供演示</span>
       </header>
       <section class="mock-demo-controller-group">
-        <span class="mock-demo-controller-label">Commercial access</span>
-        <nav class="mock-state-nav" aria-label="Preview membership state">
+        <span class="mock-demo-controller-label">会员状态</span>
+        <nav class="mock-state-nav" aria-label="预览会员状态">
           <button
             v-for="state in commercialAccessStates"
             :key="state.id"
@@ -3494,8 +3526,8 @@ onBeforeUnmount(() => {
       </section>
       <template v-if="activeTab === 'study'">
         <section class="mock-demo-controller-group">
-          <span class="mock-demo-controller-label">Course entry</span>
-          <nav class="mock-state-nav" aria-label="Preview course entry state">
+          <span class="mock-demo-controller-label">学习状态</span>
+          <nav class="mock-state-nav" aria-label="预览课程进入状态">
             <button
               v-for="state in courseEntryStates"
               :key="state.id"
@@ -3512,8 +3544,8 @@ onBeforeUnmount(() => {
           </nav>
         </section>
         <section class="mock-demo-controller-group">
-          <span class="mock-demo-controller-label">Diagnostic test</span>
-          <nav class="mock-state-nav" aria-label="Preview diagnostic test card state">
+          <span class="mock-demo-controller-label">诊断测试</span>
+          <nav class="mock-state-nav" aria-label="预览诊断测试卡片状态">
             <button
               v-for="state in diagnosticTestStates"
               :key="state.id"
@@ -3530,8 +3562,8 @@ onBeforeUnmount(() => {
           </nav>
         </section>
         <section class="mock-demo-controller-group">
-          <span class="mock-demo-controller-label">Practice test</span>
-          <nav class="mock-state-nav" aria-label="Preview practice test card state">
+          <span class="mock-demo-controller-label">完整模考</span>
+          <nav class="mock-state-nav" aria-label="预览完整模考卡片状态">
             <button
               v-for="state in practiceTestStates"
               :key="state.id"
@@ -3550,8 +3582,8 @@ onBeforeUnmount(() => {
       </template>
       <template v-else>
         <section class="mock-demo-controller-group">
-          <span class="mock-demo-controller-label">Report source</span>
-          <nav class="mock-state-nav" aria-label="Preview result source">
+          <span class="mock-demo-controller-label">报告来源</span>
+          <nav class="mock-state-nav" aria-label="预览报告来源">
             <button
               v-for="source in resultSources"
               :key="source.id"
@@ -3563,7 +3595,7 @@ onBeforeUnmount(() => {
               :aria-pressed="resultSource === source.id"
               @click="setResultSource(source.id)"
             >
-              {{ source.id === "diagnostic" ? "Diagnostic" : "Practice" }}
+              {{ source.id === "diagnostic" ? "诊断测试" : "完整模考" }}
             </button>
           </nav>
         </section>
@@ -3571,8 +3603,8 @@ onBeforeUnmount(() => {
           v-if="resultSource === 'diagnostic'"
           class="mock-demo-controller-group"
         >
-          <span class="mock-demo-controller-label">Diagnostic test</span>
-          <nav class="mock-state-nav" aria-label="Preview diagnostic result state">
+          <span class="mock-demo-controller-label">诊断测试结果</span>
+          <nav class="mock-state-nav" aria-label="预览诊断测试结果状态">
             <button
               v-for="state in diagnosticTestStates"
               :key="state.id"
@@ -3589,8 +3621,8 @@ onBeforeUnmount(() => {
           </nav>
         </section>
         <section v-else class="mock-demo-controller-group">
-          <span class="mock-demo-controller-label">Practice results</span>
-          <nav class="mock-state-nav" aria-label="Preview practice results access">
+          <span class="mock-demo-controller-label">完整模考结果</span>
+          <nav class="mock-state-nav" aria-label="预览完整模考结果状态">
             <button
               v-for="state in resultsAccessStates"
               :key="state.id"
