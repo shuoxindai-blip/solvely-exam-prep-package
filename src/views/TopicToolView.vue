@@ -9,6 +9,7 @@ import type { SatFlashcard, SatManifest, SatQuizQuestion, SatTopic } from '../ty
 
 type ToolMode = 'study-guide' | 'flashcards' | 'quiz'
 type CardStatus = 'unseen' | 'review' | 'mastered'
+type TopicPriorityFilter = 'ALL' | SatTopic['priority']
 
 const route = useRoute()
 const router = useRouter()
@@ -36,6 +37,7 @@ const iframeLoaded = ref(false)
 const improvePracticeProgress = ref(0)
 const askSolvelyOpen = ref(false)
 const askSolvelyPanelWidth = ref(344)
+const topicPriorityFilter = ref<TopicPriorityFilter>('ALL')
 
 const mode = computed<ToolMode>(() => {
   const name = String(route.name)
@@ -60,9 +62,15 @@ const currentCard = computed(() => flashcards.value[cardIndex.value] ?? null)
 const currentQuestion = computed(() => quizQuestions.value[quizIndex.value] ?? null)
 const selectedCorrect = computed(() => selectedAnswer.value !== null && selectedAnswer.value === currentQuestion.value?.correctIndex)
 const orderedTopics = computed(() => [...(manifest.value?.topics ?? [])].sort((left, right) => left.order - right.order))
-const currentTopicPosition = computed(() => orderedTopics.value.findIndex((item) => item.id === topic.value?.id))
-const isLastTopic = computed(() => currentTopicPosition.value === orderedTopics.value.length - 1)
-const nextStudyTopic = computed(() => orderedTopics.value[currentTopicPosition.value + 1] ?? null)
+const filteredOrderedTopics = computed(() => topicPriorityFilter.value === 'ALL'
+  ? orderedTopics.value
+  : orderedTopics.value
+      .filter((item) => item.priority === topicPriorityFilter.value)
+      .sort((left, right) => right.importanceScore - left.importanceScore || left.order - right.order))
+const navigationTopics = computed(() => isImprovePractice.value ? orderedTopics.value : filteredOrderedTopics.value)
+const currentTopicPosition = computed(() => navigationTopics.value.findIndex((item) => item.id === topic.value?.id))
+const isLastTopic = computed(() => currentTopicPosition.value === navigationTopics.value.length - 1)
+const nextStudyTopic = computed(() => navigationTopics.value[currentTopicPosition.value + 1] ?? null)
 const hasAnotherStudyPractice = computed(() => studyPracticeIndex.value < studyPracticeQuestions.value.length - 1)
 const isLastQuizQuestion = computed(() => quizIndex.value === quizQuestions.value.length - 1)
 const isImproveReview = computed(() => isImprovePractice.value && quizQuestions.value.length > 0 && improvePracticeProgress.value >= quizQuestions.value.length)
@@ -73,6 +81,18 @@ const topicsBySection = computed(() => {
   const byId = new Map(manifest.value.topics.map((item) => [item.id, item]))
   return manifest.value.sections.map((section) => ({ ...section, topics: section.topicIds.map((id) => byId.get(id)).filter(Boolean) as SatTopic[] }))
 })
+const sidebarTopicGroups = computed(() => {
+  if (topicPriorityFilter.value === 'ALL') return topicsBySection.value.map((section) => ({ ...section, filtered: false }))
+  return [{
+    id: `priority-${topicPriorityFilter.value.toLowerCase()}`,
+    title: topicPriorityFilter.value,
+    examSection: '',
+    topicIds: filteredOrderedTopics.value.map((item) => item.id),
+    topics: filteredOrderedTopics.value,
+    filtered: true,
+  }]
+})
+const visibleTopicCount = computed(() => filteredOrderedTopics.value.length)
 
 const toolLabel = computed(() => mode.value === 'study-guide' ? 'Study Guide' : mode.value === 'flashcards' ? 'Flashcards' : 'Quiz')
 const cardStatusCounts = computed(() => {
@@ -94,6 +114,14 @@ function backToPackage() {
 
 function chooseTopic(target: SatTopic) {
   toolRoute(mode.value, target)
+}
+
+function setTopicPriorityFilter(filter: TopicPriorityFilter) {
+  topicPriorityFilter.value = filter
+  collapsedSections.value = new Set()
+  if (filter === 'ALL' || topic.value?.priority === filter) return
+  const firstMatch = filteredOrderedTopics.value[0]
+  if (firstMatch) chooseTopic(firstMatch)
 }
 
 function toggleSection(id: string) {
@@ -337,14 +365,26 @@ onBeforeUnmount(() => {
 
     <div v-else :class="['topic-tool-layout',{ 'practice-only': isImprovePractice }]">
       <aside v-if="!isImprovePractice" class="topic-sidebar" aria-label="SAT topics">
-        <div class="topic-sidebar-heading"><span>Topics</span><strong>{{ manifest.totals.topics }}</strong></div>
+        <div class="topic-sidebar-heading"><span>Topics</span><strong>{{ visibleTopicCount }}</strong></div>
+        <div class="topic-priority-filter" role="group" aria-label="Filter topics by priority">
+          <button
+            v-for="filter in ['ALL', 'CORE', 'LIKELY', 'POSSIBLE'] as TopicPriorityFilter[]"
+            :key="filter"
+            :class="filter.toLowerCase()"
+            type="button"
+            :aria-pressed="topicPriorityFilter === filter"
+            @click="setTopicPriorityFilter(filter)"
+          >
+            <i v-if="filter !== 'ALL'" />{{ filter.charAt(0) + filter.slice(1).toLowerCase() }}
+          </button>
+        </div>
         <div class="topic-sidebar-stats">
           <span><strong>{{ manifest.totals.flashcards }}</strong> flashcards</span>
           <span><strong>{{ manifest.totals.quizQuestions }}</strong> questions</span>
         </div>
         <div class="topic-sidebar-groups">
-          <section v-for="section in topicsBySection" :key="section.id" class="topic-sidebar-group">
-            <button type="button" class="topic-section-toggle" :aria-expanded="!collapsedSections.has(section.id)" @click="toggleSection(section.id)">
+          <section v-for="section in sidebarTopicGroups" :key="section.id" :class="['topic-sidebar-group', { filtered: section.filtered }]">
+            <button v-if="!section.filtered" type="button" class="topic-section-toggle" :aria-expanded="!collapsedSections.has(section.id)" @click="toggleSection(section.id)">
               <span><small>{{ section.examSection }}</small><strong>{{ section.title }}</strong></span>
               <b>{{ section.topics.length }}</b>
               <i>⌄</i>
