@@ -1750,10 +1750,10 @@
     .mock-card-click-target:focus-visible { outline:0; }
     body.dark .mock-entry-card { border-color:var(--line); background:linear-gradient(102deg,var(--surface-raised) 0%,var(--surface-raised) 70%,rgba(35,104,240,.12) 100%); }
     .mock-entry-content { min-width:0; }
-    .mock-entry-icon { width:52px; height:52px; display:grid; place-items:center; border-radius:15px; background:#e8f1ff; color:#087df7; }
-    .mock-entry-icon .icon { width:25px; height:25px; }
-    .mock-entry-title-row { min-width:0; display:flex; flex-wrap:wrap; align-items:center; align-content:flex-start; gap:9px; padding-top:17px; }
-    .mock-entry-title-row h3 { min-width:0; margin:0; color:#424854; font-size:24px; line-height:1.15; letter-spacing:-.035em; }
+    .mock-entry-icon { width:44px; height:44px; display:grid; place-items:center; border-radius:13px; background:#e8f1ff; color:#087df7; }
+    .mock-entry-icon .icon { width:22px; height:22px; }
+    .mock-entry-title-row { min-width:0; display:flex; flex-wrap:wrap; align-items:center; align-content:flex-start; gap:8px; padding-top:11px; }
+    .mock-entry-title-row h3 { min-width:0; margin:0; color:#424854; font-size:22px; line-height:1.15; letter-spacing:-.035em; }
     body.dark .mock-entry-title-row h3 { color:var(--text); }
     .mock-entry-state { min-height:25px; display:inline-flex; align-items:center; gap:6px; padding:0 9px; border-radius:999px; font-size:8px; font-weight:760; letter-spacing:.07em; text-transform:uppercase; }
     .mock-entry-state i { width:6px; height:6px; border-radius:50%; background:currentColor; }
@@ -1774,23 +1774,23 @@
     .mock-entry-footer > span { color:#959ba4; font-size:10px; }
     .mock-entry-footer button { min-width:218px; min-height:52px; display:inline-flex; align-items:center; justify-content:center; gap:9px; padding:0 25px; border-radius:999px; background:#087df7; font-size:13px; white-space:nowrap; box-shadow:0 8px 18px rgba(0,122,255,.2); }
     .mock-entry-footer button .icon { width:18px; height:18px; }
-    .mock-entry-card.compact { min-height:390px; display:flex; flex-direction:column; align-items:stretch; gap:0; padding:28px 28px 25px; border-radius:22px; background:linear-gradient(148deg,#fff 0%,#fff 58%,#f4f9ff 82%,#eaf5ff 100%); }
+    .mock-entry-card.compact { min-height:326px; display:flex; flex-direction:column; align-items:stretch; gap:0; padding:22px 24px 20px; border-radius:22px; background:linear-gradient(148deg,#fff 0%,#fff 58%,#f4f9ff 82%,#eaf5ff 100%); }
     body.dark .mock-entry-card.compact { background:linear-gradient(148deg,var(--surface-raised) 0%,var(--surface-raised) 62%,rgba(35,104,240,.12) 100%); }
-    .mock-entry-card.compact .mock-entry-content { min-height:0; flex:1; display:grid; grid-template-rows:52px minmax(60px,auto) minmax(62px,auto) 20px 72px; align-content:start; }
-    .mock-entry-card.compact .mock-entry-copy p { margin-top:7px; font-size:11px; line-height:1.52; }
+    .mock-entry-card.compact .mock-entry-content { min-height:0; flex:1; display:grid; grid-template-rows:44px minmax(48px,auto) minmax(52px,auto) 18px 58px; align-content:start; }
+    .mock-entry-card.compact .mock-entry-copy p { margin-top:5px; font-size:10px; line-height:1.5; }
     .mock-entry-card.compact .mock-entry-details { min-height:14px; align-self:start; margin-top:0; }
-    .mock-entry-state-slot { min-height:72px; display:flex; align-items:flex-start; padding-top:14px; }
+    .mock-entry-state-slot { min-height:58px; display:flex; align-items:flex-start; padding-top:10px; }
     .mock-entry-status-summary { min-width:0; }
-    .mock-entry-status-value { min-height:35px; display:flex; align-items:baseline; color:#9298a1; line-height:1; white-space:nowrap; }
-    .mock-entry-status-value strong { color:#087df7; font-size:32px; font-weight:760; letter-spacing:-.045em; }
-    .mock-entry-status-value > span { color:#9aa0aa; font-size:30px; font-weight:560; letter-spacing:-.04em; }
+    .mock-entry-status-value { min-height:31px; display:flex; align-items:baseline; color:#9298a1; line-height:1; white-space:nowrap; }
+    .mock-entry-status-value strong { color:#087df7; font-size:28px; font-weight:760; letter-spacing:-.045em; }
+    .mock-entry-status-value > span { color:#9aa0aa; font-size:27px; font-weight:560; letter-spacing:-.04em; }
     .mock-entry-status-value small { margin-left:7px; color:#9aa0aa; font-size:10px; font-weight:560; letter-spacing:0; }
-    .mock-entry-status-summary p { margin:6px 0 0; color:#969ca5; font-size:10px; line-height:1.4; }
+    .mock-entry-status-summary p { margin:4px 0 0; color:#969ca5; font-size:9px; line-height:1.4; }
     .mock-entry-card.not-started .mock-entry-status-value strong { color:#515865; }
     .mock-entry-card.scoring .mock-entry-status-value strong { color:#b66c12; }
     .mock-entry-card.results .mock-entry-status-value strong { color:#16865d; }
-    .mock-entry-card.compact .mock-entry-footer { width:100%; min-width:0; align-items:flex-start; margin-top:13px; }
-    .mock-entry-footer > .mock-card-link { min-width:182px; min-height:44px; display:inline-flex; align-items:center; justify-content:center; gap:10px; padding:0 22px; border-radius:999px; background:#087df7; box-shadow:0 8px 18px rgba(0,122,255,.18); color:#fff; font-size:11px; font-weight:740; line-height:1.3; transition:background .18s ease,box-shadow .18s ease,transform .18s ease; }
+    .mock-entry-card.compact .mock-entry-footer { width:100%; min-width:0; align-items:flex-start; margin-top:10px; }
+    .mock-entry-footer > .mock-card-link { min-width:170px; min-height:40px; display:inline-flex; align-items:center; justify-content:center; gap:10px; padding:0 20px; border-radius:999px; background:#087df7; box-shadow:0 8px 18px rgba(0,122,255,.18); color:#fff; font-size:10px; font-weight:740; line-height:1.3; transition:background .18s ease,box-shadow .18s ease,transform .18s ease; }
     .mock-card-link-arrow { font-size:15px; font-weight:620; line-height:1; transition:transform .18s ease; }
     .mock-entry-card.is-clickable:hover .mock-card-link { background:#006fe8; box-shadow:0 10px 22px rgba(0,122,255,.24); transform:translateY(-1px); }
     .mock-entry-card.is-clickable:hover .mock-card-link-arrow { transform:translateX(3px); }
