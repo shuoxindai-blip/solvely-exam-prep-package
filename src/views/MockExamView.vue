@@ -613,7 +613,15 @@ onBeforeUnmount(() => {
     <button class="save-leave-button" type="button" @click="exitExam"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 5H5v14h5M14 8l4 4-4 4M8 12h10" /></svg>Save and Leave</button>
     <div class="break-layout">
       <section class="break-timer-column">
-        <div class="oneprep-wordmark"><span aria-hidden="true">●</span>Solvely SAT</div>
+        <div class="oneprep-wordmark">
+          <img
+            src="/assets/solvely-ai-logo.jpeg"
+            alt=""
+            width="34"
+            height="34"
+          />
+          Solvely SAT
+        </div>
         <div class="break-timer-card"><span>Break Time:</span><strong>{{ breakTimeLabel }}</strong></div>
         <button class="resume-button" type="button" @click="resumeAfterBreak">Resume Testing</button>
       </section>

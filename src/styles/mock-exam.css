@@ -2347,10 +2347,14 @@ body.is-resizing * {
   letter-spacing: -0.04em;
 }
 
-.oneprep-wordmark span {
-  color: #49dce3;
-  font-size: 33px;
-  text-shadow: 9px 7px 0 #32aee8;
+.oneprep-wordmark img {
+  width: 34px;
+  height: 34px;
+  display: block;
+  flex: 0 0 auto;
+  border-radius: 9px;
+  object-fit: cover;
+  box-shadow: 0 5px 14px rgba(40, 74, 224, 0.24);
 }
 
 .break-timer-card {
