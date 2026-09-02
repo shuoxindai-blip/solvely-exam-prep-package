@@ -239,8 +239,8 @@ const courseEntryState = computed<CourseEntryState>(() =>
   isCourseStarted.value ? "in-progress" : "first-visit",
 );
 const resultsAccessStates: { id: ResultsAccessState; label: string }[] = [
-  { id: "locked", label: "未解锁" },
-  { id: "unlocked", label: "已解锁" },
+  { id: "locked", label: "未完成" },
+  { id: "unlocked", label: "结果已生成" },
 ];
 const activeAssessmentComplete = computed(() =>
   resultSource.value === "diagnostic"
@@ -253,32 +253,64 @@ const resultsRequirePro = computed(
 const resultsCommercialLocked = computed(
   () => resultsRequirePro.value && !isProMember.value,
 );
+const resultsNeedAssessment = computed(
+  () =>
+    !activeAssessmentComplete.value &&
+    (resultSource.value === "diagnostic" || isProMember.value),
+);
+const resultsProLocked = computed(
+  () => resultsCommercialLocked.value && !resultsNeedAssessment.value,
+);
 const showResultsUnlockAction = computed(
-  () => resultsCommercialLocked.value && activeAssessmentComplete.value,
+  () => resultsProLocked.value,
 );
 const resultsLocked = computed(
-  () => !activeAssessmentComplete.value || resultsCommercialLocked.value,
+  () => resultsNeedAssessment.value || resultsProLocked.value,
+);
+const targetedPracticeNeedsAssessment = computed(
+  () =>
+    !activeAssessmentComplete.value &&
+    (resultSource.value === "diagnostic" || isProMember.value),
+);
+const targetedPracticeProLocked = computed(
+  () => !targetedPracticeNeedsAssessment.value && !isProMember.value,
 );
 const targetedPracticeLocked = computed(
-  () => !activeAssessmentComplete.value || !isProMember.value,
+  () =>
+    targetedPracticeNeedsAssessment.value || targetedPracticeProLocked.value,
 );
 const showTargetedPracticeUnlockAction = computed(
-  () => activeAssessmentComplete.value && !isProMember.value,
+  () => targetedPracticeProLocked.value,
 );
 const resultsLockTitle = computed(() => {
-  if (!activeAssessmentComplete.value)
-    return resultSource.value === "diagnostic"
-      ? "Complete the Free Diagnostic Test to unlock"
-      : "Complete the Practice Test to unlock";
+  if (resultsNeedAssessment.value || targetedPracticeNeedsAssessment.value) {
+    if (resultSource.value === "diagnostic") {
+      if (diagnosticTestState.value === "scoring")
+        return "Your Diagnostic Test is being scored";
+      return diagnosticTestState.value === "in-progress"
+        ? "Finish your Diagnostic Test to see your results"
+        : "Take the Free Diagnostic Test to see your results";
+    }
+    if (practiceTestState.value === "scoring")
+      return "Your Full-Length Practice Test is being scored";
+    return practiceTestState.value === "in-progress"
+      ? "Finish your Full-Length Practice Test to see your results"
+      : "Take the Full-Length Practice Test to see your results";
+  }
   return resultSource.value === "diagnostic"
     ? "Unlock Targeted Practice with Solvely Pro"
-    : "Unlock with Solvely Pro";
+    : "Unlock this report with Solvely Pro";
 });
 const resultsLockDescription = computed(() => {
-  if (!activeAssessmentComplete.value)
-    return resultSource.value === "diagnostic"
-      ? "Complete all 20 diagnostic questions to see your free Score Report and Question Review."
-      : "Finish the full-length SAT Practice Test to unlock this report.";
+  if (resultsNeedAssessment.value || targetedPracticeNeedsAssessment.value) {
+    if (resultSource.value === "diagnostic")
+      return diagnosticTestState.value === "scoring"
+        ? "Your score estimate and free question review will appear here automatically in a few seconds."
+        : "Complete 20 untimed questions to generate your score estimate and free question review.";
+    return practiceTestState.value === "scoring"
+      ? "Your score analysis, question review, and targeted practice will appear here automatically."
+      : "Complete the test to generate your score analysis, question review, and targeted practice.";
+  }
   return resultSource.value === "diagnostic"
     ? "Upgrade to turn your diagnostic results into prioritized topics and adaptive practice."
     : "Get your full score report, every explanation, and adaptive topics to improve.";
@@ -439,6 +471,31 @@ const practiceTestCard = computed(() => {
     disabled: false,
   };
 });
+const resultsPrerequisiteActionLabel = computed(() =>
+  resultSource.value === "diagnostic"
+    ? diagnosticTestCard.value.cta
+    : practiceTestCard.value.cta,
+);
+const showResultsStartAction = computed(() => {
+  if (!resultsNeedAssessment.value) return false;
+  return resultSource.value === "diagnostic"
+    ? !diagnosticTestCard.value.disabled
+    : !practiceTestCard.value.disabled;
+});
+const showResultsGateAction = computed(
+  () => showResultsStartAction.value || showResultsUnlockAction.value,
+);
+const showTargetedPracticeStartAction = computed(() => {
+  if (!targetedPracticeNeedsAssessment.value) return false;
+  return resultSource.value === "diagnostic"
+    ? !diagnosticTestCard.value.disabled
+    : !practiceTestCard.value.disabled;
+});
+const showTargetedPracticeGateAction = computed(
+  () =>
+    showTargetedPracticeStartAction.value ||
+    showTargetedPracticeUnlockAction.value,
+);
 const reportQuestions = computed(() =>
   activeResultExam.value && resultReport.value
     ? buildReviewQuestions(activeResultExam.value, resultReport.value)
@@ -1283,6 +1340,13 @@ function handleDiagnosticTestAction() {
       diagnosticState: "in-progress",
     },
   });
+}
+function handleResultsPrerequisiteAction() {
+  if (resultSource.value === "diagnostic") {
+    handleDiagnosticTestAction();
+    return;
+  }
+  handlePracticeTestAction();
 }
 function toggleTheme() {
   document.body.classList.toggle("dark");
@@ -2496,29 +2560,36 @@ onBeforeUnmount(() => {
                         >
                       </template>
                     </div>
-                    <div
-                      v-if="
-                        diagnosticTestState !== 'results' &&
-                        diagnosticTestState !== 'not-started'
-                      "
-                      class="mock-entry-progress"
-                    >
-                      <div>
-                        <span>{{ diagnosticTestCard.progressTitle }}</span
-                        ><strong>{{ diagnosticTestCard.progressLabel }}</strong>
+                    <div class="mock-entry-state-slot">
+                      <div
+                        v-if="
+                          diagnosticTestState !== 'results' &&
+                          diagnosticTestState !== 'not-started'
+                        "
+                        class="mock-entry-progress"
+                      >
+                        <div>
+                          <span>{{ diagnosticTestCard.progressTitle }}</span
+                          ><strong>{{ diagnosticTestCard.progressLabel }}</strong>
+                        </div>
+                        <span class="mock-entry-progress-track"
+                          ><i
+                            :style="{
+                              width: `${diagnosticTestCard.progressPercent}%`,
+                            }"
+                        /></span>
                       </div>
-                      <span class="mock-entry-progress-track"
-                        ><i
-                          :style="{
-                            width: `${diagnosticTestCard.progressPercent}%`,
-                          }"
-                      /></span>
-                    </div>
-                    <div
-                      v-else-if="diagnosticTestState === 'results'"
-                      class="mock-entry-completed"
-                    >
-                      {{ diagnosticTestCard.progressLabel }}
+                      <div
+                        v-else-if="diagnosticTestState === 'results'"
+                        class="mock-entry-completed"
+                      >
+                        {{ diagnosticTestCard.progressLabel }}
+                      </div>
+                      <div
+                        v-else
+                        class="mock-entry-progress-placeholder"
+                        aria-hidden="true"
+                      ></div>
                     </div>
                   </div>
                   <footer class="mock-entry-footer">
@@ -2579,29 +2650,36 @@ onBeforeUnmount(() => {
                         >
                       </template>
                     </div>
-                    <div
-                      v-if="
-                        practiceTestState !== 'results' &&
-                        practiceTestState !== 'not-started'
-                      "
-                      class="mock-entry-progress"
-                    >
-                      <div>
-                        <span>{{ practiceTestCard.progressTitle }}</span
-                        ><strong>{{ practiceTestCard.progressLabel }}</strong>
+                    <div class="mock-entry-state-slot">
+                      <div
+                        v-if="
+                          practiceTestState !== 'results' &&
+                          practiceTestState !== 'not-started'
+                        "
+                        class="mock-entry-progress"
+                      >
+                        <div>
+                          <span>{{ practiceTestCard.progressTitle }}</span
+                          ><strong>{{ practiceTestCard.progressLabel }}</strong>
+                        </div>
+                        <span class="mock-entry-progress-track"
+                          ><i
+                            :style="{
+                              width: `${practiceTestCard.progressPercent}%`,
+                            }"
+                        /></span>
                       </div>
-                      <span class="mock-entry-progress-track"
-                        ><i
-                          :style="{
-                            width: `${practiceTestCard.progressPercent}%`,
-                          }"
-                      /></span>
-                    </div>
-                    <div
-                      v-else-if="practiceTestState === 'results'"
-                      class="mock-entry-completed"
-                    >
-                      Completed {{ practiceTestCard.progressLabel }}
+                      <div
+                        v-else-if="practiceTestState === 'results'"
+                        class="mock-entry-completed"
+                      >
+                        Completed {{ practiceTestCard.progressLabel }}
+                      </div>
+                      <div
+                        v-else
+                        class="mock-entry-progress-placeholder"
+                        aria-hidden="true"
+                      ></div>
                     </div>
                   </div>
                   <footer class="mock-entry-footer">
@@ -2683,8 +2761,8 @@ onBeforeUnmount(() => {
                       'full-report': resultView === 'full',
                     },
                   ]"
-                  :inert="resultsLocked && !showResultsUnlockAction"
-                  :aria-hidden="resultsLocked && !showResultsUnlockAction"
+                  :inert="resultsLocked && !showResultsGateAction"
+                  :aria-hidden="resultsLocked && !showResultsGateAction"
                 >
               <div v-if="resultLoadError" class="results-empty">
                 {{ resultLoadError }}
@@ -2811,13 +2889,38 @@ onBeforeUnmount(() => {
                   questions. It does not replace a full-length SAT Practice
                   Test.
                 </p>
-                  <div v-if="resultsLocked" :class="['results-subsection-lock', { 'has-commercial-action': showResultsUnlockAction }]">
+                  <div
+                    v-if="resultsLocked"
+                    :class="[
+                      'results-subsection-lock',
+                      {
+                        'has-gate-action': showResultsGateAction,
+                        'is-prerequisite': resultsNeedAssessment,
+                      },
+                    ]"
+                  >
                     <span aria-hidden="true"
-                      ><svg class="icon"><use href="#i-lock" /></svg
+                      ><svg class="icon">
+                        <use
+                          :href="resultsNeedAssessment ? '#i-exam' : '#i-lock'"
+                        /></svg
                     ></span>
                     <strong>{{ resultsLockTitle }}</strong>
                     <small>{{ resultsLockDescription }}</small>
-                    <button v-if="showResultsUnlockAction" type="button" @click="openCommercialPaywall('your complete SAT score report')">Unlock report</button>
+                    <button
+                      v-if="showResultsStartAction"
+                      type="button"
+                      @click="handleResultsPrerequisiteAction"
+                    >
+                      {{ resultsPrerequisiteActionLabel }}
+                    </button>
+                    <button
+                      v-else-if="showResultsUnlockAction"
+                      type="button"
+                      @click="openCommercialPaywall('your complete SAT score report')"
+                    >
+                      Unlock report
+                    </button>
                   </div>
                 </div>
 
@@ -2875,13 +2978,38 @@ onBeforeUnmount(() => {
                       </div>
                     </article>
                   </div>
-                  <div v-if="resultsLocked" :class="['results-subsection-lock', { 'has-commercial-action': showResultsUnlockAction }]">
+                  <div
+                    v-if="resultsLocked"
+                    :class="[
+                      'results-subsection-lock',
+                      {
+                        'has-gate-action': showResultsGateAction,
+                        'is-prerequisite': resultsNeedAssessment,
+                      },
+                    ]"
+                  >
                     <span aria-hidden="true"
-                      ><svg class="icon"><use href="#i-lock" /></svg
+                      ><svg class="icon">
+                        <use
+                          :href="resultsNeedAssessment ? '#i-exam' : '#i-lock'"
+                        /></svg
                     ></span>
                     <strong>{{ resultsLockTitle }}</strong>
                     <small>{{ resultsLockDescription }}</small>
-                    <button v-if="showResultsUnlockAction" type="button" @click="openCommercialPaywall('your SAT knowledge and skills breakdown')">Unlock report</button>
+                    <button
+                      v-if="showResultsStartAction"
+                      type="button"
+                      @click="handleResultsPrerequisiteAction"
+                    >
+                      {{ resultsPrerequisiteActionLabel }}
+                    </button>
+                    <button
+                      v-else-if="showResultsUnlockAction"
+                      type="button"
+                      @click="openCommercialPaywall('your SAT knowledge and skills breakdown')"
+                    >
+                      Unlock report
+                    </button>
                   </div>
                 </section>
 
@@ -3032,13 +3160,38 @@ onBeforeUnmount(() => {
                       </section>
                     </div>
                   </article>
-                  <div v-if="resultsLocked" :class="['results-subsection-lock', { 'has-commercial-action': showResultsUnlockAction }]">
+                  <div
+                    v-if="resultsLocked"
+                    :class="[
+                      'results-subsection-lock',
+                      {
+                        'has-gate-action': showResultsGateAction,
+                        'is-prerequisite': resultsNeedAssessment,
+                      },
+                    ]"
+                  >
                     <span aria-hidden="true"
-                      ><svg class="icon"><use href="#i-lock" /></svg
+                      ><svg class="icon">
+                        <use
+                          :href="resultsNeedAssessment ? '#i-exam' : '#i-lock'"
+                        /></svg
                     ></span>
                     <strong>{{ resultsLockTitle }}</strong>
                     <small>{{ resultsLockDescription }}</small>
-                    <button v-if="showResultsUnlockAction" type="button" @click="openCommercialPaywall('detailed SAT performance insights')">Unlock report</button>
+                    <button
+                      v-if="showResultsStartAction"
+                      type="button"
+                      @click="handleResultsPrerequisiteAction"
+                    >
+                      {{ resultsPrerequisiteActionLabel }}
+                    </button>
+                    <button
+                      v-else-if="showResultsUnlockAction"
+                      type="button"
+                      @click="openCommercialPaywall('detailed SAT performance insights')"
+                    >
+                      Unlock report
+                    </button>
                   </div>
                 </section>
 
@@ -3346,13 +3499,38 @@ onBeforeUnmount(() => {
                       </button>
                     </footer>
                   </article>
-                  <div v-if="resultsLocked" :class="['results-subsection-lock', { 'has-commercial-action': showResultsUnlockAction }]">
+                  <div
+                    v-if="resultsLocked"
+                    :class="[
+                      'results-subsection-lock',
+                      {
+                        'has-gate-action': showResultsGateAction,
+                        'is-prerequisite': resultsNeedAssessment,
+                      },
+                    ]"
+                  >
                     <span aria-hidden="true"
-                      ><svg class="icon"><use href="#i-lock" /></svg
+                      ><svg class="icon">
+                        <use
+                          :href="resultsNeedAssessment ? '#i-exam' : '#i-lock'"
+                        /></svg
                     ></span>
                     <strong>{{ resultsLockTitle }}</strong>
                     <small>{{ resultsLockDescription }}</small>
-                    <button v-if="showResultsUnlockAction" type="button" @click="openCommercialPaywall('every answer, explanation, and skill review')">Unlock review</button>
+                    <button
+                      v-if="showResultsStartAction"
+                      type="button"
+                      @click="handleResultsPrerequisiteAction"
+                    >
+                      {{ resultsPrerequisiteActionLabel }}
+                    </button>
+                    <button
+                      v-else-if="showResultsUnlockAction"
+                      type="button"
+                      @click="openCommercialPaywall('every answer, explanation, and skill review')"
+                    >
+                      Unlock review
+                    </button>
                   </div>
                 </div>
                 <div v-else class="results-empty">
@@ -3552,18 +3730,33 @@ onBeforeUnmount(() => {
                       :class="[
                         'results-subsection-lock',
                         {
-                          'has-commercial-action':
-                            showTargetedPracticeUnlockAction,
+                          'has-gate-action': showTargetedPracticeGateAction,
+                          'is-prerequisite':
+                            targetedPracticeNeedsAssessment,
                         },
                       ]"
                     >
                       <span aria-hidden="true"
-                        ><svg class="icon"><use href="#i-lock" /></svg
+                        ><svg class="icon">
+                          <use
+                            :href="
+                              targetedPracticeNeedsAssessment
+                                ? '#i-exam'
+                                : '#i-lock'
+                            "
+                          /></svg
                       ></span>
                       <strong>{{ resultsLockTitle }}</strong>
                       <small>{{ resultsLockDescription }}</small>
                       <button
-                        v-if="showTargetedPracticeUnlockAction"
+                        v-if="showTargetedPracticeStartAction"
+                        type="button"
+                        @click="handleResultsPrerequisiteAction"
+                      >
+                        {{ resultsPrerequisiteActionLabel }}
+                      </button>
+                      <button
+                        v-else-if="showTargetedPracticeUnlockAction"
                         type="button"
                         @click="
                           openCommercialPaywall(
@@ -3582,18 +3775,32 @@ onBeforeUnmount(() => {
                     :class="[
                       'results-subsection-lock',
                       {
-                        'has-commercial-action':
-                          showTargetedPracticeUnlockAction,
+                        'has-gate-action': showTargetedPracticeGateAction,
+                        'is-prerequisite': targetedPracticeNeedsAssessment,
                       },
                     ]"
                   >
                     <span aria-hidden="true"
-                      ><svg class="icon"><use href="#i-lock" /></svg
+                      ><svg class="icon">
+                        <use
+                          :href="
+                            targetedPracticeNeedsAssessment
+                              ? '#i-exam'
+                              : '#i-lock'
+                          "
+                        /></svg
                     ></span>
                     <strong>{{ resultsLockTitle }}</strong>
                     <small>{{ resultsLockDescription }}</small>
                     <button
-                      v-if="showTargetedPracticeUnlockAction"
+                      v-if="showTargetedPracticeStartAction"
+                      type="button"
+                      @click="handleResultsPrerequisiteAction"
+                    >
+                      {{ resultsPrerequisiteActionLabel }}
+                    </button>
+                    <button
+                      v-else-if="showTargetedPracticeUnlockAction"
                       type="button"
                       @click="
                         openCommercialPaywall(
