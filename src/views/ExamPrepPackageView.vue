@@ -334,9 +334,10 @@ const diagnosticTestCard = computed(() => {
         { value: String(readingWritingScore), label: "Reading & Writing" },
         { value: String(mathScore), label: "Math" },
       ],
-      progressTitle: "Completed",
-      progressLabel: "Report ready",
-      progressPercent: 100,
+      statusValue: String(report?.totalScore ?? 1280),
+      statusTotal: "/1600",
+      statusUnit: "Score",
+      statusMeta: "Results ready",
       cta: "View Free Results",
       disabled: false,
     };
@@ -350,9 +351,10 @@ const diagnosticTestCard = computed(() => {
         { value: "Untimed", label: "" },
         { value: "2", label: "sections" },
       ],
-      progressTitle: "Status",
-      progressLabel: "Calculating score prediction",
-      progressPercent: 36,
+      statusValue: String(questionCount),
+      statusTotal: `/${questionCount}`,
+      statusUnit: "Questions",
+      statusMeta: "Scoring results…",
       cta: "Scoring…",
       disabled: true,
     };
@@ -366,9 +368,10 @@ const diagnosticTestCard = computed(() => {
         { value: "Untimed", label: "" },
         { value: "2", label: "sections" },
       ],
-      progressTitle: "Progress",
-      progressLabel: `4 of ${questionCount} answered`,
-      progressPercent: (4 / questionCount) * 100,
+      statusValue: "4",
+      statusTotal: `/${questionCount}`,
+      statusUnit: "Questions",
+      statusMeta: "In progress · Sep 2, 2026",
       cta: "Continue Diagnostic",
       disabled: false,
     };
@@ -381,9 +384,10 @@ const diagnosticTestCard = computed(() => {
       { value: "Untimed", label: "" },
       { value: "2", label: "sections" },
     ],
-    progressTitle: "Access",
-    progressLabel: "Free for everyone",
-    progressPercent: 0,
+    statusValue: "—",
+    statusTotal: "",
+    statusUnit: "",
+    statusMeta: "Not started",
     cta: "Start Free Diagnostic",
     disabled: false,
   };
@@ -411,9 +415,10 @@ const practiceTestCard = computed(() => {
         { value: String(durationMinutes), label: "min" },
         { value: String(moduleCount), label: "modules" },
       ],
-      progressTitle: "Progress",
-      progressLabel: "Ready to start",
-      progressPercent: 0,
+      statusValue: "—",
+      statusTotal: "",
+      statusUnit: "",
+      statusMeta: "Not started",
       cta: "Start Practice Test",
       disabled: false,
     };
@@ -430,9 +435,10 @@ const practiceTestCard = computed(() => {
         },
         { value: String(moduleCount), label: "modules" },
       ],
-      progressTitle: "Status",
-      progressLabel: "Preparing score report",
-      progressPercent: 36,
+      statusValue: String(answeredCount),
+      statusTotal: `/${questionCount}`,
+      statusUnit: "Questions",
+      statusMeta: "Scoring results…",
       cta: "Scoring…",
       disabled: true,
     };
@@ -445,11 +451,12 @@ const practiceTestCard = computed(() => {
         { value: String(readingWritingScore), label: "Reading & Writing" },
         { value: String(mathScore), label: "Math" },
       ],
-      progressTitle: "Completed",
-      progressLabel: report
-        ? formatReportDate(report.completedAt)
-        : "Aug 21, 2026",
-      progressPercent: 100,
+      statusValue: String(report?.totalScore ?? 1280),
+      statusTotal: "/1600",
+      statusUnit: "Score",
+      statusMeta: `Results ready · ${
+        report ? formatReportDate(report.completedAt) : "Aug 21, 2026"
+      }`,
       cta: "View Results",
       disabled: false,
     };
@@ -462,11 +469,10 @@ const practiceTestCard = computed(() => {
       { value: String(durationMinutes), label: "min" },
       { value: String(moduleCount), label: "modules" },
     ],
-    progressTitle: "Progress",
-    progressLabel: `${savedAnsweredCount} of ${questionCount} answered`,
-    progressPercent: questionCount
-      ? (savedAnsweredCount / questionCount) * 100
-      : 0,
+    statusValue: String(savedAnsweredCount),
+    statusTotal: `/${questionCount}`,
+    statusUnit: "Questions",
+    statusMeta: "In progress · Sep 2, 2026",
     cta: "Continue Practice Test",
     disabled: false,
   };
@@ -2528,9 +2534,12 @@ onBeforeUnmount(() => {
                   ]"
                 >
                   <div class="mock-entry-content">
-                    <header class="mock-entry-head">
-                      <span class="mock-entry-number">Diagnostic Test</span
-                      ><span
+                    <div class="mock-entry-icon" aria-hidden="true">
+                      <svg class="icon"><use href="#i-target" /></svg>
+                    </div>
+                    <header class="mock-entry-title-row">
+                      <h3>Free SAT Diagnostic Test</h3>
+                      <span
                         :class="[
                           'mock-entry-state',
                           diagnosticTestState,
@@ -2540,7 +2549,6 @@ onBeforeUnmount(() => {
                       >
                     </header>
                     <div class="mock-entry-copy">
-                      <h3>Free SAT Diagnostic Test</h3>
                       <p>{{ diagnosticTestCard.description }}</p>
                     </div>
                     <div class="mock-entry-details" aria-label="Test details">
@@ -2561,35 +2569,18 @@ onBeforeUnmount(() => {
                       </template>
                     </div>
                     <div class="mock-entry-state-slot">
-                      <div
-                        v-if="
-                          diagnosticTestState !== 'results' &&
-                          diagnosticTestState !== 'not-started'
-                        "
-                        class="mock-entry-progress"
-                      >
-                        <div>
-                          <span>{{ diagnosticTestCard.progressTitle }}</span
-                          ><strong>{{ diagnosticTestCard.progressLabel }}</strong>
+                      <div class="mock-entry-status-summary">
+                        <div class="mock-entry-status-value">
+                          <strong>{{ diagnosticTestCard.statusValue }}</strong
+                          ><span v-if="diagnosticTestCard.statusTotal">{{
+                            diagnosticTestCard.statusTotal
+                          }}</span
+                          ><small v-if="diagnosticTestCard.statusUnit">{{
+                            diagnosticTestCard.statusUnit
+                          }}</small>
                         </div>
-                        <span class="mock-entry-progress-track"
-                          ><i
-                            :style="{
-                              width: `${diagnosticTestCard.progressPercent}%`,
-                            }"
-                        /></span>
+                        <p>{{ diagnosticTestCard.statusMeta }}</p>
                       </div>
-                      <div
-                        v-else-if="diagnosticTestState === 'results'"
-                        class="mock-entry-completed"
-                      >
-                        {{ diagnosticTestCard.progressLabel }}
-                      </div>
-                      <div
-                        v-else
-                        class="mock-entry-progress-placeholder"
-                        aria-hidden="true"
-                      ></div>
                     </div>
                   </div>
                   <footer class="mock-entry-footer">
@@ -2625,14 +2616,16 @@ onBeforeUnmount(() => {
                   ]"
                 >
                   <div class="mock-entry-content">
-                    <header class="mock-entry-head">
-                      <span class="mock-entry-number">Practice Test</span
-                      ><span :class="['mock-entry-state', practiceTestState]"
+                    <div class="mock-entry-icon" aria-hidden="true">
+                      <svg class="icon"><use href="#i-exam" /></svg>
+                    </div>
+                    <header class="mock-entry-title-row">
+                      <h3>SAT Full-Length Practice Test</h3>
+                      <span :class="['mock-entry-state', practiceTestState]"
                         ><i />{{ practiceTestCard.stateLabel }}</span
                       >
                     </header>
                     <div class="mock-entry-copy">
-                      <h3>SAT Full-Length Practice Test</h3>
                       <p>{{ practiceTestCard.description }}</p>
                     </div>
                     <div class="mock-entry-details" aria-label="Test details">
@@ -2651,35 +2644,18 @@ onBeforeUnmount(() => {
                       </template>
                     </div>
                     <div class="mock-entry-state-slot">
-                      <div
-                        v-if="
-                          practiceTestState !== 'results' &&
-                          practiceTestState !== 'not-started'
-                        "
-                        class="mock-entry-progress"
-                      >
-                        <div>
-                          <span>{{ practiceTestCard.progressTitle }}</span
-                          ><strong>{{ practiceTestCard.progressLabel }}</strong>
+                      <div class="mock-entry-status-summary">
+                        <div class="mock-entry-status-value">
+                          <strong>{{ practiceTestCard.statusValue }}</strong
+                          ><span v-if="practiceTestCard.statusTotal">{{
+                            practiceTestCard.statusTotal
+                          }}</span
+                          ><small v-if="practiceTestCard.statusUnit">{{
+                            practiceTestCard.statusUnit
+                          }}</small>
                         </div>
-                        <span class="mock-entry-progress-track"
-                          ><i
-                            :style="{
-                              width: `${practiceTestCard.progressPercent}%`,
-                            }"
-                        /></span>
+                        <p>{{ practiceTestCard.statusMeta }}</p>
                       </div>
-                      <div
-                        v-else-if="practiceTestState === 'results'"
-                        class="mock-entry-completed"
-                      >
-                        Completed {{ practiceTestCard.progressLabel }}
-                      </div>
-                      <div
-                        v-else
-                        class="mock-entry-progress-placeholder"
-                        aria-hidden="true"
-                      ></div>
                     </div>
                   </div>
                   <footer class="mock-entry-footer">
