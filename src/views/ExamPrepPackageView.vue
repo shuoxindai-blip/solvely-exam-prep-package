@@ -2305,72 +2305,19 @@ onBeforeUnmount(() => {
             >
               <div class="course-study-column">
                 <section
-                  class="course-content-region course-todays-plan"
-                  aria-labelledby="todaysPlanTitle"
-                >
-                  <header class="course-region-heading">
-                    <h2 id="todaysPlanTitle">Today's Plan</h2>
-                  </header>
-                  <section
-                    v-if="courseStartModule"
-                    class="course-kickoff"
-                    :aria-labelledby="`courseKickoffTitle-${courseStartTopic?.id}`"
-                  >
-                    <span class="course-kickoff-icon" aria-hidden="true">
-                      <svg class="icon"><use href="#i-target" /></svg>
-                    </span>
-                    <div class="course-kickoff-copy">
-                      <span class="course-kickoff-label">{{
-                        courseStartModule.label
-                      }}</span>
-                      <h2 :id="`courseKickoffTitle-${courseStartTopic?.id}`">
-                        {{ courseStartModule.title }}
-                      </h2>
-                      <div class="course-kickoff-meta">
-                        <span>{{ courseStartModule.domain }}</span>
-                        <span>{{ courseStartModule.detail }}</span>
-                      </div>
-                    </div>
-                    <button
-                      class="course-kickoff-action"
-                      type="button"
-                      @click="openCourseStartTopic"
-                    >
-                      <span>{{ courseStartModule.cta }}</span>
-                      <svg class="icon" aria-hidden="true">
-                        <use href="#i-chevron" />
-                      </svg>
-                    </button>
-                  </section>
-                  <section
-                    v-else
-                    class="course-kickoff course-kickoff-loading"
-                    aria-label="Loading recommended lesson"
-                    aria-busy="true"
-                  >
-                    <span class="course-kickoff-skeleton icon" />
-                    <div class="course-kickoff-copy">
-                      <span class="course-kickoff-skeleton label" />
-                      <span class="course-kickoff-skeleton title" />
-                      <span class="course-kickoff-skeleton meta" />
-                    </div>
-                    <span class="course-kickoff-skeleton action" />
-                  </section>
-                </section>
-                <section
                   class="study-breakdown course-content-region"
-                  aria-labelledby="topicsTitle"
+                  aria-labelledby="lessonsTitle"
                 >
                 <header
                   class="course-region-heading course-topics-heading"
                   aria-label="Filter lessons"
                 >
-                  <h2 id="topicsTitle">Topics</h2>
+                  <h2 id="lessonsTitle">Lessons</h2>
                   <div class="course-topic-filters">
                     <label class="course-topic-select">
                       <select
                         v-model="sectionFilter"
-                        aria-label="Filter topics by section"
+                        aria-label="Filter lessons by section"
                       >
                         <option value="Math">Section: Math</option>
                         <option value="Reading and Writing">
@@ -2384,7 +2331,7 @@ onBeforeUnmount(() => {
                     <label class="course-topic-select priority">
                       <select
                         v-model="priorityFilter"
-                        aria-label="Filter topics by priority"
+                        aria-label="Filter lessons by priority"
                       >
                         <option value="all">Priority: All</option>
                         <option value="core">Priority: Core</option>
