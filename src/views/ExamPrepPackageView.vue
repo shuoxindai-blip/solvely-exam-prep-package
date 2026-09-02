@@ -116,7 +116,6 @@ const demoControllerStyle = computed(() =>
 const isCourseStarted = computed(
   () => String(route.query.courseState || "") !== "not-started",
 );
-const courseProgressPercent = computed(() => (isCourseStarted.value ? 18 : 0));
 const lastActivityDetail = computed(() =>
   lastActivity.value.kind === "learning"
     ? `${lastActivity.value.sectionTitle} · ${lastActivity.value.resourceLabel} · ${lastActivity.value.progressPercent}% complete`
@@ -2217,30 +2216,7 @@ onBeforeUnmount(() => {
                 </div>
               </div>
               <aside
-                v-if="isCourseStarted"
-                class="course-progress-summary"
-                aria-label="Course progress"
-              >
-                <span class="course-progress-watermark" aria-hidden="true">{{
-                  courseProgressPercent
-                }}</span>
-                <div class="course-progress-value">
-                  <strong>{{ courseProgressPercent }}%</strong
-                  ><span>Course Progress</span>
-                </div>
-                <div
-                  class="course-progress-track"
-                  role="progressbar"
-                  aria-label="Course progress"
-                  aria-valuemin="0"
-                  aria-valuemax="100"
-                  :aria-valuenow="courseProgressPercent"
-                >
-                  <i :style="{ width: `${courseProgressPercent}%` }" />
-                </div>
-              </aside>
-              <aside
-                v-else
+                v-if="!isCourseStarted"
                 class="course-journey-start"
                 aria-label="Start your prep journey"
               >
