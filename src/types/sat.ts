@@ -53,7 +53,7 @@ export type SatManifest = {
   exam: string
   generatedFrom: string
   importanceModel: {
-    schemaVersion: 'SAT_TOPIC_IMPORTANCE_V1'
+    schemaVersion: string
     source: string
     sourceQuestionCount: number
     domainWeightContribution: number
@@ -64,12 +64,12 @@ export type SatManifest = {
     officialDomainWeights: Record<string, number>
   }
   questionInventory: {
-    schemaVersion: 'SAT_PRACTICE_INVENTORY_V1'
+    schemaVersion: string
     sourceQuestionCount: number
     mappedQuestionCount: number
     studyGuidePracticeQuestionCount: number
     standaloneQuizQuestionCount: number
-    overlapQuestionCount: 0
+    overlapQuestionCount: number
     selectionRule: string
   }
   totals: {

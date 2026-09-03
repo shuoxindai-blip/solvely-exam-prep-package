@@ -282,6 +282,8 @@ button:focus-visible,
 
 .exam-more-menu button:hover { background: #f1f3f5; }
 .exam-more-menu svg { width: 19px; height: 19px; flex: 0 0 19px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.7; }
+.exam-more-menu button b { margin-left: auto; color: #0b77eb; font-size: 12px; }
+.accessibility-tools-menu { right: 232px; width: 205px; }
 
 .exam-dialog-backdrop {
   position: fixed;
@@ -375,7 +377,60 @@ button:focus-visible,
 }
 
 .passage-inner.graph-question {
-  padding-top: 80px;
+  padding-top: 42px;
+}
+
+.act-passage-heading {
+  display: grid;
+  gap: 7px;
+  margin: 0 0 25px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid #dedede;
+}
+
+.act-passage-heading span {
+  color: #69707b;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+}
+
+.act-passage-heading h1 {
+  margin: 0;
+  color: #171717;
+  font: 700 24px/1.2 Arial, Helvetica, sans-serif;
+  letter-spacing: -.025em;
+}
+
+.act-stimulus-image {
+  display: block;
+  width: min(100%, 560px);
+  height: auto;
+  margin: 0 auto 26px;
+  border: 1px solid #e0e2e5;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.line-reader-overlay {
+  --line-y: 46%;
+  position: absolute;
+  z-index: 30;
+  top: calc(var(--line-y) - 23px);
+  right: -10px;
+  left: -10px;
+  height: 46px;
+  border: 1px solid rgba(12, 119, 234, .42);
+  border-radius: 4px;
+  pointer-events: none;
+  box-shadow: 0 -1000px 0 1000px rgba(255, 255, 255, .68), 0 1000px 0 1000px rgba(255, 255, 255, .68);
+}
+
+.line-reader-overlay span {
+  position: absolute;
+  inset: 50% 8px auto;
+  border-top: 1px dashed rgba(12, 119, 234, .28);
 }
 
 .passage-copy {
@@ -2189,6 +2244,7 @@ body.mock-exam-route.mock-exam-dark {
 }
 
 .exam-app.dark-mode .passage-copy,
+.exam-app.dark-mode .act-passage-heading h1,
 .exam-app.dark-mode .question-shell h1,
 .exam-app.dark-mode .math-question-shell h1,
 .exam-app.dark-mode .student-response-field label,
@@ -2197,6 +2253,10 @@ body.mock-exam-route.mock-exam-dark {
 }
 
 .exam-app.dark-mode .student-response-field small { color: var(--exam-muted-foreground); }
+.exam-app.dark-mode .act-passage-heading { border-color: var(--exam-border); }
+.exam-app.dark-mode .act-passage-heading span { color: var(--exam-muted-foreground); }
+.exam-app.dark-mode .act-stimulus-image { border-color: var(--exam-border); background: #171717; }
+.exam-app.dark-mode .line-reader-overlay { box-shadow: 0 -1000px 0 1000px rgba(13, 13, 13, .72), 0 1000px 0 1000px rgba(13, 13, 13, .72); }
 
 .exam-app.dark-mode .splitter {
   border-color: var(--exam-subtle-border);

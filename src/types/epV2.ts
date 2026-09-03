@@ -33,7 +33,7 @@ export type EpExamResultSection = {
   sectionId: string
   sectionTitle: string
   score: number
-  maximumScore: 800
+  maximumScore: number
   scoreRange: [number, number]
   averageScore: number
   percentile: number
@@ -47,7 +47,7 @@ export type EpExamResultSection = {
 export type EpExamResultModule = {
   sectionId: string
   sectionTitle: string
-  module: 'Module 1' | 'Module 2'
+  module: string
   route: string
   total: number
   correct: number
@@ -80,13 +80,13 @@ export type EpExamResultDifficulty = {
 }
 
 export type EpExamResult = {
-  schemaVersion: 'EP_REPORT_V1'
+  schemaVersion: string
   attemptId: string
   status: 'COMPLETED'
   completedAt: string
   durationSeconds: number
   totalScore: number
-  maximumScore: 1600
+  maximumScore: number
   scoreRange: [number, number]
   averageScore: number
   percentile: number
@@ -114,7 +114,7 @@ export type EpTopicGroup = {
 }
 
 export type EpTopicImportanceModel = {
-  schemaVersion: 'SAT_TOPIC_IMPORTANCE_V1'
+  schemaVersion: string
   source: string
   sourceQuestionCount: number
   domainWeightContribution: number
@@ -126,12 +126,12 @@ export type EpTopicImportanceModel = {
 }
 
 export type EpQuestionInventory = {
-  schemaVersion: 'SAT_PRACTICE_INVENTORY_V1'
+  schemaVersion: string
   sourceQuestionCount: number
   mappedQuestionCount: number
   studyGuidePracticeQuestionCount: number
   standaloneQuizQuestionCount: number
-  overlapQuestionCount: 0
+  overlapQuestionCount: number
   selectionRule: string
 }
 
@@ -263,7 +263,7 @@ export type EpExamQuestion = EpQuestion & {
   topicGroupId: number
   sectionId: string
   sectionTitle: string
-  module: 'Module 1' | 'Module 2'
+  module: string
   route: string
   contentDomain: string
   officialSkill: string

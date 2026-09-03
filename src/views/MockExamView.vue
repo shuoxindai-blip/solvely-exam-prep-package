@@ -6,9 +6,11 @@ import MathReferenceSheet from '../components/MathReferenceSheet.vue'
 import ScientificCalculator from '../components/ScientificCalculator.vue'
 import { loadEpExam } from '../data/satData'
 import { buildSatDiagnosticExam, SAT_DIAGNOSTIC_QUESTIONS_PER_SECTION } from '../data/satDiagnostic'
+import { loadActEpExam } from '../data/actData'
+import { buildActDiagnosticExam, ACT_DIAGNOSTIC_QUESTIONS_PER_SECTION } from '../data/actDiagnostic'
 import type { EpExam } from '../types/epV2'
 
-type SectionKind = 'reading' | 'math'
+type SectionKind = 'reading' | 'math' | 'english' | 'science'
 type ExamStage = 'exam' | 'review' | 'break' | 'complete' | 'results'
 type HighlightColor = 'yellow' | 'pink' | 'blue'
 type HighlightUnderline = 'solid' | 'dashed' | 'dotted' | 'none'
@@ -35,6 +37,9 @@ type ModuleDefinition = {
 type Question = {
   prompt: string
   passage: string
+  passageTitle?: string
+  passageType?: string
+  pictureUrl?: string
   options: string[]
   correctIndex: number
   answer: string
@@ -59,6 +64,13 @@ type SourceQuestion = {
   module: string
   questionNumber: number
   responseType: string
+  stimulusMaterial?: {
+    id?: string
+    title?: string
+    type?: string
+    body?: string
+    pictureUrl?: string
+  } | null
 }
 
 type SourceExam = { id: string; title: string; questions: SourceQuestion[] }
@@ -73,11 +85,28 @@ const diagnosticModules: ModuleDefinition[] = [
   { id: 'diagnostic-reading', sectionNumber: 1, moduleNumber: 1, section: 'reading', title: 'Reading and Writing', total: SAT_DIAGNOSTIC_QUESTIONS_PER_SECTION, duration: 0 },
   { id: 'diagnostic-math', sectionNumber: 2, moduleNumber: 1, section: 'math', title: 'Math', total: SAT_DIAGNOSTIC_QUESTIONS_PER_SECTION, duration: 0 },
 ]
+const actFullLengthModules: ModuleDefinition[] = [
+  { id: 'act-english', sectionNumber: 1, moduleNumber: 1, section: 'english', title: 'English', total: 50, duration: 35 * 60 },
+  { id: 'act-mathematics', sectionNumber: 2, moduleNumber: 1, section: 'math', title: 'Mathematics', total: 45, duration: 50 * 60 },
+  { id: 'act-reading', sectionNumber: 3, moduleNumber: 1, section: 'reading', title: 'Reading', total: 36, duration: 40 * 60 },
+  { id: 'act-science', sectionNumber: 4, moduleNumber: 1, section: 'science', title: 'Science', total: 40, duration: 40 * 60 },
+]
+const actDiagnosticModules: ModuleDefinition[] = [
+  { id: 'act-diagnostic-english', sectionNumber: 1, moduleNumber: 1, section: 'english', title: 'English', total: ACT_DIAGNOSTIC_QUESTIONS_PER_SECTION, duration: 0 },
+  { id: 'act-diagnostic-mathematics', sectionNumber: 2, moduleNumber: 1, section: 'math', title: 'Mathematics', total: ACT_DIAGNOSTIC_QUESTIONS_PER_SECTION, duration: 0 },
+  { id: 'act-diagnostic-reading', sectionNumber: 3, moduleNumber: 1, section: 'reading', title: 'Reading', total: ACT_DIAGNOSTIC_QUESTIONS_PER_SECTION, duration: 0 },
+  { id: 'act-diagnostic-science', sectionNumber: 4, moduleNumber: 1, section: 'science', title: 'Science', total: ACT_DIAGNOSTIC_QUESTIONS_PER_SECTION, duration: 0 },
+]
 
 const route = useRoute()
 const router = useRouter()
 const isDiagnostic = computed(() => String(route.query.mode || '') === 'diagnostic')
-const modules = computed(() => isDiagnostic.value ? diagnosticModules : fullLengthModules)
+const isActExam = computed(() => String(route.query.exam || '').toLowerCase() === 'act')
+const examName = computed(() => isActExam.value ? 'ACT' : 'SAT')
+const packageHash = computed(() => isActExam.value ? '#course-1' : '#course-0')
+const modules = computed(() => isActExam.value
+  ? (isDiagnostic.value ? actDiagnosticModules : actFullLengthModules)
+  : (isDiagnostic.value ? diagnosticModules : fullLengthModules))
 const examId = computed(() => String(route.params.examId) === '2' ? 2 : 1)
 const activeEpExam = ref<EpExam | null>(null)
 const examLoadError = ref('')
@@ -87,8 +116,8 @@ function adaptEpExam(exam: EpExam, index: number, diagnostic = false): SourceExa
   return {
     id: String(exam._id),
     title: diagnostic
-      ? 'Free SAT Diagnostic Test'
-      : `Digital SAT Full-Length Practice Test ${index + 1}`,
+      ? `Free ${examName.value} Diagnostic Test`
+      : isActExam.value ? 'ACT Full-Length Practice Test' : `Digital SAT Full-Length Practice Test ${index + 1}`,
     questions: exam.questions.map((question) => {
       const module = question.module === 'Module 2' ? 'M2' : 'M1'
       const moduleKey = `${question.sectionTitle}:${module}`
@@ -109,6 +138,7 @@ function adaptEpExam(exam: EpExam, index: number, diagnostic = false): SourceExa
         module,
         questionNumber,
         responseType: question.responseType,
+        stimulusMaterial: question.stimulusMaterial as SourceQuestion['stimulusMaterial'],
       }
     }),
   }
@@ -117,33 +147,51 @@ function adaptEpExam(exam: EpExam, index: number, diagnostic = false): SourceExa
 const activeExam = computed<SourceExam>(() => activeEpExam.value
   ? adaptEpExam(
       isDiagnostic.value
-        ? buildSatDiagnosticExam(activeEpExam.value)
+        ? (isActExam.value ? buildActDiagnosticExam(activeEpExam.value) : buildSatDiagnosticExam(activeEpExam.value))
         : activeEpExam.value,
       examId.value - 1,
       isDiagnostic.value,
     )
-  : { id: '', title: 'Loading Digital SAT Mock Exam…', questions: [] })
+  : { id: '', title: `Loading ${examName.value} Practice Test…`, questions: [] })
 
 async function loadActiveExam() {
   examLoadError.value = ''
   activeEpExam.value = null
   try {
-    activeEpExam.value = await loadEpExam(examId.value)
+    activeEpExam.value = await (isActExam.value
+      ? loadActEpExam(isDiagnostic.value ? 2 : examId.value)
+      : loadEpExam(examId.value))
   } catch (error) {
     examLoadError.value = error instanceof Error ? error.message : 'Unable to load the mock exam.'
   }
 }
 
-watch(examId, () => { void loadActiveExam() })
+watch([examId, isActExam, isDiagnostic], () => { void loadActiveExam() })
 
 function sourceQuestionFor(module: ModuleDefinition, number: number) {
-  const section = module.section === 'reading' ? 'Reading and Writing' : 'Math'
+  const section = isActExam.value
+    ? module.title
+    : module.section === 'reading' ? 'Reading and Writing' : 'Math'
   const moduleCode = module.moduleNumber === 1 ? 'M1' : 'M2'
-  return activeExam.value.questions.find((question) => question.section === section && question.module === moduleCode && question.questionNumber === number)
+  return activeExam.value.questions.find((question) => question.section === section && (isActExam.value || question.module === moduleCode) && question.questionNumber === number)
 }
 
 function displayQuestion(source: SourceQuestion | undefined): Question {
   if (!source) return { prompt: 'Question unavailable', passage: '', options: [], correctIndex: -1, answer: '', explanation: '', difficulty: '', domain: '' }
+  if (isActExam.value) {
+    return {
+      ...source,
+      passage: (source.stimulusMaterial?.body ?? '')
+        .replace(/^(ENGLISH|READING|SCIENCE) PASSAGE[^\n]*\n/i, '')
+        .replace(/\[\[([^\]]+)\]\]/g, '$1'),
+      passageTitle: source.stimulusMaterial?.title,
+      passageType: source.stimulusMaterial?.type,
+      pictureUrl: source.stimulusMaterial?.pictureUrl,
+      prompt: source.question,
+      graph: Boolean(source.stimulusMaterial?.pictureUrl),
+      diagram: false,
+    }
+  }
   if (source.section === 'Reading and Writing') {
     const markers = ['Which choice', 'According to', 'Based on the', 'What is the']
     const splitAt = Math.max(...markers.map((marker) => source.question.lastIndexOf(marker)))
@@ -168,6 +216,9 @@ const calculatorOpen = ref(false)
 const calculatorPoppedOut = ref(false)
 const referenceOpen = ref(false)
 const navigatorOpen = ref(false)
+const accessibilityToolsOpen = ref(false)
+const lineReaderEnabled = ref(false)
+const lineReaderY = ref(46)
 const moreOpen = ref(false)
 const shortcutsOpen = ref(false)
 const reportOpen = ref(false)
@@ -183,7 +234,7 @@ const feedbackText = ref('')
 const feedbackSubmitted = ref(false)
 const timeRemaining = ref(modules.value[0].duration)
 const diagnosticElapsedSeconds = ref(0)
-const breakRemaining = ref(9 * 60 + 52)
+const breakRemaining = ref(isActExam.value ? 15 * 60 : 10 * 60)
 const questionTimeSeconds = reactive<Record<string, number>>({})
 const leftWidth = ref(47.25)
 const passageScroller = ref<HTMLElement | null>(null)
@@ -204,16 +255,25 @@ const currentModule = computed(() => modules.value[moduleIndex.value])
 const currentSourceQuestion = computed(() => sourceQuestionFor(currentModule.value, currentNumber.value))
 const currentQuestion = computed<Question>(() => displayQuestion(currentSourceQuestion.value))
 const questionKey = computed(() => `${currentModule.value.id}-${currentNumber.value}`)
+const usesPassageLayout = computed(() => currentModule.value.section !== 'math')
+const activeSectionKinds = computed<SectionKind[]>(() => isActExam.value
+  ? ['english', 'math', 'reading', 'science']
+  : ['reading', 'math'])
+function sectionName(section: SectionKind) {
+  if (section === 'english') return 'English'
+  if (section === 'reading') return isActExam.value ? 'Reading' : 'Reading and Writing'
+  if (section === 'science') return 'Science'
+  return isActExam.value ? 'Mathematics' : 'Math'
+}
 const sectionLabel = computed(() =>
-  isDiagnostic.value
+  isActExam.value || isDiagnostic.value
     ? `Section ${currentModule.value.sectionNumber}`
     : `Section ${currentModule.value.sectionNumber}, Module ${currentModule.value.moduleNumber}`,
 )
 const primaryActionLabel = computed(() => {
-  if (stage.value !== 'review' || !isDiagnostic.value) return 'Next'
-  return moduleIndex.value === modules.value.length - 1
-    ? 'Submit Diagnostic'
-    : 'Next Section'
+  if (stage.value !== 'review') return 'Next'
+  if (moduleIndex.value === modules.value.length - 1) return isDiagnostic.value ? 'Submit Diagnostic' : 'Finish Test'
+  return isActExam.value || isDiagnostic.value ? 'Next Section' : 'Next'
 })
 const timeLabel = computed(() => formatTime(timeRemaining.value))
 const displayedTimerLabel = computed(() => isDiagnostic.value ? formatTime(diagnosticElapsedSeconds.value) : timeLabel.value)
@@ -247,7 +307,7 @@ function isCorrectFor(module: ModuleDefinition, number: number) {
 }
 
 function topicFor(module: ModuleDefinition, number: number) {
-  return sourceQuestionFor(module, number)?.domain ?? (module.section === 'reading' ? 'Reading and Writing' : 'Math')
+  return sourceQuestionFor(module, number)?.domain ?? sectionName(module.section)
 }
 
 function median(values: number[]) {
@@ -288,7 +348,7 @@ const moduleStats = computed(() =>
 )
 
 const subjectStats = computed(() =>
-  (['reading', 'math'] as SectionKind[]).map((section) => {
+  activeSectionKinds.value.map((section) => {
     const stats = moduleStats.value.filter((module) => module.section === section)
     const total = stats.reduce((sum, module) => sum + module.total, 0)
     const correct = stats.reduce((sum, module) => sum + module.correct, 0)
@@ -297,7 +357,7 @@ const subjectStats = computed(() =>
     const seconds = stats.reduce((sum, module) => sum + module.averageSeconds * module.attempted, 0)
     return {
       section,
-      label: section === 'reading' ? 'Reading and Writing' : 'Math',
+      label: sectionName(section),
       total,
       correct,
       incorrect,
@@ -305,7 +365,9 @@ const subjectStats = computed(() =>
       attempted,
       accuracy: attempted ? Math.round((correct / attempted) * 100) : 0,
       averageSeconds: attempted ? Math.round(seconds / attempted) : 0,
-      score: 200 + Math.round(((correct / total) * 600) / 10) * 10,
+      score: isActExam.value
+        ? Math.max(1, Math.min(36, Math.round(1 + (correct / Math.max(1, total)) * 35)))
+        : 200 + Math.round(((correct / Math.max(1, total)) * 600) / 10) * 10,
     }
   }),
 )
@@ -321,7 +383,9 @@ const totalStats = computed(() => {
     incorrect,
     unattempted: total - attempted,
     accuracy: attempted ? Math.round((correct / attempted) * 100) : 0,
-    score: subjectStats.value.reduce((sum, subject) => sum + subject.score, 0),
+    score: isActExam.value
+      ? Math.round(subjectStats.value.filter((subject) => ['english', 'math', 'reading'].includes(subject.section)).reduce((sum, subject) => sum + subject.score, 0) / 3)
+      : subjectStats.value.reduce((sum, subject) => sum + subject.score, 0),
   }
 })
 
@@ -352,7 +416,7 @@ const weakestTopics = computed(() =>
 )
 
 const difficultyStats = computed(() =>
-  (['reading', 'math'] as SectionKind[]).map((section) => {
+  activeSectionKinds.value.map((section) => {
     const buckets = ['Easy', 'Medium', 'Hard'].map((label) => ({ label, seconds: [] as number[] }))
     modules.value
       .filter((module) => module.section === section)
@@ -364,7 +428,7 @@ const difficultyStats = computed(() =>
       })
     return {
       section,
-      label: section === 'reading' ? 'English' : 'Math',
+      label: sectionName(section),
       values: buckets.map((bucket) => ({ ...bucket, averageSeconds: bucket.seconds.length ? Math.round(bucket.seconds.reduce((sum, value) => sum + value, 0) / bucket.seconds.length) : 0 })),
     }
   }),
@@ -482,7 +546,8 @@ function restartExam() {
   timeRemaining.value = modules.value[0].duration
   diagnosticElapsedSeconds.value = 0
   timerVisible.value = !isDiagnostic.value
-  breakRemaining.value = 9 * 60 + 52
+  breakRemaining.value = isActExam.value ? 15 * 60 : 10 * 60
+  lineReaderEnabled.value = false
   stage.value = 'exam'
   closeTransientTools()
 }
@@ -492,6 +557,7 @@ function openResults() {
 }
 
 function openPackageScoreReport() {
+  const examQuery = isActExam.value ? { exam: 'act' } : {}
   void router.push({
     name: 'package',
     query: isDiagnostic.value
@@ -499,9 +565,10 @@ function openPackageScoreReport() {
           tab: 'study',
           reportSource: 'diagnostic',
           diagnosticState: 'scoring',
+          ...examQuery,
         }
-      : { tab: 'study', practiceState: 'scoring' },
-    hash: '#course-0',
+      : { tab: 'study', practiceState: 'scoring', ...examQuery },
+    hash: packageHash.value,
   })
 }
 
@@ -511,6 +578,7 @@ function backToCompletion() {
 }
 
 function exitExam() {
+  const examQuery = isActExam.value ? { exam: 'act' } : {}
   void router.push({
     name: 'package',
     query: isDiagnostic.value
@@ -518,9 +586,10 @@ function exitExam() {
           tab: 'study',
           reportSource: 'diagnostic',
           diagnosticState: 'in-progress',
+          ...examQuery,
         }
-      : { tab: 'study' },
-    hash: '#course-0',
+      : { tab: 'study', ...examQuery },
+    hash: packageHash.value,
   })
 }
 
@@ -561,8 +630,26 @@ function toggleReference() {
   moreOpen.value = false
 }
 
+function toggleAccessibilityTools() {
+  accessibilityToolsOpen.value = !accessibilityToolsOpen.value
+  moreOpen.value = false
+}
+
+function toggleLineReader() {
+  lineReaderEnabled.value = !lineReaderEnabled.value
+  accessibilityToolsOpen.value = false
+}
+
+function moveLineReader(event: PointerEvent) {
+  if (!lineReaderEnabled.value) return
+  const panel = event.currentTarget as HTMLElement
+  const rect = panel.getBoundingClientRect()
+  lineReaderY.value = Math.max(8, Math.min(92, ((event.clientY - rect.top) / rect.height) * 100))
+}
+
 function toggleMore() {
   moreOpen.value = !moreOpen.value
+  accessibilityToolsOpen.value = false
 }
 
 async function toggleFullscreen() {
@@ -597,6 +684,7 @@ function closeTransientTools() {
   calculatorPoppedOut.value = false
   referenceOpen.value = false
   moreOpen.value = false
+  accessibilityToolsOpen.value = false
   highlighterEnabled.value = false
 }
 
@@ -633,6 +721,7 @@ function onKeydown(event: KeyboardEvent) {
     moreOpen.value = false
     shortcutsOpen.value = false
     reportOpen.value = false
+    accessibilityToolsOpen.value = false
     return
   }
   if (event.key === '?' && !target?.closest('input, select, textarea, [contenteditable]')) {
@@ -714,11 +803,11 @@ onBeforeUnmount(() => {
 
 <template>
   <main v-if="examLoadError" class="completion-page">
-    <section class="completion-card"><h1>Unable to load this mock exam</h1><p>{{ examLoadError }}</p><button class="view-results-button" type="button" @click="exitExam">Back to SAT package</button></section>
+    <section class="completion-card"><h1>Unable to load this practice test</h1><p>{{ examLoadError }}</p><button class="view-results-button" type="button" @click="exitExam">Back to {{ examName }} package</button></section>
   </main>
 
   <main v-else-if="!activeEpExam" class="completion-page">
-    <section class="completion-card"><p>Loading {{ isDiagnostic ? 'Free SAT Diagnostic Test' : 'Digital SAT Mock Exam ' + examId }}…</p></section>
+    <section class="completion-card"><p>Loading {{ isDiagnostic ? `Free ${examName} Diagnostic Test` : `${examName} Full-Length Practice Test` }}…</p></section>
   </main>
 
   <main v-else-if="stage === 'break'" class="break-screen" :class="{ 'dark-mode': darkMode }">
@@ -732,7 +821,7 @@ onBeforeUnmount(() => {
             width="34"
             height="34"
           />
-          Solvely SAT
+          Solvely {{ examName }}
         </div>
         <div class="break-timer-card"><span>Break Time:</span><strong>{{ breakTimeLabel }}</strong></div>
         <button class="resume-button" type="button" @click="resumeAfterBreak">Resume Testing</button>
@@ -750,7 +839,7 @@ onBeforeUnmount(() => {
 
   <main v-else-if="stage === 'complete'" class="completion-page">
     <section class="completion-card">
-      <button class="completion-back" type="button" @click="exitExam"><span aria-hidden="true">‹</span> Back to SAT package</button>
+      <button class="completion-back" type="button" @click="exitExam"><span aria-hidden="true">‹</span> Back to {{ examName }} package</button>
       <div class="completion-mark" aria-hidden="true">✓</div>
       <h1>Congratulations!</h1>
       <p>You've completed</p>
@@ -759,7 +848,7 @@ onBeforeUnmount(() => {
 
       <form class="feedback-card" @submit.prevent="submitFeedback">
         <fieldset>
-          <legend>How likely are you to recommend this SAT mock exam to a friend? <span aria-hidden="true">*</span></legend>
+          <legend>How likely are you to recommend this {{ examName }} practice test to a friend? <span aria-hidden="true">*</span></legend>
           <div class="rating-row" role="radiogroup" aria-label="Recommendation rating">
             <button v-for="rating in 11" :key="`recommend-${rating - 1}`" type="button" :class="{ selected: recommendationRating === rating - 1 }" :aria-pressed="recommendationRating === rating - 1" @click="recommendationRating = rating - 1">{{ rating - 1 }}</button>
           </div>
@@ -785,7 +874,7 @@ onBeforeUnmount(() => {
 
   <main v-else-if="stage === 'results'" class="results-page">
     <article class="results-shell">
-      <button class="report-back" type="button" @click="exitExam"><span aria-hidden="true">‹</span> Back to SAT package</button>
+      <button class="report-back" type="button" @click="exitExam"><span aria-hidden="true">‹</span> Back to {{ examName }} package</button>
 
       <header class="report-title-row">
         <div class="report-title-copy">
@@ -797,7 +886,7 @@ onBeforeUnmount(() => {
 
       <section class="report-disclaimer">
         <div class="report-brand-mark" aria-hidden="true">S</div>
-        <div><h2>Practice score disclaimer</h2><p>This mock exam is calibrated to the current Digital SAT structure. Its score is an estimated practice result and is not an official College Board score.</p></div>
+        <div><h2>Practice score disclaimer</h2><p>{{ isActExam ? 'This practice test follows the current ACT structure with Science. Its score is an estimate and is not an official ACT score.' : 'This practice test is calibrated to the current Digital SAT structure. Its score is an estimate and is not an official College Board score.' }}</p></div>
       </section>
 
       <section class="report-section" aria-labelledby="overview-title">
@@ -870,6 +959,10 @@ onBeforeUnmount(() => {
       </div>
       <div class="header-tools">
         <button class="tool-button" :class="{ active: highlighterEnabled }" type="button" :aria-pressed="highlighterEnabled" :aria-label="highlighterEnabled ? 'Turn off highlight mode' : 'Turn on highlight mode'" @click="toggleHighlightMode"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 16 9.8-9.8a2 2 0 0 1 2.8 0l.2.2a2 2 0 0 1 0 2.8L8 19H5v-3Z" /><path d="M13.5 7.5 16.5 10.5M4 21h16" /></svg><span>Highlight</span></button>
+        <button v-if="isActExam && usesPassageLayout" class="tool-button" :class="{ active: accessibilityToolsOpen || lineReaderEnabled }" type="button" aria-haspopup="menu" :aria-expanded="accessibilityToolsOpen" @click="toggleAccessibilityTools"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10" /><circle cx="18" cy="17" r="2" /></svg><span>Tools</span></button>
+        <div v-if="accessibilityToolsOpen" class="exam-more-menu accessibility-tools-menu" role="menu" aria-label="Reading tools">
+          <button type="button" role="menuitemcheckbox" :aria-checked="lineReaderEnabled" @click="toggleLineReader"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 10h16M4 14h16M4 18h16" /></svg><span>Line Reader</span><b>{{ lineReaderEnabled ? 'On' : 'Off' }}</b></button>
+        </div>
         <button v-if="currentModule.section === 'math'" class="tool-button" :class="{ active: calculatorOpen }" type="button" :aria-pressed="calculatorOpen" @click="toggleCalculator"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="3" width="12" height="18" rx="2" /><path d="M8.5 6h7v3h-7zM9 13h.01M12 13h.01M15 13h.01M9 17h.01M12 17h.01M15 17h.01" /></svg><span>Calculator</span></button>
         <button v-if="currentModule.section === 'math'" class="tool-button" :class="{ active: referenceOpen }" type="button" :aria-pressed="referenceOpen" @click="toggleReference"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h8l3 3v15H7zM15 3v4h4M10 11h5M10 15h5" /></svg><span>Reference</span></button>
         <button class="tool-button" :class="{ active: moreOpen }" type="button" aria-haspopup="menu" :aria-expanded="moreOpen" @click="toggleMore"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.2" /><circle cx="12" cy="12" r="1.2" /><circle cx="19" cy="12" r="1.2" /></svg><span>More</span></button>
@@ -882,10 +975,15 @@ onBeforeUnmount(() => {
       </div>
     </header>
 
-    <template v-if="stage === 'exam' && currentModule.section === 'reading'">
+    <template v-if="stage === 'exam' && usesPassageLayout">
       <section class="exam-workspace">
-        <article ref="passageScroller" class="passage-panel" aria-label="Reading passage">
+        <article ref="passageScroller" class="passage-panel" :aria-label="`${currentModule.title} passage`" @pointermove="moveLineReader">
           <div class="passage-inner" :class="{ 'graph-question': currentQuestion.graph }">
+            <header v-if="isActExam && (currentQuestion.passageTitle || currentQuestion.passageType)" class="act-passage-heading">
+              <span>{{ currentQuestion.passageType }}</span>
+              <h1>{{ currentQuestion.passageTitle }}</h1>
+            </header>
+            <img v-if="currentQuestion.pictureUrl" class="act-stimulus-image" :src="currentQuestion.pictureUrl" :alt="`${currentQuestion.passageTitle || currentModule.title} figure`" />
             <figure v-if="currentQuestion.graph" class="graph-figure" aria-label="Coffee shop density and laptop usage graph">
               <figcaption>Coffee Shop Density and<br />Average Laptop Usage Time</figcaption>
               <svg class="graph" viewBox="0 0 500 420" role="img" aria-labelledby="graph-title">
@@ -895,6 +993,7 @@ onBeforeUnmount(() => {
               </svg>
             </figure>
             <HighlightablePassage :key="questionKey" :text="currentQuestion.passage" :enabled="highlighterEnabled" :model-value="highlights[questionKey] ?? []" :extra-class="currentQuestion.graph ? 'graph-copy' : ''" @update:model-value="updateHighlights" />
+            <div v-if="lineReaderEnabled" class="line-reader-overlay" :style="{ '--line-y': `${lineReaderY}%` }" aria-hidden="true"><span /></div>
           </div>
         </article>
         <div class="splitter" role="separator" aria-orientation="vertical" :aria-valuenow="Math.round(leftWidth)" tabindex="0" @pointerdown="beginResize"><span><i /><i /><i /></span></div>
@@ -924,7 +1023,8 @@ onBeforeUnmount(() => {
 
     <section v-else-if="stage === 'review'" class="review-page"><div class="review-shell">
       <h1>Check Your Work</h1>
-      <p v-if="isDiagnostic">Review the 10 questions in this section. You can return to any question before moving on.</p>
+      <p v-if="isDiagnostic">Review the {{ currentModule.total }} questions in this section. You can return to any question before moving on.</p>
+      <p v-else-if="isActExam">On test day, you won't be able to return to this section after moving on.<br />For this practice test, click <strong>Next Section</strong> when you're ready.</p>
       <p v-else>On test day, you won't be able to move on to the next module until time expires.<br />For these practice questions, you can click <strong>Next</strong> when you're ready to move on.</p>
       <section class="review-card" :aria-label="`${sectionLabel}: ${currentModule.title}`"><div class="review-card-header"><h2>{{ sectionLabel }}: {{ currentModule.title }}</h2><div class="review-legend"><span><i class="unanswered-key" />Unanswered</span><span><i class="review-key" />For Review</span></div></div><div class="review-grid"><button v-for="number in currentModule.total" :key="number" type="button" :class="{ answered: answeredNumbers.has(number), current: currentNumber === number, review: review.has(keyFor(number)) }" @click="stage = 'exam'; goToQuestion(number)">{{ number }}</button></div></section>
     </div></section>

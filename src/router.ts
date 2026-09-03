@@ -20,10 +20,11 @@ const router = createRouter({
 })
 
 router.afterEach((to) => {
-  const labels: Record<string, string> = { 'mock-exam': 'SAT Mock Exam', 'study-guide': 'SAT Study Guide', flashcards: 'SAT Flashcards', quiz: 'SAT Quiz' }
+  const exam = String(to.query.exam || '').toLowerCase() === 'act' ? 'ACT' : 'SAT'
+  const labels: Record<string, string> = { 'mock-exam': `${exam} Practice Test`, 'study-guide': `${exam} Study Guide`, flashcards: `${exam} Flashcards`, quiz: `${exam} Quiz` }
   const label = to.name === 'mock-exam' && to.query.mode === 'diagnostic'
-    ? 'SAT Diagnostic Test'
-    : labels[String(to.name)] || 'SAT Exam Prep'
+    ? `${exam} Diagnostic Test`
+    : labels[String(to.name)] || `${exam} Exam Prep`
   document.title = `${label} — Solvely`
 })
 

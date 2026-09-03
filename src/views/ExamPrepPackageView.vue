@@ -7,6 +7,9 @@ import { useProAccess } from "../composables/useProAccess";
 import { loadEpExam, loadSatManifest } from "../data/satData";
 import { buildSatDiagnosticExam } from "../data/satDiagnostic";
 import { buildReviewQuestions, buildSatReport } from "../data/satReport";
+import { loadActEpExam, loadActManifest } from "../data/actData";
+import { buildActDiagnosticExam } from "../data/actDiagnostic";
+import { buildActReport } from "../data/actReport";
 import { loadImprovePracticeProgress } from "../data/improvePracticeProgress";
 import type { SatReportReviewQuestion } from "../data/satReport";
 import type { EpExam } from "../types/epV2";
@@ -24,7 +27,7 @@ type DiagnosticTestState =
 type PracticeTestState = "not-started" | "in-progress" | "scoring" | "results";
 type ResultsAccessState = "locked" | "unlocked";
 type ReviewFilter = "ALL" | "INCORRECT" | "CORRECT" | "OMITTED";
-type ReviewSectionFilter = "ALL" | "reading-writing" | "math";
+type ReviewSectionFilter = string;
 type Course = {
   family: string;
   label: string;
@@ -57,6 +60,10 @@ type LastActivity =
 
 const route = useRoute();
 const router = useRouter();
+const isActPackage = computed(() => String(route.query.exam || "").toLowerCase() === "act" || route.hash === "#course-1");
+const activeCourseHash = computed(() => isActPackage.value ? "#course-1" : "#course-0");
+const examName = computed(() => isActPackage.value ? "ACT" : "SAT");
+const packageTitle = computed(() => `${examName.value} Prep 2026`);
 const { accessState, isProMember, setProAccess } = useProAccess();
 const manifest = ref<SatManifest | null>(null);
 const loadError = ref("");
@@ -64,16 +71,17 @@ const sidebarCollapsed = ref(false);
 const activeTab = ref<CourseTab>("study");
 const searchQuery = ref("");
 const familyFilter = ref("all");
-const sectionFilter = ref<"Math" | "Reading and Writing">("Math");
+const sectionFilter = ref<string>("Math");
 const priorityFilter = ref("all");
 const collapsedSections = ref(new Set<string>());
 const resultExam = ref<EpExam | null>(null);
+const diagnosticSourceExam = ref<EpExam | null>(null);
 const resultLoadError = ref("");
 const resultView = ref<ResultView>("full");
 const reviewFilter = ref<ReviewFilter>("ALL");
 const reviewSectionFilter = ref<ReviewSectionFilter>("ALL");
 const selectedReviewQuestionId = ref<number | null>(null);
-const improveSection = ref<"math" | "reading-writing">("math");
+const improveSection = ref<string>("math");
 const improvePriority = ref<"ALL" | SatTopic["priority"]>("ALL");
 const improvePracticeProgress = ref<Record<string, number>>({});
 const showImproveImportanceNote = ref(true);
@@ -82,7 +90,7 @@ const diagnosticTestState = ref<DiagnosticTestState>("not-started");
 const practiceTestState = ref<PracticeTestState>("in-progress");
 const resultsAccessState = ref<ResultsAccessState>("locked");
 const paywallOpen = ref(false);
-const paywallContext = ref("the complete SAT Prep 2026 package");
+const paywallContext = ref("the complete exam prep package");
 let pendingCommercialAction: (() => void) | null = null;
 let practiceScoringTimer: number | null = null;
 let diagnosticScoringTimer: number | null = null;
@@ -103,7 +111,7 @@ const lastActivity = ref<LastActivity>({
   progressPercent: 62,
   topicId: "sat_math_advanced_equivalent_expressions_01",
 });
-const isCourseOpen = computed(() => route.hash === "#course-0");
+const isCourseOpen = computed(() => route.hash === "#course-0" || route.hash === "#course-1");
 const demoControllerStyle = computed(() =>
   demoControllerPosition.value
     ? {
@@ -126,17 +134,22 @@ const lastActivityCta = computed(() =>
   lastActivity.value.kind === "learning" ? "Continue learning" : "Resume exam",
 );
 
-const practiceResultReport = computed(() =>
-  resultExam.value ? buildSatReport(resultExam.value) : null,
-);
+const practiceResultReport = computed(() => resultExam.value
+  ? (isActPackage.value ? buildActReport(resultExam.value) : buildSatReport(resultExam.value))
+  : null);
 const diagnosticExam = computed<EpExam | null>(() => {
-  const exam = resultExam.value;
+  const exam = isActPackage.value ? diagnosticSourceExam.value : resultExam.value;
   if (!exam) return null;
-  return buildSatDiagnosticExam(exam);
+  return isActPackage.value ? buildActDiagnosticExam(exam) : buildSatDiagnosticExam(exam);
 });
 const diagnosticResultReport = computed(() => {
   if (!diagnosticExam.value) return null;
-  const report = buildSatReport(diagnosticExam.value);
+  const report = isActPackage.value ? buildActReport(diagnosticExam.value) : buildSatReport(diagnosticExam.value);
+  if (isActPackage.value) return {
+    ...report,
+    attemptId: "act-diagnostic-anna-2026-09-03",
+    overview: "Your diagnostic gives you a fast starting estimate across English, Mathematics, Reading, and Science. Use the full-length test for a more complete picture of your pacing and endurance.",
+  };
   const sections = report.sections.map((section) => {
     const score = Math.round((200 + section.accuracy * 6) / 10) * 10;
     return {
@@ -172,6 +185,15 @@ const resultReport = computed(() =>
     ? diagnosticResultReport.value
     : practiceResultReport.value,
 );
+const actCompositeCards = computed(() => {
+  if (!isActPackage.value || !resultReport.value) return [];
+  const score = (id: string) => resultReport.value?.sections.find((section) => section.sectionId === id)?.score ?? 0;
+  return [
+    { id: "stem", label: "STEM Composite", detail: "Average of Mathematics and Science", value: Math.round((score("mathematics") + score("science")) / 2) },
+    { id: "ela", label: "ELA Composite", detail: "English and Reading performance", value: Math.round((score("english") + score("reading")) / 2) },
+    { id: "writing", label: "Writing", detail: "Optional section · Not tested", value: 0, muted: true },
+  ];
+});
 const practiceTestQuestionCount = computed(
   () => resultExam.value?.questions.length ?? resultExam.value?.totalCount ?? 0,
 );
@@ -187,7 +209,7 @@ const practiceTestDurationMinutes = computed(() => {
   const sectionIds = new Set(
     (resultExam.value?.questions ?? []).map((question) => question.sectionId),
   );
-  return (
+  return isActPackage.value ? 165 : (
     (sectionIds.has("reading-writing") ? 64 : 0) +
     (sectionIds.has("math") ? 70 : 0)
   );
@@ -301,7 +323,7 @@ const resultsLockDescription = computed(() => {
     if (resultSource.value === "diagnostic")
       return diagnosticTestState.value === "scoring"
         ? "Your score estimate and free question review will appear here automatically in a few seconds."
-        : "Complete 20 untimed questions to generate your score estimate and free question review.";
+        : `Complete ${isActPackage.value ? 20 : 20} untimed questions to generate your score estimate and free question review.`;
     return practiceTestState.value === "scoring"
       ? "Your score analysis, question review, and targeted practice will appear here automatically."
       : "Complete the test to generate your score analysis, question review, and targeted practice.";
@@ -322,15 +344,18 @@ const diagnosticTestCard = computed(() => {
   if (diagnosticTestState.value === "results")
     return {
       stateLabel: "Results ready",
-      description:
-        "Your predicted SAT score and free answer review are ready. This estimate does not replace the full-length test.",
-      metrics: [
+      description: `Your predicted ${examName.value} score and free answer review are ready. This estimate does not replace the full-length test.`,
+      metrics: isActPackage.value ? [
+        { value: String(report?.totalScore ?? 25), label: "predicted composite" },
+        { value: String(report?.sections.find((section) => section.sectionId === "science")?.score ?? 25), label: "Science" },
+        { value: String(questionCount), label: "questions" },
+      ] : [
         { value: String(report?.totalScore ?? 1280), label: "predicted total" },
         { value: String(readingWritingScore), label: "Reading & Writing" },
         { value: String(mathScore), label: "Math" },
       ],
-      statusValue: String(report?.totalScore ?? 1280),
-      statusTotal: "/1600",
+      statusValue: String(report?.totalScore ?? (isActPackage.value ? 25 : 1280)),
+      statusTotal: isActPackage.value ? "/36" : "/1600",
       statusUnit: "Score",
       statusMeta: "Results ready",
       cta: "View Free Results",
@@ -340,11 +365,11 @@ const diagnosticTestCard = computed(() => {
     return {
       stateLabel: "Scoring",
       description:
-        "Your answers were submitted. We are calculating your total and section score predictions; results are usually ready in a few seconds.",
+        "Your answers were submitted. We are calculating your composite and section score predictions; results are usually ready in a few seconds.",
       metrics: [
         { value: String(questionCount), label: "questions" },
         { value: "Untimed", label: "" },
-        { value: "2", label: "sections" },
+        { value: isActPackage.value ? "4" : "2", label: "sections" },
       ],
       statusValue: String(questionCount),
       statusTotal: `/${questionCount}`,
@@ -357,11 +382,11 @@ const diagnosticTestCard = computed(() => {
     return {
       stateLabel: "In progress",
       description:
-        "Continue your quick SAT score and skill check. Your answers are saved automatically.",
+        `Continue your quick ${examName.value} score and skill check. Your answers are saved automatically.`,
       metrics: [
         { value: String(questionCount), label: "questions" },
         { value: "Untimed", label: "" },
-        { value: "2", label: "sections" },
+        { value: isActPackage.value ? "4" : "2", label: "sections" },
       ],
       statusValue: "4",
       statusTotal: `/${questionCount}`,
@@ -373,11 +398,11 @@ const diagnosticTestCard = computed(() => {
   return {
     stateLabel: "Free",
     description:
-      "Get an instant score estimate and skill breakdown to see where you can gain points fast.",
+      `Get an instant ${examName.value} score estimate and skill breakdown across ${isActPackage.value ? "English, Math, Reading, and Science" : "Reading & Writing and Math"}.`,
     metrics: [
       { value: String(questionCount), label: "questions" },
       { value: "Untimed", label: "" },
-      { value: "2", label: "sections" },
+      { value: isActPackage.value ? "4" : "2", label: "sections" },
     ],
     statusValue: "—",
     statusTotal: "",
@@ -404,11 +429,11 @@ const practiceTestCard = computed(() => {
     return {
       stateLabel: "Pro",
       description:
-        "Take a realistic full-length Digital SAT with official timing and module structure.",
+        `Take a realistic full-length ${isActPackage.value ? "ACT with Science" : "Digital SAT"} with official timing and section structure.`,
       metrics: [
         { value: String(questionCount), label: "questions" },
         { value: String(durationMinutes), label: "min" },
-        { value: String(moduleCount), label: "modules" },
+        { value: String(moduleCount), label: isActPackage.value ? "sections" : "modules" },
       ],
       statusValue: "—",
       statusTotal: "",
@@ -428,7 +453,7 @@ const practiceTestCard = computed(() => {
           value: report ? formatReportDuration(report.durationSeconds) : "—",
           label: "time used",
         },
-        { value: String(moduleCount), label: "modules" },
+        { value: String(moduleCount), label: isActPackage.value ? "sections" : "modules" },
       ],
       statusValue: String(answeredCount),
       statusTotal: `/${questionCount}`,
@@ -441,13 +466,17 @@ const practiceTestCard = computed(() => {
     return {
       stateLabel: "Results ready",
       description: `Your score report and next-step recommendations are ready. Your result is in the ${report?.percentile ?? 70}th percentile.`,
-      metrics: [
+      metrics: isActPackage.value ? [
+        { value: String(report?.totalScore ?? 25), label: "composite" },
+        { value: String(report?.sections.find((section) => section.sectionId === "science")?.score ?? 25), label: "Science" },
+        { value: "4", label: "sections" },
+      ] : [
         { value: String(report?.totalScore ?? 1280), label: "total score" },
         { value: String(readingWritingScore), label: "Reading & Writing" },
         { value: String(mathScore), label: "Math" },
       ],
-      statusValue: String(report?.totalScore ?? 1280),
-      statusTotal: "/1600",
+      statusValue: String(report?.totalScore ?? (isActPackage.value ? 25 : 1280)),
+      statusTotal: isActPackage.value ? "/36" : "/1600",
       statusUnit: "Score",
       statusMeta: `Results ready · ${
         report ? formatReportDate(report.completedAt) : "Aug 21, 2026"
@@ -458,11 +487,11 @@ const practiceTestCard = computed(() => {
   return {
     stateLabel: "In progress",
     description:
-      "Resume your saved attempt from Reading and Writing, Module 1. Your answers are saved automatically.",
+      `Resume your saved attempt from ${isActPackage.value ? "English, Section 1" : "Reading and Writing, Module 1"}. Your answers are saved automatically.`,
     metrics: [
       { value: String(questionCount), label: "questions" },
       { value: String(durationMinutes), label: "min" },
-      { value: String(moduleCount), label: "modules" },
+      { value: String(moduleCount), label: isActPackage.value ? "sections" : "modules" },
     ],
     statusValue: String(savedAnsweredCount),
     statusTotal: `/${questionCount}`,
@@ -507,7 +536,7 @@ const confidenceTopics = computed(() => {
     (manifest.value?.topics ?? []).map((topic) => [topic.topicId, topic.title]),
   );
   const groups = new Map<
-    number,
+    string,
     {
       topicId: number;
       sectionId: string;
@@ -522,12 +551,16 @@ const confidenceTopics = computed(() => {
     }
   >();
   reportQuestions.value.forEach((question) => {
-    const group = groups.get(question.topicId) ?? {
+    const groupKey = `${question.sectionId}|${question.teachingTopic || question.topicId}`;
+    const group = groups.get(groupKey) ?? {
       topicId: question.topicId,
       sectionId: question.sectionId,
       sectionTitle: question.sectionTitle,
       domain: question.contentDomain,
-      label: topicTitles.get(question.topicId) ?? question.officialSkill,
+      label:
+        question.teachingTopic ||
+        topicTitles.get(question.topicId) ||
+        question.officialSkill,
       correct: 0,
       attempts: 0,
       total: 0,
@@ -542,7 +575,7 @@ const confidenceTopics = computed(() => {
       if (question.timeSpentSeconds > 0)
         group.seconds.push(question.timeSpentSeconds);
     }
-    groups.set(question.topicId, group);
+    groups.set(groupKey, group);
   });
   const plottedTopics = [...groups.values()].map((group) => {
     const section = resultReport.value?.sections.find(
@@ -610,7 +643,7 @@ const confidenceTopics = computed(() => {
   });
 
   const positioned = new Map<string, { left: number; top: number }[]>();
-  return plottedTopics.map((topic) => {
+  return plottedTopics.map((topic, topicIndex) => {
     const sectionPoints = positioned.get(topic.sectionId) ?? [];
     const fastPace = topic.left < 50;
     const highAccuracy = topic.top < 50;
@@ -637,7 +670,14 @@ const confidenceTopics = computed(() => {
     }
     sectionPoints.push({ left, top });
     positioned.set(topic.sectionId, sectionPoints);
-    return { ...topic, left, top, edgeRight: left > 72, edgeBottom: top > 72 };
+    return {
+      ...topic,
+      pointId: `${topic.sectionId}-${topic.topicId}-${topicIndex}`,
+      left,
+      top,
+      edgeRight: left > 72,
+      edgeBottom: top > 72,
+    };
   });
 });
 const sectionReviewQuestions = computed(() =>
@@ -734,10 +774,7 @@ const improveTopics = computed(() => {
         : 0;
       return {
         ...topic,
-        sectionId:
-          topic.section === "Math"
-            ? ("math" as const)
-            : ("reading-writing" as const),
+        sectionId: topicSectionId(topic.section),
         contentDomain: topic.domain,
         description: topic.summary,
         accuracy,
@@ -778,8 +815,7 @@ const improveTopicSections = computed(() => {
     (contentDomain) => ({
       id: `${improveSection.value}-${contentDomain}`,
       title: contentDomain,
-      examSection:
-        improveSection.value === "math" ? "Math" : "Reading & Writing",
+      examSection: sectionDisplayTitle(improveSection.value),
       topics: topics.filter((topic) => topic.contentDomain === contentDomain),
     }),
   );
@@ -848,9 +884,9 @@ const courses: Course[] = [
     family: "act",
     label: "ACT",
     title: "ACT Prep 2026",
-    topics: "230+",
-    videos: "230+",
-    questions: "6,600+",
+    topics: "235",
+    videos: "235",
+    questions: "6,600",
     search: "college admissions english math reading science",
   },
   {
@@ -1023,6 +1059,19 @@ const filteredCourses = computed(() => {
   });
 });
 
+const courseSectionOptions = computed(() => [...new Set((manifest.value?.topics ?? []).map((topic) => topic.section))]);
+const reportSectionOptions = computed(() => resultReport.value?.sections ?? []);
+
+function topicSectionId(section: string) {
+  if (section === "Math") return "math";
+  if (section === "Reading and Writing") return "reading-writing";
+  return section.toLowerCase().replace(/\s+/g, "-");
+}
+
+function sectionDisplayTitle(sectionId: string) {
+  return resultReport.value?.sections.find((section) => section.sectionId === sectionId)?.sectionTitle ?? sectionId;
+}
+
 const topicsBySection = computed(() => {
   if (!manifest.value) return [];
   const byId = new Map(manifest.value.topics.map((topic) => [topic.id, topic]));
@@ -1057,7 +1106,7 @@ const topicsBySection = computed(() => {
 
 const recommendedStartTopic = computed(() =>
   [...(manifest.value?.topics ?? [])]
-    .filter((topic) => topic.section === "Math" && topic.priority === "CORE")
+    .filter((topic) => topic.section === (isActPackage.value ? "English" : "Math") && topic.priority === "CORE")
     .sort((left, right) => left.order - right.order)[0] ?? null,
 );
 
@@ -1093,6 +1142,12 @@ const courseStartModule = computed(() => {
 
 function topicProgress(topic: SatTopic) {
   if (!isCourseStarted.value) return 0;
+  if (isActPackage.value) {
+    if (topic.order <= 2) return 100;
+    if (topic.order === 3) return 62;
+    if (topic.order === 4) return 33;
+    return 0;
+  }
   if (topic.order <= 46) return 100;
   if (topic.order <= 52)
     return topic.order === 50 ? 62 : topic.order % 2 ? 33 : 67;
@@ -1231,9 +1286,11 @@ function initializeSectionDisclosure() {
 }
 
 function openCourse(course: Course) {
-  if (course.family !== "sat") return;
+  if (course.family !== "sat" && course.family !== "act") return;
   activeTab.value = "study";
-  void router.push({ name: "package", hash: "#course-0" });
+  const isAct = course.family === "act";
+  sectionFilter.value = isAct ? "English" : "Math";
+  void router.push({ name: "package", query: isAct ? { exam: "act" } : {}, hash: isAct ? "#course-1" : "#course-0" });
 }
 
 function closeCourse() {
@@ -1255,7 +1312,7 @@ function openTopic(
   void router.push({
     name: tool,
     params: { topicId: topic.id },
-    query: { access: accessState.value },
+    query: { access: accessState.value, ...(isActPackage.value ? { exam: "act" } : {}) },
   });
 }
 
@@ -1306,7 +1363,7 @@ function improvePracticeLabel(topic: SatTopic) {
 }
 function openImprovePractice(topic: SatTopic) {
   if (!isProMember.value) {
-    openCommercialPaywall("adaptive practice for your priority SAT topics", () =>
+    openCommercialPaywall(`adaptive practice for your priority ${examName.value} topics`, () =>
       openImprovePractice(topic),
     );
     return;
@@ -1314,14 +1371,14 @@ function openImprovePractice(topic: SatTopic) {
   void router.push({
     name: "quiz",
     params: { topicId: topic.id },
-    query: { source: "improve", access: accessState.value },
+    query: { source: "improve", access: accessState.value, ...(isActPackage.value ? { exam: "act" } : {}) },
   });
 }
 function dismissImportanceNote(note: "improve") {
   showImproveImportanceNote.value = false;
   try {
     window.localStorage.setItem(
-      `solvely:sat:${note}-importance-note-dismissed`,
+      `solvely:${examName.value.toLowerCase()}:${note}-importance-note-dismissed`,
       "1",
     );
   } catch {
@@ -1333,12 +1390,13 @@ function resumeLastActivity() {
     void router.push({
       name: "study-guide",
       params: { topicId: lastActivity.value.topicId },
+      query: isActPackage.value ? { exam: "act" } : {},
     });
   else startMockExam(lastActivity.value.examId);
 }
 function startMockExam(examId: number) {
   if (!isProMember.value) {
-    openCommercialPaywall("the SAT Full-Length Practice Test", () =>
+    openCommercialPaywall(`the ${examName.value} Full-Length Practice Test`, () =>
       startMockExam(examId),
     );
     return;
@@ -1346,7 +1404,7 @@ function startMockExam(examId: number) {
   void router.push({
     name: "mock-exam",
     params: { examId },
-    query: { access: accessState.value },
+    query: { access: accessState.value, ...(isActPackage.value ? { exam: "act" } : {}) },
   });
 }
 function requestRetake() {
@@ -1361,7 +1419,7 @@ function requestRetake() {
         diagnosticState: "not-started",
         reportSource: "diagnostic",
       },
-      hash: "#course-0",
+      hash: activeCourseHash.value,
     });
     return;
   }
@@ -1397,7 +1455,7 @@ function setPracticeTestState(state: PracticeTestState) {
     void router.replace({
       name: "package",
       query: { ...route.query, tab: "study", practiceState: "results" },
-      hash: "#course-0",
+      hash: activeCourseHash.value,
     });
   }, 2000);
 }
@@ -1419,7 +1477,7 @@ function setDiagnosticTestState(state: DiagnosticTestState) {
         reportSource: "diagnostic",
         diagnosticState: "results",
       },
-      hash: "#course-0",
+      hash: activeCourseHash.value,
     });
   }, 2000);
 }
@@ -1438,7 +1496,7 @@ function setCourseEntryState(state: CourseEntryState) {
           }
         : {}),
     },
-    hash: "#course-0",
+    hash: activeCourseHash.value,
   });
 }
 function setResultsAccessState(state: ResultsAccessState) {
@@ -1446,7 +1504,7 @@ function setResultsAccessState(state: ResultsAccessState) {
   void router.replace({
     name: "package",
     query: { ...route.query, tab: "results", resultState: state },
-    hash: "#course-0",
+    hash: activeCourseHash.value,
   });
 }
 function confirmRetake() {
@@ -1459,8 +1517,8 @@ function handlePracticeTestAction() {
   if (!isProMember.value) {
     openCommercialPaywall(
       practiceTestState.value === "results"
-        ? "your complete SAT score report"
-        : "the SAT Full-Length Practice Test",
+        ? `your complete ${examName.value} score report`
+        : `the ${examName.value} Full-Length Practice Test`,
       handlePracticeTestAction,
     );
     return;
@@ -1472,11 +1530,12 @@ function handlePracticeTestAction() {
     void router.push({
       name: "package",
       query: {
+        ...route.query,
         tab: "results",
         resultState: "unlocked",
         reportSource: "practice",
       },
-      hash: "#course-0",
+      hash: activeCourseHash.value,
     });
     return;
   }
@@ -1497,7 +1556,7 @@ function handleDiagnosticTestAction() {
         reportSource: "diagnostic",
         diagnosticState: "results",
       },
-      hash: "#course-0",
+      hash: activeCourseHash.value,
     });
     return;
   }
@@ -1508,6 +1567,7 @@ function handleDiagnosticTestAction() {
     query: {
       mode: "diagnostic",
       diagnosticState: "in-progress",
+      ...(isActPackage.value ? { exam: "act" } : {}),
     },
   });
 }
@@ -1532,7 +1592,7 @@ function setResultView(view: ResultView) {
   void router.replace({
     name: "package",
     query: { ...route.query, tab: "results", view },
-    hash: "#course-0",
+    hash: activeCourseHash.value,
   });
 }
 function setResultSource(source: ResultSource) {
@@ -1548,7 +1608,7 @@ function setResultSource(source: ResultSource) {
       view: undefined,
       reportSource: source,
     },
-    hash: "#course-0",
+    hash: activeCourseHash.value,
   });
 }
 function moveResultSource(event: KeyboardEvent) {
@@ -1615,7 +1675,7 @@ function reviewTopicTitle(question: SatReportReviewQuestion) {
 }
 function practiceReviewQuestion(question: SatReportReviewQuestion) {
   if (!isProMember.value) {
-    openCommercialPaywall("question review and targeted SAT practice", () =>
+    openCommercialPaywall(`question review and targeted ${examName.value} practice`, () =>
       practiceReviewQuestion(question),
     );
     return;
@@ -1625,7 +1685,7 @@ function practiceReviewQuestion(question: SatReportReviewQuestion) {
     void router.push({
       name: "quiz",
       params: { topicId: topic.id },
-      query: { access: accessState.value },
+      query: { access: accessState.value, ...(isActPackage.value ? { exam: "act" } : {}) },
     });
 }
 function optionEntries(question: SatReportReviewQuestion) {
@@ -1719,7 +1779,7 @@ watch(
     () => route.query.resultState,
   ],
   () => {
-    if (route.hash === "#course-0") syncTabFromRoute();
+    if (route.hash === "#course-0" || route.hash === "#course-1") syncTabFromRoute();
     else activeTab.value = "study";
   },
 );
@@ -1830,6 +1890,30 @@ function keepDemoControllerInViewport() {
   );
 }
 
+async function loadPackageData() {
+  manifest.value = null;
+  resultExam.value = null;
+  diagnosticSourceExam.value = null;
+  loadError.value = "";
+  resultLoadError.value = "";
+  sectionFilter.value = isActPackage.value ? "English" : "Math";
+  improveSection.value = isActPackage.value ? "english" : "math";
+  try {
+    manifest.value = isActPackage.value ? await loadActManifest() : await loadSatManifest();
+    initializeSectionDisclosure();
+  } catch (error) {
+    loadError.value = error instanceof Error ? error.message : `Unable to load ${examName.value} materials.`;
+  }
+  try {
+    resultExam.value = isActPackage.value ? await loadActEpExam(1) : await loadEpExam(1);
+    diagnosticSourceExam.value = isActPackage.value ? await loadActEpExam(2) : resultExam.value;
+  } catch (error) {
+    resultLoadError.value = error instanceof Error ? error.message : `Unable to load the ${examName.value} score report.`;
+  }
+}
+
+watch(isActPackage, () => { void loadPackageData(); });
+
 onMounted(async () => {
   document.body.classList.add("package-route");
   window.addEventListener("resize", keepDemoControllerInViewport);
@@ -1837,27 +1921,13 @@ onMounted(async () => {
   try {
     showImproveImportanceNote.value =
       window.localStorage.getItem(
-        "solvely:sat:improve-importance-note-dismissed",
+        `solvely:${examName.value.toLowerCase()}:improve-importance-note-dismissed`,
       ) !== "1";
   } catch {
     /* Keep both notices visible when browser storage is unavailable. */
   }
   improvePracticeProgress.value = loadImprovePracticeProgress();
-  try {
-    manifest.value = await loadSatManifest();
-    initializeSectionDisclosure();
-  } catch (error) {
-    loadError.value =
-      error instanceof Error ? error.message : "Unable to load SAT materials.";
-  }
-  try {
-    resultExam.value = await loadEpExam(1);
-  } catch (error) {
-    resultLoadError.value =
-      error instanceof Error
-        ? error.message
-        : "Unable to load the SAT score report.";
-  }
+  await loadPackageData();
 });
 
 onBeforeUnmount(() => {
@@ -2445,12 +2515,12 @@ onBeforeUnmount(() => {
               :key="course.title"
               :class="[
                 'course-card',
-                { 'sample-course': course.family !== 'sat' },
+                { 'sample-course': course.family !== 'sat' && course.family !== 'act' },
               ]"
               type="button"
-              :disabled="course.family !== 'sat'"
+              :disabled="course.family !== 'sat' && course.family !== 'act'"
               :aria-label="
-                course.family === 'sat'
+                course.family === 'sat' || course.family === 'act'
                   ? `Open ${course.title} course`
                   : `${course.title} sample unavailable`
               "
@@ -2489,21 +2559,21 @@ onBeforeUnmount(() => {
             </button>
             <div class="course-package-hero-main">
               <div class="course-package-copy">
-                <h1 id="courseWorkspaceTitle">SAT Prep 2026</h1>
+                <h1 id="courseWorkspaceTitle">{{ packageTitle }}</h1>
                 <p>
-                  SAT Prep 2026 with focused study tools, a realistic mock exam,
+                  {{ packageTitle }} with focused study tools, a realistic {{ examName }} test,
                   a score report, and targeted practice.
                 </p>
                 <div class="course-package-stats" aria-label="Course contents">
                   <span
                     ><svg class="icon" aria-hidden="true">
                       <use href="#i-book" /></svg
-                    ><strong>100</strong> video lessons</span
+                    ><strong>{{ isActPackage ? '235' : '100' }}</strong> video lessons</span
                   >
                   <span
                     ><svg class="icon" aria-hidden="true">
                       <use href="#i-grid" /></svg
-                    ><strong>3,879</strong> practice questions</span
+                    ><strong>{{ isActPackage ? '6,600' : '3,879' }}</strong> practice questions</span
                   >
                   <span
                     ><svg class="icon" aria-hidden="true">
@@ -2574,7 +2644,7 @@ onBeforeUnmount(() => {
             <section
               v-if="activeTab === 'study'"
               class="study-practice-layout"
-              aria-label="SAT lessons and practice test"
+              :aria-label="`${examName} lessons and practice tests`"
             >
               <div class="course-study-column">
                 <section
@@ -2592,9 +2662,8 @@ onBeforeUnmount(() => {
                         v-model="sectionFilter"
                         aria-label="Filter lessons by section"
                       >
-                        <option value="Math">Section: Math</option>
-                        <option value="Reading and Writing">
-                          Section: Reading &amp; Writing
+                        <option v-for="section in courseSectionOptions" :key="section" :value="section">
+                          Section: {{ section }}
                         </option>
                       </select>
                       <svg class="icon" aria-hidden="true">
@@ -2621,7 +2690,7 @@ onBeforeUnmount(() => {
                   {{ loadError }}
                 </div>
                 <div v-else-if="!manifest" class="study-topic-empty">
-                  Loading SAT topics…
+                  Loading {{ examName }} lessons…
                 </div>
                 <div v-else class="study-topic-sections">
                   <section
@@ -2817,7 +2886,7 @@ onBeforeUnmount(() => {
                       <svg class="icon"><use href="#i-target" /></svg>
                     </div>
                     <header class="mock-entry-title-row">
-                      <h3>Free SAT Diagnostic Test</h3>
+                      <h3>Free {{ examName }} Diagnostic Test</h3>
                       <span
                         :class="[
                           'mock-entry-state',
@@ -2899,7 +2968,7 @@ onBeforeUnmount(() => {
                       <svg class="icon"><use href="#i-exam" /></svg>
                     </div>
                     <header class="mock-entry-title-row">
-                      <h3>SAT Full-Length Practice Test</h3>
+                      <h3>{{ examName }} Full-Length Practice Test</h3>
                       <span :class="['mock-entry-state', practiceTestState]"
                         ><i />{{ practiceTestCard.stateLabel }}</span
                       >
@@ -3026,7 +3095,7 @@ onBeforeUnmount(() => {
                 >
                 <section class="score-report-card">
                   <header class="score-report-cover">
-                    <span>SAT® Prep 2026</span
+                    <span>{{ examName }} Prep 2026</span
                     ><small>{{
                       resultSource === "diagnostic"
                         ? "Diagnostic result"
@@ -3036,9 +3105,13 @@ onBeforeUnmount(() => {
                   <div class="score-report-main">
                     <div class="score-report-total">
                       <span>{{
-                        resultSource === "diagnostic"
-                          ? "Predicted total score"
-                          : "Total score"
+                        isActPackage
+                          ? resultSource === "diagnostic"
+                            ? "Predicted composite score"
+                            : "Composite score"
+                          : resultSource === "diagnostic"
+                            ? "Predicted total score"
+                            : "Total score"
                       }}</span>
                       <strong
                         >{{ resultReport.totalScore }}<small
@@ -3112,7 +3185,7 @@ onBeforeUnmount(() => {
                     <span>{{
                       resultSource === "diagnostic"
                         ? "Diagnostic Overview"
-                        : "SAT Overview"
+                        : `${examName} Overview`
                     }}</span>
                     <p>{{ resultReport.overview }}</p>
                   </div>
@@ -3122,7 +3195,7 @@ onBeforeUnmount(() => {
                   class="diagnostic-score-disclaimer"
                 >
                   This predicted score is an estimate based on 20 untimed
-                  questions. It does not replace a full-length SAT Practice
+                  questions. It does not replace a full-length {{ examName }} Practice
                   Test.
                 </p>
                   <div
@@ -3153,7 +3226,7 @@ onBeforeUnmount(() => {
                     <button
                       v-else-if="showResultsUnlockAction"
                       type="button"
-                      @click="openCommercialPaywall('your complete SAT score report')"
+                      @click="openCommercialPaywall(`your complete ${examName} score report`)"
                     >
                       Unlock report
                     </button>
@@ -3177,11 +3250,18 @@ onBeforeUnmount(() => {
                         {{
                           resultSource === "diagnostic"
                             ? "diagnostic"
-                            : "SAT"
+                            : examName
                         }}.
                       </p>
                     </div>
                   </header>
+                  <div v-if="isActPackage" class="act-composite-grid" aria-label="ACT composite score groups">
+                    <article v-for="composite in actCompositeCards" :key="composite.id" :class="{ muted: composite.muted }">
+                      <div><strong>{{ composite.label }}</strong><span>{{ composite.detail }}</span></div>
+                      <b v-if="!composite.muted">{{ composite.value }}<small>/36</small></b>
+                      <b v-else class="act-not-tested">Not tested</b>
+                    </article>
+                  </div>
                   <div class="knowledge-section-grid">
                     <article
                       v-for="section in resultReport.sections"
@@ -3242,7 +3322,7 @@ onBeforeUnmount(() => {
                     <button
                       v-else-if="showResultsUnlockAction"
                       type="button"
-                      @click="openCommercialPaywall('your SAT knowledge and skills breakdown')"
+                      @click="openCommercialPaywall(`your ${examName} knowledge and skills breakdown`)"
                     >
                       Unlock report
                     </button>
@@ -3259,7 +3339,7 @@ onBeforeUnmount(() => {
                     <div>
                       <h3>Performance details</h3>
                       <p>
-                        See which SAT skills are both accurate and efficient,
+                        See which {{ examName }} skills are both accurate and efficient,
                         and identify where extra review can help.
                       </p>
                     </div>
@@ -3346,7 +3426,7 @@ onBeforeUnmount(() => {
                             v-for="topic in confidenceTopics.filter(
                               (item) => item.sectionId === section.sectionId,
                             )"
-                            :key="topic.topicId"
+                            :key="topic.pointId"
                             type="button"
                             :class="[
                               'report-confidence-dot',
@@ -3361,10 +3441,10 @@ onBeforeUnmount(() => {
                               top: `${topic.top}%`,
                             }"
                             :aria-label="`${topic.label}: ${topic.accuracy}% accuracy, ${topic.correct} of ${topic.attempts} answered questions correct, ${topic.averageSeconds ? formatReportTime(topic.averageSeconds) : 'no recorded time'} average time`"
-                            :aria-describedby="`confidence-tooltip-${topic.topicId}`"
+                            :aria-describedby="`confidence-tooltip-${topic.pointId}`"
                           >
                             <span
-                              :id="`confidence-tooltip-${topic.topicId}`"
+                              :id="`confidence-tooltip-${topic.pointId}`"
                               class="report-confidence-tooltip"
                               role="tooltip"
                               ><strong>{{ topic.label }}</strong
@@ -3424,7 +3504,7 @@ onBeforeUnmount(() => {
                     <button
                       v-else-if="showResultsUnlockAction"
                       type="button"
-                      @click="openCommercialPaywall('detailed SAT performance insights')"
+                      @click="openCommercialPaywall(`detailed ${examName} performance insights`)"
                     >
                       Unlock report
                     </button>
@@ -3433,9 +3513,7 @@ onBeforeUnmount(() => {
 
                 <footer v-if="resultView !== 'full'" class="report-footer">
                   <p>
-                    SAT® is a registered trademark of the College Board, which
-                    is not affiliated with or endorsed by this product. Practice
-                    scores are estimates, not official College Board scores.
+                    Practice scores are estimates and are not official {{ examName }} scores.
                   </p>
                   <div v-if="!resultsLocked">
                     <button
@@ -3475,10 +3553,9 @@ onBeforeUnmount(() => {
                           @change="setReviewSectionFilterFromEvent"
                         >
                           <option value="ALL">Section: All</option>
-                          <option value="reading-writing">
-                            Section: Reading &amp; Writing
+                          <option v-for="section in reportSectionOptions" :key="section.sectionId" :value="section.sectionId">
+                            Section: {{ section.sectionTitle }}
                           </option>
-                          <option value="math">Section: Math</option>
                         </select>
                         <svg class="icon" aria-hidden="true">
                           <use href="#i-chevron" />
@@ -3774,8 +3851,7 @@ onBeforeUnmount(() => {
                 </div>
                 <footer v-if="resultView !== 'full'" class="report-footer">
                   <p>
-                    SAT® is a registered trademark of the College Board, which
-                    is not affiliated with or endorsed by this product.
+                    Practice results are estimates and are not official {{ examName }} scores.
                   </p>
                   <div v-if="!resultsLocked">
                     <button
@@ -3815,9 +3891,8 @@ onBeforeUnmount(() => {
                           v-model="improveSection"
                           aria-label="Filter improvement topics by section"
                         >
-                          <option value="math">Section: Math</option>
-                          <option value="reading-writing">
-                            Section: Reading &amp; Writing
+                          <option v-for="section in reportSectionOptions" :key="section.sectionId" :value="section.sectionId">
+                            Section: {{ section.sectionTitle }}
                           </option>
                         </select>
                         <svg class="icon" aria-hidden="true">
@@ -3856,7 +3931,7 @@ onBeforeUnmount(() => {
                     <use href="#i-target" /></svg
                   ><span
                     >Topics are prioritized using your latest test results and
-                    SAT priority. Practice progress is tracked
+                    {{ examName }} priority. Practice progress is tracked
                     separately from Lessons.</span
                   ><button
                     class="study-priority-note-close"
@@ -4006,7 +4081,7 @@ onBeforeUnmount(() => {
                         type="button"
                         @click="
                           openCommercialPaywall(
-                            'prioritized topics and adaptive SAT practice',
+                            `prioritized topics and adaptive ${examName} practice`,
                           )
                         "
                       >
@@ -4050,7 +4125,7 @@ onBeforeUnmount(() => {
                       type="button"
                       @click="
                         openCommercialPaywall(
-                          'prioritized topics and adaptive SAT practice',
+                          `prioritized topics and adaptive ${examName} practice`,
                         )
                       "
                     >
@@ -4063,7 +4138,12 @@ onBeforeUnmount(() => {
                 v-if="resultView === 'full' || resultView === 'improve'"
                 class="report-footer full-report-footer"
               >
-                <p>
+                <p v-if="isActPackage">
+                  ACT® is a registered trademark of ACT, Inc., which is not
+                  affiliated with or endorsed by this product. Practice scores
+                  are estimates, not official ACT scores.
+                </p>
+                <p v-else>
                   SAT® is a registered trademark of the College Board, which
                   is not affiliated with or endorsed by this product. Practice
                   scores are estimates, not official College Board scores.
