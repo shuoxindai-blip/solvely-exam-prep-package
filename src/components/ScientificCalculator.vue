@@ -4,6 +4,7 @@ import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 const emit = defineEmits<{ close: [] }>()
 
 const expression = ref('')
+const calculatorMode = ref<'scientific' | 'graphing'>('scientific')
 const answer = ref(0)
 const displayResult = ref('0')
 const errorMessage = ref('')
@@ -170,14 +171,21 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
 </script>
 
 <template>
-  <section class="calculator-shell" aria-label="Scientific calculator">
+  <section class="calculator-shell" :aria-label="calculatorMode === 'scientific' ? 'Scientific calculator' : 'Graphing calculator'">
     <header class="calculator-titlebar">
       <strong>Calculator</strong>
-      <button class="angle-mode" type="button" :aria-label="`Angle mode ${angleMode}`" @click="angleMode = angleMode === 'DEG' ? 'RAD' : 'DEG'">{{ angleMode }}</button>
+      <label class="calculator-mode-picker">
+        <span class="sr-only">Calculator type</span>
+        <select v-model="calculatorMode" aria-label="Calculator type">
+          <option value="scientific">Scientific</option>
+          <option value="graphing">Graphing</option>
+        </select>
+      </label>
       <button class="calculator-close" type="button" aria-label="Close calculator" @click="emit('close')">×</button>
     </header>
 
-    <div class="calculator-body">
+    <div v-if="calculatorMode === 'scientific'" class="calculator-body">
+      <div class="scientific-controls"><button class="angle-mode" type="button" :aria-label="`Angle mode ${angleMode}`" @click="angleMode = angleMode === 'DEG' ? 'RAD' : 'DEG'">{{ angleMode }}</button></div>
       <div class="calculator-display" aria-live="polite">
         <span>{{ displayExpression }}</span>
         <strong>{{ displayResult }}</strong>
@@ -193,6 +201,9 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
         <p v-if="!history.length">Your calculations will appear here.</p>
         <button v-for="item in history" :key="`${item.expression}-${item.result}`" type="button" @click="useHistory(item)"><span>{{ item.expression }}</span><strong>= {{ item.result }}</strong></button>
       </aside>
+    </div>
+    <div v-else class="graphing-calculator-wrap">
+      <iframe src="/geogebra-calculator.html" title="GeoGebra graphing calculator" allow="clipboard-write" />
     </div>
   </section>
 </template>
@@ -223,8 +234,31 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
 
 .calculator-titlebar strong { font-size: 16px; }
 .calculator-titlebar button { border: 0; background: transparent; cursor: pointer; }
-.angle-mode { padding: 7px 13px; border-radius: 7px !important; background: #eeeeef !important; color: #525252; font-size: 12px; font-weight: 700; }
 .calculator-close { justify-self: end; color: #555; font-size: 28px; font-weight: 300; line-height: 1; }
+
+.calculator-mode-picker select {
+  min-width: 126px;
+  height: 34px;
+  padding: 0 30px 0 12px;
+  border: 1px solid #d4d4d4;
+  border-radius: 8px;
+  background: #f7f7f8;
+  color: #333;
+  font: 600 13px Arial, Helvetica, sans-serif;
+  cursor: pointer;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
 
 .calculator-body {
   display: grid;
@@ -232,6 +266,32 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
   min-height: 0;
   padding: 18px;
   overflow: auto;
+}
+
+.scientific-controls {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+}
+
+.angle-mode {
+  padding: 7px 13px;
+  border: 0;
+  border-radius: 7px;
+  background: #eeeeef;
+  color: #525252;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.graphing-calculator-wrap,
+.graphing-calculator-wrap iframe {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  border: 0;
+  background: #fff;
 }
 
 .calculator-display {
@@ -282,6 +342,22 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
 .calculator-history p { color: #929292; font-size: 13px; }
 .calculator-history > button { display: flex; width: 100%; padding: 9px 4px; border: 0; border-bottom: 1px solid #e4e4e4; background: transparent; justify-content: space-between; cursor: pointer; }
 .calculator-history > button span { max-width: 65%; overflow: hidden; color: #777; text-overflow: ellipsis; white-space: nowrap; }
+
+:global(.exam-app.dark-mode) .calculator-shell { border-color: #454952; background: #1c1e23; color: #f4f5f7; }
+:global(.exam-app.dark-mode) .calculator-titlebar { border-color: #454952; background: #25282e; }
+:global(.exam-app.dark-mode) .calculator-mode-picker select,
+:global(.exam-app.dark-mode) .angle-mode { border-color: #535863; background: #353941; color: #f1f3f5; }
+:global(.exam-app.dark-mode) .calculator-close { color: #e3e5e9; }
+:global(.exam-app.dark-mode) .calculator-display,
+:global(.exam-app.dark-mode) .calculator-keys button { border-color: #494e57; background: #282b31; color: #f4f5f7; }
+:global(.exam-app.dark-mode) .calculator-keys button:hover { background: #353941; }
+:global(.exam-app.dark-mode) .calculator-keys .operator { border-color: #236a7a; background: #193b43; color: #5bd3ee; }
+:global(.exam-app.dark-mode) .calculator-keys .utility { background: #34373e; color: #d8dbe0; }
+:global(.exam-app.dark-mode) .calculator-history { border-color: #444851; }
+:global(.exam-app.dark-mode) .calculator-history > button { border-color: #3f434b; color: #f4f5f7; }
+:global(.exam-app.dark-mode) .calculator-history > button span,
+:global(.exam-app.dark-mode) .calculator-display span,
+:global(.exam-app.dark-mode) .calculator-history p { color: #aeb3bc; }
 
 @media (max-width: 760px) {
   .calculator-body { padding: 12px; }

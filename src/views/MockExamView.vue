@@ -167,6 +167,13 @@ const eliminationMode = ref(false)
 const calculatorOpen = ref(false)
 const referenceOpen = ref(false)
 const navigatorOpen = ref(false)
+const moreOpen = ref(false)
+const shortcutsOpen = ref(false)
+const reportOpen = ref(false)
+const reportIssue = ref('Other issue')
+const reportDetails = ref('')
+const darkMode = ref(false)
+const isFullscreen = ref(false)
 const timerVisible = ref(true)
 const toastMessage = ref('')
 const recommendationRating = ref<number | null>(null)
@@ -181,6 +188,15 @@ const passageScroller = ref<HTMLElement | null>(null)
 const questionScroller = ref<HTMLElement | null>(null)
 let countdownId: number | undefined
 let toastId: number | undefined
+
+const reportIssues = [
+  'Problem with the question wording',
+  'Answer choices are incorrect or incomplete',
+  'Question content is missing',
+  'Image or graph did not load',
+  'Page is stuck or not responding',
+  'Other issue',
+]
 
 const currentModule = computed(() => modules.value[moduleIndex.value])
 const currentSourceQuestion = computed(() => sourceQuestionFor(currentModule.value, currentNumber.value))
@@ -526,15 +542,51 @@ function toggleHighlightMode() {
 
 function toggleCalculator() {
   calculatorOpen.value = !calculatorOpen.value
+  if (calculatorOpen.value) referenceOpen.value = false
+  moreOpen.value = false
 }
 
 function toggleReference() {
   referenceOpen.value = !referenceOpen.value
+  if (referenceOpen.value) calculatorOpen.value = false
+  moreOpen.value = false
+}
+
+function toggleMore() {
+  moreOpen.value = !moreOpen.value
+}
+
+async function toggleFullscreen() {
+  moreOpen.value = false
+  try {
+    if (document.fullscreenElement) await document.exitFullscreen()
+    else await document.documentElement.requestFullscreen()
+  } catch {
+    showToast('Fullscreen is not available in this browser.')
+  }
+}
+
+function openKeyboardShortcuts() {
+  moreOpen.value = false
+  shortcutsOpen.value = true
+}
+
+function openQuestionReport() {
+  moreOpen.value = false
+  reportIssue.value = 'Other issue'
+  reportDetails.value = ''
+  reportOpen.value = true
+}
+
+function submitQuestionReport() {
+  reportOpen.value = false
+  showToast('Thanks. This question has been reported for review.')
 }
 
 function closeTransientTools() {
   calculatorOpen.value = false
   referenceOpen.value = false
+  moreOpen.value = false
   highlighterEnabled.value = false
 }
 
@@ -568,12 +620,49 @@ function onKeydown(event: KeyboardEvent) {
   if (event.key === 'Escape') {
     navigatorOpen.value = false
     referenceOpen.value = false
+    moreOpen.value = false
+    shortcutsOpen.value = false
+    reportOpen.value = false
     return
   }
-  if (stage.value !== 'exam' || calculatorOpen.value || target?.closest('button, input, select, textarea, [contenteditable], .user-highlight')) return
-  if (currentQuestion.value.options.length && ['1', '2', '3', '4'].includes(event.key)) {
+  if (event.key === '?' && !target?.closest('input, select, textarea, [contenteditable]')) {
     event.preventDefault()
-    selectAnswer(Number(event.key) - 1)
+    openKeyboardShortcuts()
+    return
+  }
+  if (stage.value !== 'exam' || calculatorOpen.value || shortcutsOpen.value || reportOpen.value || target?.closest('button, input, select, textarea, [contenteditable], .user-highlight')) return
+
+  const optionKey = event.key.toUpperCase()
+  const optionIndex = ['A', 'B', 'C', 'D'].includes(optionKey) ? optionKey.charCodeAt(0) - 65 : Number(event.key) - 1
+  if (currentQuestion.value.options.length && optionIndex >= 0 && optionIndex < currentQuestion.value.options.length && event.altKey) {
+    event.preventDefault()
+    toggleEliminated(optionIndex)
+    return
+  }
+  if (currentQuestion.value.options.length && optionIndex >= 0 && optionIndex < currentQuestion.value.options.length) {
+    event.preventDefault()
+    selectAnswer(optionIndex)
+    return
+  }
+  if (currentQuestion.value.options.length && ['ArrowUp', 'ArrowDown'].includes(event.key)) {
+    event.preventDefault()
+    const selected = answers[questionKey.value]
+    const direction = event.key === 'ArrowDown' ? 1 : -1
+    const nextIndex = selected == null
+      ? (direction > 0 ? 0 : currentQuestion.value.options.length - 1)
+      : Math.min(currentQuestion.value.options.length - 1, Math.max(0, selected + direction))
+    selectAnswer(nextIndex)
+    return
+  }
+  if (event.key === 'ArrowLeft') {
+    event.preventDefault()
+    previousQuestion()
+    return
+  }
+  if (event.key === 'ArrowRight') {
+    event.preventDefault()
+    nextQuestion()
+    return
   }
   if (event.key === 'Enter') {
     event.preventDefault()
@@ -590,13 +679,19 @@ onMounted(async () => {
     if (stage.value === 'break' && breakRemaining.value > 0) breakRemaining.value -= 1
   }, 1000)
   window.addEventListener('keydown', onKeydown)
+  document.addEventListener('fullscreenchange', syncFullscreenState)
 })
+
+function syncFullscreenState() {
+  isFullscreen.value = Boolean(document.fullscreenElement)
+}
 
 onBeforeUnmount(() => {
   document.body.classList.remove('mock-exam-route')
   if (countdownId) window.clearInterval(countdownId)
   if (toastId) window.clearTimeout(toastId)
   window.removeEventListener('keydown', onKeydown)
+  document.removeEventListener('fullscreenchange', syncFullscreenState)
 })
 </script>
 
@@ -609,7 +704,7 @@ onBeforeUnmount(() => {
     <section class="completion-card"><p>Loading {{ isDiagnostic ? 'Free SAT Diagnostic Test' : 'Digital SAT Mock Exam ' + examId }}…</p></section>
   </main>
 
-  <main v-else-if="stage === 'break'" class="break-screen">
+  <main v-else-if="stage === 'break'" class="break-screen" :class="{ 'dark-mode': darkMode }">
     <button class="save-leave-button" type="button" @click="exitExam"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 5H5v14h5M14 8l4 4-4 4M8 12h10" /></svg>Save and Leave</button>
     <div class="break-layout">
       <section class="break-timer-column">
@@ -745,7 +840,7 @@ onBeforeUnmount(() => {
     <div v-if="toastMessage" class="toast" role="status">{{ toastMessage }}</div>
   </main>
 
-  <main v-else class="exam-app" :class="{ 'review-stage': stage === 'review' }" :style="{ '--split': `${leftWidth}%` }">
+  <main v-else class="exam-app" :class="{ 'review-stage': stage === 'review', 'dark-mode': darkMode }" :style="{ '--split': `${leftWidth}%` }">
     <header class="exam-header">
       <div class="header-left">
         <button class="package-exit-control" type="button" aria-label="Back to SAT package" @click="exitExam">←</button>
@@ -763,9 +858,16 @@ onBeforeUnmount(() => {
         </template>
       </div>
       <div class="header-tools">
+        <button class="tool-button" :class="{ active: highlighterEnabled }" type="button" :aria-pressed="highlighterEnabled" :aria-label="highlighterEnabled ? 'Turn off highlight mode' : 'Turn on highlight mode'" @click="toggleHighlightMode"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 16 9.8-9.8a2 2 0 0 1 2.8 0l.2.2a2 2 0 0 1 0 2.8L8 19H5v-3Z" /><path d="M13.5 7.5 16.5 10.5M4 21h16" /></svg><span>Highlight</span></button>
         <button v-if="currentModule.section === 'math'" class="tool-button" :class="{ active: calculatorOpen }" type="button" :aria-pressed="calculatorOpen" @click="toggleCalculator"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="3" width="12" height="18" rx="2" /><path d="M8.5 6h7v3h-7zM9 13h.01M12 13h.01M15 13h.01M9 17h.01M12 17h.01M15 17h.01" /></svg><span>Calculator</span></button>
         <button v-if="currentModule.section === 'math'" class="tool-button" :class="{ active: referenceOpen }" type="button" :aria-pressed="referenceOpen" @click="toggleReference"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h8l3 3v15H7zM15 3v4h4M10 11h5M10 15h5" /></svg><span>Reference</span></button>
-        <button class="tool-button" :class="{ active: highlighterEnabled }" type="button" :aria-pressed="highlighterEnabled" :aria-label="highlighterEnabled ? 'Turn off highlight mode' : 'Turn on highlight mode'" @click="toggleHighlightMode"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 16 9.8-9.8a2 2 0 0 1 2.8 0l.2.2a2 2 0 0 1 0 2.8L8 19H5v-3Z" /><path d="M13.5 7.5 16.5 10.5M4 21h16" /></svg><span>Highlight</span></button>
+        <button class="tool-button" :class="{ active: moreOpen }" type="button" aria-haspopup="menu" :aria-expanded="moreOpen" @click="toggleMore"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.2" /><circle cx="12" cy="12" r="1.2" /><circle cx="19" cy="12" r="1.2" /></svg><span>More</span></button>
+        <div v-if="moreOpen" class="exam-more-menu" role="menu" aria-label="More exam options">
+          <button type="button" role="menuitem" @click="exitExam"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 5H5v14h5M14 8l4 4-4 4M8 12h10" /></svg><span>Save and Exit</span></button>
+          <button type="button" role="menuitem" @click="toggleFullscreen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4H4v5M15 4h5v5M20 15v5h-5M4 15v5h5" /></svg><span>{{ isFullscreen ? 'Exit Fullscreen' : 'Fullscreen' }}</span></button>
+          <button type="button" role="menuitem" @click="openKeyboardShortcuts"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="2" /><path d="M6 10h1M10 10h1M14 10h1M18 10h.01M6 14h8M16 14h2" /></svg><span>Keyboard shortcuts</span></button>
+          <button type="button" role="menuitem" @click="darkMode = !darkMode; moreOpen = false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 15.5A8 8 0 0 1 8.5 4 8.2 8.2 0 1 0 20 15.5Z" /></svg><span>Switch to {{ darkMode ? 'light' : 'dark' }} mode</span></button>
+        </div>
       </div>
     </header>
 
@@ -786,7 +888,7 @@ onBeforeUnmount(() => {
         </article>
         <div class="splitter" role="separator" aria-orientation="vertical" :aria-valuenow="Math.round(leftWidth)" tabindex="0" @pointerdown="beginResize"><span><i /><i /><i /></span></div>
         <article ref="questionScroller" class="question-panel" aria-label="Answer choices"><div class="question-shell">
-          <div class="question-toolbar"><span class="number-badge">{{ currentNumber }}</span><button class="review-button" :class="{ active: review.has(questionKey) }" type="button" @click="toggleReview"><svg viewBox="0 0 18 22" aria-hidden="true"><path d="M3 2.5h12v17l-6-4-6 4v-17Z" /></svg>Mark for Review</button><button class="report-button" type="button" @click="showToast('Thanks. This question has been reported for review.')"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21V4m1 1h11l-2.2 4L17 13H6" /></svg>Report</button><button class="elimination-mode-button" :class="{ active: eliminationMode }" type="button" :aria-pressed="eliminationMode" :aria-label="eliminationMode ? 'Hide answer elimination controls' : 'Show answer elimination controls'" :title="eliminationMode ? 'Hide answer elimination controls' : 'Eliminate answer choices'" @click="toggleEliminationMode"><span aria-hidden="true">ABC</span></button></div>
+          <div class="question-toolbar"><span class="number-badge">{{ currentNumber }}</span><button class="review-button" :class="{ active: review.has(questionKey) }" type="button" @click="toggleReview"><svg viewBox="0 0 18 22" aria-hidden="true"><path d="M3 2.5h12v17l-6-4-6 4v-17Z" /></svg>Mark for Review</button><button class="report-button" type="button" @click="openQuestionReport"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21V4m1 1h11l-2.2 4L17 13H6" /></svg>Report</button><button class="elimination-mode-button" :class="{ active: eliminationMode }" type="button" :aria-pressed="eliminationMode" :aria-label="eliminationMode ? 'Hide answer elimination controls' : 'Show answer elimination controls'" :title="eliminationMode ? 'Hide answer elimination controls' : 'Eliminate answer choices'" @click="toggleEliminationMode"><span aria-hidden="true">ABC</span></button></div>
           <h1>{{ currentQuestion.prompt }}</h1>
           <div class="choices" role="radiogroup" :aria-label="currentQuestion.prompt"><div v-for="(option, index) in currentQuestion.options" :key="`${questionKey}-${index}`" class="choice-row" :class="{ selected: answers[questionKey] === index, eliminated: eliminated[questionKey]?.has(index), 'elimination-mode': eliminationMode }"><button class="choice-card" type="button" role="radio" :aria-checked="answers[questionKey] === index" @click="selectAnswer(index)"><span class="choice-letter">{{ String.fromCharCode(65 + index) }}</span><span class="choice-copy">{{ option }}</span></button><button v-if="eliminationMode" class="eliminate-button" type="button" :aria-label="`${eliminated[questionKey]?.has(index) ? 'Restore' : 'Cross out'} answer ${String.fromCharCode(65 + index)}`" :aria-pressed="eliminated[questionKey]?.has(index) ?? false" @click="toggleEliminated(index)"><span>{{ String.fromCharCode(65 + index) }}</span></button></div></div>
           <p class="keyboard-tip">Tip:&nbsp; press <kbd>1</kbd><kbd>2</kbd><kbd>3</kbd><kbd>4</kbd> to pick an answer, then <kbd class="enter-key">Enter</kbd> to go to the next question</p>
@@ -798,7 +900,7 @@ onBeforeUnmount(() => {
       <section class="math-workspace" :class="{ 'calculator-visible': calculatorOpen }">
         <div v-if="calculatorOpen" class="math-calculator-pane"><ScientificCalculator @close="calculatorOpen = false" /></div><div v-if="calculatorOpen" class="math-splitter" aria-hidden="true"><span><i /><i /><i /></span></div>
         <article ref="questionScroller" class="math-question-panel" aria-label="Math question"><div class="math-question-shell" :class="{ 'diagram-question': currentQuestion.diagram }">
-          <div class="question-toolbar"><span class="number-badge">{{ currentNumber }}</span><button class="review-button" :class="{ active: review.has(questionKey) }" type="button" @click="toggleReview"><svg viewBox="0 0 18 22" aria-hidden="true"><path d="M3 2.5h12v17l-6-4-6 4v-17Z" /></svg>Mark for Review</button><button class="report-button" type="button" @click="showToast('Thanks. This question has been reported for review.')"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21V4m1 1h11l-2.2 4L17 13H6" /></svg>Report</button><button class="elimination-mode-button" :class="{ active: eliminationMode }" type="button" :aria-pressed="eliminationMode" :aria-label="eliminationMode ? 'Hide answer elimination controls' : 'Show answer elimination controls'" :title="eliminationMode ? 'Hide answer elimination controls' : 'Eliminate answer choices'" @click="toggleEliminationMode"><span aria-hidden="true">ABC</span></button></div>
+          <div class="question-toolbar"><span class="number-badge">{{ currentNumber }}</span><button class="review-button" :class="{ active: review.has(questionKey) }" type="button" @click="toggleReview"><svg viewBox="0 0 18 22" aria-hidden="true"><path d="M3 2.5h12v17l-6-4-6 4v-17Z" /></svg>Mark for Review</button><button class="report-button" type="button" @click="openQuestionReport"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21V4m1 1h11l-2.2 4L17 13H6" /></svg>Report</button><button class="elimination-mode-button" :class="{ active: eliminationMode }" type="button" :aria-pressed="eliminationMode" :aria-label="eliminationMode ? 'Hide answer elimination controls' : 'Show answer elimination controls'" :title="eliminationMode ? 'Hide answer elimination controls' : 'Eliminate answer choices'" @click="toggleEliminationMode"><span aria-hidden="true">ABC</span></button></div>
           <figure v-if="currentQuestion.diagram" class="circle-diagram"><svg viewBox="0 0 620 560" role="img" aria-label="Circle with intersecting lines through O"><circle cx="310" cy="260" r="210" /><path d="M228 66 393 458M395 69 226 457" /><text x="201" y="67">S</text><text x="397" y="67">R</text><text x="198" y="489">P</text><text x="401" y="489">Q</text><text x="321" y="280">O</text></svg><figcaption>Note: Figure not drawn to scale.</figcaption></figure>
           <HighlightablePassage :key="questionKey" :text="currentQuestion.passage" :enabled="highlighterEnabled" :model-value="highlights[questionKey] ?? []" extra-class="math-stem-copy" @update:model-value="updateHighlights" />
           <h1>{{ currentQuestion.prompt }}</h1>
@@ -822,6 +924,38 @@ onBeforeUnmount(() => {
       <div class="footer-actions"><button v-if="stage === 'review'" type="button" @click="previousQuestion">Back</button><button v-else type="button" :disabled="currentNumber <= 1" @click="previousQuestion">Previous</button><button type="button" @click="stage === 'review' ? advanceFromReview() : nextQuestion()">{{ primaryActionLabel }}</button></div>
     </footer>
     <MathReferenceSheet v-if="referenceOpen && currentModule.section === 'math'" @close="referenceOpen = false" />
+
+    <div v-if="shortcutsOpen" class="exam-dialog-backdrop" role="presentation" @click.self="shortcutsOpen = false">
+      <section class="shortcut-dialog" role="dialog" aria-modal="true" aria-labelledby="shortcut-dialog-title">
+        <header><h2 id="shortcut-dialog-title">Keyboard shortcuts</h2><button type="button" aria-label="Close keyboard shortcuts" @click="shortcutsOpen = false">×</button></header>
+        <dl>
+          <div><dt>Previous question</dt><dd><kbd>←</kbd></dd></div>
+          <div><dt>Next question</dt><dd><kbd>→</kbd></dd></div>
+          <div><dt>Select choice A, B, C, or D</dt><dd><kbd>A–D</kbd><kbd>1–4</kbd></dd></div>
+          <div><dt>Move selected choice</dt><dd><kbd>↑</kbd><kbd>↓</kbd></dd></div>
+          <div><dt>Cross out choice A, B, C, or D</dt><dd><kbd>Alt / ⌥</kbd><span>+</span><kbd>A–D</kbd><kbd>1–4</kbd></dd></div>
+          <div><dt>Open keyboard shortcuts</dt><dd><kbd>?</kbd></dd></div>
+        </dl>
+      </section>
+    </div>
+
+    <div v-if="reportOpen" class="exam-dialog-backdrop" role="presentation" @click.self="reportOpen = false">
+      <section class="question-report-dialog" role="dialog" aria-modal="true" aria-labelledby="question-report-title">
+        <header><h2 id="question-report-title">Report an issue</h2><button type="button" aria-label="Close report form" @click="reportOpen = false">×</button></header>
+        <label>
+          <span>What went wrong?</span>
+          <select v-model="reportIssue" autofocus>
+            <option v-for="issue in reportIssues" :key="issue" :value="issue">{{ issue }}</option>
+          </select>
+        </label>
+        <label>
+          <span>Additional details <small>(optional)</small></span>
+          <textarea v-model="reportDetails" rows="5" placeholder="Tell us what happened…" />
+        </label>
+        <footer><button type="button" @click="reportOpen = false">Cancel</button><button class="submit-report-button" type="button" @click="submitQuestionReport">Submit</button></footer>
+      </section>
+    </div>
+
     <div v-if="toastMessage" class="toast" role="status">{{ toastMessage }}</div>
   </main>
 </template>

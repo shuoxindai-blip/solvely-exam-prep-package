@@ -171,6 +171,7 @@ button:focus-visible,
 }
 
 .header-tools {
+  position: relative;
   align-self: stretch;
   display: flex;
   align-items: stretch;
@@ -212,6 +213,98 @@ button:focus-visible,
   font-size: 11px;
   line-height: 14px;
 }
+
+.exam-more-menu {
+  position: absolute;
+  z-index: 110;
+  top: calc(100% + 8px);
+  right: 2px;
+  width: 224px;
+  padding: 6px;
+  border: 1px solid #d9dce1;
+  border-radius: 11px;
+  background: #fff;
+  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.18);
+}
+
+.exam-more-menu button {
+  display: flex;
+  width: 100%;
+  min-height: 43px;
+  padding: 0 11px;
+  align-items: center;
+  gap: 11px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: #24272d;
+  font-size: 14px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.exam-more-menu button:hover { background: #f1f3f5; }
+.exam-more-menu svg { width: 19px; height: 19px; flex: 0 0 19px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.7; }
+
+.exam-dialog-backdrop {
+  position: fixed;
+  z-index: 160;
+  inset: 0;
+  display: grid;
+  padding: 24px;
+  place-items: center;
+  background: rgba(15, 18, 24, 0.42);
+  backdrop-filter: blur(2px);
+}
+
+.shortcut-dialog,
+.question-report-dialog {
+  width: min(540px, calc(100vw - 32px));
+  max-height: calc(100dvh - 48px);
+  overflow: auto;
+  border: 1px solid #d9dce1;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.26);
+  color: #17191d;
+}
+
+.shortcut-dialog > header,
+.question-report-dialog > header {
+  display: flex;
+  min-height: 68px;
+  padding: 0 18px 0 22px;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #e4e6e9;
+}
+
+.shortcut-dialog h2,
+.question-report-dialog h2 { margin: 0; font-size: 23px; font-weight: 650; letter-spacing: -0.02em; }
+.shortcut-dialog header button,
+.question-report-dialog header button { display: grid; width: 38px; height: 38px; padding: 0; place-items: center; border: 0; border-radius: 8px; background: transparent; color: #50545c; font-size: 29px; font-weight: 300; cursor: pointer; }
+.shortcut-dialog header button:hover,
+.question-report-dialog header button:hover { background: #f0f1f3; }
+
+.shortcut-dialog dl { margin: 0; padding: 0 22px 12px; }
+.shortcut-dialog dl > div { display: flex; min-height: 66px; align-items: center; justify-content: space-between; gap: 20px; border-bottom: 1px solid #e6e7e9; }
+.shortcut-dialog dl > div:last-child { border-bottom: 0; }
+.shortcut-dialog dt { font-size: 16px; line-height: 1.35; }
+.shortcut-dialog dd { display: flex; margin: 0; align-items: center; gap: 6px; color: #656a73; }
+.shortcut-dialog kbd { display: inline-grid; min-width: 38px; min-height: 36px; padding: 0 9px; place-items: center; border: 0; border-radius: 9px; background: #f0f1f2; color: #17191d; font: 15px Arial, Helvetica, sans-serif; box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.08); }
+
+.question-report-dialog { padding-bottom: 18px; }
+.question-report-dialog label { display: grid; gap: 8px; margin: 18px 22px 0; color: #373b43; font-size: 13px; font-weight: 700; }
+.question-report-dialog label small { color: #7b8089; font-weight: 500; }
+.question-report-dialog select,
+.question-report-dialog textarea { width: 100%; border: 1px solid #cfd3d9; border-radius: 9px; background: #fff; color: #202329; font: 14px Arial, Helvetica, sans-serif; }
+.question-report-dialog select { height: 46px; padding: 0 38px 0 13px; }
+.question-report-dialog textarea { min-height: 126px; padding: 12px 13px; resize: vertical; line-height: 1.45; }
+.question-report-dialog select:focus,
+.question-report-dialog textarea:focus { border-color: #1677ef; outline: 3px solid rgba(22, 119, 239, 0.15); }
+.question-report-dialog > footer { display: flex; margin: 20px 22px 0; justify-content: flex-end; gap: 10px; }
+.question-report-dialog > footer button { min-width: 92px; height: 42px; padding: 0 18px; border: 1px solid #cfd3d9; border-radius: 9px; background: #fff; color: #2f3339; font-weight: 650; cursor: pointer; }
+.question-report-dialog > footer .submit-report-button { border-color: #1677ef; background: #1677ef; color: #fff; }
 
 .exam-workspace {
   position: relative;
@@ -1987,6 +2080,60 @@ body.is-resizing * {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Exam theme controlled from More. */
+.exam-app.dark-mode {
+  color: #f4f5f7;
+  background: #111215;
+}
+
+.exam-app.dark-mode .exam-header,
+.exam-app.dark-mode .exam-footer { border-color: #3e4148; background: #1a1c21; }
+.exam-app.dark-mode .package-exit-control,
+.exam-app.dark-mode .timer-wrap button { border-color: #484c55; background: #25282e; color: #e7e9ed; }
+.exam-app.dark-mode .tool-button { color: #c9ccd2; }
+.exam-app.dark-mode .tool-button:hover,
+.exam-app.dark-mode .tool-button.active { background: #193b43; color: #39cae9; }
+.exam-app.dark-mode .exam-more-menu { border-color: #484c55; background: #25282e; box-shadow: 0 16px 40px rgba(0, 0, 0, .45); }
+.exam-app.dark-mode .exam-more-menu button { color: #f2f3f5; }
+.exam-app.dark-mode .exam-more-menu button:hover { background: #353941; }
+.exam-app.dark-mode .passage-panel,
+.exam-app.dark-mode .question-panel,
+.exam-app.dark-mode .math-workspace,
+.exam-app.dark-mode .math-question-panel,
+.exam-app.dark-mode .review-page { background: #111215; color: #f3f4f6; }
+.exam-app.dark-mode .splitter,
+.exam-app.dark-mode .math-splitter { background: #3e4148; }
+.exam-app.dark-mode .question-toolbar { background: #2a2d33; }
+.exam-app.dark-mode .review-button,
+.exam-app.dark-mode .report-button { color: #e3e5e8; }
+.exam-app.dark-mode .report-button svg { fill: #b8bdc5; stroke: #b8bdc5; }
+.exam-app.dark-mode .choice-card,
+.exam-app.dark-mode .student-response-field input,
+.exam-app.dark-mode .review-card,
+.exam-app.dark-mode .navigator-card { border-color: #464a52; background: #202329; color: #f3f4f6; }
+.exam-app.dark-mode .choice-row.selected .choice-card { border-color: #44c8e8; background: #173941; }
+.exam-app.dark-mode .choice-letter { border-color: #737985; background: #2b2f36; color: #f3f4f6; }
+.exam-app.dark-mode .keyboard-tip { color: #aaafb8; }
+.exam-app.dark-mode .keyboard-tip kbd { border-color: #4c5059; background: #292c32; color: #e8eaee; }
+.exam-app.dark-mode .exam-footer button { border-color: #4a4e57; background: #272a31; color: #f4f5f7; }
+.exam-app.dark-mode .footer-actions button:last-child { border-color: #19a9d2; background: #1197bd; }
+.exam-app.dark-mode .shortcut-dialog,
+.exam-app.dark-mode .question-report-dialog { border-color: #484c55; background: #25282e; color: #f3f4f6; }
+.exam-app.dark-mode .shortcut-dialog > header,
+.exam-app.dark-mode .question-report-dialog > header,
+.exam-app.dark-mode .shortcut-dialog dl > div { border-color: #444851; }
+.exam-app.dark-mode .shortcut-dialog header button,
+.exam-app.dark-mode .question-report-dialog header button { color: #d7dae0; }
+.exam-app.dark-mode .shortcut-dialog header button:hover,
+.exam-app.dark-mode .question-report-dialog header button:hover { background: #353941; }
+.exam-app.dark-mode .shortcut-dialog kbd { background: #3b3f47; color: #fff; }
+.exam-app.dark-mode .question-report-dialog label { color: #e2e4e8; }
+.exam-app.dark-mode .question-report-dialog select,
+.exam-app.dark-mode .question-report-dialog textarea,
+.exam-app.dark-mode .question-report-dialog > footer button { border-color: #555a64; background: #30343b; color: #f4f5f7; }
+.exam-app.dark-mode .question-report-dialog > footer .submit-report-button { border-color: #1689d8; background: #1689d8; }
+.break-screen.dark-mode { background: #0f1013; color: #f4f5f7; }
 
 /* Full module flow */
 .review-page,

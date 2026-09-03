@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Graphing Calculator</title>
+    <style>
+      html,
+      body,
+      #graphing-calculator {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        overflow: hidden;
+        background: #fff;
+      }
+
+      #loading {
+        position: fixed;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        color: #697386;
+        font: 14px Arial, Helvetica, sans-serif;
+      }
+    </style>
+    <script src="https://www.geogebra.org/apps/deployggb.js"></script>
+  </head>
+  <body>
+    <div id="graphing-calculator"><div id="loading">Loading graphing calculator…</div></div>
+    <script>
+      const container = document.getElementById('graphing-calculator')
+      const params = {
+        appName: 'graphing',
+        width: Math.max(420, container.clientWidth),
+        height: Math.max(480, container.clientHeight),
+        showToolBar: false,
+        showAlgebraInput: true,
+        showMenuBar: false,
+        showResetIcon: false,
+        enableLabelDrags: false,
+        enableShiftDragZoom: true,
+        enableRightClick: false,
+        errorDialogsActive: false,
+        useBrowserForJS: true,
+        language: 'en',
+        appletOnLoad() {
+          document.getElementById('loading')?.remove()
+        },
+      }
+
+      if (window.GGBApplet) {
+        new GGBApplet(params, true).inject('graphing-calculator')
+      } else {
+        document.getElementById('loading').textContent = 'Graphing calculator could not load. Check your connection and try again.'
+      }
+    </script>
+  </body>
+</html>
