@@ -465,7 +465,7 @@ const practiceTestCard = computed(() => {
   if (practiceTestState.value === "results")
     return {
       stateLabel: "Results ready",
-      description: `Your score report and next-step recommendations are ready. Your result is in the ${report?.percentile ?? 70}th percentile.`,
+      description: `Your score report and next-step recommendations are ready. Your result is in the ${formatOrdinal(report?.percentile ?? 70)} percentile.`,
       metrics: isActPackage.value ? [
         { value: String(report?.totalScore ?? 25), label: "composite" },
         { value: String(report?.sections.find((section) => section.sectionId === "science")?.score ?? 25), label: "Science" },
@@ -1715,6 +1715,14 @@ function formatReportDate(value: string) {
     day: "numeric",
     year: "numeric",
   }).format(new Date(value));
+}
+function formatOrdinal(value: number) {
+  const remainder = value % 100;
+  if (remainder >= 11 && remainder <= 13) return `${value}th`;
+  if (value % 10 === 1) return `${value}st`;
+  if (value % 10 === 2) return `${value}nd`;
+  if (value % 10 === 3) return `${value}rd`;
+  return `${value}th`;
 }
 function reviewStatusLabel(status: ReviewFilter) {
   return status === "OMITTED"
@@ -3138,7 +3146,7 @@ onBeforeUnmount(() => {
                         ><span
                           >Average score
                           <b>{{ resultReport.averageScore }}</b></span
-                        ><em>{{ resultReport.percentile }}th percentile</em>
+                        ><em>{{ formatOrdinal(resultReport.percentile) }} percentile</em>
                       </div>
                     </div>
                     <div class="score-report-sections">
@@ -3170,7 +3178,7 @@ onBeforeUnmount(() => {
                         <em>{{
                           resultSource === "diagnostic"
                             ? "Starting point"
-                            : section.percentile + "th percentile"
+                            : formatOrdinal(section.percentile) + " percentile"
                         }}</em>
                       </article>
                     </div>
