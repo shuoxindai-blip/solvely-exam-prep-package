@@ -86,6 +86,7 @@ const paywallContext = ref("the complete SAT Prep 2026 package");
 let pendingCommercialAction: (() => void) | null = null;
 let practiceScoringTimer: number | null = null;
 let diagnosticScoringTimer: number | null = null;
+let studyTopicPopoverReleaseTimer: number | null = null;
 const retakeDialog = ref<HTMLDialogElement | null>(null);
 const demoController = ref<HTMLElement | null>(null);
 const demoControllerPosition = ref<{ x: number; y: number } | null>(null);
@@ -1055,6 +1056,126 @@ function topicProgress(topic: SatTopic) {
   return 0;
 }
 
+function placeStudyTopicPopover(
+  row: HTMLElement,
+  clientX: number,
+  clientY: number,
+) {
+  if (window.matchMedia("(max-width: 700px)").matches) return;
+
+  const popover = row.querySelector<HTMLElement>(".study-topic-popover");
+  if (!popover) return;
+
+  const viewportInset = 16;
+  const pointerGap = 16;
+  const popoverWidth = Math.min(360, window.innerWidth - viewportInset * 2);
+  const popoverHeight = popover.offsetHeight;
+  const canOpenRight =
+    clientX + pointerGap + popoverWidth + viewportInset <= window.innerWidth;
+  const side = canOpenRight ? "right" : "left";
+  const unclampedLeft = canOpenRight
+    ? clientX + pointerGap
+    : clientX - pointerGap - popoverWidth;
+  const left = Math.min(
+    Math.max(unclampedLeft, viewportInset),
+    window.innerWidth - popoverWidth - viewportInset,
+  );
+  const halfHeight = popoverHeight / 2;
+  const centerY = Math.min(
+    Math.max(clientY, viewportInset + halfHeight),
+    window.innerHeight - viewportInset - halfHeight,
+  );
+  const arrowY = Math.min(
+    Math.max(clientY - (centerY - halfHeight), 20),
+    popoverHeight - 20,
+  );
+
+  popover.dataset.side = side;
+  popover.style.setProperty("--topic-popover-left", `${left}px`);
+  popover.style.setProperty("--topic-popover-top", `${centerY}px`);
+  popover.style.setProperty("--topic-popover-arrow-y", `${arrowY}px`);
+  row.dataset.popoverAnchored = "true";
+  row.dataset.popoverOpen = "true";
+}
+
+function positionStudyTopicPopover(event: MouseEvent) {
+  const row = event.currentTarget as HTMLElement;
+  if (studyTopicPopoverReleaseTimer !== null) {
+    window.clearTimeout(studyTopicPopoverReleaseTimer);
+    studyTopicPopoverReleaseTimer = null;
+  }
+  if (row.dataset.popoverAnchored === "true") return;
+  document
+    .querySelectorAll<HTMLElement>('[data-popover-anchored="true"]')
+    .forEach((candidate) => {
+      if (candidate !== row) {
+        delete candidate.dataset.popoverAnchored;
+        delete candidate.dataset.popoverOpen;
+      }
+    });
+  placeStudyTopicPopover(
+    row,
+    event.clientX,
+    event.clientY,
+  );
+}
+
+function positionStudyTopicPopoverForKeyboard(event: FocusEvent) {
+  const row = event.currentTarget as HTMLElement;
+  if (row.matches(":hover")) return;
+  const rect = row.getBoundingClientRect();
+  placeStudyTopicPopover(
+    row,
+    rect.left + Math.min(rect.width * 0.46, 420),
+    rect.top + rect.height / 2,
+  );
+}
+
+function scheduleStudyTopicPopoverRelease(row: HTMLElement) {
+  if (studyTopicPopoverReleaseTimer !== null) {
+    window.clearTimeout(studyTopicPopoverReleaseTimer);
+  }
+  studyTopicPopoverReleaseTimer = window.setTimeout(() => {
+    const popover = row.querySelector<HTMLElement>(".study-topic-popover");
+    if (
+      row.matches(":hover, :focus-within") ||
+      popover?.matches(":hover")
+    ) {
+      studyTopicPopoverReleaseTimer = null;
+      return;
+    }
+    delete row.dataset.popoverAnchored;
+    delete row.dataset.popoverOpen;
+    studyTopicPopoverReleaseTimer = null;
+  }, 180);
+}
+
+function releaseStudyTopicPopover(event: MouseEvent | FocusEvent) {
+  const row = event.currentTarget as HTMLElement;
+  const nextTarget = event.relatedTarget;
+  if (nextTarget instanceof Node && row.contains(nextTarget)) return;
+  scheduleStudyTopicPopoverRelease(row);
+}
+
+function keepStudyTopicPopoverOpen(event: MouseEvent) {
+  if (studyTopicPopoverReleaseTimer !== null) {
+    window.clearTimeout(studyTopicPopoverReleaseTimer);
+    studyTopicPopoverReleaseTimer = null;
+  }
+  const row = (event.currentTarget as HTMLElement).closest<HTMLElement>(
+    ".study-topic-row",
+  );
+  if (row) row.dataset.popoverOpen = "true";
+}
+
+function releaseStudyTopicPopoverPanel(event: MouseEvent) {
+  const row = (event.currentTarget as HTMLElement).closest<HTMLElement>(
+    ".study-topic-row",
+  );
+  if (!row) return;
+  scheduleStudyTopicPopoverRelease(row);
+}
+
 function initializeSectionDisclosure() {
   if (!manifest.value) return;
   const sectionIds = manifest.value.sections
@@ -1683,6 +1804,9 @@ onMounted(async () => {
 onBeforeUnmount(() => {
   clearPracticeScoringTimer();
   clearDiagnosticScoringTimer();
+  if (studyTopicPopoverReleaseTimer !== null) {
+    window.clearTimeout(studyTopicPopoverReleaseTimer);
+  }
   stopDemoControllerDrag();
   window.removeEventListener("resize", keepDemoControllerInViewport);
   document.body.classList.remove("package-route", "dark");
@@ -2491,9 +2615,13 @@ onBeforeUnmount(() => {
                       <article
                         v-for="topic in section.topics"
                         :key="topic.id"
-                        class="study-topic-row"
+                        class="study-topic-row lesson-topic-row"
                         role="row"
                         tabindex="0"
+                        @mouseenter="positionStudyTopicPopover"
+                        @mouseleave="releaseStudyTopicPopover"
+                        @focusin="positionStudyTopicPopoverForKeyboard"
+                        @focusout="releaseStudyTopicPopover"
                       >
                         <div class="study-topic-copy" role="cell">
                           <strong>{{ topic.title }}</strong>
@@ -2524,6 +2652,8 @@ onBeforeUnmount(() => {
                         <aside
                           class="study-topic-popover"
                           :aria-label="`Study tools for ${topic.title}`"
+                          @mouseenter="keepStudyTopicPopoverOpen"
+                          @mouseleave="releaseStudyTopicPopoverPanel"
                         >
                           <div class="study-topic-popover-head">
                             <h4>{{ topic.title }}</h4>
