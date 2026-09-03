@@ -175,7 +175,7 @@ const reportIssue = ref('Other issue')
 const reportDetails = ref('')
 const darkMode = ref(false)
 const isFullscreen = ref(false)
-const timerVisible = ref(false)
+const timerVisible = ref(!isDiagnostic.value)
 const toastMessage = ref('')
 const recommendationRating = ref<number | null>(null)
 const challengeRating = ref<number | null>(null)
@@ -481,7 +481,7 @@ function restartExam() {
   currentNumber.value = 1
   timeRemaining.value = modules.value[0].duration
   diagnosticElapsedSeconds.value = 0
-  timerVisible.value = false
+  timerVisible.value = !isDiagnostic.value
   breakRemaining.value = 9 * 60 + 52
   stage.value = 'exam'
   closeTransientTools()
@@ -863,7 +863,7 @@ onBeforeUnmount(() => {
       <div class="timer-wrap">
         <span v-if="timerVisible" class="timer-value-row">
           <strong class="timer" :aria-label="isDiagnostic ? `Elapsed time ${displayedTimerLabel}` : `Time remaining ${displayedTimerLabel}`" aria-live="polite">{{ displayedTimerLabel }}</strong>
-          <span v-if="!isDiagnostic" class="timer-help" tabindex="0" aria-label="About the practice test timer">?<span class="timer-tooltip" role="tooltip">Use the countdown to build your pacing. The real SAT also counts down the time remaining.</span></span>
+          <span v-if="isDiagnostic" class="timer-help" tabindex="0" aria-label="About the diagnostic timer">?<span class="timer-tooltip" role="tooltip">This untimed diagnostic tracks how long you have been working. The full-length practice test uses a countdown timer.</span></span>
         </span>
         <span v-else class="timer-placeholder">Timer hidden</span>
         <button class="timer-toggle" type="button" @click="timerVisible = !timerVisible">{{ timerVisible ? 'Hide' : 'Show' }}</button>
