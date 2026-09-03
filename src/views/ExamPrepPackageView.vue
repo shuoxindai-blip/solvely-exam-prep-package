@@ -217,12 +217,6 @@ const resultSources: {
     label: "Full-Length Practice Test",
   },
 ];
-const resultViews: { id: ResultView; label: string }[] = [
-  { id: "full", label: "Full Report" },
-  { id: "score", label: "Score Analysis" },
-  { id: "review", label: "Question Review" },
-  { id: "improve", label: "Targeted Practice" },
-];
 const retakeActionLabel = computed(() =>
   resultSource.value === "diagnostic"
     ? "Retake Diagnostic Test"
@@ -1541,9 +1535,6 @@ function setResultView(view: ResultView) {
     hash: "#course-0",
   });
 }
-function setResultViewFromEvent(event: Event) {
-  setResultView((event.target as HTMLSelectElement).value as ResultView);
-}
 function setResultSource(source: ResultSource) {
   resultSource.value = source;
   selectedReviewQuestionId.value = null;
@@ -1551,14 +1542,40 @@ function setResultSource(source: ResultSource) {
   reviewSectionFilter.value = "ALL";
   void router.replace({
     name: "package",
-    query: { ...route.query, tab: "results", reportSource: source },
+    query: {
+      ...route.query,
+      tab: "results",
+      view: undefined,
+      reportSource: source,
+    },
     hash: "#course-0",
   });
 }
-function setResultSourceFromEvent(event: Event) {
-  setResultSource(
-    (event.target as HTMLSelectElement).value as ResultSource,
+function moveResultSource(event: KeyboardEvent) {
+  if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key))
+    return;
+  event.preventDefault();
+  const currentIndex = resultSources.findIndex(
+    (source) => source.id === resultSource.value,
   );
+  const nextIndex =
+    event.key === "Home"
+      ? 0
+      : event.key === "End"
+        ? resultSources.length - 1
+        : (currentIndex + (event.key === "ArrowRight" ? 1 : -1) +
+            resultSources.length) %
+          resultSources.length;
+  const nextSource = resultSources[nextIndex];
+  if (!nextSource) return;
+  setResultSource(nextSource.id);
+  void nextTick(() => {
+    document
+      .querySelector<HTMLButtonElement>(
+        `[data-result-source="${nextSource.id}"]`,
+      )
+      ?.focus();
+  });
 }
 function setReviewFilter(filter: ReviewFilter) {
   reviewFilter.value = filter;
@@ -1679,14 +1696,7 @@ function syncTabFromRoute() {
         ? "diagnostic"
         : "practice";
   if (activeTab.value === "results") {
-    const requestedView = String(route.query.view || "");
-    resultView.value =
-      requestedView === "score" ||
-      requestedView === "review" ||
-      requestedView === "improve" ||
-      requestedView === "full"
-        ? requestedView
-        : "full";
+    resultView.value = "full";
     const requestedResultState = String(route.query.resultState || "");
     resultsAccessState.value =
       requestedResultState === "locked" ||
@@ -2954,47 +2964,28 @@ onBeforeUnmount(() => {
             <div v-else class="results-experience">
               <header class="course-region-heading results-page-heading">
                 <h2>Test Results</h2>
-                <div
-                  class="course-topic-filters"
-                  aria-label="Filter test results"
+                <nav
+                  :class="[
+                    'results-source-switch',
+                    { 'is-practice': resultSource === 'practice' },
+                  ]"
+                  role="tablist"
+                  aria-label="Select test results"
+                  @keydown="moveResultSource"
                 >
-                  <label class="course-topic-select results-test-select">
-                    <select
-                      :value="resultSource"
-                      aria-label="Select test results"
-                      @change="setResultSourceFromEvent"
-                    >
-                      <option
-                        v-for="source in resultSources"
-                        :key="source.id"
-                        :value="source.id"
-                      >
-                        Test: {{ source.label }}
-                      </option>
-                    </select>
-                    <svg class="icon" aria-hidden="true">
-                      <use href="#i-chevron" />
-                    </svg>
-                  </label>
-                  <label class="course-topic-select results-view-select">
-                    <select
-                      :value="resultView"
-                      aria-label="Select result view"
-                      @change="setResultViewFromEvent"
-                    >
-                      <option
-                        v-for="view in resultViews"
-                        :key="view.id"
-                        :value="view.id"
-                      >
-                        View: {{ view.label }}
-                      </option>
-                    </select>
-                    <svg class="icon" aria-hidden="true">
-                      <use href="#i-chevron" />
-                    </svg>
-                  </label>
-                </div>
+                  <button
+                    v-for="source in resultSources"
+                    :key="source.id"
+                    type="button"
+                    role="tab"
+                    :data-result-source="source.id"
+                    :aria-selected="resultSource === source.id"
+                    :tabindex="resultSource === source.id ? 0 : -1"
+                    @click="setResultSource(source.id)"
+                  >
+                    {{ source.label }}
+                  </button>
+                </nav>
               </header>
 
               <div class="results-preview-shell">

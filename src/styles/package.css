@@ -1880,8 +1880,13 @@
     .results-experience { display:grid; gap:0; color:var(--text); }
     .results-page-heading { min-height:48px; margin-bottom:0; }
     .results-page-heading h2 { font-size:17px; font-weight:700; letter-spacing:-.025em; }
-    .results-test-select { min-width:226px; }
-    .results-view-select { min-width:206px; }
+    .results-source-switch { width:min(420px,100%); min-height:38px; position:relative; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:0; padding:3px; border:1px solid var(--line); border-radius:12px; background:var(--surface-soft); isolation:isolate; }
+    .results-source-switch::before { content:""; position:absolute; top:3px; bottom:3px; left:3px; z-index:0; width:calc(50% - 3px); border:1px solid rgba(112,122,140,.08); border-radius:9px; background:var(--surface); box-shadow:0 1px 3px rgba(23,34,51,.09),0 4px 12px rgba(23,34,51,.04); transform:translateX(0); transition:transform .2s cubic-bezier(.22,1,.36,1); }
+    .results-source-switch.is-practice::before { transform:translateX(100%); }
+    .results-source-switch button { min-width:0; min-height:30px; position:relative; z-index:1; border:0; border-radius:9px; outline:0; background:transparent; color:#7c8798; font-size:9.5px; font-weight:680; line-height:1.2; white-space:nowrap; cursor:pointer; transition:color .16s ease; }
+    .results-source-switch button:hover { color:var(--text); }
+    .results-source-switch button:focus-visible { box-shadow:inset 0 0 0 2px rgba(35,104,240,.38); }
+    .results-source-switch button[aria-selected="true"] { color:var(--text); font-weight:740; }
     .results-navigation-bar { min-height:52px; display:grid; grid-template-columns:minmax(220px,1fr) 1px minmax(390px,2fr); align-items:stretch; gap:12px; overflow-x:auto; border-bottom:1px solid var(--line); scrollbar-width:none; }
     .results-navigation-bar::-webkit-scrollbar { display:none; }
     .results-navigation-divider { width:1px; height:24px; align-self:center; background:var(--line); }
@@ -2212,6 +2217,7 @@
       .study-breakdown-toolbar { align-items:flex-start; }
       .study-breakdown-filters { justify-content:space-between; }
       .course-topics-heading,.results-page-heading,.results-filter-heading { align-items:flex-start; flex-direction:column; }
+      .results-source-switch { width:100%; }
       .course-topic-filters { width:100%; justify-content:flex-start; margin-left:0; }
       .study-topic-table-head,.study-topic-row { grid-template-columns:minmax(180px,1fr) 100px 150px; gap:18px; padding-inline:20px; }
       .improve-topic-row { grid-template-columns:minmax(0,1fr) 100px; }
