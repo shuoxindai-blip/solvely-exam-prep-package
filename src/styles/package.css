@@ -1686,9 +1686,9 @@
     .study-topic-row[data-popover-open="true"] .study-topic-popover,.study-topic-row:focus .study-topic-popover,.study-topic-row:focus-within .study-topic-popover { transform:translateY(-50%) scale(1); opacity:1; visibility:visible; pointer-events:auto; }
     .study-topic-popover::before { content:""; position:absolute; top:var(--topic-popover-arrow-y,50%); left:-8px; width:14px; height:14px; border-left:1px solid #e0e4ea; border-bottom:1px solid #e0e4ea; background:var(--surface); transform:translateY(-50%) rotate(45deg); }
     .study-topic-popover[data-side="left"]::before { right:-8px; left:auto; border:0; border-top:1px solid #e0e4ea; border-right:1px solid #e0e4ea; }
-    .study-topic-popover-head { display:flex; align-items:center; justify-content:space-between; gap:12px; }
-    .study-topic-popover-head h4 { min-width:0; margin:0; overflow:hidden; font-size:14px; letter-spacing:-.015em; text-overflow:ellipsis; white-space:nowrap; }
-    .study-topic-popover-head span { min-height:22px; flex:0 0 auto; display:inline-flex; align-items:center; padding:0 8px; border-radius:7px; background:#147ef5; color:#fff; font-size:9px; font-weight:780; white-space:nowrap; }
+    .study-topic-popover-head { display:flex; align-items:flex-start; justify-content:space-between; gap:8px; }
+    .study-topic-popover-head h4 { min-width:0; flex:1 1 auto; margin:0; overflow:visible; font-size:16px; font-weight:700; line-height:1.375; letter-spacing:-.018em; overflow-wrap:anywhere; text-overflow:clip; white-space:normal; }
+    .study-topic-popover-head span { min-height:22px; flex:0 0 auto; align-self:flex-start; display:inline-flex; align-items:center; padding:0 8px; border-radius:7px; background:#147ef5; color:#fff; font-size:9px; font-weight:780; white-space:nowrap; }
     .study-topic-popover > p { margin:11px 0 17px; color:var(--muted); font-size:10px; line-height:1.55; }
     .study-topic-popover > p.study-topic-probability { margin:10px 0 15px; color:#657184; font-size:10px; line-height:1.45; }
     .study-topic-popover > p.study-topic-importance-detail { margin:-10px 0 14px; color:#73839a; font-size:8px; font-weight:650; }
