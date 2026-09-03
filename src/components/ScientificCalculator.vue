@@ -26,19 +26,24 @@ const shell = ref<HTMLElement | null>(null)
 const scientificHost = ref<HTMLElement | null>(null)
 const calculatorLoadError = ref('')
 const position = reactive({ x: 28, y: 92 })
+const size = reactive({ width: 410, height: 578 })
+
+const minimumSize = { width: 340, height: 420 }
 
 const desmosScriptUrl = 'https://www.desmos.com/api/v1.11/calculator.js?apiKey=dcb31709b452b1cf9dc26972add0fda6&lang=en'
 let desmosCalculator: DesmosCalculatorInstance | null = null
 const shellStyle = computed(() => poppedOut.value
-  ? { left: `${position.x}px`, top: `${position.y}px` }
+  ? { left: `${position.x}px`, top: `${position.y}px`, width: `${size.width}px`, height: `${size.height}px` }
   : undefined)
+let stopResize: (() => void) | undefined
 
-function clampPosition() {
-  const rect = shell.value?.getBoundingClientRect()
-  const width = rect?.width ?? 410
-  const height = rect?.height ?? 578
-  position.x = Math.max(12, Math.min(position.x, window.innerWidth - width - 12))
-  position.y = Math.max(12, Math.min(position.y, window.innerHeight - height - 12))
+function clampGeometry() {
+  const maxWidth = Math.max(280, window.innerWidth - 24)
+  const maxHeight = Math.max(360, window.innerHeight - 24)
+  size.width = Math.min(maxWidth, Math.max(Math.min(minimumSize.width, maxWidth), size.width))
+  size.height = Math.min(maxHeight, Math.max(Math.min(minimumSize.height, maxHeight), size.height))
+  position.x = Math.max(12, Math.min(position.x, window.innerWidth - size.width - 12))
+  position.y = Math.max(12, Math.min(position.y, window.innerHeight - size.height - 12))
 }
 
 function loadDesmos() {
@@ -87,7 +92,7 @@ async function togglePopout() {
     position.x = Math.max(20, Math.min(94, window.innerWidth - 430))
     position.y = Math.max(20, Math.min(112, window.innerHeight - 598))
     await nextTick()
-    clampPosition()
+    clampGeometry()
     desmosCalculator?.resize()
   }
 }
@@ -121,6 +126,58 @@ function beginDrag(event: PointerEvent) {
   ;(event.currentTarget as HTMLElement | null)?.setPointerCapture?.(event.pointerId)
 }
 
+function setResizedDimensions(width: number, height: number) {
+  const maxWidth = Math.max(280, window.innerWidth - position.x - 12)
+  const maxHeight = Math.max(360, window.innerHeight - position.y - 12)
+  size.width = Math.min(maxWidth, Math.max(Math.min(minimumSize.width, maxWidth), width))
+  size.height = Math.min(maxHeight, Math.max(Math.min(minimumSize.height, maxHeight), height))
+}
+
+function beginResize(event: PointerEvent) {
+  if (!poppedOut.value) return
+  event.preventDefault()
+  event.stopPropagation()
+
+  const startX = event.clientX
+  const startY = event.clientY
+  const startWidth = size.width
+  const startHeight = size.height
+  const onMove = (moveEvent: PointerEvent) => {
+    setResizedDimensions(startWidth + moveEvent.clientX - startX, startHeight + moveEvent.clientY - startY)
+    desmosCalculator?.resize()
+  }
+  const cleanup = () => {
+    window.removeEventListener('pointermove', onMove)
+    window.removeEventListener('pointerup', onUp)
+    window.removeEventListener('pointercancel', onUp)
+    document.body.classList.remove('is-resizing-calculator')
+    stopResize = undefined
+  }
+  const onUp = () => {
+    cleanup()
+    desmosCalculator?.resize()
+  }
+
+  stopResize?.()
+  stopResize = cleanup
+  document.body.classList.add('is-resizing-calculator')
+  window.addEventListener('pointermove', onMove)
+  window.addEventListener('pointerup', onUp)
+  window.addEventListener('pointercancel', onUp)
+  ;(event.currentTarget as HTMLElement | null)?.setPointerCapture?.(event.pointerId)
+}
+
+function resizeWithKeyboard(event: KeyboardEvent) {
+  if (!poppedOut.value || !['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(event.key)) return
+  event.preventDefault()
+  const step = event.shiftKey ? 40 : 16
+  setResizedDimensions(
+    size.width + (event.key === 'ArrowRight' ? step : event.key === 'ArrowLeft' ? -step : 0),
+    size.height + (event.key === 'ArrowDown' ? step : event.key === 'ArrowUp' ? -step : 0),
+  )
+  void nextTick(() => desmosCalculator?.resize())
+}
+
 function closeCalculator() {
   poppedOut.value = false
   emit('popout-change', false)
@@ -128,14 +185,15 @@ function closeCalculator() {
 }
 
 onMounted(() => {
-  window.addEventListener('resize', clampPosition)
+  window.addEventListener('resize', clampGeometry)
   void mountScientificCalculator()
 })
 
 onBeforeUnmount(() => {
   desmosCalculator?.destroy()
   desmosCalculator = null
-  window.removeEventListener('resize', clampPosition)
+  stopResize?.()
+  window.removeEventListener('resize', clampGeometry)
 })
 
 watch(calculatorMode, (mode) => {
@@ -178,6 +236,7 @@ watch(calculatorMode, (mode) => {
         <iframe v-else src="/geogebra-calculator.html" title="GeoGebra graphing calculator" allow="clipboard-write" />
         <p v-if="calculatorLoadError" class="calculator-load-error" role="status">{{ calculatorLoadError }}</p>
       </div>
+      <button v-if="poppedOut" class="calculator-resize-handle" type="button" aria-label="Resize calculator" title="Drag to resize" @pointerdown="beginResize" @keydown="resizeWithKeyboard"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 11 11 19M19 16l-3 3" /></svg></button>
     </section>
   </Teleport>
 </template>
@@ -204,6 +263,31 @@ watch(calculatorMode, (mode) => {
   height: min(578px, calc(100dvh - 24px));
   box-shadow: 0 24px 72px rgba(0, 0, 0, .26);
 }
+
+.calculator-resize-handle {
+  position: absolute;
+  z-index: 4;
+  right: 0;
+  bottom: 0;
+  display: grid;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  place-items: center;
+  border: 0;
+  border-radius: 8px 0 8px 0;
+  background: linear-gradient(135deg, transparent 42%, rgba(255, 255, 255, .88) 43%);
+  color: #787878;
+  cursor: nwse-resize;
+}
+
+.calculator-resize-handle:hover,
+.calculator-resize-handle:focus-visible { color: #1677ef; }
+.calculator-resize-handle:focus-visible { outline: 2px solid #1677ef; outline-offset: -3px; }
+.calculator-resize-handle svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; }
+
+:global(body.is-resizing-calculator),
+:global(body.is-resizing-calculator *) { cursor: nwse-resize !important; user-select: none !important; }
 
 .calculator-titlebar {
   display: grid;
@@ -305,6 +389,7 @@ watch(calculatorMode, (mode) => {
 :global(body.mock-exam-dark .calculator-shell.popped-out .calculator-window-actions button) { color: #a3a3a3; }
 :global(.exam-app.dark-mode .calculator-window-actions button:hover),
 :global(body.mock-exam-dark .calculator-shell.popped-out .calculator-window-actions button:hover) { background: #262626; color: #fafafa; }
+:global(body.mock-exam-dark .calculator-shell.popped-out .calculator-resize-handle) { background: linear-gradient(135deg, transparent 42%, rgba(10, 10, 10, .88) 43%); color: #a3a3a3; }
 
 @media (max-width: 680px) {
   .calculator-titlebar { grid-template-columns: auto 1fr auto; padding-left: 10px; }
