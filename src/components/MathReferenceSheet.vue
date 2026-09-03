@@ -101,14 +101,14 @@ const solidFigures = [
 .special-triangle-section img { width: min(100%, 330px); height: auto; mix-blend-mode: multiply; }
 .reference-facts { display: grid; gap: 10px; margin: 26px 0 0; padding: 22px 0 0 20px; border-top: 1px solid #dadde1; font: 15px/1.45 Georgia, 'Times New Roman', serif; }
 
-:global(.exam-app.dark-mode) .reference-sheet { border-color: #444851; background: #24262b; color: #f4f4f5; }
-:global(.exam-app.dark-mode) .reference-titlebar { border-color: #444851; }
-:global(.exam-app.dark-mode) .reference-titlebar button { color: #d5d7dc; }
-:global(.exam-app.dark-mode) .reference-titlebar button:hover { background: #363941; }
-:global(.exam-app.dark-mode) .reference-formula-grid img,
-:global(.exam-app.dark-mode) .special-triangle-section img { filter: invert(1); mix-blend-mode: normal; }
-:global(.exam-app.dark-mode) .special-triangle-section,
-:global(.exam-app.dark-mode) .reference-facts { border-color: #444851; }
+:global(.exam-app.dark-mode .reference-sheet) { border-color: #262626; background: #0a0a0a; color: #fafafa; }
+:global(.exam-app.dark-mode .reference-titlebar) { border-color: #262626; }
+:global(.exam-app.dark-mode .reference-titlebar button) { color: #a3a3a3; }
+:global(.exam-app.dark-mode .reference-titlebar button:hover) { background: #262626; color: #fafafa; }
+:global(.exam-app.dark-mode .reference-formula-grid img),
+:global(.exam-app.dark-mode .special-triangle-section img) { filter: invert(1); mix-blend-mode: normal; }
+:global(.exam-app.dark-mode .special-triangle-section),
+:global(.exam-app.dark-mode .reference-facts) { border-color: #262626; }
 
 @media (max-width: 680px) { .reference-sheet { top: 72px; left: 12px; width: calc(100vw - 24px); height: calc(100dvh - 96px); } }
 @media (prefers-reduced-motion: reduce) { .reference-sheet { transition: none; } }

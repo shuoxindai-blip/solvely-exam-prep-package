@@ -136,17 +136,12 @@ button:focus-visible,
   letter-spacing: -0.02em;
 }
 
-.timer.untimed {
-  min-height: 31px;
-  padding: 0 13px;
-  border: 1px solid #cfe1ff;
-  border-radius: 999px;
-  background: #f1f6ff;
-  color: #087bf1;
-  font-size: 12px;
-  font-weight: 750;
-  line-height: 29px;
-  letter-spacing: 0.02em;
+.timer-value-row {
+  position: relative;
+  display: inline-flex;
+  min-height: 29px;
+  align-items: center;
+  gap: 7px;
 }
 
 .timer-placeholder {
@@ -156,7 +151,7 @@ button:focus-visible,
   line-height: 29px;
 }
 
-.timer-wrap button {
+.timer-toggle {
   min-width: 53px;
   height: 27px;
   padding: 0 12px;
@@ -168,6 +163,48 @@ button:focus-visible,
   font-weight: 600;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
   cursor: pointer;
+}
+
+.timer-help {
+  position: relative;
+  display: grid;
+  width: 17px;
+  height: 17px;
+  place-items: center;
+  border: 1px solid #bcbcbc;
+  border-radius: 50%;
+  color: #6b6b6b;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: help;
+}
+
+.timer-tooltip {
+  position: absolute;
+  z-index: 80;
+  top: calc(100% + 10px);
+  left: 50%;
+  width: 250px;
+  padding: 10px 12px;
+  border: 1px solid #d8d8d8;
+  border-radius: 9px;
+  background: #fff;
+  color: #313131;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.45;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-50%) translateY(-3px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, .14);
+  transition: opacity .14s ease, transform .14s ease;
+}
+
+.timer-help:hover .timer-tooltip,
+.timer-help:focus-visible .timer-tooltip {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
 }
 
 .header-tools {
@@ -2081,59 +2118,239 @@ body.is-resizing * {
   }
 }
 
-/* Exam theme controlled from More. */
+/* OnePrep-aligned exam theme controlled from More. */
+body.mock-exam-route.mock-exam-dark {
+  background: #0d0d0d;
+  color-scheme: dark;
+}
+
 .exam-app.dark-mode {
-  color: #f4f5f7;
-  background: #111215;
+  --exam-background: #0d0d0d;
+  --exam-card: #0a0a0a;
+  --exam-muted: #1a1a1a;
+  --exam-secondary: #262626;
+  --exam-border: #262626;
+  --exam-subtle-border: #1d1d1d;
+  --exam-foreground: #fafafa;
+  --exam-muted-foreground: #a3a3a3;
+  --exam-accent-bg: #002e5f;
+  --exam-accent: #46cbe3;
+  color: var(--exam-foreground);
+  background: var(--exam-background);
+  color-scheme: dark;
 }
 
 .exam-app.dark-mode .exam-header,
-.exam-app.dark-mode .exam-footer { border-color: #3e4148; background: #1a1c21; }
+.exam-app.dark-mode .exam-footer {
+  border-color: var(--exam-subtle-border);
+  background: var(--exam-background);
+}
+
+.exam-app.dark-mode .timer-placeholder { color: var(--exam-muted-foreground); }
+.exam-app.dark-mode .timer-help { border-color: #525252; color: var(--exam-muted-foreground); }
+.exam-app.dark-mode .timer-tooltip { border-color: var(--exam-border); background: var(--exam-card); color: var(--exam-foreground); box-shadow: 0 16px 34px rgba(0, 0, 0, .55); }
+
 .exam-app.dark-mode .package-exit-control,
-.exam-app.dark-mode .timer-wrap button { border-color: #484c55; background: #25282e; color: #e7e9ed; }
-.exam-app.dark-mode .tool-button { color: #c9ccd2; }
-.exam-app.dark-mode .tool-button:hover,
-.exam-app.dark-mode .tool-button.active { background: #193b43; color: #39cae9; }
-.exam-app.dark-mode .exam-more-menu { border-color: #484c55; background: #25282e; box-shadow: 0 16px 40px rgba(0, 0, 0, .45); }
-.exam-app.dark-mode .exam-more-menu button { color: #f2f3f5; }
-.exam-app.dark-mode .exam-more-menu button:hover { background: #353941; }
+.exam-app.dark-mode .timer-toggle {
+  border-color: var(--exam-muted);
+  background: rgba(26, 26, 26, .72);
+  color: var(--exam-muted-foreground);
+  box-shadow: none;
+}
+
+.exam-app.dark-mode .package-exit-control:hover,
+.exam-app.dark-mode .timer-toggle:hover {
+  border-color: var(--exam-border);
+  background: var(--exam-secondary);
+  color: var(--exam-foreground);
+}
+
+.exam-app.dark-mode .tool-button { color: var(--exam-muted-foreground); }
+.exam-app.dark-mode .tool-button:hover { background: rgba(38, 38, 38, .72); color: var(--exam-foreground); }
+.exam-app.dark-mode .tool-button.active { background: var(--exam-accent-bg); color: var(--exam-accent); }
+
+.exam-app.dark-mode .exam-more-menu {
+  border-color: var(--exam-border);
+  background: var(--exam-card);
+  box-shadow: 0 18px 48px rgba(0, 0, 0, .58);
+}
+
+.exam-app.dark-mode .exam-more-menu button { color: var(--exam-muted-foreground); }
+.exam-app.dark-mode .exam-more-menu button:hover { background: var(--exam-secondary); color: var(--exam-foreground); }
+
 .exam-app.dark-mode .passage-panel,
 .exam-app.dark-mode .question-panel,
 .exam-app.dark-mode .math-workspace,
 .exam-app.dark-mode .math-question-panel,
-.exam-app.dark-mode .review-page { background: #111215; color: #f3f4f6; }
-.exam-app.dark-mode .splitter,
-.exam-app.dark-mode .math-splitter { background: #3e4148; }
-.exam-app.dark-mode .question-toolbar { background: #2a2d33; }
+.exam-app.dark-mode .review-page {
+  background: var(--exam-background);
+  color: var(--exam-foreground);
+  scrollbar-color: #404040 transparent;
+}
+
+.exam-app.dark-mode .passage-copy,
+.exam-app.dark-mode .question-shell h1,
+.exam-app.dark-mode .math-question-shell h1,
+.exam-app.dark-mode .student-response-field label,
+.exam-app.dark-mode .student-response-field small {
+  color: var(--exam-foreground);
+}
+
+.exam-app.dark-mode .student-response-field small { color: var(--exam-muted-foreground); }
+
+.exam-app.dark-mode .splitter {
+  border-color: var(--exam-subtle-border);
+  background: var(--exam-subtle-border);
+}
+
+.exam-app.dark-mode .splitter span,
+.exam-app.dark-mode .math-splitter span {
+  border-color: var(--exam-border);
+  background: var(--exam-muted);
+  box-shadow: none;
+}
+
+.exam-app.dark-mode .splitter i,
+.exam-app.dark-mode .math-splitter i { background: var(--exam-muted-foreground); }
+.exam-app.dark-mode .math-splitter { background: var(--exam-subtle-border); }
+
+.exam-app.dark-mode .question-toolbar { background: var(--exam-muted); }
+.exam-app.dark-mode .number-badge { background: var(--exam-foreground); color: #171717; }
 .exam-app.dark-mode .review-button,
-.exam-app.dark-mode .report-button { color: #e3e5e8; }
-.exam-app.dark-mode .report-button svg { fill: #b8bdc5; stroke: #b8bdc5; }
+.exam-app.dark-mode .report-button { color: var(--exam-muted-foreground); }
+.exam-app.dark-mode .review-button:hover,
+.exam-app.dark-mode .report-button:hover { color: var(--exam-foreground); }
+.exam-app.dark-mode .review-button svg,
+.exam-app.dark-mode .report-button svg { fill: var(--exam-muted-foreground); stroke: var(--exam-muted-foreground); }
+
+.exam-app.dark-mode .elimination-mode-button {
+  border-color: #404040;
+  background: rgba(26, 26, 26, .3);
+  color: var(--exam-muted-foreground);
+}
+
+.exam-app.dark-mode .elimination-mode-button:hover { background: var(--exam-secondary); color: var(--exam-foreground); }
+.exam-app.dark-mode .elimination-mode-button.active { border-color: var(--exam-accent); background: var(--exam-accent-bg); color: var(--exam-accent); }
+
 .exam-app.dark-mode .choice-card,
-.exam-app.dark-mode .student-response-field input,
-.exam-app.dark-mode .review-card,
-.exam-app.dark-mode .navigator-card { border-color: #464a52; background: #202329; color: #f3f4f6; }
-.exam-app.dark-mode .choice-row.selected .choice-card { border-color: #44c8e8; background: #173941; }
-.exam-app.dark-mode .choice-letter { border-color: #737985; background: #2b2f36; color: #f3f4f6; }
-.exam-app.dark-mode .keyboard-tip { color: #aaafb8; }
-.exam-app.dark-mode .keyboard-tip kbd { border-color: #4c5059; background: #292c32; color: #e8eaee; }
-.exam-app.dark-mode .exam-footer button { border-color: #4a4e57; background: #272a31; color: #f4f5f7; }
-.exam-app.dark-mode .footer-actions button:last-child { border-color: #19a9d2; background: #1197bd; }
+.exam-app.dark-mode .student-response-field input {
+  border-color: var(--exam-muted-foreground);
+  background: var(--exam-background);
+  color: var(--exam-foreground);
+}
+
+.exam-app.dark-mode .choice-card:hover { border-color: #d4d4d4; background: #171717; }
+.exam-app.dark-mode .choice-row.selected .choice-card { border-color: var(--exam-accent); background: var(--exam-accent-bg); }
+.exam-app.dark-mode .choice-letter {
+  border-color: var(--exam-muted-foreground);
+  background: transparent;
+  color: var(--exam-foreground);
+}
+.exam-app.dark-mode .choice-row.selected .choice-letter { border-color: var(--exam-accent); background: var(--exam-accent); color: #0d0d0d; }
+.exam-app.dark-mode .choice-row.eliminated .choice-card { color: #737373; }
+.exam-app.dark-mode .eliminate-button span { border-color: var(--exam-muted-foreground); color: var(--exam-muted-foreground); }
+.exam-app.dark-mode .eliminate-button span::after { background: var(--exam-muted-foreground); }
+.exam-app.dark-mode .choice-row.eliminated .eliminate-button span::after { background: var(--exam-accent); }
+
+.exam-app.dark-mode .keyboard-tip { color: #737373; }
+.exam-app.dark-mode .keyboard-tip kbd {
+  border-color: var(--exam-border);
+  background: var(--exam-muted);
+  color: var(--exam-muted-foreground);
+  box-shadow: none;
+}
+
+.exam-app.dark-mode .exam-footer .question-count {
+  border-color: var(--exam-foreground);
+  background: var(--exam-foreground);
+  color: #171717;
+}
+
+.exam-app.dark-mode .footer-actions button {
+  border-color: var(--exam-muted);
+  background: rgba(26, 26, 26, .3);
+  color: var(--exam-muted-foreground);
+}
+
+.exam-app.dark-mode .footer-actions button:hover:not(:disabled) {
+  border-color: var(--exam-border);
+  background: rgba(26, 26, 26, .55);
+  color: var(--exam-foreground);
+}
+
+.exam-app.dark-mode .footer-actions button:disabled { color: #525252; }
+
+.exam-app.dark-mode .navigator-card,
+.exam-app.dark-mode .review-card {
+  border-color: var(--exam-border);
+  background: var(--exam-card);
+  color: var(--exam-foreground);
+}
+
+.exam-app.dark-mode .navigator-close,
+.exam-app.dark-mode .review-legend { color: var(--exam-muted-foreground); }
+.exam-app.dark-mode .navigator-rule,
+.exam-app.dark-mode .review-card-header { border-color: var(--exam-border); }
+.exam-app.dark-mode .navigator-rule { background: var(--exam-border); }
+.exam-app.dark-mode .unanswered-key,
+.exam-app.dark-mode .question-grid button,
+.exam-app.dark-mode .review-grid button {
+  border-color: #737373;
+  background: var(--exam-background);
+  color: var(--exam-foreground);
+}
+.exam-app.dark-mode .question-grid button.answered,
+.exam-app.dark-mode .review-grid button.answered { border-color: var(--exam-accent); background: var(--exam-accent-bg); color: var(--exam-foreground); }
+.exam-app.dark-mode .question-grid button.current,
+.exam-app.dark-mode .review-grid button.current { border-color: var(--exam-foreground); background: var(--exam-foreground); color: #171717; box-shadow: 0 0 0 3px var(--exam-card), 0 0 0 5px var(--exam-foreground); }
+.exam-app.dark-mode .review-grid button:hover { border-color: var(--exam-foreground); background: var(--exam-secondary); }
+.exam-app.dark-mode .review-shell > p { color: var(--exam-muted-foreground); }
+.exam-app.dark-mode .review-shell > p strong { color: var(--exam-foreground); }
+
+.exam-app.dark-mode .exam-dialog-backdrop { background: rgba(0, 0, 0, .58); }
 .exam-app.dark-mode .shortcut-dialog,
-.exam-app.dark-mode .question-report-dialog { border-color: #484c55; background: #25282e; color: #f3f4f6; }
+.exam-app.dark-mode .question-report-dialog {
+  border-color: var(--exam-border);
+  background: var(--exam-card);
+  color: var(--exam-foreground);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, .62);
+}
+
 .exam-app.dark-mode .shortcut-dialog > header,
 .exam-app.dark-mode .question-report-dialog > header,
-.exam-app.dark-mode .shortcut-dialog dl > div { border-color: #444851; }
+.exam-app.dark-mode .shortcut-dialog dl > div { border-color: var(--exam-border); }
 .exam-app.dark-mode .shortcut-dialog header button,
-.exam-app.dark-mode .question-report-dialog header button { color: #d7dae0; }
+.exam-app.dark-mode .question-report-dialog header button { color: var(--exam-muted-foreground); }
 .exam-app.dark-mode .shortcut-dialog header button:hover,
-.exam-app.dark-mode .question-report-dialog header button:hover { background: #353941; }
-.exam-app.dark-mode .shortcut-dialog kbd { background: #3b3f47; color: #fff; }
-.exam-app.dark-mode .question-report-dialog label { color: #e2e4e8; }
+.exam-app.dark-mode .question-report-dialog header button:hover { background: var(--exam-secondary); color: var(--exam-foreground); }
+.exam-app.dark-mode .shortcut-dialog dd,
+.exam-app.dark-mode .question-report-dialog label small { color: var(--exam-muted-foreground); }
+.exam-app.dark-mode .shortcut-dialog kbd { background: var(--exam-muted); color: var(--exam-foreground); }
+.exam-app.dark-mode .question-report-dialog label { color: var(--exam-foreground); }
 .exam-app.dark-mode .question-report-dialog select,
 .exam-app.dark-mode .question-report-dialog textarea,
-.exam-app.dark-mode .question-report-dialog > footer button { border-color: #555a64; background: #30343b; color: #f4f5f7; }
-.exam-app.dark-mode .question-report-dialog > footer .submit-report-button { border-color: #1689d8; background: #1689d8; }
-.break-screen.dark-mode { background: #0f1013; color: #f4f5f7; }
+.exam-app.dark-mode .question-report-dialog > footer button {
+  border-color: var(--exam-border);
+  background: var(--exam-muted);
+  color: var(--exam-foreground);
+}
+.exam-app.dark-mode .question-report-dialog > footer .submit-report-button { border-color: #0055aa; background: #0055aa; color: #d8f7ff; }
+
+.exam-app.dark-mode .toast {
+  border-color: var(--exam-border);
+  background: var(--exam-card);
+  color: var(--exam-foreground);
+  box-shadow: 0 12px 34px rgba(0, 0, 0, .48);
+}
+
+.exam-app.dark-mode .circle-diagram,
+.exam-app.dark-mode .graph-figure {
+  border-radius: 8px;
+  background: #fff;
+  color: #171717;
+}
+
+.break-screen.dark-mode { background: #0d0d0d; color: #fafafa; }
 
 /* Full module flow */
 .review-page,
@@ -2288,6 +2505,10 @@ body.is-resizing * {
   min-height: 0;
   padding: 38px 20px 40px clamp(24px, 8.5vw, 145px);
   overflow: hidden;
+}
+
+.math-calculator-pane.popped-out-host {
+  display: none;
 }
 
 .math-splitter {

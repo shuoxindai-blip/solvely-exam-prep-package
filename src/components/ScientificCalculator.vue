@@ -1,240 +1,251 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
 
-const emit = defineEmits<{ close: [] }>()
+type DesmosCalculatorInstance = {
+  destroy: () => void
+  resize: () => void
+}
 
-const expression = ref('')
+declare global {
+  interface Window {
+    Desmos?: {
+      ScientificCalculator: (element: HTMLElement, options?: Record<string, unknown>) => DesmosCalculatorInstance
+    }
+  }
+}
+
+const emit = defineEmits<{
+  close: []
+  'popout-change': [value: boolean]
+}>()
+
 const calculatorMode = ref<'scientific' | 'graphing'>('scientific')
-const answer = ref(0)
-const displayResult = ref('0')
-const errorMessage = ref('')
-const angleMode = ref<'DEG' | 'RAD'>('DEG')
-const history = ref<Array<{ expression: string; result: string }>>([])
+const poppedOut = ref(false)
+const isFullscreen = ref(false)
+const isDragging = ref(false)
+const shell = ref<HTMLElement | null>(null)
+const scientificHost = ref<HTMLElement | null>(null)
+const calculatorLoadError = ref('')
+const position = reactive({ x: 28, y: 92 })
 
-const displayExpression = computed(() => expression.value || '0')
+const desmosScriptUrl = 'https://www.desmos.com/api/v1.11/calculator.js?apiKey=dcb31709b452b1cf9dc26972add0fda6&lang=en'
+let desmosCalculator: DesmosCalculatorInstance | null = null
+const shellStyle = computed(() => poppedOut.value && !isFullscreen.value
+  ? { left: `${position.x}px`, top: `${position.y}px` }
+  : undefined)
 
-const keys = [
-  ['(', ')', '%', 'AC'],
-  ['sin(', 'cos(', 'tan(', '√('],
-  ['7', '8', '9', '÷'],
-  ['4', '5', '6', '×'],
-  ['1', '2', '3', '−'],
-  ['0', '.', '⌫', '+'],
-  ['π', '^', 'Ans', '='],
-]
-
-function formatNumber(value: number) {
-  if (!Number.isFinite(value)) throw new Error('Result is not finite')
-  if (Math.abs(value) < 1e-12) return '0'
-  return Number(value.toPrecision(12)).toString()
+function clampPosition() {
+  const rect = shell.value?.getBoundingClientRect()
+  const width = rect?.width ?? 410
+  const height = rect?.height ?? 578
+  position.x = Math.max(12, Math.min(position.x, window.innerWidth - width - 12))
+  position.y = Math.max(12, Math.min(position.y, window.innerHeight - height - 12))
 }
 
-function evaluate(input: string) {
-  const source = input.replace(/×/g, '*').replace(/÷/g, '/').replace(/−/g, '-').replace(/π/g, String(Math.PI)).replace(/Ans/g, String(answer.value)).replace(/√/g, 'sqrt')
-  let position = 0
-
-  const skip = () => {
-    while (/\s/.test(source[position] ?? '')) position += 1
+function loadDesmos() {
+  if (window.Desmos?.ScientificCalculator) return Promise.resolve()
+  const existing = document.querySelector<HTMLScriptElement>('script[data-solvely-desmos]')
+  if (existing) {
+    return new Promise<void>((resolve, reject) => {
+      existing.addEventListener('load', () => resolve(), { once: true })
+      existing.addEventListener('error', () => reject(new Error('Unable to load the calculator.')), { once: true })
+    })
   }
-  const peek = () => {
-    skip()
-    return source[position]
-  }
-  const consume = (token: string) => {
-    skip()
-    if (source.slice(position, position + token.length) === token) {
-      position += token.length
-      return true
-    }
-    return false
-  }
-  const parseNumber = () => {
-    skip()
-    const match = source.slice(position).match(/^(?:\d+\.?\d*|\.\d+)(?:e[+-]?\d+)?/i)
-    if (!match) throw new Error('Expected a number')
-    position += match[0].length
-    return Number(match[0])
-  }
-  const applyFunction = (name: string, value: number) => {
-    const radians = angleMode.value === 'DEG' ? (value * Math.PI) / 180 : value
-    if (name === 'sin') return Math.sin(radians)
-    if (name === 'cos') return Math.cos(radians)
-    if (name === 'tan') return Math.tan(radians)
-    if (name === 'sqrt') return Math.sqrt(value)
-    if (name === 'log') return Math.log10(value)
-    if (name === 'ln') return Math.log(value)
-    throw new Error('Unknown function')
-  }
-  const parsePrimary = (): number => {
-    skip()
-    if (consume('(')) {
-      const value = parseExpression()
-      if (!consume(')')) throw new Error('Missing closing parenthesis')
-      return value
-    }
-    const identifier = source.slice(position).match(/^[a-z]+/i)?.[0]
-    if (identifier) {
-      position += identifier.length
-      if (!consume('(')) throw new Error('Expected parenthesis')
-      const value = parseExpression()
-      if (!consume(')')) throw new Error('Missing closing parenthesis')
-      return applyFunction(identifier, value)
-    }
-    return parseNumber()
-  }
-  const parsePostfix = () => {
-    let value = parsePrimary()
-    while (consume('%')) value /= 100
-    return value
-  }
-  const parseUnary = (): number => {
-    if (consume('+')) return parseUnary()
-    if (consume('-')) return -parseUnary()
-    return parsePostfix()
-  }
-  const parsePower = (): number => {
-    const left = parseUnary()
-    return consume('^') ? left ** parsePower() : left
-  }
-  const parseTerm = () => {
-    let value = parsePower()
-    while (true) {
-      if (consume('*')) value *= parsePower()
-      else if (consume('/')) value /= parsePower()
-      else break
-    }
-    return value
-  }
-  function parseExpression() {
-    let value = parseTerm()
-    while (true) {
-      if (consume('+')) value += parseTerm()
-      else if (consume('-')) value -= parseTerm()
-      else break
-    }
-    return value
-  }
-
-  const value = parseExpression()
-  if (peek() !== undefined) throw new Error('Check the expression')
-  return value
+  return new Promise<void>((resolve, reject) => {
+    const script = document.createElement('script')
+    script.src = desmosScriptUrl
+    script.async = true
+    script.dataset.solvelyDesmos = 'true'
+    script.addEventListener('load', () => resolve(), { once: true })
+    script.addEventListener('error', () => reject(new Error('Unable to load the calculator.')), { once: true })
+    document.head.appendChild(script)
+  })
 }
 
-function calculate() {
-  if (!expression.value.trim()) return
+async function mountScientificCalculator() {
+  calculatorLoadError.value = ''
+  await nextTick()
+  if (calculatorMode.value !== 'scientific' || !scientificHost.value) return
   try {
-    const original = expression.value
-    const value = evaluate(original)
-    const formatted = formatNumber(value)
-    answer.value = value
-    displayResult.value = formatted
-    history.value.unshift({ expression: original, result: formatted })
-    history.value = history.value.slice(0, 5)
-    errorMessage.value = ''
+    await loadDesmos()
+    if (calculatorMode.value !== 'scientific' || !scientificHost.value || !window.Desmos) return
+    desmosCalculator?.destroy()
+    desmosCalculator = window.Desmos.ScientificCalculator(scientificHost.value, {
+      degreeMode: false,
+      invertedColors: false,
+      qwertyKeyboard: true,
+      autosize: true,
+    })
   } catch {
-    errorMessage.value = 'Invalid expression'
-    displayResult.value = 'Error'
+    calculatorLoadError.value = 'The scientific calculator could not be loaded. Please try again.'
   }
 }
 
-function press(key: string) {
-  errorMessage.value = ''
-  if (key === '=') return calculate()
-  if (key === 'AC') {
-    expression.value = ''
-    displayResult.value = '0'
-    return
-  }
-  if (key === '⌫') {
-    expression.value = expression.value.slice(0, -1)
-    return
-  }
-  expression.value += key
-}
-
-function useHistory(item: { expression: string; result: string }) {
-  expression.value = item.result
-  displayResult.value = item.result
-}
-
-function onKeydown(event: KeyboardEvent) {
-  const map: Record<string, string> = { '*': '×', '/': '÷', '-': '−', Enter: '=', Backspace: '⌫', Escape: 'AC' }
-  const key = map[event.key] ?? event.key
-  if (/^[0-9.+()%]$/.test(key) || ['×', '÷', '−', '=', '⌫', 'AC', '^'].includes(key)) {
-    event.preventDefault()
-    press(key)
+async function togglePopout() {
+  poppedOut.value = !poppedOut.value
+  emit('popout-change', poppedOut.value)
+  if (poppedOut.value) {
+    position.x = Math.max(20, Math.min(94, window.innerWidth - 430))
+    position.y = Math.max(20, Math.min(112, window.innerHeight - 598))
+    await nextTick()
+    clampPosition()
+    desmosCalculator?.resize()
   }
 }
 
-onMounted(() => window.addEventListener('keydown', onKeydown))
-onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
+function beginDrag(event: PointerEvent) {
+  if (!poppedOut.value || isFullscreen.value) return
+  const target = event.target as HTMLElement | null
+  if (target?.closest('button, select, label')) return
+
+  const originX = position.x
+  const originY = position.y
+  const startX = event.clientX
+  const startY = event.clientY
+  isDragging.value = true
+
+  const onMove = (moveEvent: PointerEvent) => {
+    const rect = shell.value?.getBoundingClientRect()
+    const width = rect?.width ?? 410
+    const height = rect?.height ?? 578
+    position.x = Math.max(12, Math.min(originX + moveEvent.clientX - startX, window.innerWidth - width - 12))
+    position.y = Math.max(12, Math.min(originY + moveEvent.clientY - startY, window.innerHeight - height - 12))
+  }
+  const onUp = () => {
+    isDragging.value = false
+    window.removeEventListener('pointermove', onMove)
+    window.removeEventListener('pointerup', onUp)
+  }
+
+  window.addEventListener('pointermove', onMove)
+  window.addEventListener('pointerup', onUp)
+  ;(event.currentTarget as HTMLElement | null)?.setPointerCapture?.(event.pointerId)
+}
+
+async function toggleCalculatorFullscreen() {
+  try {
+    if (document.fullscreenElement === shell.value) await document.exitFullscreen()
+    else await shell.value?.requestFullscreen()
+  } catch {
+    // The exam-level fullscreen control remains available if element fullscreen is blocked.
+  }
+}
+
+function syncFullscreen() {
+  isFullscreen.value = document.fullscreenElement === shell.value
+  void nextTick(() => desmosCalculator?.resize())
+}
+
+function closeCalculator() {
+  poppedOut.value = false
+  emit('popout-change', false)
+  emit('close')
+}
+
+onMounted(() => {
+  window.addEventListener('resize', clampPosition)
+  document.addEventListener('fullscreenchange', syncFullscreen)
+  void mountScientificCalculator()
+})
+
+onBeforeUnmount(() => {
+  desmosCalculator?.destroy()
+  desmosCalculator = null
+  window.removeEventListener('resize', clampPosition)
+  document.removeEventListener('fullscreenchange', syncFullscreen)
+})
+
+watch(calculatorMode, (mode) => {
+  desmosCalculator?.destroy()
+  desmosCalculator = null
+  if (mode === 'scientific') void mountScientificCalculator()
+})
 </script>
 
 <template>
-  <section class="calculator-shell" :aria-label="calculatorMode === 'scientific' ? 'Scientific calculator' : 'Graphing calculator'">
-    <header class="calculator-titlebar">
-      <strong>Calculator</strong>
-      <label class="calculator-mode-picker">
-        <span class="sr-only">Calculator type</span>
-        <select v-model="calculatorMode" aria-label="Calculator type">
-          <option value="scientific">Scientific</option>
-          <option value="graphing">Graphing</option>
-        </select>
-      </label>
-      <button class="calculator-close" type="button" aria-label="Close calculator" @click="emit('close')">×</button>
-    </header>
+  <Teleport to="body" :disabled="!poppedOut">
+    <section
+      ref="shell"
+      class="calculator-shell"
+      :class="{ 'popped-out': poppedOut, dragging: isDragging, fullscreen: isFullscreen }"
+      :style="shellStyle"
+      :aria-label="calculatorMode === 'scientific' ? 'Scientific calculator' : 'Graphing calculator'"
+      role="dialog"
+    >
+      <header class="calculator-titlebar" @pointerdown="beginDrag">
+        <strong>Calculator</strong>
+        <label class="calculator-mode-picker">
+          <span class="sr-only">Calculator type</span>
+          <select v-model="calculatorMode" aria-label="Calculator type">
+            <option value="scientific">Scientific</option>
+            <option value="graphing">Graphing</option>
+          </select>
+        </label>
+        <div class="calculator-window-actions">
+          <button type="button" :aria-label="poppedOut ? 'Switch to inline layout' : 'Pop out calculator'" :title="poppedOut ? 'Switch to inline layout' : 'Pop Out'" @click="togglePopout">
+            <svg v-if="poppedOut" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="13" height="13" rx="2" /><path d="M9 2h10a3 3 0 0 1 3 3v10" /></svg>
+            <svg v-else viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h6v6M20 4l-8 8" /><rect x="4" y="8" width="12" height="12" rx="2" /></svg>
+          </button>
+          <button type="button" :aria-label="isFullscreen ? 'Exit calculator fullscreen' : 'Enter calculator fullscreen'" :title="isFullscreen ? 'Exit fullscreen' : 'Fullscreen'" @click="toggleCalculatorFullscreen">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path v-if="!isFullscreen" d="M8 3H3v5M16 3h5v5M21 16v5h-5M3 16v5h5" /><path v-else d="M9 3v6H3M15 3v6h6M21 15h-6v6M3 15h6v6" /></svg>
+          </button>
+          <button class="calculator-close" type="button" aria-label="Close calculator" title="Close" @click="closeCalculator">×</button>
+        </div>
+      </header>
 
-    <div v-if="calculatorMode === 'scientific'" class="calculator-body">
-      <div class="scientific-controls"><button class="angle-mode" type="button" :aria-label="`Angle mode ${angleMode}`" @click="angleMode = angleMode === 'DEG' ? 'RAD' : 'DEG'">{{ angleMode }}</button></div>
-      <div class="calculator-display" aria-live="polite">
-        <span>{{ displayExpression }}</span>
-        <strong>{{ displayResult }}</strong>
-        <small v-if="errorMessage">{{ errorMessage }}</small>
+      <div class="calculator-content">
+        <div v-if="calculatorMode === 'scientific'" ref="scientificHost" class="scientific-calculator-host" aria-label="Desmos scientific calculator" />
+        <iframe v-else src="/geogebra-calculator.html" title="GeoGebra graphing calculator" allow="clipboard-write" />
+        <p v-if="calculatorLoadError" class="calculator-load-error" role="status">{{ calculatorLoadError }}</p>
       </div>
-
-      <div class="calculator-keys">
-        <button v-for="key in keys.flat()" :key="key" type="button" :class="{ operator: ['÷', '×', '−', '+', '^', '='].includes(key), utility: ['AC', '⌫', '%'].includes(key), function: key.includes('(') }" @click="press(key)">{{ key }}</button>
-      </div>
-
-      <aside class="calculator-history" aria-label="Calculation history">
-        <div><strong>History</strong><button v-if="history.length" type="button" @click="history = []">Clear</button></div>
-        <p v-if="!history.length">Your calculations will appear here.</p>
-        <button v-for="item in history" :key="`${item.expression}-${item.result}`" type="button" @click="useHistory(item)"><span>{{ item.expression }}</span><strong>= {{ item.result }}</strong></button>
-      </aside>
-    </div>
-    <div v-else class="graphing-calculator-wrap">
-      <iframe src="/geogebra-calculator.html" title="GeoGebra graphing calculator" allow="clipboard-write" />
-    </div>
-  </section>
+    </section>
+  </Teleport>
 </template>
 
 <style scoped>
 .calculator-shell {
   display: grid;
-  grid-template-rows: 54px minmax(0, 1fr);
+  grid-template-rows: 56px minmax(0, 1fr);
   width: 100%;
   height: 100%;
   min-height: 0;
+  overflow: hidden;
   border: 1px solid #d4d4d4;
   border-radius: 10px;
-  overflow: hidden;
-  background: #f7f7f8;
+  background: #fff;
   color: #171717;
   font-family: Arial, Helvetica, sans-serif;
 }
 
-.calculator-titlebar {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: center;
-  padding: 0 15px;
-  border-bottom: 1px solid #d4d4d4;
-  background: #fff;
+.calculator-shell.popped-out {
+  position: fixed;
+  z-index: 1010;
+  width: min(410px, calc(100vw - 24px));
+  height: min(578px, calc(100dvh - 24px));
+  box-shadow: 0 24px 72px rgba(0, 0, 0, .26);
 }
 
+.calculator-shell.fullscreen {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  border-radius: 0;
+}
+
+.calculator-titlebar {
+  display: grid;
+  grid-template-columns: minmax(88px, 1fr) auto minmax(88px, 1fr);
+  align-items: center;
+  gap: 10px;
+  padding: 0 12px 0 15px;
+  border-bottom: 1px solid #d4d4d4;
+  background: #fff;
+  user-select: none;
+}
+
+.popped-out .calculator-titlebar { cursor: grab; }
+.popped-out.dragging .calculator-titlebar { cursor: grabbing; }
 .calculator-titlebar strong { font-size: 16px; }
-.calculator-titlebar button { border: 0; background: transparent; cursor: pointer; }
-.calculator-close { justify-self: end; color: #555; font-size: 28px; font-weight: 300; line-height: 1; }
 
 .calculator-mode-picker select {
   min-width: 126px;
@@ -242,11 +253,48 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
   padding: 0 30px 0 12px;
   border: 1px solid #d4d4d4;
   border-radius: 8px;
-  background: #f7f7f8;
+  background: #f5f5f5;
   color: #333;
   font: 600 13px Arial, Helvetica, sans-serif;
   cursor: pointer;
 }
+
+.calculator-window-actions {
+  display: flex;
+  justify-self: end;
+  align-items: center;
+  gap: 2px;
+}
+
+.calculator-window-actions button {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  place-items: center;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: #555;
+  cursor: pointer;
+}
+
+.calculator-window-actions button:hover { background: #ededee; color: #171717; }
+.calculator-window-actions svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.calculator-window-actions .calculator-close { font-size: 27px; font-weight: 300; line-height: 1; }
+
+.calculator-content,
+.calculator-content iframe,
+.scientific-calculator-host {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  border: 0;
+  background: #fff;
+}
+
+.calculator-content { position: relative; }
+.calculator-load-error { position: absolute; inset: 0; display: grid; margin: 0; padding: 24px; place-items: center; background: #fff; color: #626262; text-align: center; }
 
 .sr-only {
   position: absolute;
@@ -260,112 +308,35 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
   border: 0;
 }
 
-.calculator-body {
-  display: grid;
-  grid-template-rows: auto auto minmax(100px, 1fr);
-  min-height: 0;
-  padding: 18px;
-  overflow: auto;
+:global(.exam-app.dark-mode .calculator-shell),
+:global(body.mock-exam-dark .calculator-shell.popped-out) {
+  border-color: #262626;
+  background: #0a0a0a;
+  color: #fafafa;
 }
 
-.scientific-controls {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 10px;
+:global(.exam-app.dark-mode .calculator-titlebar),
+:global(body.mock-exam-dark .calculator-shell.popped-out .calculator-titlebar) {
+  border-color: #262626;
+  background: #0d0d0d;
 }
 
-.angle-mode {
-  padding: 7px 13px;
-  border: 0;
-  border-radius: 7px;
-  background: #eeeeef;
-  color: #525252;
-  font-size: 12px;
-  font-weight: 700;
-  cursor: pointer;
+:global(.exam-app.dark-mode .calculator-mode-picker select),
+:global(body.mock-exam-dark .calculator-shell.popped-out .calculator-mode-picker select) {
+  border-color: #262626;
+  background: #1a1a1a;
+  color: #fafafa;
 }
 
-.graphing-calculator-wrap,
-.graphing-calculator-wrap iframe {
-  width: 100%;
-  height: 100%;
-  min-height: 0;
-  border: 0;
-  background: #fff;
-}
+:global(.exam-app.dark-mode .calculator-window-actions button),
+:global(body.mock-exam-dark .calculator-shell.popped-out .calculator-window-actions button) { color: #a3a3a3; }
+:global(.exam-app.dark-mode .calculator-window-actions button:hover),
+:global(body.mock-exam-dark .calculator-shell.popped-out .calculator-window-actions button:hover) { background: #262626; color: #fafafa; }
 
-.calculator-display {
-  display: flex;
-  min-height: 118px;
-  padding: 18px 20px;
-  border: 1px solid #d7d7d7;
-  border-radius: 10px;
-  background: #fff;
-  flex-direction: column;
-  align-items: flex-end;
-  justify-content: flex-end;
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, .03);
-}
-
-.calculator-display span { width: 100%; overflow: hidden; color: #747474; text-align: right; text-overflow: ellipsis; white-space: nowrap; }
-.calculator-display strong { max-width: 100%; margin-top: 8px; overflow: hidden; font-size: clamp(27px, 3vw, 42px); font-weight: 500; text-overflow: ellipsis; }
-.calculator-display small { margin-top: 4px; color: #d22; }
-
-.calculator-keys {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
-  margin-top: 14px;
-}
-
-.calculator-keys button {
-  min-height: 46px;
-  border: 1px solid #d3d3d3;
-  border-radius: 8px;
-  background: #fff;
-  color: #202020;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  box-shadow: 0 1px 1px rgba(0, 0, 0, .04);
-}
-
-.calculator-keys button:hover { background: #ececec; }
-.calculator-keys button:active { transform: translateY(1px); }
-.calculator-keys .operator { border-color: #9fdcf1; background: #dff6ff; color: #047aa2; }
-.calculator-keys .utility { background: #ededee; color: #555; }
-.calculator-keys .function { font-size: 14px; }
-
-.calculator-history { min-height: 0; margin-top: 18px; padding-top: 14px; border-top: 1px solid #dadada; overflow: auto; }
-.calculator-history > div { display: flex; justify-content: space-between; }
-.calculator-history > div button { border: 0; background: transparent; color: #777; cursor: pointer; }
-.calculator-history p { color: #929292; font-size: 13px; }
-.calculator-history > button { display: flex; width: 100%; padding: 9px 4px; border: 0; border-bottom: 1px solid #e4e4e4; background: transparent; justify-content: space-between; cursor: pointer; }
-.calculator-history > button span { max-width: 65%; overflow: hidden; color: #777; text-overflow: ellipsis; white-space: nowrap; }
-
-:global(.exam-app.dark-mode) .calculator-shell { border-color: #454952; background: #1c1e23; color: #f4f5f7; }
-:global(.exam-app.dark-mode) .calculator-titlebar { border-color: #454952; background: #25282e; }
-:global(.exam-app.dark-mode) .calculator-mode-picker select,
-:global(.exam-app.dark-mode) .angle-mode { border-color: #535863; background: #353941; color: #f1f3f5; }
-:global(.exam-app.dark-mode) .calculator-close { color: #e3e5e9; }
-:global(.exam-app.dark-mode) .calculator-display,
-:global(.exam-app.dark-mode) .calculator-keys button { border-color: #494e57; background: #282b31; color: #f4f5f7; }
-:global(.exam-app.dark-mode) .calculator-keys button:hover { background: #353941; }
-:global(.exam-app.dark-mode) .calculator-keys .operator { border-color: #236a7a; background: #193b43; color: #5bd3ee; }
-:global(.exam-app.dark-mode) .calculator-keys .utility { background: #34373e; color: #d8dbe0; }
-:global(.exam-app.dark-mode) .calculator-history { border-color: #444851; }
-:global(.exam-app.dark-mode) .calculator-history > button { border-color: #3f434b; color: #f4f5f7; }
-:global(.exam-app.dark-mode) .calculator-history > button span,
-:global(.exam-app.dark-mode) .calculator-display span,
-:global(.exam-app.dark-mode) .calculator-history p { color: #aeb3bc; }
-
-@media (max-width: 760px) {
-  .calculator-body { padding: 12px; }
-  .calculator-keys { gap: 6px; }
-  .calculator-keys button { min-height: 42px; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .calculator-keys button:active { transform: none; }
+@media (max-width: 680px) {
+  .calculator-titlebar { grid-template-columns: auto 1fr auto; padding-left: 10px; }
+  .calculator-titlebar strong { display: none; }
+  .calculator-mode-picker { justify-self: start; }
+  .calculator-shell.popped-out { width: calc(100vw - 24px); }
 }
 </style>

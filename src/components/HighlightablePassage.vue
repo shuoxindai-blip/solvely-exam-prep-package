@@ -647,6 +647,41 @@ onBeforeUnmount(() => {
   border-color: #d7d7d7;
 }
 
+:global(body.mock-exam-dark .highlight-toolbar) {
+  border-color: #262626;
+  background: #0a0a0a;
+  color: #fafafa;
+  box-shadow: 0 14px 38px rgba(0, 0, 0, .58);
+}
+
+:global(body.mock-exam-dark .highlight-toolbar::after) {
+  border-color: #262626;
+  background: #0a0a0a;
+}
+
+:global(body.mock-exam-dark .highlight-tool-button),
+:global(body.mock-exam-dark .underline-menu) {
+  border-color: #262626;
+  background: #1a1a1a;
+  color: #a3a3a3;
+}
+
+:global(body.mock-exam-dark .highlight-tool-button:hover),
+:global(body.mock-exam-dark .highlight-tool-button.active),
+:global(body.mock-exam-dark .underline-option:hover),
+:global(body.mock-exam-dark .underline-option.selected) {
+  border-color: #404040;
+  background: #262626;
+  color: #fafafa;
+}
+
+:global(body.mock-exam-dark .underline-option),
+:global(body.mock-exam-dark .none-label),
+:global(body.mock-exam-dark .highlight-note-input),
+:global(body.mock-exam-dark .highlight-note-preview) { color: #fafafa; }
+
+:global(body.mock-exam-dark .highlight-note-input::placeholder) { color: #737373; }
+
 @media (max-width: 410px) {
   .highlight-toolbar {
     padding-inline: 9px;

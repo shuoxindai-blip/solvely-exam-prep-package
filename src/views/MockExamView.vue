@@ -165,6 +165,7 @@ const highlights = reactive<Record<string, TextHighlight[]>>({})
 const highlighterEnabled = ref(false)
 const eliminationMode = ref(false)
 const calculatorOpen = ref(false)
+const calculatorPoppedOut = ref(false)
 const referenceOpen = ref(false)
 const navigatorOpen = ref(false)
 const moreOpen = ref(false)
@@ -174,13 +175,14 @@ const reportIssue = ref('Other issue')
 const reportDetails = ref('')
 const darkMode = ref(false)
 const isFullscreen = ref(false)
-const timerVisible = ref(true)
+const timerVisible = ref(false)
 const toastMessage = ref('')
 const recommendationRating = ref<number | null>(null)
 const challengeRating = ref<number | null>(null)
 const feedbackText = ref('')
 const feedbackSubmitted = ref(false)
 const timeRemaining = ref(modules.value[0].duration)
+const diagnosticElapsedSeconds = ref(0)
 const breakRemaining = ref(9 * 60 + 52)
 const questionTimeSeconds = reactive<Record<string, number>>({})
 const leftWidth = ref(47.25)
@@ -214,6 +216,7 @@ const primaryActionLabel = computed(() => {
     : 'Next Section'
 })
 const timeLabel = computed(() => formatTime(timeRemaining.value))
+const displayedTimerLabel = computed(() => isDiagnostic.value ? formatTime(diagnosticElapsedSeconds.value) : timeLabel.value)
 const breakTimeLabel = computed(() => formatTime(breakRemaining.value))
 const answeredNumbers = computed(() => {
   const values = new Set<number>()
@@ -434,6 +437,7 @@ function openReview() {
   stage.value = 'review'
   navigatorOpen.value = false
   calculatorOpen.value = false
+  calculatorPoppedOut.value = false
   referenceOpen.value = false
   highlighterEnabled.value = false
 }
@@ -444,7 +448,6 @@ function startModule(index: number) {
   timeRemaining.value = modules.value[index].duration
   stage.value = 'exam'
   navigatorOpen.value = false
-  timerVisible.value = true
   closeTransientTools()
 }
 
@@ -477,6 +480,8 @@ function restartExam() {
   moduleIndex.value = 0
   currentNumber.value = 1
   timeRemaining.value = modules.value[0].duration
+  diagnosticElapsedSeconds.value = 0
+  timerVisible.value = false
   breakRemaining.value = 9 * 60 + 52
   stage.value = 'exam'
   closeTransientTools()
@@ -542,13 +547,17 @@ function toggleHighlightMode() {
 
 function toggleCalculator() {
   calculatorOpen.value = !calculatorOpen.value
+  if (!calculatorOpen.value) calculatorPoppedOut.value = false
   if (calculatorOpen.value) referenceOpen.value = false
   moreOpen.value = false
 }
 
 function toggleReference() {
   referenceOpen.value = !referenceOpen.value
-  if (referenceOpen.value) calculatorOpen.value = false
+  if (referenceOpen.value) {
+    calculatorOpen.value = false
+    calculatorPoppedOut.value = false
+  }
   moreOpen.value = false
 }
 
@@ -580,11 +589,12 @@ function openQuestionReport() {
 
 function submitQuestionReport() {
   reportOpen.value = false
-  showToast('Thanks. This question has been reported for review.')
+  showToast('Thank you for helping us improve!')
 }
 
 function closeTransientTools() {
   calculatorOpen.value = false
+  calculatorPoppedOut.value = false
   referenceOpen.value = false
   moreOpen.value = false
   highlighterEnabled.value = false
@@ -674,7 +684,10 @@ onMounted(async () => {
   document.body.classList.add('mock-exam-route')
   await loadActiveExam()
   countdownId = window.setInterval(() => {
-    if ((stage.value === 'exam' || stage.value === 'review') && timeRemaining.value > 0) timeRemaining.value -= 1
+    if (stage.value === 'exam' || stage.value === 'review') {
+      if (isDiagnostic.value) diagnosticElapsedSeconds.value += 1
+      else if (timeRemaining.value > 0) timeRemaining.value -= 1
+    }
     if (stage.value === 'exam') questionTimeSeconds[questionKey.value] = (questionTimeSeconds[questionKey.value] ?? 0) + 1
     if (stage.value === 'break' && breakRemaining.value > 0) breakRemaining.value -= 1
   }, 1000)
@@ -686,8 +699,12 @@ function syncFullscreenState() {
   isFullscreen.value = Boolean(document.fullscreenElement)
 }
 
+watch(darkMode, (enabled) => {
+  document.body.classList.toggle('mock-exam-dark', enabled)
+})
+
 onBeforeUnmount(() => {
-  document.body.classList.remove('mock-exam-route')
+  document.body.classList.remove('mock-exam-route', 'mock-exam-dark')
   if (countdownId) window.clearInterval(countdownId)
   if (toastId) window.clearTimeout(toastId)
   window.removeEventListener('keydown', onKeydown)
@@ -842,20 +859,14 @@ onBeforeUnmount(() => {
 
   <main v-else class="exam-app" :class="{ 'review-stage': stage === 'review', 'dark-mode': darkMode }" :style="{ '--split': `${leftWidth}%` }">
     <header class="exam-header">
-      <div class="header-left">
-        <button class="package-exit-control" type="button" aria-label="Back to SAT package" @click="exitExam">←</button>
-        <span v-if="isDiagnostic" class="diagnostic-mode-label">
-          <b>Free Diagnostic</b>
-          <small>{{ sectionLabel }} of 2 · {{ currentModule.title }}</small>
-        </span>
-      </div>
+      <div class="header-left" aria-hidden="true" />
       <div class="timer-wrap">
-        <strong v-if="isDiagnostic" class="timer untimed" aria-label="This diagnostic is untimed">Untimed</strong>
-        <template v-else>
-          <strong v-if="timerVisible" class="timer" aria-live="polite">{{ timeLabel }}</strong>
-          <span v-else class="timer-placeholder">Timer hidden</span>
-          <button type="button" @click="timerVisible = !timerVisible">{{ timerVisible ? 'Hide' : 'Show' }}</button>
-        </template>
+        <span v-if="timerVisible" class="timer-value-row">
+          <strong class="timer" :aria-label="isDiagnostic ? `Elapsed time ${displayedTimerLabel}` : `Time remaining ${displayedTimerLabel}`" aria-live="polite">{{ displayedTimerLabel }}</strong>
+          <span v-if="!isDiagnostic" class="timer-help" tabindex="0" aria-label="About the practice test timer">?<span class="timer-tooltip" role="tooltip">Use the countdown to build your pacing. The real SAT also counts down the time remaining.</span></span>
+        </span>
+        <span v-else class="timer-placeholder">Timer hidden</span>
+        <button class="timer-toggle" type="button" @click="timerVisible = !timerVisible">{{ timerVisible ? 'Hide' : 'Show' }}</button>
       </div>
       <div class="header-tools">
         <button class="tool-button" :class="{ active: highlighterEnabled }" type="button" :aria-pressed="highlighterEnabled" :aria-label="highlighterEnabled ? 'Turn off highlight mode' : 'Turn on highlight mode'" @click="toggleHighlightMode"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 16 9.8-9.8a2 2 0 0 1 2.8 0l.2.2a2 2 0 0 1 0 2.8L8 19H5v-3Z" /><path d="M13.5 7.5 16.5 10.5M4 21h16" /></svg><span>Highlight</span></button>
@@ -897,8 +908,8 @@ onBeforeUnmount(() => {
     </template>
 
     <template v-else-if="stage === 'exam' && currentModule.section === 'math'">
-      <section class="math-workspace" :class="{ 'calculator-visible': calculatorOpen }">
-        <div v-if="calculatorOpen" class="math-calculator-pane"><ScientificCalculator @close="calculatorOpen = false" /></div><div v-if="calculatorOpen" class="math-splitter" aria-hidden="true"><span><i /><i /><i /></span></div>
+      <section class="math-workspace" :class="{ 'calculator-visible': calculatorOpen && !calculatorPoppedOut }">
+        <div v-if="calculatorOpen" class="math-calculator-pane" :class="{ 'popped-out-host': calculatorPoppedOut }"><ScientificCalculator @close="calculatorOpen = false; calculatorPoppedOut = false" @popout-change="calculatorPoppedOut = $event" /></div><div v-if="calculatorOpen && !calculatorPoppedOut" class="math-splitter" aria-hidden="true"><span><i /><i /><i /></span></div>
         <article ref="questionScroller" class="math-question-panel" aria-label="Math question"><div class="math-question-shell" :class="{ 'diagram-question': currentQuestion.diagram }">
           <div class="question-toolbar"><span class="number-badge">{{ currentNumber }}</span><button class="review-button" :class="{ active: review.has(questionKey) }" type="button" @click="toggleReview"><svg viewBox="0 0 18 22" aria-hidden="true"><path d="M3 2.5h12v17l-6-4-6 4v-17Z" /></svg>Mark for Review</button><button class="report-button" type="button" @click="openQuestionReport"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21V4m1 1h11l-2.2 4L17 13H6" /></svg>Report</button><button class="elimination-mode-button" :class="{ active: eliminationMode }" type="button" :aria-pressed="eliminationMode" :aria-label="eliminationMode ? 'Hide answer elimination controls' : 'Show answer elimination controls'" :title="eliminationMode ? 'Hide answer elimination controls' : 'Eliminate answer choices'" @click="toggleEliminationMode"><span aria-hidden="true">ABC</span></button></div>
           <figure v-if="currentQuestion.diagram" class="circle-diagram"><svg viewBox="0 0 620 560" role="img" aria-label="Circle with intersecting lines through O"><circle cx="310" cy="260" r="210" /><path d="M228 66 393 458M395 69 226 457" /><text x="201" y="67">S</text><text x="397" y="67">R</text><text x="198" y="489">P</text><text x="401" y="489">Q</text><text x="321" y="280">O</text></svg><figcaption>Note: Figure not drawn to scale.</figcaption></figure>
