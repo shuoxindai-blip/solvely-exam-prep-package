@@ -79,6 +79,17 @@ export type EpExamResultDifficulty = {
   averageSeconds: number
 }
 
+export type EpExamResultCombinedScore = {
+  id: 'STEM' | 'ELA'
+  label: string
+  score: number | null
+  maximumScore: 36
+  status: 'AVAILABLE' | 'NOT_AVAILABLE'
+  formula: string
+  requiredSectionIds: string[]
+  missingSectionIds: string[]
+}
+
 export type EpExamResult = {
   schemaVersion: string
   attemptId: string
@@ -100,6 +111,7 @@ export type EpExamResult = {
   domains: EpExamResultDomain[]
   difficulties: EpExamResultDifficulty[]
   questions: EpExamResultQuestion[]
+  combinedScores?: EpExamResultCombinedScore[]
 }
 
 export type EpTopicGroup = {

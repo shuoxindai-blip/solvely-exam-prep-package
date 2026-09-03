@@ -187,12 +187,18 @@ const resultReport = computed(() =>
 );
 const actCompositeCards = computed(() => {
   if (!isActPackage.value || !resultReport.value) return [];
-  const score = (id: string) => resultReport.value?.sections.find((section) => section.sectionId === id)?.score ?? 0;
-  return [
-    { id: "stem", label: "STEM Composite", detail: "Average of Mathematics and Science", value: Math.round((score("mathematics") + score("science")) / 2) },
-    { id: "ela", label: "ELA Composite", detail: "English and Reading performance", value: Math.round((score("english") + score("reading")) / 2) },
-    { id: "writing", label: "Writing", detail: "Optional section · Not tested", value: 0, muted: true },
-  ];
+  return (resultReport.value.combinedScores ?? []).map((score) => ({
+    id: score.id.toLowerCase(),
+    label: score.label,
+    detail: score.formula,
+    value: score.score,
+    muted: score.status === "NOT_AVAILABLE",
+    note: score.id === "ELA" && score.status === "NOT_AVAILABLE"
+      ? "Requires the optional Writing test"
+      : score.id === "STEM"
+        ? "Reported because Mathematics and Science are included"
+        : "",
+  }));
 });
 const practiceTestQuestionCount = computed(
   () => resultExam.value?.questions.length ?? resultExam.value?.totalCount ?? 0,
@@ -3183,6 +3189,17 @@ onBeforeUnmount(() => {
                       </article>
                     </div>
                   </div>
+                  <div v-if="isActPackage" class="act-composite-grid" aria-label="ACT combined scores">
+                    <article v-for="composite in actCompositeCards" :key="composite.id" :class="{ muted: composite.muted }">
+                      <div>
+                        <strong>{{ composite.label }}</strong>
+                        <span>{{ composite.detail }}</span>
+                        <small>{{ composite.note }}</small>
+                      </div>
+                      <b v-if="composite.value !== null">{{ composite.value }}<small>/36</small></b>
+                      <b v-else class="act-not-tested">Not available</b>
+                    </article>
+                  </div>
                 </section>
 
                 <section class="report-ai-overview">
@@ -3263,13 +3280,6 @@ onBeforeUnmount(() => {
                       </p>
                     </div>
                   </header>
-                  <div v-if="isActPackage" class="act-composite-grid" aria-label="ACT composite score groups">
-                    <article v-for="composite in actCompositeCards" :key="composite.id" :class="{ muted: composite.muted }">
-                      <div><strong>{{ composite.label }}</strong><span>{{ composite.detail }}</span></div>
-                      <b v-if="!composite.muted">{{ composite.value }}<small>/36</small></b>
-                      <b v-else class="act-not-tested">Not tested</b>
-                    </article>
-                  </div>
                   <div class="knowledge-section-grid">
                     <article
                       v-for="section in resultReport.sections"

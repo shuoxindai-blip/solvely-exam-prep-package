@@ -60,6 +60,26 @@ export function buildActReport(exam: EpExam): EpExamResult {
   })
   const compositeSections = sections.filter((section) => ['english', 'mathematics', 'reading'].includes(section.sectionId))
   const composite = Math.round(compositeSections.reduce((sum, section) => sum + section.score, 0) / Math.max(1, compositeSections.length))
+  const sectionScore = new Map(sections.map((section) => [section.sectionId, section.score]))
+  const combinedScore = (id: 'STEM' | 'ELA', label: string, requiredSectionIds: string[], formula: string) => {
+    const missingSectionIds = requiredSectionIds.filter((sectionId) => !sectionScore.has(sectionId))
+    return {
+      id,
+      label,
+      score: missingSectionIds.length
+        ? null
+        : Math.round(requiredSectionIds.reduce((sum, sectionId) => sum + (sectionScore.get(sectionId) ?? 0), 0) / requiredSectionIds.length),
+      maximumScore: 36 as const,
+      status: missingSectionIds.length ? 'NOT_AVAILABLE' as const : 'AVAILABLE' as const,
+      formula,
+      requiredSectionIds,
+      missingSectionIds,
+    }
+  }
+  const combinedScores = [
+    combinedScore('STEM', 'STEM Score', ['mathematics', 'science'], '(Mathematics + Science) ÷ 2, rounded'),
+    combinedScore('ELA', 'ELA Score', ['english', 'reading', 'writing'], '(English + Reading + Writing) ÷ 3, rounded'),
+  ]
   const modules = sectionIds.map<EpExamResultModule>((sectionId) => {
     const sectionQuestions = exam.questions.filter((question) => question.sectionId === sectionId)
     return { sectionId, sectionTitle: sectionQuestions[0]?.sectionTitle ?? sectionId, module: 'Section', route: 'standard', ...aggregate(sectionQuestions, byId) }
@@ -82,6 +102,6 @@ export function buildActReport(exam: EpExam): EpExamResult {
     scoreRange: [Math.max(1, composite - 2), Math.min(36, composite + 2)], averageScore: 20, percentile: percentile(composite),
     correct: total.correct, incorrect: total.incorrect, omitted: total.omitted, accuracy: total.accuracy,
     overview: 'Your strongest performance is in Reading. Focus next on the highest-priority Mathematics and Science skills, then use targeted practice to improve accuracy without losing pace.',
-    sections, modules, domains, difficulties, questions,
+    sections, modules, domains, difficulties, questions, combinedScores,
   }
 }
