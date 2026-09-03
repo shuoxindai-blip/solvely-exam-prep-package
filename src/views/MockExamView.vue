@@ -745,7 +745,7 @@ onBeforeUnmount(() => {
         <ul><li>Do not disturb students who are still testing.</li><li>Do not exit the app or close your laptop.</li><li>Do not access phones, smartwatches, textbooks, notes, or the internet.</li><li>Do not eat or drink near any testing device.</li><li>Do not speak in the testing room; outside the room, do not discuss the exam with anyone.</li></ul>
       </section>
     </div>
-    <div v-if="toastMessage" class="toast break-toast" role="status">{{ toastMessage }}</div>
+    <div v-if="toastMessage" class="exam-toast break-toast" role="status">{{ toastMessage }}</div>
   </main>
 
   <main v-else-if="stage === 'complete'" class="completion-page">
@@ -780,7 +780,7 @@ onBeforeUnmount(() => {
         <p v-if="feedbackSubmitted" class="feedback-success" role="status">Thanks — your feedback has been recorded.</p>
       </form>
     </section>
-    <div v-if="toastMessage" class="toast" role="status">{{ toastMessage }}</div>
+    <div v-if="toastMessage" class="exam-toast" role="status">{{ toastMessage }}</div>
   </main>
 
   <main v-else-if="stage === 'results'" class="results-page">
@@ -854,7 +854,7 @@ onBeforeUnmount(() => {
         <div class="difficulty-cards"><article v-for="subject in difficultyStats" :key="subject.section"><h3>{{ subject.label }}</h3><p>Time per question by difficulty</p><div class="difficulty-body"><div class="time-ring"><strong>{{ formatDuration(subjectStats.find((item) => item.section === subject.section)?.averageSeconds ?? 0) }}</strong><span>average</span></div><div class="difficulty-list"><div v-for="value in subject.values" :key="value.label"><span>{{ value.label }}</span><strong>{{ formatDuration(value.averageSeconds) }}</strong><small>{{ value.seconds.length }} attempted</small></div></div></div></article></div>
       </section>
     </article>
-    <div v-if="toastMessage" class="toast" role="status">{{ toastMessage }}</div>
+    <div v-if="toastMessage" class="exam-toast" role="status">{{ toastMessage }}</div>
   </main>
 
   <main v-else class="exam-app" :class="{ 'review-stage': stage === 'review', 'dark-mode': darkMode }" :style="{ '--split': `${leftWidth}%` }">
@@ -967,6 +967,6 @@ onBeforeUnmount(() => {
       </section>
     </div>
 
-    <div v-if="toastMessage" class="toast" role="status">{{ toastMessage }}</div>
+    <div v-if="toastMessage" class="exam-toast" role="status">{{ toastMessage }}</div>
   </main>
 </template>

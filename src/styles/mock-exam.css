@@ -989,9 +989,9 @@ body.is-resizing * {
   content: '';
 }
 
-.toast {
+.exam-toast {
   position: fixed;
-  z-index: 100;
+  z-index: 200;
   top: 91px;
   left: 50%;
   padding: 11px 16px;
@@ -2336,7 +2336,7 @@ body.mock-exam-route.mock-exam-dark {
 }
 .exam-app.dark-mode .question-report-dialog > footer .submit-report-button { border-color: #0055aa; background: #0055aa; color: #d8f7ff; }
 
-.exam-app.dark-mode .toast {
+.exam-app.dark-mode .exam-toast {
   border-color: var(--exam-border);
   background: var(--exam-card);
   color: var(--exam-foreground);

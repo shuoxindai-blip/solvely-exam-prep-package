@@ -21,7 +21,6 @@ const emit = defineEmits<{
 
 const calculatorMode = ref<'scientific' | 'graphing'>('scientific')
 const poppedOut = ref(false)
-const isFullscreen = ref(false)
 const isDragging = ref(false)
 const shell = ref<HTMLElement | null>(null)
 const scientificHost = ref<HTMLElement | null>(null)
@@ -30,7 +29,7 @@ const position = reactive({ x: 28, y: 92 })
 
 const desmosScriptUrl = 'https://www.desmos.com/api/v1.11/calculator.js?apiKey=dcb31709b452b1cf9dc26972add0fda6&lang=en'
 let desmosCalculator: DesmosCalculatorInstance | null = null
-const shellStyle = computed(() => poppedOut.value && !isFullscreen.value
+const shellStyle = computed(() => poppedOut.value
   ? { left: `${position.x}px`, top: `${position.y}px` }
   : undefined)
 
@@ -94,7 +93,7 @@ async function togglePopout() {
 }
 
 function beginDrag(event: PointerEvent) {
-  if (!poppedOut.value || isFullscreen.value) return
+  if (!poppedOut.value) return
   const target = event.target as HTMLElement | null
   if (target?.closest('button, select, label')) return
 
@@ -122,20 +121,6 @@ function beginDrag(event: PointerEvent) {
   ;(event.currentTarget as HTMLElement | null)?.setPointerCapture?.(event.pointerId)
 }
 
-async function toggleCalculatorFullscreen() {
-  try {
-    if (document.fullscreenElement === shell.value) await document.exitFullscreen()
-    else await shell.value?.requestFullscreen()
-  } catch {
-    // The exam-level fullscreen control remains available if element fullscreen is blocked.
-  }
-}
-
-function syncFullscreen() {
-  isFullscreen.value = document.fullscreenElement === shell.value
-  void nextTick(() => desmosCalculator?.resize())
-}
-
 function closeCalculator() {
   poppedOut.value = false
   emit('popout-change', false)
@@ -144,7 +129,6 @@ function closeCalculator() {
 
 onMounted(() => {
   window.addEventListener('resize', clampPosition)
-  document.addEventListener('fullscreenchange', syncFullscreen)
   void mountScientificCalculator()
 })
 
@@ -152,7 +136,6 @@ onBeforeUnmount(() => {
   desmosCalculator?.destroy()
   desmosCalculator = null
   window.removeEventListener('resize', clampPosition)
-  document.removeEventListener('fullscreenchange', syncFullscreen)
 })
 
 watch(calculatorMode, (mode) => {
@@ -167,7 +150,7 @@ watch(calculatorMode, (mode) => {
     <section
       ref="shell"
       class="calculator-shell"
-      :class="{ 'popped-out': poppedOut, dragging: isDragging, fullscreen: isFullscreen }"
+      :class="{ 'popped-out': poppedOut, dragging: isDragging }"
       :style="shellStyle"
       :aria-label="calculatorMode === 'scientific' ? 'Scientific calculator' : 'Graphing calculator'"
       role="dialog"
@@ -186,10 +169,7 @@ watch(calculatorMode, (mode) => {
             <svg v-if="poppedOut" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="13" height="13" rx="2" /><path d="M9 2h10a3 3 0 0 1 3 3v10" /></svg>
             <svg v-else viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h6v6M20 4l-8 8" /><rect x="4" y="8" width="12" height="12" rx="2" /></svg>
           </button>
-          <button type="button" :aria-label="isFullscreen ? 'Exit calculator fullscreen' : 'Enter calculator fullscreen'" :title="isFullscreen ? 'Exit fullscreen' : 'Fullscreen'" @click="toggleCalculatorFullscreen">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path v-if="!isFullscreen" d="M8 3H3v5M16 3h5v5M21 16v5h-5M3 16v5h5" /><path v-else d="M9 3v6H3M15 3v6h6M21 15h-6v6M3 15h6v6" /></svg>
-          </button>
-          <button class="calculator-close" type="button" aria-label="Close calculator" title="Close" @click="closeCalculator">×</button>
+          <button class="calculator-close" type="button" aria-label="Close calculator" title="Close" @click="closeCalculator"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" /></svg></button>
         </div>
       </header>
 
@@ -223,13 +203,6 @@ watch(calculatorMode, (mode) => {
   width: min(410px, calc(100vw - 24px));
   height: min(578px, calc(100dvh - 24px));
   box-shadow: 0 24px 72px rgba(0, 0, 0, .26);
-}
-
-.calculator-shell.fullscreen {
-  width: 100%;
-  height: 100%;
-  border: 0;
-  border-radius: 0;
 }
 
 .calculator-titlebar {
@@ -280,8 +253,8 @@ watch(calculatorMode, (mode) => {
 }
 
 .calculator-window-actions button:hover { background: #ededee; color: #171717; }
-.calculator-window-actions svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-.calculator-window-actions .calculator-close { font-size: 27px; font-weight: 300; line-height: 1; }
+.calculator-window-actions svg { display: block; width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.calculator-window-actions .calculator-close svg { width: 18px; height: 18px; }
 
 .calculator-content,
 .calculator-content iframe,
