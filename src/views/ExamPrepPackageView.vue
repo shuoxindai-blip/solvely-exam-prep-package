@@ -791,6 +791,55 @@ const improveTopicSections = computed(() => {
   );
 });
 
+const improveTopicSectionClusters = computed(() => {
+  const sections = improveTopicSections.value;
+  const toCluster = (clusterSections: typeof sections) => ({
+    id: `cluster-${clusterSections.map((section) => section.id).join("-")}`,
+    sections: clusterSections,
+    topicCount: clusterSections.reduce(
+      (total, section) => total + section.topics.length,
+      0,
+    ),
+  });
+
+  if (
+    !targetedPracticeLocked.value ||
+    resultSource.value === "diagnostic" ||
+    sections.length < 2
+  ) {
+    return sections.map((section) => toCluster([section]));
+  }
+
+  const clusters: ReturnType<typeof toCluster>[] = [];
+  let pendingSections: typeof sections = [];
+  let pendingTopicCount = 0;
+
+  sections.forEach((section) => {
+    pendingSections.push(section);
+    pendingTopicCount += section.topics.length;
+    if (pendingTopicCount >= 2) {
+      clusters.push(toCluster(pendingSections));
+      pendingSections = [];
+      pendingTopicCount = 0;
+    }
+  });
+
+  if (pendingSections.length) {
+    const previousCluster = clusters[clusters.length - 1];
+    if (previousCluster) {
+      clusters.splice(
+        -1,
+        1,
+        toCluster([...previousCluster.sections, ...pendingSections]),
+      );
+    } else {
+      clusters.push(toCluster(pendingSections));
+    }
+  }
+
+  return clusters;
+});
+
 const courses: Course[] = [
   {
     family: "sat",
@@ -3847,77 +3896,87 @@ onBeforeUnmount(() => {
                     },
                   ]"
                 >
-                  <section
-                    v-for="section in improveTopicSections"
-                    :key="section.id"
+                  <div
+                    v-for="cluster in improveTopicSectionClusters"
+                    :key="cluster.id"
                     :class="[
-                      'study-topic-section',
+                      'improve-section-cluster',
                       {
                         'results-locked-subsection':
                           targetedPracticeLocked &&
                           resultSource !== 'diagnostic',
+                        'is-short-lock':
+                          targetedPracticeLocked &&
+                          resultSource !== 'diagnostic' &&
+                          cluster.topicCount < 3,
                       },
                     ]"
-                    :aria-labelledby="
-                      improvePriority === 'ALL' ? section.id : undefined
-                    "
-                    :aria-label="
-                      improvePriority !== 'ALL'
-                        ? `${improvePriority} topics sorted by priority`
-                        : undefined
-                    "
                   >
-                    <header
-                      v-if="improvePriority === 'ALL'"
-                      class="study-section-head static"
+                    <section
+                      v-for="section in cluster.sections"
+                      :key="section.id"
+                      class="study-topic-section"
+                      :aria-labelledby="
+                        improvePriority === 'ALL' ? section.id : undefined
+                      "
+                      :aria-label="
+                        improvePriority !== 'ALL'
+                          ? `${improvePriority} topics sorted by priority`
+                          : undefined
+                      "
                     >
-                      <h3 :id="section.id">
-                        {{ section.examSection }} · {{ section.title }}
-                      </h3>
-                      <span class="study-section-meta"
-                        ><span
-                          >{{ section.topics.length }}
-                          {{
-                            section.topics.length === 1 ? "Topic" : "Topics"
-                          }}</span
-                        ></span
+                      <header
+                        v-if="improvePriority === 'ALL'"
+                        class="study-section-head static"
                       >
-                    </header>
-                    <div role="table">
-                      <article
-                        v-for="topic in section.topics"
-                        :key="topic.id"
-                        class="study-topic-row improve-topic-row"
-                        role="row"
-                      >
-                        <div class="study-topic-copy" role="cell">
-                          <strong>{{ topic.title }}</strong
-                          ><span>{{ topic.description }}</span>
-                          <div class="study-topic-meta">
-                            <span
-                              :class="[
-                                'study-topic-importance',
-                                topic.priority.toLowerCase(),
-                              ]"
-                              >{{ topic.importanceScore }}% ·
-                              {{ priorityLabel(topic.priority) }}</span
-                            ><span
-                              >{{ topic.missed }} missed · {{ topic.accuracy }}%
-                              accuracy</span
-                            ><span>{{ topic.contentDomain }}</span>
+                        <h3 :id="section.id">
+                          {{ section.examSection }} · {{ section.title }}
+                        </h3>
+                        <span class="study-section-meta"
+                          ><span
+                            >{{ section.topics.length }}
+                            {{
+                              section.topics.length === 1 ? "Topic" : "Topics"
+                            }}</span
+                          ></span
+                        >
+                      </header>
+                      <div role="table">
+                        <article
+                          v-for="topic in section.topics"
+                          :key="topic.id"
+                          class="study-topic-row improve-topic-row"
+                          role="row"
+                        >
+                          <div class="study-topic-copy" role="cell">
+                            <strong>{{ topic.title }}</strong
+                            ><span>{{ topic.description }}</span>
+                            <div class="study-topic-meta">
+                              <span
+                                :class="[
+                                  'study-topic-importance',
+                                  topic.priority.toLowerCase(),
+                                ]"
+                                >{{ topic.importanceScore }}% ·
+                                {{ priorityLabel(topic.priority) }}</span
+                              ><span
+                                >{{ topic.missed }} missed ·
+                                {{ topic.accuracy }}% accuracy</span
+                              ><span>{{ topic.contentDomain }}</span>
+                            </div>
                           </div>
-                        </div>
-                        <div class="improve-topic-action" role="cell">
-                          <button
-                            type="button"
-                            :class="improvePracticeState(topic)"
-                            @click="openImprovePractice(topic)"
-                          >
-                            {{ improvePracticeLabel(topic) }}
-                          </button>
-                        </div>
-                      </article>
-                    </div>
+                          <div class="improve-topic-action" role="cell">
+                            <button
+                              type="button"
+                              :class="improvePracticeState(topic)"
+                              @click="openImprovePractice(topic)"
+                            >
+                              {{ improvePracticeLabel(topic) }}
+                            </button>
+                          </div>
+                        </article>
+                      </div>
+                    </section>
                     <div
                       v-if="
                         targetedPracticeLocked &&
@@ -3963,7 +4022,7 @@ onBeforeUnmount(() => {
                         Unlock practice
                       </button>
                     </div>
-                  </section>
+                  </div>
                   <div
                     v-if="
                       targetedPracticeLocked && resultSource === 'diagnostic'

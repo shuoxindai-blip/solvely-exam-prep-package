@@ -1642,6 +1642,8 @@
     .study-priority-note-close:focus-visible { outline:2px solid rgba(35,104,240,.3); outline-offset:1px; }
     .study-priority-note-close .icon { width:14px; height:14px; color:currentColor; }
     .study-topic-sections { display:grid; gap:13px; }
+    .improve-section-cluster { min-width:0; position:relative; display:grid; gap:13px; border-radius:14px; }
+    .improve-section-cluster.is-short-lock { min-height:330px; }
     .study-topic-section { position:relative; border:1px solid var(--line); border-radius:14px; background:var(--surface); box-shadow:none; overflow:visible; }
     .study-section-head { width:100%; min-height:54px; display:flex; align-items:center; justify-content:space-between; gap:14px; padding:0 19px; border:0; border-radius:14px 14px 0 0; background:var(--surface-soft); color:inherit; text-align:left; cursor:pointer; }
     .study-section-head.static { cursor:default; }
