@@ -1678,18 +1678,16 @@
     .improve-topic-action button.review { border-color:#cddff5; background:#edf5ff; color:#147ef5; }
     .improve-topic-row { grid-template-columns:minmax(0,1fr) 112px; }
     .improve-topic-row:hover { z-index:1; }
-    .study-topic-popover { position:absolute; top:50%; left:46%; z-index:30; width:min(410px,48vw); padding:18px; border:1px solid #e0e4ea; border-radius:16px; background:var(--surface); box-shadow:0 20px 48px rgba(29,39,58,.18); transform:translate(8px,-50%); opacity:0; visibility:hidden; pointer-events:none; transition:opacity .16s ease,transform .16s ease,visibility .16s ease; }
-    .study-topic-row:hover .study-topic-popover,.study-topic-row:focus .study-topic-popover,.study-topic-row:focus-within .study-topic-popover { transform:translate(0,-50%); opacity:1; visibility:visible; pointer-events:auto; }
+    .study-topic-popover { position:absolute; top:50%; left:46%; z-index:30; width:min(360px,48vw); padding:18px; border:1px solid #e0e4ea; border-radius:18px; background:var(--surface); box-shadow:0 20px 60px -8px rgba(29,39,58,.2); transform:translate(8px,-50%) scale(.98); transform-origin:left center; opacity:0; visibility:hidden; pointer-events:none; transition:opacity .16s ease,transform .16s ease,visibility .16s ease; }
+    .study-topic-row:hover .study-topic-popover,.study-topic-row:focus .study-topic-popover,.study-topic-row:focus-within .study-topic-popover { transform:translate(0,-50%) scale(1); opacity:1; visibility:visible; pointer-events:auto; }
     .study-topic-popover::before { content:""; position:absolute; top:50%; left:-8px; width:14px; height:14px; border-left:1px solid #e0e4ea; border-bottom:1px solid #e0e4ea; background:var(--surface); transform:translateY(-50%) rotate(45deg); }
     .study-topic-popover-head { display:flex; align-items:center; justify-content:space-between; gap:12px; }
-    .study-topic-popover-head h4 { margin:0; font-size:14px; letter-spacing:-.015em; }
-    .study-topic-popover-head span { min-height:23px; display:inline-flex; align-items:center; padding:0 8px; border-radius:7px; font-size:9px; font-weight:780; }
-    .study-topic-popover-head span.core { background:#fff0f3; color:#f2385a; }
-    .study-topic-popover-head span.likely { background:#fff1e6; color:#f26522; }
-    .study-topic-popover-head span.possible { background:#fff8d9; color:#c98700; }
+    .study-topic-popover-head h4 { min-width:0; margin:0; overflow:hidden; font-size:14px; letter-spacing:-.015em; text-overflow:ellipsis; white-space:nowrap; }
+    .study-topic-popover-head span { min-height:22px; flex:0 0 auto; display:inline-flex; align-items:center; padding:0 8px; border-radius:7px; background:#147ef5; color:#fff; font-size:9px; font-weight:780; white-space:nowrap; }
     .study-topic-popover > p { margin:11px 0 17px; color:var(--muted); font-size:10px; line-height:1.55; }
+    .study-topic-popover > p.study-topic-probability { margin:10px 0 15px; color:#657184; font-size:10px; line-height:1.45; }
     .study-topic-popover > p.study-topic-importance-detail { margin:-10px 0 14px; color:#73839a; font-size:8px; font-weight:650; }
-    .study-topic-popover > small { display:block; margin:14px 0 8px; color:var(--muted); font-size:8px; font-weight:760; letter-spacing:.09em; text-transform:uppercase; }
+    .study-topic-popover > small { display:block; margin:0 0 8px; color:var(--muted); font-size:8px; font-weight:760; letter-spacing:.09em; text-transform:uppercase; }
     .study-topic-actions { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:7px; }
     .study-topic-tool { min-width:0; min-height:58px; display:grid; align-content:center; justify-items:start; gap:7px; padding:9px 10px; border:1px solid var(--line); border-radius:10px; background:var(--surface); color:#147ef5; font-size:9px; font-weight:730; text-align:left; cursor:pointer; }
     .study-topic-tool:first-child { border-color:#147ef5; background:#edf6ff; box-shadow:inset 0 0 0 1px rgba(20,126,245,.08); }
@@ -2173,7 +2171,7 @@
       .study-practice-layout { grid-template-columns:1fr; }
       .practice-test-rail { position:static; grid-template-columns:repeat(2,minmax(0,1fr)); }
       .course-tests-heading { grid-column:1/-1; }
-      .study-topic-popover { right:0; left:auto; width:min(410px,calc(100vw - 48px)); }
+      .study-topic-popover { right:0; left:auto; width:min(360px,calc(100vw - 48px)); transform-origin:right center; }
     }
     @media (max-width:900px) {
       .course-overview-grid,.course-overview-layout,.results-two-column { grid-template-columns:1fr; }
@@ -2184,7 +2182,7 @@
       .question-review-workspace,.review-question-list,.improve-topic-grid { grid-template-columns:1fr; }
       .review-question-navigator { position:static; }
       .review-question-groups { max-height:340px; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:0 18px; }
-      .study-topic-popover { left:38%; width:min(410px,58vw); }
+      .study-topic-popover { left:38%; width:min(360px,58vw); transform-origin:left center; }
       .mock-exam-stage { grid-template-columns:1fr; }
       .mock-exam-card-grid { grid-template-columns:1fr; }
       .mock-session-layout { grid-template-columns:210px minmax(0,1fr); }
@@ -2207,8 +2205,8 @@
       .course-topic-filters { width:100%; justify-content:flex-start; margin-left:0; }
       .study-topic-table-head,.study-topic-row { grid-template-columns:minmax(180px,1fr) 100px 150px; gap:18px; padding-inline:20px; }
       .improve-topic-row { grid-template-columns:minmax(0,1fr) 100px; }
-      .study-topic-popover { top:calc(100% - 5px); right:14px; left:14px; width:auto; transform:translateY(8px); }
-      .study-topic-row:hover .study-topic-popover,.study-topic-row:focus .study-topic-popover,.study-topic-row:focus-within .study-topic-popover { transform:translateY(0); }
+      .study-topic-popover { top:calc(100% - 5px); right:14px; left:14px; width:auto; transform:translateY(8px) scale(.98); transform-origin:top right; }
+      .study-topic-row:hover .study-topic-popover,.study-topic-row:focus .study-topic-popover,.study-topic-row:focus-within .study-topic-popover { transform:translateY(0) scale(1); }
       .study-topic-popover::before { top:-8px; right:36px; left:auto; transform:rotate(135deg); }
       .mock-exam-metrics { grid-template-columns:1fr; }
     }

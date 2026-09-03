@@ -2477,15 +2477,18 @@ onBeforeUnmount(() => {
                                 }" /></span
                           ></span>
                         </div>
-                        <aside class="study-topic-popover">
+                        <aside
+                          class="study-topic-popover"
+                          :aria-label="`Study tools for ${topic.title}`"
+                        >
                           <div class="study-topic-popover-head">
                             <h4>{{ topic.title }}</h4>
-                            <span :class="topic.priority.toLowerCase()"
-                              >{{ topic.importanceScore }}% ·
-                              {{ priorityLabel(topic.priority) }}</span
-                            >
+                            <span>{{ topicProgress(topic) }}% complete</span>
                           </div>
-                          <small>Choose a study tool</small>
+                          <p class="study-topic-probability">
+                            {{ topic.importanceScore }}% exam probability
+                          </p>
+                          <small>Study with</small>
                           <div class="study-topic-actions">
                             <button
                               class="study-topic-tool"
