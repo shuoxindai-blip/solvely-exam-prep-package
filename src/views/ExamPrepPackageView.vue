@@ -2941,22 +2941,19 @@ onBeforeUnmount(() => {
 
         <section class="exam-catalog" aria-labelledby="examCatalogTitle">
           <div class="predictor-library-heading exam-catalog-heading">
-            <h2 id="examCatalogTitle">Standard Test Courses</h2>
+            <h2 id="examCatalogTitle">Standardized Test Prep Courses</h2>
             <span>{{ packageLibraryTotal }} {{ searchQuery || familyFilter !== 'all' ? 'Found' : 'Total' }}</span>
           </div>
-          <p class="exam-catalog-description">
-            Choose a ready-made course for the exam you are preparing for.
-          </p>
           <div class="exam-catalog-toolbar">
             <label class="exam-search-wrap"
               ><svg class="icon"><use href="#i-search" /></svg
               ><input
                 v-model="searchQuery"
-                aria-label="Search standard test courses"
+                aria-label="Search standardized test prep courses"
                 placeholder="Search SAT, ACT, AP, or Abitur courses..." /></label
             ><label class="exam-filter-wrap"
-              ><span class="sr-only">Filter standard test courses</span
-              ><select v-model="familyFilter" aria-label="Filter standard test courses">
+              ><span class="sr-only">Filter standardized test prep courses</span
+              ><select v-model="familyFilter" aria-label="Filter standardized test prep courses">
                 <option value="all">All courses</option>
                 <option value="sat">SAT</option>
                 <option value="act">ACT</option>
@@ -2966,7 +2963,7 @@ onBeforeUnmount(() => {
               ><svg class="icon"><use href="#i-chevron" /></svg
             ></label>
           </div>
-          <div class="course-grid" aria-label="Standard test courses">
+          <div class="course-grid" aria-label="Standardized test prep courses">
             <button
               v-for="course in filteredCourses"
               :key="course.title"

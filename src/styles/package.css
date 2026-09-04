@@ -1166,7 +1166,6 @@
     .exam-catalog[hidden] { display:none; }
     .exam-catalog-heading { display:flex; align-items:center; gap:12px; margin-bottom:0; }
     .exam-catalog-heading h2 { margin:0; color:#4a5565; font-size:18px; font-weight:650; line-height:27px; letter-spacing:0; }
-    .exam-catalog-description { margin:5px 0 18px; color:#8b919c; font-size:12px; line-height:18px; }
     .diagnostic-entry { min-height:120px; display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:24px; margin-bottom:16px; padding:20px 22px; overflow:hidden; position:relative; border:1px solid rgba(20,126,245,.2); border-radius:18px; background:linear-gradient(120deg,#f4f9ff 0%,#f8fbff 58%,#edf5ff 100%); box-shadow:0 12px 32px rgba(35,83,136,.08); }
     .diagnostic-entry::after { content:""; width:180px; height:180px; position:absolute; right:-62px; top:-94px; border-radius:50%; background:rgba(20,126,245,.08); pointer-events:none; }
     .diagnostic-entry-copy { min-width:0; position:relative; z-index:1; }
@@ -1214,7 +1213,6 @@
     .course-empty { padding:24px; border:1px dashed var(--line); border-radius:14px; color:var(--muted); text-align:center; }
 
     body.dark .exam-catalog-heading h2 { color:var(--text); }
-    body.dark .exam-catalog-description { color:var(--muted); }
     body.dark .course-card { border-color:var(--line); }
     body.dark .course-card-banner { background:linear-gradient(135deg,rgba(0,122,255,.2),rgba(50,75,104,.55)); }
     body.dark .course-card.sample-course .course-card-banner { background:linear-gradient(135deg,rgba(99,110,127,.2),rgba(53,61,73,.58)); }
