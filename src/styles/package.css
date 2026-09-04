@@ -1194,7 +1194,18 @@
     .course-card-icon .icon { width:22px; height:22px; }
     .course-card-icon-exam span { font-size:12px; font-weight:850; letter-spacing:-.02em; }
     .course-card.sample-course .course-card-icon { color:#657184; box-shadow:none; }
-    .course-card-banner > strong { min-width:0; overflow:hidden; color:var(--text); font-size:16px; font-weight:650; line-height:24px; text-overflow:ellipsis; white-space:nowrap; }
+    .course-card-banner > strong {
+      min-width:0;
+      overflow:hidden;
+      color:var(--text);
+      font-size:16px;
+      font-weight:650;
+      line-height:22px;
+      display:-webkit-box;
+      -webkit-box-orient:vertical;
+      -webkit-line-clamp:2;
+      white-space:normal;
+    }
     .course-card-body { min-height:118px; flex:1; display:flex; align-content:flex-start; align-items:center; flex-wrap:wrap; gap:2px 14px; padding:12px 24px 13px; }
     .course-card-detail { width:100%; color:#4a5565; font-size:12px; line-height:18px; }
     .course-card-action { display:inline-flex; align-items:center; gap:4px; margin-top:5px; color:#087cf4; font-size:12px; font-weight:700; line-height:18px; }

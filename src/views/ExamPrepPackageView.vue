@@ -1007,197 +1007,83 @@ const improveTopicSectionClusters = computed(() => {
   return clusters;
 });
 
+function catalogCourse(
+  family: Course["family"],
+  title: string,
+  topics: number,
+  questions: number,
+  icon: string,
+  search: string,
+): Course {
+  return {
+    family,
+    label: family === "abitur" ? "ABITUR" : family.toUpperCase(),
+    icon,
+    title,
+    topics: topics.toLocaleString("en-US"),
+    videos: topics.toLocaleString("en-US"),
+    questions: questions.toLocaleString("en-US"),
+    search,
+  };
+}
+
+// Source: “iOS备考包-算法及物料”, revision 1460.
+// 1 SAT + 1 ACT + 43 AP + 7 Abitur courses = 52 total courses.
 const courses: Course[] = [
-  {
-    family: "sat",
-    label: "SAT",
-    icon: "exam",
-    title: "SAT Prep 2026",
-    topics: "100",
-    videos: "100",
-    questions: "3,879",
-    search: "digital college admissions math reading writing",
-  },
-  {
-    family: "act",
-    label: "ACT",
-    icon: "exam",
-    title: "ACT Prep 2026",
-    topics: "235",
-    videos: "235",
-    questions: "6,600",
-    search: "college admissions english math reading science",
-  },
-  {
-    family: "ap",
-    label: "AP",
-    icon: "math",
-    title: "AP Calculus AB",
-    topics: "42+",
-    videos: "42+",
-    questions: "1,200+",
-    search: "advanced placement math calculus",
-  },
-  {
-    family: "ap",
-    label: "AP",
-    icon: "biology",
-    title: "AP Biology",
-    topics: "55+",
-    videos: "55+",
-    questions: "1,600+",
-    search: "advanced placement biology science",
-  },
-  {
-    family: "ap",
-    label: "AP",
-    icon: "history",
-    title: "AP United States History",
-    topics: "45+",
-    videos: "45+",
-    questions: "1,400+",
-    search: "advanced placement us history",
-  },
-  {
-    family: "ap",
-    label: "AP",
-    icon: "globe",
-    title: "AP World History: Modern",
-    topics: "42+",
-    videos: "42+",
-    questions: "1,300+",
-    search: "advanced placement world history modern",
-  },
-  {
-    family: "ap",
-    label: "AP",
-    icon: "psychology",
-    title: "AP Psychology",
-    topics: "40+",
-    videos: "40+",
-    questions: "1,200+",
-    search: "advanced placement psychology",
-  },
-  {
-    family: "ap",
-    label: "AP",
-    icon: "chemistry",
-    title: "AP Chemistry",
-    topics: "50+",
-    videos: "50+",
-    questions: "1,500+",
-    search: "advanced placement chemistry science",
-  },
-  {
-    family: "ap",
-    label: "AP",
-    icon: "statistics",
-    title: "AP Statistics",
-    topics: "38+",
-    videos: "38+",
-    questions: "1,100+",
-    search: "advanced placement statistics math data",
-  },
-  {
-    family: "ap",
-    label: "AP",
-    icon: "globe",
-    title: "AP Human Geography",
-    topics: "35+",
-    videos: "35+",
-    questions: "1,000+",
-    search: "advanced placement human geography",
-  },
-  {
-    family: "ap",
-    label: "AP",
-    icon: "language",
-    title: "AP English Language and Composition",
-    topics: "32+",
-    videos: "32+",
-    questions: "900+",
-    search: "advanced placement english language composition",
-  },
-  {
-    family: "ap",
-    label: "AP",
-    icon: "code",
-    title: "AP Computer Science A",
-    topics: "40+",
-    videos: "40+",
-    questions: "1,000+",
-    search: "advanced placement computer science programming",
-  },
-  {
-    family: "abitur",
-    label: "ABITUR",
-    icon: "language",
-    title: "Abitur Deutsch",
-    topics: "26",
-    videos: "26",
-    questions: "1,100+",
-    search: "german deutsch germany",
-  },
-  {
-    family: "abitur",
-    label: "ABITUR",
-    icon: "math",
-    title: "Abitur Mathematik",
-    topics: "32",
-    videos: "32",
-    questions: "1,200+",
-    search: "german mathematik mathematics math germany",
-  },
-  {
-    family: "abitur",
-    label: "ABITUR",
-    icon: "language",
-    title: "Abitur Englisch",
-    topics: "24",
-    videos: "24",
-    questions: "950+",
-    search: "german englisch english germany",
-  },
-  {
-    family: "abitur",
-    label: "ABITUR",
-    icon: "language",
-    title: "Abitur Französisch",
-    topics: "21",
-    videos: "21",
-    questions: "850+",
-    search: "german french französisch germany",
-  },
-  {
-    family: "abitur",
-    label: "ABITUR",
-    icon: "biology",
-    title: "Abitur Biologie",
-    topics: "25",
-    videos: "25",
-    questions: "1,100+",
-    search: "german biology biologie germany",
-  },
-  {
-    family: "abitur",
-    label: "ABITUR",
-    icon: "chemistry",
-    title: "Abitur Chemie",
-    topics: "22",
-    videos: "22",
-    questions: "950+",
-    search: "german chemistry chemie germany",
-  },
-  {
-    family: "abitur",
-    label: "ABITUR",
-    icon: "physics",
-    title: "Abitur Physik",
-    topics: "20",
-    videos: "20",
-    questions: "850+",
-    search: "german physics physik germany",
-  },
+  catalogCourse("sat", "SAT Prep 2026", 100, 6226, "exam", "digital college admissions math reading writing"),
+  catalogCourse("act", "ACT Prep 2026", 235, 14100, "exam", "college admissions english math reading science writing"),
+
+  catalogCourse("ap", "AP 2-D Art and Design", 19, 1140, "art", "advanced placement arts visual design"),
+  catalogCourse("ap", "AP 3-D Art and Design", 20, 1200, "art", "advanced placement arts visual design"),
+  catalogCourse("ap", "AP African American Studies", 20, 1200, "history", "advanced placement history social science"),
+  catalogCourse("ap", "AP Art History", 17, 1020, "art", "advanced placement arts history"),
+  catalogCourse("ap", "AP Biology", 32, 1920, "biology", "advanced placement biology science"),
+  catalogCourse("ap", "AP Business with Personal Finance", 31, 1860, "business", "advanced placement business finance career kickstart"),
+  catalogCourse("ap", "AP Calculus AB", 32, 1920, "math", "advanced placement math calculus"),
+  catalogCourse("ap", "AP Calculus BC", 49, 2940, "math", "advanced placement math calculus"),
+  catalogCourse("ap", "AP Chemistry", 38, 2280, "chemistry", "advanced placement chemistry science"),
+  catalogCourse("ap", "AP Chinese Language and Culture", 24, 1440, "language", "advanced placement chinese language culture"),
+  catalogCourse("ap", "AP Comparative Government and Politics", 20, 1200, "government", "advanced placement comparative government politics social science"),
+  catalogCourse("ap", "AP Computer Science A", 32, 1920, "code", "advanced placement computer science programming"),
+  catalogCourse("ap", "AP Computer Science Principles", 25, 1500, "code", "advanced placement computer science programming principles"),
+  catalogCourse("ap", "AP Cybersecurity", 24, 1440, "security", "advanced placement cybersecurity career kickstart computing"),
+  catalogCourse("ap", "AP Drawing", 19, 1140, "art", "advanced placement arts drawing design"),
+  catalogCourse("ap", "AP English Language and Composition", 34, 2040, "language", "advanced placement english language composition"),
+  catalogCourse("ap", "AP English Literature and Composition", 37, 2220, "language", "advanced placement english literature composition"),
+  catalogCourse("ap", "AP Environmental Science", 36, 2160, "environment", "advanced placement environmental earth science"),
+  catalogCourse("ap", "AP European History", 27, 1620, "history", "advanced placement european history"),
+  catalogCourse("ap", "AP French Language and Culture", 24, 1440, "language", "advanced placement french language culture"),
+  catalogCourse("ap", "AP German Language and Culture", 24, 1440, "language", "advanced placement german language culture"),
+  catalogCourse("ap", "AP Human Geography", 28, 1680, "globe", "advanced placement human geography social science"),
+  catalogCourse("ap", "AP Italian Language and Culture", 24, 1440, "language", "advanced placement italian language culture"),
+  catalogCourse("ap", "AP Japanese Language and Culture", 24, 1440, "language", "advanced placement japanese language culture"),
+  catalogCourse("ap", "AP Latin", 24, 1440, "language", "advanced placement latin language culture"),
+  catalogCourse("ap", "AP Macroeconomics", 24, 1440, "economics", "advanced placement macroeconomics economics social science"),
+  catalogCourse("ap", "AP Microeconomics", 24, 1440, "economics", "advanced placement microeconomics economics social science"),
+  catalogCourse("ap", "AP Music Theory", 29, 1740, "music", "advanced placement arts music theory"),
+  catalogCourse("ap", "AP Networking (Pilot)", 22, 1320, "network", "advanced placement networking pilot career kickstart computing"),
+  catalogCourse("ap", "AP Physics 1: Algebra-Based", 32, 1920, "physics", "advanced placement physics algebra science"),
+  catalogCourse("ap", "AP Physics 2: Algebra-Based", 28, 1680, "physics", "advanced placement physics algebra science"),
+  catalogCourse("ap", "AP Physics C: Electricity and Magnetism", 24, 1440, "physics", "advanced placement physics electricity magnetism science"),
+  catalogCourse("ap", "AP Physics C: Mechanics", 28, 1680, "physics", "advanced placement physics mechanics science"),
+  catalogCourse("ap", "AP Precalculus", 28, 1680, "math", "advanced placement math precalculus"),
+  catalogCourse("ap", "AP Psychology", 29, 1740, "psychology", "advanced placement psychology social science"),
+  catalogCourse("ap", "AP Research", 40, 2400, "research", "advanced placement capstone research"),
+  catalogCourse("ap", "AP Seminar", 30, 1800, "research", "advanced placement capstone seminar research"),
+  catalogCourse("ap", "AP Spanish Language and Culture", 24, 1440, "language", "advanced placement spanish language culture"),
+  catalogCourse("ap", "AP Spanish Literature and Culture", 32, 1920, "language", "advanced placement spanish literature culture"),
+  catalogCourse("ap", "AP Statistics", 35, 2100, "statistics", "advanced placement statistics math data"),
+  catalogCourse("ap", "AP United States Government and Politics", 25, 1500, "government", "advanced placement united states government politics social science"),
+  catalogCourse("ap", "AP United States History", 27, 1620, "history", "advanced placement united states history"),
+  catalogCourse("ap", "AP World History: Modern", 27, 1620, "history", "advanced placement world history modern"),
+
+  catalogCourse("abitur", "Abitur Biologie", 28, 1680, "biology", "german abitur biology biologie science"),
+  catalogCourse("abitur", "Abitur Chemie", 37, 2220, "chemistry", "german abitur chemistry chemie science"),
+  catalogCourse("abitur", "Abitur Deutsch", 18, 1080, "language", "german abitur deutsch language"),
+  catalogCourse("abitur", "Abitur Englisch", 19, 1268, "language", "german abitur englisch english language"),
+  catalogCourse("abitur", "Abitur Französisch", 19, 1144, "language", "german abitur french französisch language"),
+  catalogCourse("abitur", "Abitur Mathematik", 31, 2929, "math", "german abitur mathematik mathematics math"),
+  catalogCourse("abitur", "Abitur Physik", 25, 1503, "physics", "german abitur physics physik science"),
 ];
 
 const filteredCourses = computed(() => {
@@ -2526,6 +2412,40 @@ onBeforeUnmount(() => {
     </symbol>
     <symbol id="i-course-code" viewBox="0 0 24 24">
       <path d="m8 7-5 5 5 5M16 7l5 5-5 5M14 4l-4 16" />
+    </symbol>
+    <symbol id="i-course-art" viewBox="0 0 24 24">
+      <path d="M12 3a9 9 0 1 0 0 18h1.5a2 2 0 0 0 0-4H12a2 2 0 0 1 0-4h3a6 6 0 0 0 0-12Z" />
+      <circle cx="7.5" cy="10" r="1" /><circle cx="9.5" cy="6.5" r="1" /><circle cx="14" cy="6" r="1" /><circle cx="17" cy="9" r="1" />
+    </symbol>
+    <symbol id="i-course-business" viewBox="0 0 24 24">
+      <rect x="3" y="7" width="18" height="13" rx="2" />
+      <path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 12h18M10 12v2h4v-2" />
+    </symbol>
+    <symbol id="i-course-government" viewBox="0 0 24 24">
+      <path d="m3 9 9-6 9 6M5 10h14M6 10v8M10 10v8M14 10v8M18 10v8M4 18h16M3 21h18" />
+    </symbol>
+    <symbol id="i-course-security" viewBox="0 0 24 24">
+      <path d="M12 3 20 6v5c0 5-3.2 8.4-8 10-4.8-1.6-8-5-8-10V6Z" />
+      <path d="m8.5 12 2.2 2.2 4.8-5" />
+    </symbol>
+    <symbol id="i-course-environment" viewBox="0 0 24 24">
+      <path d="M20 4C11 4 5 8.2 5 14a5 5 0 0 0 5 5c5.8 0 10-6 10-15Z" />
+      <path d="M4 21c2.6-5.6 6.5-9.3 12-12" />
+    </symbol>
+    <symbol id="i-course-economics" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="9" />
+      <path d="M15.5 8.5c-.7-1-1.8-1.5-3.5-1.5-2 0-3.5 1-3.5 2.5s1.2 2.2 3.8 2.7c2.2.4 3.2 1.1 3.2 2.5S14.1 17 12 17c-1.8 0-3.1-.6-3.8-1.7M12 5v14" />
+    </symbol>
+    <symbol id="i-course-music" viewBox="0 0 24 24">
+      <path d="M9 18V6l10-2v12" />
+      <ellipse cx="6" cy="18" rx="3" ry="2" /><ellipse cx="16" cy="16" rx="3" ry="2" />
+    </symbol>
+    <symbol id="i-course-network" viewBox="0 0 24 24">
+      <rect x="9" y="3" width="6" height="5" rx="1" /><rect x="3" y="16" width="6" height="5" rx="1" /><rect x="15" y="16" width="6" height="5" rx="1" />
+      <path d="M12 8v4M6 16v-4h12v4" />
+    </symbol>
+    <symbol id="i-course-research" viewBox="0 0 24 24">
+      <circle cx="10" cy="10" r="6" /><path d="m14.5 14.5 6 6M8 7h4M7 10h6M8 13h3" />
     </symbol>
     <symbol id="i-course-physics" viewBox="0 0 24 24">
       <circle cx="12" cy="12" r="1.5" />
