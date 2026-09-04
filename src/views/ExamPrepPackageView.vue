@@ -37,6 +37,12 @@ type Course = {
   questions: string;
   search: string;
 };
+type CreatedPrediction = {
+  id: string;
+  title: string;
+  date: string;
+  focus: string;
+};
 type LastActivity =
   | {
       kind: "learning";
@@ -95,7 +101,8 @@ const newPredictionDialog = ref<HTMLDialogElement | null>(null);
 const predictionExamName = ref("");
 const predictionExamDate = ref("");
 const predictionFocus = ref("Balanced review");
-const createdPrediction = ref<{ title: string; date: string; focus: string } | null>(null);
+const createdPredictions = ref<CreatedPrediction[]>([]);
+const editingPredictionId = ref<string | null>(null);
 const similarQuizDrawer = ref<HTMLDialogElement | null>(null);
 const similarQuizBody = ref<HTMLElement | null>(null);
 const similarQuizTopic = ref<SatTopic | null>(null);
@@ -140,11 +147,6 @@ const demoControllerStyle = computed(() =>
 );
 const isCourseStarted = computed(
   () => String(route.query.courseState || "") !== "not-started",
-);
-const lastActivityDetail = computed(() =>
-  lastActivity.value.kind === "learning"
-    ? `${lastActivity.value.sectionTitle} · ${lastActivity.value.resourceLabel} · ${lastActivity.value.progressPercent}% complete`
-    : `${lastActivity.value.sectionTitle} · ${lastActivity.value.moduleLabel} · ${lastActivity.value.answered} of ${lastActivity.value.total} answered`,
 );
 const lastActivityCta = computed(() =>
   lastActivity.value.kind === "learning" ? "Continue learning" : "Resume exam",
@@ -1157,13 +1159,17 @@ const courses: Course[] = [
   },
 ];
 
+const availableCourses = courses.filter(
+  (course) => course.family === "sat" || course.family === "act",
+);
+
 const filteredCourses = computed(() => {
   const terms = searchQuery.value
     .trim()
     .toLowerCase()
     .split(/\s+/)
     .filter(Boolean);
-  return courses.filter((course) => {
+  return availableCourses.filter((course) => {
     const haystack = `${course.title} ${course.search}`.toLowerCase();
     return (
       (familyFilter.value === "all" || course.family === familyFilter.value) &&
@@ -1171,7 +1177,8 @@ const filteredCourses = computed(() => {
     );
   });
 });
-const examLibraryTotal = computed(() => createdPrediction.value ? 2 : 1);
+const examLibraryTotal = computed(() => createdPredictions.value.length + 1);
+const packageLibraryTotal = computed(() => filteredCourses.value.length);
 
 const courseSectionOptions = computed(() => [...new Set((manifest.value?.topics ?? []).map((topic) => topic.section))]);
 const reportSectionOptions = computed(() => resultReport.value?.sections ?? []);
@@ -1400,7 +1407,6 @@ function initializeSectionDisclosure() {
 }
 
 function openCourse(course: Course) {
-  if (course.family !== "sat" && course.family !== "act") return;
   activeTab.value = "study";
   const isAct = course.family === "act";
   sectionFilter.value = isAct ? "English" : "Math";
@@ -1415,8 +1421,17 @@ function openExamPredictorHome() {
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 function openNewPrediction() {
-  if (!predictionExamName.value) predictionExamName.value = "AP Biology Midterm";
-  if (!predictionExamDate.value) predictionExamDate.value = "2026-11-12";
+  editingPredictionId.value = null;
+  predictionExamName.value = "AP Biology Midterm";
+  predictionExamDate.value = "2026-11-12";
+  predictionFocus.value = "Balanced review";
+  newPredictionDialog.value?.showModal();
+}
+function editCreatedPrediction(prediction: CreatedPrediction) {
+  editingPredictionId.value = prediction.id;
+  predictionExamName.value = prediction.title;
+  predictionExamDate.value = prediction.date;
+  predictionFocus.value = prediction.focus;
   newPredictionDialog.value?.showModal();
 }
 function closeNewPrediction() {
@@ -1425,12 +1440,33 @@ function closeNewPrediction() {
 function createNewPrediction() {
   const title = predictionExamName.value.trim();
   if (!title || !predictionExamDate.value) return;
-  createdPrediction.value = {
+  const prediction: CreatedPrediction = {
+    id: editingPredictionId.value ?? `prediction-${Date.now()}`,
     title,
     date: predictionExamDate.value,
     focus: predictionFocus.value,
   };
+  if (editingPredictionId.value) {
+    createdPredictions.value = createdPredictions.value.map((item) =>
+      item.id === editingPredictionId.value ? prediction : item,
+    );
+  } else {
+    createdPredictions.value = [prediction, ...createdPredictions.value];
+  }
+  try {
+    window.localStorage.setItem(
+      "solvely:ep:created-predictions",
+      JSON.stringify(createdPredictions.value),
+    );
+  } catch {
+    /* The new plan still appears when browser storage is unavailable. */
+  }
   closeNewPrediction();
+  void nextTick(() => {
+    document
+      .querySelector<HTMLElement>(".predictor-library-card.created")
+      ?.focus();
+  });
 }
 function formatPredictionDate(value: string) {
   return new Intl.DateTimeFormat("en-US", {
@@ -1537,6 +1573,21 @@ function resumeLastActivity() {
       query: isActPackage.value ? { exam: "act" } : {},
     });
   else startMockExam(lastActivity.value.examId);
+}
+function openCourseFromHome(course: Course) {
+  if (lastActivity.value.examTitle === course.title) {
+    resumeLastActivity();
+    return;
+  }
+  openCourse(course);
+}
+function courseHomeState(course: Course) {
+  return lastActivity.value.examTitle === course.title ? "IN PROGRESS" : "READY";
+}
+function courseHomeAction(course: Course) {
+  return lastActivity.value.examTitle === course.title
+    ? lastActivityCta.value
+    : "Open package";
 }
 function startMockExam(examId: number) {
   if (!isProMember.value) {
@@ -2205,6 +2256,39 @@ onMounted(async () => {
   window.addEventListener("resize", keepDemoControllerInViewport);
   syncTabFromRoute();
   try {
+    const savedPredictions =
+      window.localStorage.getItem("solvely:ep:created-predictions") ??
+      window.localStorage.getItem("solvely:ep:created-prediction");
+    if (savedPredictions) {
+      const parsedPredictions = JSON.parse(savedPredictions) as unknown;
+      if (Array.isArray(parsedPredictions)) {
+        createdPredictions.value = parsedPredictions.filter(
+          (prediction): prediction is CreatedPrediction =>
+            typeof prediction === "object" &&
+            prediction !== null &&
+            typeof prediction.id === "string" &&
+            typeof prediction.title === "string" &&
+            typeof prediction.date === "string" &&
+            typeof prediction.focus === "string",
+        );
+      } else if (
+        typeof parsedPredictions === "object" &&
+        parsedPredictions !== null &&
+        "title" in parsedPredictions &&
+        "date" in parsedPredictions &&
+        "focus" in parsedPredictions &&
+        typeof parsedPredictions.title === "string" &&
+        typeof parsedPredictions.date === "string" &&
+        typeof parsedPredictions.focus === "string"
+      ) {
+        createdPredictions.value = [{
+          id: "prediction-migrated",
+          title: parsedPredictions.title,
+          date: parsedPredictions.date,
+          focus: parsedPredictions.focus,
+        }];
+      }
+    }
     showImproveImportanceNote.value =
       window.localStorage.getItem(
         `solvely:${examName.value.toLowerCase()}:improve-importance-note-dismissed`,
@@ -2545,20 +2629,24 @@ onBeforeUnmount(() => {
             <span>{{ examLibraryTotal }} Total</span>
           </div>
           <div class="predictor-library-grid">
-            <article
-              v-if="createdPrediction"
+            <button
+              v-for="prediction in createdPredictions"
+              :key="prediction.id"
               class="predictor-library-card created"
+              type="button"
+              :aria-label="`Edit ${prediction.title}`"
+              @click="editCreatedPrediction(prediction)"
             >
               <div class="predictor-library-banner">
                 <span class="predictor-library-state">READY</span>
-                <h3>{{ createdPrediction.title }}</h3>
+                <h3>{{ prediction.title }}</h3>
               </div>
               <div class="predictor-library-details">
                 <span><svg class="icon"><use href="#i-target" /></svg>0% Mastered</span>
-                <span><svg class="icon"><use href="#i-history" /></svg>{{ createdPrediction.focus }}</span>
-                <small>Exam Date {{ formatPredictionDate(createdPrediction.date) }}</small>
+                <span><svg class="icon"><use href="#i-history" /></svg>{{ prediction.focus }}</span>
+                <small>Exam Date {{ formatPredictionDate(prediction.date) }}</small>
               </div>
-            </article>
+            </button>
             <article class="predictor-library-card">
               <div class="predictor-library-banner">
                 <span class="predictor-library-state">IN PROGRESS</span>
@@ -2830,51 +2918,27 @@ onBeforeUnmount(() => {
         </section>
 
         <section class="exam-catalog" aria-labelledby="examCatalogTitle">
-          <div class="exam-catalog-heading">
-            <div>
-              <span class="exam-catalog-eyebrow">READY-MADE</span>
-              <h2 id="examCatalogTitle">Exam Prep Packages</h2>
-            </div>
-            <p>
-              Skip setup and start with a complete path for topic study, mock
-              exams, score insights, and targeted improvement.
-            </p>
+          <div class="predictor-library-heading exam-catalog-heading">
+            <h2 id="examCatalogTitle">Exam Prep Packages</h2>
+            <span>{{ packageLibraryTotal }} {{ searchQuery || familyFilter !== 'all' ? 'Found' : 'Total' }}</span>
           </div>
-          <section
-            class="diagnostic-entry jump-back-entry"
-            aria-labelledby="jumpBackTitle"
-          >
-            <div class="diagnostic-entry-copy">
-              <div class="diagnostic-entry-meta">
-                <span>JUMP BACK IN</span
-                ><span>{{ lastActivity.examTitle }}</span>
-              </div>
-              <h3 id="jumpBackTitle">{{ lastActivity.itemTitle }}</h3>
-              <p>{{ lastActivityDetail }}</p>
-            </div>
-            <button
-              class="diagnostic-entry-button"
-              type="button"
-              @click="resumeLastActivity"
-            >
-              {{ lastActivityCta }}
-            </button>
-          </section>
+          <p class="exam-catalog-description">
+            Choose a ready-made study path and start preparing right away.
+          </p>
           <div class="exam-catalog-toolbar">
             <label class="exam-search-wrap"
               ><svg class="icon"><use href="#i-search" /></svg
               ><input
                 v-model="searchQuery"
                 aria-label="Search standardized exam courses"
-                placeholder="Search SAT, ACT, AP, Abitur packages..." /></label
+                placeholder="Search SAT or ACT packages..." /></label
             ><label class="exam-filter-wrap"
               ><span class="sr-only">Filter exam packages</span
               ><select v-model="familyFilter" aria-label="Filter exam packages">
-                <option value="all">All courses</option>
+                <option value="all">All packages</option>
                 <option value="sat">SAT</option>
                 <option value="act">ACT</option>
-                <option value="ap">AP</option>
-                <option value="abitur">Abitur</option></select
+                </select
               ><svg class="icon"><use href="#i-chevron" /></svg
             ></label>
           </div>
@@ -2882,28 +2946,30 @@ onBeforeUnmount(() => {
             <button
               v-for="course in filteredCourses"
               :key="course.title"
-              :class="[
-                'course-card',
-                { 'sample-course': course.family !== 'sat' && course.family !== 'act' },
-              ]"
+              :class="['course-card', `course-card-${course.family}`]"
               type="button"
-              :disabled="course.family !== 'sat' && course.family !== 'act'"
-              :aria-label="
-                course.family === 'sat' || course.family === 'act'
-                  ? `Open ${course.title} course`
-                  : `${course.title} sample unavailable`
-              "
-              @click="openCourse(course)"
+              :aria-label="`${courseHomeAction(course)}: ${course.title}`"
+              @click="openCourseFromHome(course)"
             >
-              <span class="course-family">{{ course.label }}</span>
-              <h3>{{ course.title }}</h3>
-              <p>
-                {{ course.topics }} topics · {{ course.videos }} video
-                lessons<br />{{ course.questions }} practice questions
-              </p>
-              <span class="course-stats"
-                ><span>Full test</span><span>Score insights</span></span
-              >
+              <span class="course-card-banner">
+                <span class="course-card-state">{{ courseHomeState(course) }}</span>
+                <span class="course-family">{{ course.label }}</span>
+                <strong>{{ course.title }}</strong>
+              </span>
+              <span class="course-card-body">
+                <span class="course-card-detail">
+                  <svg class="icon" aria-hidden="true"><use href="#i-grid" /></svg>
+                  {{ course.topics }} topics · {{ course.questions }} questions
+                </span>
+                <span class="course-card-detail">
+                  <svg class="icon" aria-hidden="true"><use href="#i-exam" /></svg>
+                  Full test · Score insights
+                </span>
+                <strong class="course-card-action">
+                  {{ courseHomeAction(course) }}
+                  <svg class="icon" aria-hidden="true"><use href="#i-chevron" /></svg>
+                </strong>
+              </span>
             </button>
           </div>
           <p v-if="!filteredCourses.length" class="course-empty">
@@ -4803,7 +4869,9 @@ onBeforeUnmount(() => {
             <svg class="icon"><use href="#i-exam" /></svg>
           </span>
           <div>
-            <h2 id="newPredictionTitle">Create an exam prediction</h2>
+            <h2 id="newPredictionTitle">
+              {{ editingPredictionId ? 'Edit exam prediction' : 'Create an exam prediction' }}
+            </h2>
             <p>Tell Solvely what you are preparing for to build your plan.</p>
           </div>
           <button
@@ -4844,7 +4912,7 @@ onBeforeUnmount(() => {
           </button>
           <button type="submit" class="prediction-primary">
             <svg class="icon"><use href="#i-spark" /></svg>
-            Create prep plan
+            {{ editingPredictionId ? 'Save changes' : 'Create prep plan' }}
           </button>
         </footer>
       </form>
