@@ -2649,7 +2649,7 @@ onBeforeUnmount(() => {
             @click="openNewPrediction"
           >
             <svg class="icon" aria-hidden="true"><use href="#i-plus" /></svg>
-            <span>New Prediction</span>
+            <span>New Prep Plan</span>
           </button>
         </section>
 
@@ -2710,7 +2710,7 @@ onBeforeUnmount(() => {
               @click="openNewPrediction"
             >
               <span><svg class="icon" aria-hidden="true"><use href="#i-plus" /></svg></span>
-              <strong>New Exam Prediction</strong>
+              <strong>New Prep Plan</strong>
             </button>
           </div>
         </section>
@@ -4925,7 +4925,7 @@ onBeforeUnmount(() => {
           </span>
           <div>
             <h2 id="newPredictionTitle">
-              {{ editingPredictionId ? 'Edit exam prediction' : 'Create an exam prediction' }}
+              {{ editingPredictionId ? 'Edit prep plan' : 'Create a prep plan' }}
             </h2>
             <p>Tell Solvely what you are preparing for to build your plan.</p>
           </div>
