@@ -6,7 +6,7 @@
   "scripts": {
     "build:data": "node scripts/build-sat-data.mjs && node scripts/build-act-data.mjs",
     "build:act-data": "node scripts/build-act-data.mjs",
-    "verify:data": "node scripts/verify-sat-importance.mjs && node scripts/verify-sat-content-separation.mjs",
+    "verify:data": "node scripts/verify-sat-importance.mjs && node scripts/verify-sat-content-separation.mjs && node scripts/verify-exam-option-integrity.mjs",
     "dev": "vite",
     "build": "vue-tsc -b && vite build",
     "preview": "vite preview",

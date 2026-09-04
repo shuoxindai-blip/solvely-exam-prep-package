@@ -35,10 +35,26 @@ function normalize(value) {
   return String(value || '').toLowerCase().replace(/[’'“”"–—‑-]/g, ' ').replace(/[^\p{L}\p{N}]+/gu, ' ').trim()
 }
 
-function optionRecord(row) {
-  return Object.fromEntries([row.choice1, row.choice2, row.choice3, row.choice4]
+function choiceValues(row) {
+  return [row.choice1, row.choice2, row.choice3, row.choice4]
     .filter((value) => String(value || '').trim())
-    .map((value, index) => [String.fromCharCode(65 + index), String(value).trim()]))
+    .map((value) => String(value).trim())
+}
+
+function embeddedChoiceLabels(row) {
+  const values = choiceValues(row)
+  if (!values.length) return []
+  const matches = [...String(row.questionText || '').matchAll(/(?:^|\n)\s*([A-Z])\)\s+/g)]
+  const labels = matches.slice(-values.length).map((match) => match[1])
+  return labels.length === values.length && new Set(labels).size === labels.length ? labels : []
+}
+
+function optionRecord(row, labels = []) {
+  const values = choiceValues(row)
+  const resolvedLabels = labels.length === values.length
+    ? labels
+    : values.map((_, index) => String.fromCharCode(65 + index))
+  return Object.fromEntries(values.map((value, index) => [resolvedLabels[index], value]))
 }
 
 function sectionId(section) {
@@ -59,9 +75,13 @@ function longestCommonPrefix(values) {
   return boundary > 0 ? prefix.slice(0, boundary).trim() : ''
 }
 
-function withoutChoices(value) {
-  const match = String(value || '').match(/\n\s*A\)\s/)
-  return (match?.index == null ? String(value || '') : String(value || '').slice(0, match.index)).trim()
+function withoutChoices(row) {
+  const value = String(row.questionText || '')
+  const labels = embeddedChoiceLabels(row)
+  if (!labels.length) return value.trim()
+  const matches = [...value.matchAll(/(?:^|\n)\s*([A-Z])\)\s+/g)]
+  const firstChoice = matches.at(-labels.length)
+  return (firstChoice?.index == null ? value : value.slice(0, firstChoice.index)).trim()
 }
 
 const MATCH_STOP_WORDS = new Set(['a', 'an', 'and', 'at', 'by', 'for', 'from', 'in', 'of', 'on', 'or', 'the', 'to', 'with'])
@@ -257,7 +277,7 @@ function passageMap(rows) {
   for (const row of rows) {
     if (!row.passageId) continue
     if (!grouped.has(row.passageId)) grouped.set(row.passageId, [])
-    grouped.get(row.passageId).push(withoutChoices(row.questionText))
+    grouped.get(row.passageId).push(withoutChoices(row))
   }
   return new Map([...grouped].map(([id, values]) => [id, longestCommonPrefix(values)]))
 }
@@ -282,13 +302,14 @@ function epExam(rows, index) {
         return { item, score: titleScore + domainBonus }
       }).sort((left, right) => right.score - left.score || left.item.order - right.item.order)
       const topic = exactTopic || rankedTopics[0]?.item || topics.find((item) => item.section === row.section)
-      const full = withoutChoices(row.questionText)
+      const full = withoutChoices(row)
       const passage = passages.get(row.passageId) || ''
       const stem = passage && full.startsWith(passage) ? full.slice(passage.length).trim() : full
+      const labels = embeddedChoiceLabels(row)
       return {
         id: 37000000 + index * 1000 + rowIndex, index: rowIndex, topicGroupId: topicStorage.get(topic.id).topicGroupId, topicId: topicStorage.get(topic.id).topicId,
         sectionId: sectionId(row.section), sectionTitle: row.section, module: 'Module 1', route: 'standard', contentDomain: row.contentDomain, officialSkill: row.officialSkill, teachingTopic: row.teachingTopic, difficulty: String(row.difficulty || '').toUpperCase(), secondaryClassification: row.secondaryClassification || '',
-        isScored: String(row.isScored).toLowerCase() !== 'false', maximumRawPoints: 1, responseType: 'MULTIPLE_CHOICE', type: 'MULTIPLE_CHOICE', stem, options: optionRecord(row), correctAnswer: String(row.answer || '').trim(), explanation: row.answerExplanation || '',
+        isScored: String(row.isScored).toLowerCase() !== 'false', maximumRawPoints: 1, responseType: 'MULTIPLE_CHOICE', type: 'MULTIPLE_CHOICE', stem, options: optionRecord(row, labels), correctAnswer: String(row.answer || '').trim(), explanation: row.answerExplanation || '',
         stimulusMaterial: passage ? { id: row.passageId, title: row.passageTitle, type: row.passageType, body: passage, pictureUrl: row.pictureKey || '' } : null,
         attachments: row.pictureKey ? [{ type: 'image', url: row.pictureKey }] : [], scoreDetail: null, userAnswer: null, isCorrect: -1,
       }

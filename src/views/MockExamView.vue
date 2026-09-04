@@ -41,6 +41,7 @@ type Question = {
   passageType?: string
   pictureUrl?: string
   options: string[]
+  optionLabels: string[]
   correctIndex: number
   answer: string
   explanation: string
@@ -53,6 +54,7 @@ type Question = {
 type SourceQuestion = {
   question: string
   options: string[]
+  optionLabels: string[]
   correctIndex: number
   answer: string
   explanation: string
@@ -127,6 +129,7 @@ function adaptEpExam(exam: EpExam, index: number, diagnostic = false): SourceExa
       return {
         question: question.stem,
         options: optionEntries.map(([, option]) => option),
+        optionLabels: optionEntries.map(([letter]) => letter),
         correctIndex: optionEntries.findIndex(([letter]) => letter === question.correctAnswer),
         answer: question.correctAnswer,
         explanation: question.explanation,
@@ -177,7 +180,7 @@ function sourceQuestionFor(module: ModuleDefinition, number: number) {
 }
 
 function displayQuestion(source: SourceQuestion | undefined): Question {
-  if (!source) return { prompt: 'Question unavailable', passage: '', options: [], correctIndex: -1, answer: '', explanation: '', difficulty: '', domain: '' }
+  if (!source) return { prompt: 'Question unavailable', passage: '', options: [], optionLabels: [], correctIndex: -1, answer: '', explanation: '', difficulty: '', domain: '' }
   if (isActExam.value) {
     return {
       ...source,
@@ -254,6 +257,9 @@ const reportIssues = [
 const currentModule = computed(() => modules.value[moduleIndex.value])
 const currentSourceQuestion = computed(() => sourceQuestionFor(currentModule.value, currentNumber.value))
 const currentQuestion = computed<Question>(() => displayQuestion(currentSourceQuestion.value))
+const optionShortcutLabels = computed(() => currentQuestion.value.optionLabels.join(', ') || 'Listed choice')
+const optionShortcutRange = computed(() => currentQuestion.value.options.length ? `1–${currentQuestion.value.options.length}` : '1–4')
+const eliminationBadge = computed(() => currentQuestion.value.optionLabels.slice(0, 3).join('') || 'ABC')
 const questionKey = computed(() => `${currentModule.value.id}-${currentNumber.value}`)
 const usesPassageLayout = computed(() => currentModule.value.section !== 'math')
 const activeSectionKinds = computed<SectionKind[]>(() => isActExam.value
@@ -457,6 +463,10 @@ function keyFor(number: number) {
 
 function selectAnswer(index: number) {
   answers[questionKey.value] = index
+}
+
+function choiceLabel(index: number) {
+  return currentQuestion.value.optionLabels[index] ?? String.fromCharCode(65 + index)
 }
 
 function setResponse(event: Event) {
@@ -732,7 +742,9 @@ function onKeydown(event: KeyboardEvent) {
   if (stage.value !== 'exam' || calculatorOpen.value || shortcutsOpen.value || reportOpen.value || target?.closest('button, input, select, textarea, [contenteditable], .user-highlight')) return
 
   const optionKey = event.key.toUpperCase()
-  const optionIndex = ['A', 'B', 'C', 'D'].includes(optionKey) ? optionKey.charCodeAt(0) - 65 : Number(event.key) - 1
+  const labeledOptionIndex = currentQuestion.value.optionLabels.findIndex((label) => label.toUpperCase() === optionKey)
+  const numericOptionIndex = Number(event.key) - 1
+  const optionIndex = labeledOptionIndex >= 0 ? labeledOptionIndex : numericOptionIndex
   if (currentQuestion.value.options.length && optionIndex >= 0 && optionIndex < currentQuestion.value.options.length && event.altKey) {
     event.preventDefault()
     toggleEliminated(optionIndex)
@@ -998,10 +1010,10 @@ onBeforeUnmount(() => {
         </article>
         <div class="splitter" role="separator" aria-orientation="vertical" :aria-valuenow="Math.round(leftWidth)" tabindex="0" @pointerdown="beginResize"><span><i /><i /><i /></span></div>
         <article ref="questionScroller" class="question-panel" aria-label="Answer choices"><div class="question-shell">
-          <div class="question-toolbar"><span class="number-badge">{{ currentNumber }}</span><button class="review-button" :class="{ active: review.has(questionKey) }" type="button" @click="toggleReview"><svg viewBox="0 0 18 22" aria-hidden="true"><path d="M3 2.5h12v17l-6-4-6 4v-17Z" /></svg>Mark for Review</button><button class="report-button" type="button" @click="openQuestionReport"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21V4m1 1h11l-2.2 4L17 13H6" /></svg>Report</button><button class="elimination-mode-button" :class="{ active: eliminationMode }" type="button" :aria-pressed="eliminationMode" :aria-label="eliminationMode ? 'Hide answer elimination controls' : 'Show answer elimination controls'" :title="eliminationMode ? 'Hide answer elimination controls' : 'Eliminate answer choices'" @click="toggleEliminationMode"><span aria-hidden="true">ABC</span></button></div>
+          <div class="question-toolbar"><span class="number-badge">{{ currentNumber }}</span><button class="review-button" :class="{ active: review.has(questionKey) }" type="button" @click="toggleReview"><svg viewBox="0 0 18 22" aria-hidden="true"><path d="M3 2.5h12v17l-6-4-6 4v-17Z" /></svg>Mark for Review</button><button class="report-button" type="button" @click="openQuestionReport"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21V4m1 1h11l-2.2 4L17 13H6" /></svg>Report</button><button class="elimination-mode-button" :class="{ active: eliminationMode }" type="button" :aria-pressed="eliminationMode" :aria-label="eliminationMode ? 'Hide answer elimination controls' : 'Show answer elimination controls'" :title="eliminationMode ? 'Hide answer elimination controls' : 'Eliminate answer choices'" @click="toggleEliminationMode"><span aria-hidden="true">{{ eliminationBadge }}</span></button></div>
           <h1>{{ currentQuestion.prompt }}</h1>
-          <div class="choices" role="radiogroup" :aria-label="currentQuestion.prompt"><div v-for="(option, index) in currentQuestion.options" :key="`${questionKey}-${index}`" class="choice-row" :class="{ selected: answers[questionKey] === index, eliminated: eliminated[questionKey]?.has(index), 'elimination-mode': eliminationMode }"><button class="choice-card" type="button" role="radio" :aria-checked="answers[questionKey] === index" @click="selectAnswer(index)"><span class="choice-letter">{{ String.fromCharCode(65 + index) }}</span><span class="choice-copy">{{ option }}</span></button><button v-if="eliminationMode" class="eliminate-button" type="button" :aria-label="`${eliminated[questionKey]?.has(index) ? 'Restore' : 'Cross out'} answer ${String.fromCharCode(65 + index)}`" :aria-pressed="eliminated[questionKey]?.has(index) ?? false" @click="toggleEliminated(index)"><span>{{ String.fromCharCode(65 + index) }}</span></button></div></div>
-          <p class="keyboard-tip">Tip:&nbsp; press <kbd>1</kbd><kbd>2</kbd><kbd>3</kbd><kbd>4</kbd> to pick an answer, then <kbd class="enter-key">Enter</kbd> to go to the next question</p>
+          <div class="choices" role="radiogroup" :aria-label="currentQuestion.prompt"><div v-for="(option, index) in currentQuestion.options" :key="`${questionKey}-${index}`" class="choice-row" :class="{ selected: answers[questionKey] === index, eliminated: eliminated[questionKey]?.has(index), 'elimination-mode': eliminationMode }"><button class="choice-card" type="button" role="radio" :aria-checked="answers[questionKey] === index" @click="selectAnswer(index)"><span class="choice-letter">{{ choiceLabel(index) }}</span><span class="choice-copy">{{ option }}</span></button><button v-if="eliminationMode" class="eliminate-button" type="button" :aria-label="`${eliminated[questionKey]?.has(index) ? 'Restore' : 'Cross out'} answer ${choiceLabel(index)}`" :aria-pressed="eliminated[questionKey]?.has(index) ?? false" @click="toggleEliminated(index)"><span>{{ choiceLabel(index) }}</span></button></div></div>
+          <p class="keyboard-tip">Tip:&nbsp; press <kbd v-for="index in currentQuestion.options.length" :key="`passage-shortcut-${index}`">{{ index }}</kbd> to pick an answer, then <kbd class="enter-key">Enter</kbd> to go to the next question</p>
         </div></article>
       </section>
     </template>
@@ -1010,13 +1022,13 @@ onBeforeUnmount(() => {
       <section class="math-workspace" :class="{ 'calculator-visible': calculatorOpen && !calculatorPoppedOut }">
         <div v-if="calculatorOpen" class="math-calculator-pane" :class="{ 'popped-out-host': calculatorPoppedOut }"><ScientificCalculator @close="calculatorOpen = false; calculatorPoppedOut = false" @popout-change="calculatorPoppedOut = $event" /></div><div v-if="calculatorOpen && !calculatorPoppedOut" class="math-splitter" aria-hidden="true"><span><i /><i /><i /></span></div>
         <article ref="questionScroller" class="math-question-panel" aria-label="Math question"><div class="math-question-shell" :class="{ 'diagram-question': currentQuestion.diagram }">
-          <div class="question-toolbar"><span class="number-badge">{{ currentNumber }}</span><button class="review-button" :class="{ active: review.has(questionKey) }" type="button" @click="toggleReview"><svg viewBox="0 0 18 22" aria-hidden="true"><path d="M3 2.5h12v17l-6-4-6 4v-17Z" /></svg>Mark for Review</button><button class="report-button" type="button" @click="openQuestionReport"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21V4m1 1h11l-2.2 4L17 13H6" /></svg>Report</button><button class="elimination-mode-button" :class="{ active: eliminationMode }" type="button" :aria-pressed="eliminationMode" :aria-label="eliminationMode ? 'Hide answer elimination controls' : 'Show answer elimination controls'" :title="eliminationMode ? 'Hide answer elimination controls' : 'Eliminate answer choices'" @click="toggleEliminationMode"><span aria-hidden="true">ABC</span></button></div>
+          <div class="question-toolbar"><span class="number-badge">{{ currentNumber }}</span><button class="review-button" :class="{ active: review.has(questionKey) }" type="button" @click="toggleReview"><svg viewBox="0 0 18 22" aria-hidden="true"><path d="M3 2.5h12v17l-6-4-6 4v-17Z" /></svg>Mark for Review</button><button class="report-button" type="button" @click="openQuestionReport"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21V4m1 1h11l-2.2 4L17 13H6" /></svg>Report</button><button class="elimination-mode-button" :class="{ active: eliminationMode }" type="button" :aria-pressed="eliminationMode" :aria-label="eliminationMode ? 'Hide answer elimination controls' : 'Show answer elimination controls'" :title="eliminationMode ? 'Hide answer elimination controls' : 'Eliminate answer choices'" @click="toggleEliminationMode"><span aria-hidden="true">{{ eliminationBadge }}</span></button></div>
           <figure v-if="currentQuestion.diagram" class="circle-diagram"><svg viewBox="0 0 620 560" role="img" aria-label="Circle with intersecting lines through O"><circle cx="310" cy="260" r="210" /><path d="M228 66 393 458M395 69 226 457" /><text x="201" y="67">S</text><text x="397" y="67">R</text><text x="198" y="489">P</text><text x="401" y="489">Q</text><text x="321" y="280">O</text></svg><figcaption>Note: Figure not drawn to scale.</figcaption></figure>
           <HighlightablePassage :key="questionKey" :text="currentQuestion.passage" :enabled="highlighterEnabled" :model-value="highlights[questionKey] ?? []" extra-class="math-stem-copy" @update:model-value="updateHighlights" />
           <h1>{{ currentQuestion.prompt }}</h1>
-          <div v-if="currentQuestion.options.length" class="choices math-choices" role="radiogroup" :aria-label="currentQuestion.prompt"><div v-for="(option, index) in currentQuestion.options" :key="`${questionKey}-${index}`" class="choice-row" :class="{ selected: answers[questionKey] === index, eliminated: eliminated[questionKey]?.has(index), 'elimination-mode': eliminationMode }"><button class="choice-card" type="button" role="radio" :aria-checked="answers[questionKey] === index" @click="selectAnswer(index)"><span class="choice-letter">{{ String.fromCharCode(65 + index) }}</span><span class="choice-copy">{{ option }}</span></button><button v-if="eliminationMode" class="eliminate-button" type="button" :aria-label="`${eliminated[questionKey]?.has(index) ? 'Restore' : 'Cross out'} answer ${String.fromCharCode(65 + index)}`" :aria-pressed="eliminated[questionKey]?.has(index) ?? false" @click="toggleEliminated(index)"><span>{{ String.fromCharCode(65 + index) }}</span></button></div></div>
+          <div v-if="currentQuestion.options.length" class="choices math-choices" role="radiogroup" :aria-label="currentQuestion.prompt"><div v-for="(option, index) in currentQuestion.options" :key="`${questionKey}-${index}`" class="choice-row" :class="{ selected: answers[questionKey] === index, eliminated: eliminated[questionKey]?.has(index), 'elimination-mode': eliminationMode }"><button class="choice-card" type="button" role="radio" :aria-checked="answers[questionKey] === index" @click="selectAnswer(index)"><span class="choice-letter">{{ choiceLabel(index) }}</span><span class="choice-copy">{{ option }}</span></button><button v-if="eliminationMode" class="eliminate-button" type="button" :aria-label="`${eliminated[questionKey]?.has(index) ? 'Restore' : 'Cross out'} answer ${choiceLabel(index)}`" :aria-pressed="eliminated[questionKey]?.has(index) ?? false" @click="toggleEliminated(index)"><span>{{ choiceLabel(index) }}</span></button></div></div>
           <div v-else class="student-response-field"><label :for="`response-${questionKey}`">Student-produced response</label><input :id="`response-${questionKey}`" inputmode="decimal" :value="responses[questionKey] || ''" placeholder="Enter your answer" @input="setResponse" /><small>You may enter an integer, decimal, or fraction.</small></div>
-          <p v-if="currentQuestion.options.length" class="keyboard-tip">Tip:&nbsp; press <kbd>1</kbd><kbd>2</kbd><kbd>3</kbd><kbd>4</kbd> to pick an answer, then <kbd class="enter-key">Enter</kbd> to go to the next question</p>
+          <p v-if="currentQuestion.options.length" class="keyboard-tip">Tip:&nbsp; press <kbd v-for="index in currentQuestion.options.length" :key="`math-shortcut-${index}`">{{ index }}</kbd> to pick an answer, then <kbd class="enter-key">Enter</kbd> to go to the next question</p>
         </div></article>
       </section>
     </template>
@@ -1042,9 +1054,9 @@ onBeforeUnmount(() => {
         <dl>
           <div><dt>Previous question</dt><dd><kbd>←</kbd></dd></div>
           <div><dt>Next question</dt><dd><kbd>→</kbd></dd></div>
-          <div><dt>Select choice A, B, C, or D</dt><dd><kbd>A–D</kbd><kbd>1–4</kbd></dd></div>
+          <div><dt>Select answer choice</dt><dd><kbd>{{ optionShortcutLabels }}</kbd><kbd>{{ optionShortcutRange }}</kbd></dd></div>
           <div><dt>Move selected choice</dt><dd><kbd>↑</kbd><kbd>↓</kbd></dd></div>
-          <div><dt>Cross out choice A, B, C, or D</dt><dd><kbd>Alt / ⌥</kbd><span>+</span><kbd>A–D</kbd><kbd>1–4</kbd></dd></div>
+          <div><dt>Cross out answer choice</dt><dd><kbd>Alt / ⌥</kbd><span>+</span><kbd>{{ optionShortcutLabels }}</kbd><kbd>{{ optionShortcutRange }}</kbd></dd></div>
           <div><dt>Open keyboard shortcuts</dt><dd><kbd>?</kbd></dd></div>
         </dl>
       </section>
