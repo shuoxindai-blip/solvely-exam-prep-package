@@ -89,6 +89,7 @@ export type SatQuizQuestion = {
   id: string
   question: string
   options: string[]
+  optionLabels?: string[]
   correctIndex: number
   answer: string
   explanation: string

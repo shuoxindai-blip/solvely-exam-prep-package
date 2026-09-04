@@ -1,5 +1,6 @@
 import type { EpContentType, EpExam, EpPreparation, EpQuizContent, EpTopicContent, EpTopicContentIndex } from '../types/epV2'
 import type { SatManifest, SatQuizQuestion } from '../types/sat'
+import { normalizeQuestionOptions, orderedOptionEntries } from '../utils/questionOptions'
 
 let preparationPromise: Promise<EpPreparation> | undefined
 let contentIndexPromise: Promise<EpTopicContentIndex> | undefined
@@ -70,7 +71,14 @@ export async function loadActTopicContent(originTopicId: string, contentType: Ep
       if (!outlineTopic) throw new Error(`Unknown ACT EP V2 topic: ${originTopicId}`)
       const document = index.documents.find((item) => item.topicId === outlineTopic.id && item.contentType === contentType)
       if (!document) throw new Error(`Missing ACT ${contentType} content for ${originTopicId}`)
-      return fetchJson<EpTopicContent>(document.path, `ACT epTopicContent ${contentType}`)
+      const content = await fetchJson<EpTopicContent>(document.path, `ACT epTopicContent ${contentType}`)
+      if (content.contentType === 'studyGuide') {
+        return { ...content, payload: { ...content.payload, items: content.payload.items.map(normalizeQuestionOptions) } }
+      }
+      if (content.contentType === 'quiz') {
+        return { ...content, payload: { ...content.payload, questions: content.payload.questions.map(normalizeQuestionOptions) } }
+      }
+      return content
     }))
   }
   return contentPromises.get(cacheKey) as Promise<EpTopicContent>
@@ -80,9 +88,10 @@ export async function loadActTopicQuiz(topicId: string) {
   const [manifest, content] = await Promise.all([loadActManifest(), loadActTopicContent(topicId, 'quiz')])
   const topic = manifest.topics.find((item) => item.id === topicId)
   return (content as EpQuizContent).payload.questions.map<SatQuizQuestion>((question) => {
-    const optionEntries = Object.entries(question.options).sort(([left], [right]) => left.localeCompare(right))
+    const optionEntries = orderedOptionEntries(question.options)
     return {
       id: String(question.id), question: question.stem, options: optionEntries.map(([, value]) => value),
+      optionLabels: optionEntries.map(([letter]) => letter),
       correctIndex: optionEntries.findIndex(([letter]) => letter === question.correctAnswer), answer: question.correctAnswer,
       explanation: question.explanation, difficulty: '', section: topic?.section ?? '', domain: topic?.domain ?? '',
       skill: topic?.skill ?? '', teachingTopic: topic?.title ?? '', pictureKey: '', sourceUrl: '',

@@ -32,6 +32,8 @@ const starredCards = ref(new Set<string>())
 const studyGuideContent = ref<EpStudyGuideContent | null>(null)
 const studyPracticeIndex = ref(0)
 const studyPracticeSelectedAnswer = ref<string | null>(null)
+const studyPracticeWrittenResponse = ref('')
+const studyPracticeWrittenSubmitted = ref(false)
 const studyPracticeLoading = ref(false)
 const flashCardContent = ref<EpFlashCardContent | null>(null)
 const quizQuestions = ref<SatQuizQuestion[]>([])
@@ -62,6 +64,8 @@ const video = computed(() => studyGuideContent.value?.payload.videoLesson ?? nul
 const studyPracticeQuestions = computed<EpQuestion[]>(() => studyGuideContent.value?.payload.items ?? [])
 const studyPracticeQuestion = computed(() => studyPracticeQuestions.value[studyPracticeIndex.value] ?? null)
 const studyPracticeOptions = computed(() => Object.entries(studyPracticeQuestion.value?.options ?? {}).sort(([left], [right]) => left.localeCompare(right)))
+const studyPracticeHasOptions = computed(() => studyPracticeOptions.value.length > 0)
+const studyPracticeAnswered = computed(() => studyPracticeHasOptions.value ? studyPracticeSelectedAnswer.value !== null : studyPracticeWrittenSubmitted.value)
 const studyPracticeCorrect = computed(() => studyPracticeSelectedAnswer.value !== null && studyPracticeSelectedAnswer.value === studyPracticeQuestion.value?.correctAnswer)
 const flashcards = computed<SatFlashcard[]>(() => flashCardContent.value?.payload.cards.map((card) => ({
   flashcard_id: String(card.id),
@@ -236,6 +240,17 @@ function chooseStudyPracticeAnswer(answer: string) {
   studyPracticeSelectedAnswer.value = answer
 }
 
+function submitStudyPracticeWrittenResponse() {
+  if (!studyPracticeWrittenResponse.value.trim() || studyPracticeWrittenSubmitted.value) return
+  studyPracticeWrittenSubmitted.value = true
+}
+
+function clearStudyPracticeAnswer() {
+  studyPracticeSelectedAnswer.value = null
+  studyPracticeWrittenResponse.value = ''
+  studyPracticeWrittenSubmitted.value = false
+}
+
 function clearStudyPracticeTimer() {
   if (studyPracticeTimer !== undefined) window.clearTimeout(studyPracticeTimer)
   studyPracticeTimer = undefined
@@ -244,14 +259,14 @@ function clearStudyPracticeTimer() {
 function resetStudyPractice() {
   clearStudyPracticeTimer()
   studyPracticeIndex.value = 0
-  studyPracticeSelectedAnswer.value = null
+  clearStudyPracticeAnswer()
   studyPracticeLoading.value = false
 }
 
 function tryAnotherStudyPractice() {
   if (!hasAnotherStudyPractice.value || studyPracticeLoading.value) return
   clearStudyPracticeTimer()
-  studyPracticeSelectedAnswer.value = null
+  clearStudyPracticeAnswer()
   studyPracticeLoading.value = true
   studyPracticeTimer = window.setTimeout(() => {
     studyPracticeIndex.value += 1
@@ -268,7 +283,7 @@ function advanceStudyTopic() {
   }
   if (!nextStudyTopic.value) return
   clearStudyPracticeTimer()
-  studyPracticeSelectedAnswer.value = null
+  clearStudyPracticeAnswer()
   studyPracticeLoading.value = true
   const targetTopicId = nextStudyTopic.value.id
   studyPracticeTimer = window.setTimeout(() => {
@@ -310,7 +325,7 @@ function nextQuestion() {
 }
 
 function answerLetter(index: number) {
-  return String.fromCharCode(65 + index)
+  return currentQuestion.value?.optionLabels?.[index] ?? String.fromCharCode(65 + index)
 }
 
 function inlineMarkup(value: string) {
@@ -518,20 +533,25 @@ onBeforeUnmount(() => {
             </article>
             <article v-else class="study-quick-card">
               <header>
-                <span>Single choice</span>
+                <span>{{ studyPracticeHasOptions ? 'Single choice' : 'Written response' }}</span>
                 <h2 id="studyQuickPracticeTitle">{{ studyPracticeQuestion.stem }}</h2>
               </header>
-              <div class="study-quick-options">
+              <div v-if="studyPracticeHasOptions" class="study-quick-options">
                 <button v-for="([letter, option]) in studyPracticeOptions" :key="`${studyPracticeQuestion.id}-${letter}`" type="button" :disabled="studyPracticeSelectedAnswer !== null" :class="{ selected: studyPracticeSelectedAnswer === letter, correct: studyPracticeSelectedAnswer !== null && studyPracticeQuestion.correctAnswer === letter, wrong: studyPracticeSelectedAnswer === letter && studyPracticeQuestion.correctAnswer !== letter }" @click="chooseStudyPracticeAnswer(letter)">
                   <i>{{ letter }}</i><span>{{ option }}</span><b v-if="studyPracticeSelectedAnswer !== null && studyPracticeQuestion.correctAnswer === letter">✓</b><b v-else-if="studyPracticeSelectedAnswer === letter">×</b>
                 </button>
               </div>
-              <section v-if="studyPracticeSelectedAnswer !== null" class="study-quick-feedback" :class="{ success: studyPracticeCorrect }" aria-live="polite">
-                <span>{{ studyPracticeCorrect ? 'Correct' : 'Incorrect' }}</span>
-                <h3>Explanation</h3>
+              <div v-else class="study-quick-written-response">
+                <label for="studyWrittenResponse">Write your response</label>
+                <textarea id="studyWrittenResponse" v-model="studyPracticeWrittenResponse" :disabled="studyPracticeWrittenSubmitted" rows="8" placeholder="Draft your essay response here…" />
+                <button type="button" :disabled="!studyPracticeWrittenResponse.trim() || studyPracticeWrittenSubmitted" @click="submitStudyPracticeWrittenResponse">Submit response</button>
+              </div>
+              <section v-if="studyPracticeAnswered" class="study-quick-feedback" :class="{ success: studyPracticeHasOptions ? studyPracticeCorrect : true }" aria-live="polite">
+                <span>{{ studyPracticeHasOptions ? (studyPracticeCorrect ? 'Correct' : 'Incorrect') : 'Response submitted' }}</span>
+                <h3>{{ studyPracticeHasOptions ? 'Explanation' : 'What a strong response includes' }}</h3>
                 <p>{{ studyPracticeQuestion.explanation }}</p>
               </section>
-              <footer v-if="studyPracticeSelectedAnswer !== null" class="study-quick-actions">
+              <footer v-if="studyPracticeAnswered" class="study-quick-actions">
                 <button v-if="hasAnotherStudyPractice" type="button" class="secondary" @click="tryAnotherStudyPractice">Try Another</button>
                 <button type="button" class="primary" :class="{ full: !hasAnotherStudyPractice }" @click="advanceStudyTopic">{{ isLastTopic ? 'Back' : 'Next Topic' }}</button>
               </footer>

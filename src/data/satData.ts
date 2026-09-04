@@ -1,5 +1,6 @@
 import type { EpContentType, EpExam, EpPreparation, EpQuizContent, EpTopicContent, EpTopicContentIndex } from '../types/epV2'
 import type { SatManifest, SatQuizQuestion } from '../types/sat'
+import { normalizeQuestionOptions, orderedOptionEntries } from '../utils/questionOptions'
 
 let preparationPromise: Promise<EpPreparation> | undefined
 let contentIndexPromise: Promise<EpTopicContentIndex> | undefined
@@ -88,7 +89,14 @@ export async function loadTopicContent(originTopicId: string, contentType: EpCon
       if (!outlineTopic) throw new Error(`Unknown EP V2 topic: ${originTopicId}`)
       const document = index.documents.find((item) => item.topicId === outlineTopic.id && item.contentType === contentType)
       if (!document) throw new Error(`Missing ${contentType} content for ${originTopicId}`)
-      return fetchJson<EpTopicContent>(document.path, `epTopicContent ${contentType}`)
+      const content = await fetchJson<EpTopicContent>(document.path, `epTopicContent ${contentType}`)
+      if (content.contentType === 'studyGuide') {
+        return { ...content, payload: { ...content.payload, items: content.payload.items.map(normalizeQuestionOptions) } }
+      }
+      if (content.contentType === 'quiz') {
+        return { ...content, payload: { ...content.payload, questions: content.payload.questions.map(normalizeQuestionOptions) } }
+      }
+      return content
     }))
   }
   return contentPromises.get(cacheKey) as Promise<EpTopicContent>
@@ -99,12 +107,13 @@ export async function loadTopicQuiz(topicId: string) {
   const topic = manifest.topics.find((item) => item.id === topicId)
   const quiz = content as EpQuizContent
   return quiz.payload.questions.map<SatQuizQuestion>((question) => {
-    const optionEntries = Object.entries(question.options).sort(([left], [right]) => left.localeCompare(right))
+    const optionEntries = orderedOptionEntries(question.options)
     const correctIndex = optionEntries.findIndex(([letter]) => letter === question.correctAnswer)
     return {
       id: String(question.id),
       question: question.stem,
       options: optionEntries.map(([, value]) => value),
+      optionLabels: optionEntries.map(([letter]) => letter),
       correctIndex,
       answer: question.correctAnswer,
       explanation: question.explanation,

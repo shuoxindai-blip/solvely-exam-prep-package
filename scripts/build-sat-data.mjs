@@ -63,8 +63,33 @@ function tokenScore(left, right) {
   return overlap / Math.max(a.size, b.size)
 }
 
+function choiceMarkerRuns(questionText) {
+  const markers = [...String(questionText || '').matchAll(/(?:^|\n)\s*([A-Z])[).:]\s+/g)]
+  const runs = []
+  for (let start = 0; start < markers.length; start += 1) {
+    if (markers[start][1] !== 'A') continue
+    const run = [markers[start]]
+    let expectedCode = 'B'.charCodeAt(0)
+    for (const marker of markers.slice(start + 1)) {
+      const label = marker[1]
+      if (label === String.fromCharCode(expectedCode)) {
+        run.push(marker)
+        expectedCode += 1
+      }
+    }
+    if (run.length >= 2) runs.push(run)
+  }
+  return runs
+}
+
 function questionParts(questionText, answer) {
-  const markers = [...questionText.matchAll(/(?:^|\n)\s*([A-D])\)\s*/g)]
+  const answerLetter = String(answer || '').trim().match(/^([A-Z])$/i)?.[1]?.toUpperCase()
+  const runs = choiceMarkerRuns(questionText)
+  const markers = [...runs]
+    .reverse()
+    .find((run) => !answerLetter || run.some((marker) => marker[1] === answerLetter))
+    ?? runs.at(-1)
+    ?? []
   if (markers.length < 2) {
     return { stem: questionText.trim(), options: [], correctIndex: -1 }
   }
@@ -75,7 +100,6 @@ function questionParts(questionText, answer) {
     const end = markers[index + 1]?.index ?? questionText.length
     return questionText.slice(start, end).trim()
   })
-  const answerLetter = String(answer || '').trim().match(/[A-D]/i)?.[0]?.toUpperCase()
   return { stem, options, correctIndex: answerLetter ? answerLetter.charCodeAt(0) - 65 : -1 }
 }
 
@@ -96,6 +120,14 @@ function compactQuestion(row) {
     pictureKey: row.pictureKey || '',
     sourceUrl: row.sourceUrl || '',
   }
+}
+
+function isRenderablePracticeQuestion(question) {
+  const answerLetter = String(question.answer || '').trim().match(/^([A-Z])$/i)?.[1]
+  if (!question.options.length) return !answerLetter
+  return question.options.length >= 2
+    && question.correctIndex >= 0
+    && question.correctIndex < question.options.length
 }
 
 function optionRecord(options) {
@@ -171,7 +203,10 @@ const videoRows = parseCsv(await readFile(resolve(root, 'resources/sat-video-lin
 const quizRows = parseCsv(await readFile(resolve(root, 'resources/sat-master-questions.csv'), 'utf8'))
 const mockOneRows = parseCsv(await readFile(resolve(root, 'resources/sat-mock-exam-1.csv'), 'utf8'))
 const mockTwoRows = parseCsv(await readFile(resolve(root, 'resources/sat-mock-exam-2.csv'), 'utf8'))
-const IMPORTANCE_MODEL = Object.freeze({ ...IMPORTANCE_MODEL_BASE, sourceQuestionCount: quizRows.length })
+const parsedQuizRows = quizRows.map((row) => ({ row, question: compactQuestion(row) }))
+const renderableQuizRows = parsedQuizRows.filter(({ question }) => isRenderablePracticeQuestion(question))
+const rejectedQuizQuestions = parsedQuizRows.filter(({ question }) => !isRenderablePracticeQuestion(question)).map(({ question }) => question)
+const IMPORTANCE_MODEL = Object.freeze({ ...IMPORTANCE_MODEL_BASE, sourceQuestionCount: renderableQuizRows.length })
 
 const topics = guideRows
   .sort((left, right) => Number(left.order) - Number(right.order))
@@ -264,9 +299,8 @@ function topicForExamQuestion(row, usage) {
 
 const questionsByTopic = new Map(topics.map((topic) => [topic.id, []]))
 const unmatched = []
-for (const row of quizRows) {
+for (const { row, question } of renderableQuizRows) {
   const topic = topicForQuestion(row)
-  const question = compactQuestion(row)
   if (topic) questionsByTopic.get(topic.id).push(question)
   else unmatched.push(question)
 }
@@ -286,8 +320,8 @@ for (const topic of topics) {
 
 const QUESTION_INVENTORY = Object.freeze({
   schemaVersion: 'SAT_PRACTICE_INVENTORY_V1',
-  sourceQuestionCount: quizRows.length,
-  mappedQuestionCount: quizRows.length - unmatched.length,
+  sourceQuestionCount: renderableQuizRows.length,
+  mappedQuestionCount: renderableQuizRows.length - unmatched.length,
   studyGuidePracticeQuestionCount: [...studyGuidePracticeByTopic.values()].reduce((total, questions) => total + questions.length, 0),
   standaloneQuizQuestionCount: [...standaloneQuizByTopic.values()].reduce((total, questions) => total + questions.length, 0),
   overlapQuestionCount: 0,
@@ -333,8 +367,8 @@ const manifest = {
   totals: {
     topics: topics.length,
     flashcards: topics.reduce((total, topic) => total + topic.flashcards.length, 0),
-    practiceQuestions: quizRows.length,
-    mappedPracticeQuestions: quizRows.length - unmatched.length,
+    practiceQuestions: renderableQuizRows.length,
+    mappedPracticeQuestions: renderableQuizRows.length - unmatched.length,
     studyGuidePracticeQuestions: QUESTION_INVENTORY.studyGuidePracticeQuestionCount,
     quizQuestions: QUESTION_INVENTORY.standaloneQuizQuestionCount,
     mockExams: 1,
@@ -590,7 +624,7 @@ await writeFile(resolve(root, 'public/data/sat/topics.json'), JSON.stringify(man
 for (const topic of topics) {
   await writeFile(resolve(root, `public/data/sat/quizzes/${topic.id}.json`), JSON.stringify({ topicId: topic.id, questions: standaloneQuizByTopic.get(topic.id) }))
 }
-await writeFile(resolve(root, 'public/data/sat/quizzes/unmatched.json'), JSON.stringify({ questions: unmatched }))
+await writeFile(resolve(root, 'public/data/sat/quizzes/unmatched.json'), JSON.stringify({ questions: unmatched, rejectedQuestions: rejectedQuizQuestions }))
 await writeFile(resolve(root, 'src/data/satMockExam1.json'), JSON.stringify(mockExam(mockOneRows, 'sat_mock_exam_1')))
 await writeFile(resolve(root, 'src/data/satMockExam2.json'), JSON.stringify(mockExam(mockTwoRows, 'sat_mock_exam_2')))
 await writeFile(resolve(root, 'public/data/ep-v2/epPreparations/2001.json'), JSON.stringify(epPreparation))
@@ -645,11 +679,12 @@ await writeFile(resolve(root, 'public/data/ep-v2/storage-contract.json'), JSON.s
   topicImportanceFields: ['importanceScore', 'priority', 'domainWeightPercent', 'mappedQuestionCount', 'domainWeightIndex', 'topicFrequencyIndex'],
   importanceModel: IMPORTANCE_MODEL,
 }))
-const emptyOptions = quizRows.filter((row) => questionParts(row.questionText, row.answer).options.length < 2).length
+const emptyOptions = renderableQuizRows.filter(({ question }) => question.options.length < 2).length
 const report = {
   topics: topics.length,
   flashcards: manifest.totals.flashcards,
-  sourcePracticeQuestions: quizRows.length,
+  sourcePracticeQuestions: renderableQuizRows.length,
+  rejectedPracticeQuestions: rejectedQuizQuestions.length,
   mappedPracticeQuestions: manifest.totals.mappedPracticeQuestions,
   studyGuidePracticeQuestions: QUESTION_INVENTORY.studyGuidePracticeQuestionCount,
   standaloneQuizQuestions: QUESTION_INVENTORY.standaloneQuizQuestionCount,
@@ -663,8 +698,8 @@ const report = {
   topicImportance: {
     scoreRange: [Math.min(...topics.map((topic) => topic.importanceScore)), Math.max(...topics.map((topic) => topic.importanceScore))],
     priorities: Object.fromEntries(['CORE', 'LIKELY', 'POSSIBLE'].map((priority) => [priority, topics.filter((topic) => topic.priority === priority).length])),
-    sourceQuestionCount: quizRows.length,
-    mappedQuestionCount: quizRows.length - unmatched.length,
+    sourceQuestionCount: renderableQuizRows.length,
+    mappedQuestionCount: renderableQuizRows.length - unmatched.length,
   },
   questionInventory: QUESTION_INVENTORY,
 }

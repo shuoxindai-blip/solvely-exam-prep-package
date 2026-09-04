@@ -97,6 +97,7 @@ const predictionExamDate = ref("");
 const predictionFocus = ref("Balanced review");
 const createdPrediction = ref<{ title: string; date: string; focus: string } | null>(null);
 const similarQuizDrawer = ref<HTMLDialogElement | null>(null);
+const similarQuizBody = ref<HTMLElement | null>(null);
 const similarQuizTopic = ref<SatTopic | null>(null);
 const similarQuizQuestions = ref<SatQuizQuestion[]>([]);
 const similarQuizIndex = ref(0);
@@ -1848,6 +1849,9 @@ function closeSimilarQuiz() {
   similarQuizLoading.value = false;
   similarQuizDrawer.value?.close();
 }
+function resetSimilarQuizScroll() {
+  void nextTick(() => similarQuizBody.value?.scrollTo({ top: 0 }));
+}
 function restartSimilarQuiz() {
   similarQuizIndex.value = 0;
   similarQuizAnswers.value = {};
@@ -1855,12 +1859,14 @@ function restartSimilarQuiz() {
   similarQuizQuestions.value = [];
   similarQuizLoadError.value = "";
   similarQuizComplete.value = false;
+  resetSimilarQuizScroll();
 }
 function retryCompletedSimilarQuiz() {
   similarQuizIndex.value = 0;
   similarQuizAnswers.value = {};
   similarQuizResponse.value = "";
   similarQuizComplete.value = false;
+  resetSimilarQuizScroll();
 }
 function answerSimilarQuiz(index: number) {
   const question = similarQuizCurrentQuestion.value;
@@ -1889,10 +1895,12 @@ function advanceSimilarQuiz() {
   if (similarQuizCurrentAnswer.value === undefined) return;
   if (similarQuizIndex.value >= similarQuizQuestions.value.length - 1) {
     similarQuizComplete.value = true;
+    resetSimilarQuizScroll();
     return;
   }
   similarQuizIndex.value += 1;
   similarQuizResponse.value = "";
+  resetSimilarQuizScroll();
 }
 function similarQuizOptionState(index: number) {
   const question = similarQuizCurrentQuestion.value;
@@ -1916,6 +1924,8 @@ function normalizeSimilarQuizAnswer(value: number | string) {
   return String(value).trim().toLocaleLowerCase().replace(/\s+/g, " ");
 }
 function quizChoiceLabel(index: number) {
+  const sourceLabel = similarQuizCurrentQuestion.value?.optionLabels?.[index];
+  if (sourceLabel) return sourceLabel;
   let number = index + 1;
   let label = "";
   while (number > 0) {
@@ -4840,7 +4850,7 @@ onBeforeUnmount(() => {
           </button>
         </header>
 
-        <div class="similar-quiz-body">
+        <div ref="similarQuizBody" class="similar-quiz-body">
           <div v-if="similarQuizLoading" class="similar-quiz-loading" role="status">
             <span aria-hidden="true" />
             <strong>Loading questions…</strong>

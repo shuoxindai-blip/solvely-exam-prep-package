@@ -257,8 +257,13 @@ function baseTopicDocument(topic, contentType, totalCount) {
 }
 
 function epQuestion(row, topic, id, kind = 'QUIZ') {
-  const options = optionRecord(row)
-  return { id, sourceQuestionId: row.questionId, topicId: topicStorage.get(topic.id).topicId, type: Object.keys(options).length ? (kind === 'CHECK_QUESTION' ? 'CHECK_QUESTION' : 'MULTIPLE_CHOICE') : 'STUDENT_PRODUCED_RESPONSE', ...(kind === 'QUIZ' ? { quizType: 'QUIZ' } : {}), stem: row.questionText, options, correctAnswer: String(row.answer || '').trim(), explanation: row.answerExplanation || '', userAnswer: null, isCorrect: -1 }
+  const labels = embeddedChoiceLabels(row)
+  const options = optionRecord(row, labels)
+  const correctAnswer = String(row.answer || '').trim()
+  if (Object.keys(options).length && !(correctAnswer in options)) {
+    throw new Error(`ACT practice question ${row.questionId} has answer ${correctAnswer} outside its rendered options`)
+  }
+  return { id, sourceQuestionId: row.questionId, topicId: topicStorage.get(topic.id).topicId, type: Object.keys(options).length ? (kind === 'CHECK_QUESTION' ? 'CHECK_QUESTION' : 'MULTIPLE_CHOICE') : 'STUDENT_PRODUCED_RESPONSE', ...(kind === 'QUIZ' ? { quizType: 'QUIZ' } : {}), stem: withoutChoices(row), options, correctAnswer, explanation: row.answerExplanation || '', userAnswer: null, isCorrect: -1 }
 }
 
 const contentDocuments = topics.flatMap((topic, topicIndex) => {
