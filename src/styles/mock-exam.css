@@ -95,7 +95,7 @@ button:focus-visible,
 
 .diagnostic-mode-label small {
   color: #6d7480;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
 }
 
@@ -182,7 +182,7 @@ button:focus-visible,
   border: 1px solid #bcbcbc;
   border-radius: 50%;
   color: #6b6b6b;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   line-height: 1;
   cursor: help;
@@ -252,7 +252,7 @@ button:focus-visible,
 }
 
 .tool-button span {
-  font-size: 11px;
+  font-size: 12px;
   line-height: 14px;
 }
 
@@ -431,7 +431,7 @@ button:focus-visible,
 
 .act-passage-heading span {
   color: #69707b;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: .09em;
   text-transform: uppercase;
@@ -704,7 +704,7 @@ body.is-resizing * {
 
 .elimination-mode-button span {
   position: relative;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 800;
   font-style: italic;
   letter-spacing: -0.08em;
@@ -874,7 +874,7 @@ body.is-resizing * {
   background: #f5f5f5;
   color: #444;
   font-family: Arial, Helvetica, sans-serif;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
 }
@@ -1807,7 +1807,7 @@ body.is-resizing * {
   border: 2px solid #ededed;
   border-radius: 9px;
   color: transparent;
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .module-cell-grid .correct {
