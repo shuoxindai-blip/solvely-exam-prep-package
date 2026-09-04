@@ -650,7 +650,7 @@ onBeforeUnmount(() => {
   height: 12px;
   border: 2px solid #fff;
   border-radius: 50%;
-  background: #2b7fff;
+  background: var(--solvely-brand, #007aff);
 }
 
 .highlight-note-input,

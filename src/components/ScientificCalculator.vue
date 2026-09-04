@@ -282,8 +282,8 @@ watch(calculatorMode, (mode) => {
 }
 
 .calculator-resize-handle:hover,
-.calculator-resize-handle:focus-visible { color: #1677ef; }
-.calculator-resize-handle:focus-visible { outline: 2px solid #1677ef; outline-offset: -3px; }
+.calculator-resize-handle:focus-visible { color: var(--solvely-brand-text, #007aff); }
+.calculator-resize-handle:focus-visible { outline: 2px solid var(--solvely-brand, #007aff); outline-offset: -3px; }
 .calculator-resize-handle svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; }
 
 :global(body.is-resizing-calculator),

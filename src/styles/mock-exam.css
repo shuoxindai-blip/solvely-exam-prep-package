@@ -20,6 +20,14 @@ body,
 
 body.mock-exam-route {
   --sidebar-width: 0px;
+  --solvely-brand: #007aff;
+  --solvely-brand-hover: #0060c9;
+  --solvely-brand-text: #007aff;
+  --solvely-brand-tint: #e2edff;
+  --solvely-brand-hover-tint: #e2edff;
+  --solvely-brand-rgb: 0, 122, 255;
+  --solvely-on-brand: #fff;
+  --solvely-on-brand-hover: #fff;
   min-width: 320px;
   overflow: hidden;
   background: #fff;
@@ -34,7 +42,7 @@ button {
 
 button:focus-visible,
 [tabindex]:focus-visible {
-  outline: 3px solid rgba(0, 188, 233, 0.28);
+  outline: 3px solid rgba(var(--solvely-brand-rgb), 0.28);
   outline-offset: 2px;
 }
 
@@ -79,7 +87,7 @@ button:focus-visible,
 }
 
 .diagnostic-mode-label b {
-  color: #087bf1;
+  color: var(--solvely-brand-text);
   font-size: 12px;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -115,7 +123,7 @@ button:focus-visible,
 
 .student-response-field label { color: #313131; font-size: 15px; font-weight: 700; }
 .student-response-field input { height: 52px; padding: 0 15px; border: 2px solid #777; border-radius: 7px; color: #151515; background: #fff; font-size: 20px; }
-.student-response-field input:focus { border-color: #008fba; outline: 3px solid rgba(0, 143, 186, .16); }
+.student-response-field input:focus { border-color: var(--solvely-brand); outline: 3px solid rgba(var(--solvely-brand-rgb), .16); }
 .student-response-field small { color: #666; font-size: 12px; }
 
 .timer-wrap {
@@ -230,11 +238,9 @@ button:focus-visible,
   cursor: pointer;
 }
 
-.tool-button:hover,
-.tool-button.active {
-  background: #c9fbff;
-  color: #05b8e4;
-}
+.tool-button:hover { background: var(--solvely-brand-hover-tint); color: var(--solvely-brand-hover); }
+.tool-button.active { background: var(--solvely-brand); color: var(--solvely-on-brand); }
+.tool-button.active:hover { background: var(--solvely-brand-hover); color: var(--solvely-on-brand-hover); }
 
 .tool-button svg {
   width: 24px;
@@ -282,7 +288,7 @@ button:focus-visible,
 
 .exam-more-menu button:hover { background: #f1f3f5; }
 .exam-more-menu svg { width: 19px; height: 19px; flex: 0 0 19px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.7; }
-.exam-more-menu button b { margin-left: auto; color: #0b77eb; font-size: 12px; }
+.exam-more-menu button b { margin-left: auto; color: var(--solvely-brand-text); font-size: 12px; }
 
 .exam-hover-tooltip {
   position: fixed;
@@ -375,10 +381,11 @@ button:focus-visible,
 .question-report-dialog select { height: 46px; padding: 0 38px 0 13px; }
 .question-report-dialog textarea { min-height: 126px; padding: 12px 13px; resize: vertical; line-height: 1.45; }
 .question-report-dialog select:focus,
-.question-report-dialog textarea:focus { border-color: #1677ef; outline: 3px solid rgba(22, 119, 239, 0.15); }
+.question-report-dialog textarea:focus { border-color: var(--solvely-brand); outline: 3px solid rgba(var(--solvely-brand-rgb), 0.15); }
 .question-report-dialog > footer { display: flex; margin: 20px 22px 0; justify-content: flex-end; gap: 10px; }
 .question-report-dialog > footer button { min-width: 92px; height: 42px; padding: 0 18px; border: 1px solid #cfd3d9; border-radius: 9px; background: #fff; color: #2f3339; font-weight: 650; cursor: pointer; }
-.question-report-dialog > footer .submit-report-button { border-color: #1677ef; background: #1677ef; color: #fff; }
+.question-report-dialog > footer .submit-report-button { border-color: var(--solvely-brand); background: var(--solvely-brand); color: var(--solvely-on-brand); }
+.question-report-dialog > footer .submit-report-button:hover { border-color: var(--solvely-brand-hover); background: var(--solvely-brand-hover); }
 
 .exam-workspace {
   position: relative;
@@ -456,7 +463,7 @@ button:focus-visible,
   right: -10px;
   left: -10px;
   height: 46px;
-  border: 1px solid rgba(12, 119, 234, .42);
+  border: 1px solid rgba(var(--solvely-brand-rgb), .42);
   border-radius: 4px;
   pointer-events: none;
   box-shadow: 0 -1000px 0 1000px rgba(255, 255, 255, .68), 0 1000px 0 1000px rgba(255, 255, 255, .68);
@@ -465,7 +472,7 @@ button:focus-visible,
 .line-reader-overlay span {
   position: absolute;
   inset: 50% 8px auto;
-  border-top: 1px dashed rgba(12, 119, 234, .28);
+  border-top: 1px dashed rgba(var(--solvely-brand-rgb), .28);
 }
 
 .passage-copy {
@@ -766,9 +773,10 @@ body.is-resizing * {
 }
 
 .choice-row.selected .choice-card {
-  border: 2px solid #13bce7;
+  border: 2px solid var(--solvely-brand);
   padding: 12.4px 15.4px 12.4px 11.4px;
-  box-shadow: 0 0 0 1px rgba(19, 188, 231, 0.07);
+  background: var(--solvely-brand-tint);
+  box-shadow: 0 0 0 1px rgba(var(--solvely-brand-rgb), 0.08);
 }
 
 .choice-letter {
@@ -787,9 +795,9 @@ body.is-resizing * {
 }
 
 .choice-row.selected .choice-letter {
-  border-color: #13bce7;
-  background: #13bce7;
-  color: #fff;
+  border-color: var(--solvely-brand);
+  background: var(--solvely-brand);
+  color: var(--solvely-on-brand);
 }
 
 .choice-copy {
@@ -842,7 +850,7 @@ body.is-resizing * {
 
 .choice-row.eliminated .eliminate-button span::after {
   height: 3px;
-  background: #13bce7;
+  background: var(--solvely-brand);
 }
 
 .keyboard-tip {
@@ -1401,7 +1409,7 @@ body.is-resizing * {
 
 .feedback-card textarea:focus {
   border-color: #222;
-  outline: 3px solid rgba(0, 188, 233, 0.2);
+  outline: 3px solid rgba(var(--solvely-brand-rgb), 0.2);
 }
 
 .feedback-submit {
@@ -2191,6 +2199,12 @@ body.is-resizing * {
 
 /* OnePrep-aligned exam theme controlled from More. */
 body.mock-exam-route.mock-exam-dark {
+  --solvely-brand-hover: #7fb3ea;
+  --solvely-brand-text: #51a9fe;
+  --solvely-brand-tint: #27333f;
+  --solvely-brand-hover-tint: #324b68;
+  --solvely-brand-rgb: 81, 169, 254;
+  --solvely-on-brand-hover: #0d0d0d;
   background: #0d0d0d;
   color-scheme: dark;
 }
@@ -2204,8 +2218,8 @@ body.mock-exam-route.mock-exam-dark {
   --exam-subtle-border: #1d1d1d;
   --exam-foreground: #fafafa;
   --exam-muted-foreground: #a3a3a3;
-  --exam-accent-bg: #002e5f;
-  --exam-accent: #46cbe3;
+  --exam-accent-bg: var(--solvely-brand-tint);
+  --exam-accent: var(--solvely-brand-text);
   color: var(--exam-foreground);
   background: var(--exam-background);
   color-scheme: dark;
@@ -2237,8 +2251,9 @@ body.mock-exam-route.mock-exam-dark {
 }
 
 .exam-app.dark-mode .tool-button { color: var(--exam-muted-foreground); }
-.exam-app.dark-mode .tool-button:hover { background: rgba(38, 38, 38, .72); color: var(--exam-foreground); }
-.exam-app.dark-mode .tool-button.active { background: var(--exam-accent-bg); color: var(--exam-accent); }
+.exam-app.dark-mode .tool-button:hover { background: var(--solvely-brand-hover-tint); color: var(--solvely-brand-text); }
+.exam-app.dark-mode .tool-button.active { background: var(--solvely-brand); color: var(--solvely-on-brand); }
+.exam-app.dark-mode .tool-button.active:hover { background: var(--solvely-brand-hover); color: var(--solvely-on-brand-hover); }
 
 .exam-app.dark-mode .exam-more-menu {
   border-color: var(--exam-border);
@@ -2319,7 +2334,7 @@ body.mock-exam-route.mock-exam-dark {
   background: transparent;
   color: var(--exam-foreground);
 }
-.exam-app.dark-mode .choice-row.selected .choice-letter { border-color: var(--exam-accent); background: var(--exam-accent); color: #0d0d0d; }
+.exam-app.dark-mode .choice-row.selected .choice-letter { border-color: var(--solvely-brand); background: var(--solvely-brand); color: var(--solvely-on-brand); }
 .exam-app.dark-mode .choice-row.eliminated .choice-card { color: #737373; }
 .exam-app.dark-mode .eliminate-button span { border-color: var(--exam-muted-foreground); color: var(--exam-muted-foreground); }
 .exam-app.dark-mode .eliminate-button span::after { background: var(--exam-muted-foreground); }
@@ -2407,7 +2422,8 @@ body.mock-exam-route.mock-exam-dark {
   background: var(--exam-muted);
   color: var(--exam-foreground);
 }
-.exam-app.dark-mode .question-report-dialog > footer .submit-report-button { border-color: #0055aa; background: #0055aa; color: #d8f7ff; }
+.exam-app.dark-mode .question-report-dialog > footer .submit-report-button { border-color: var(--solvely-brand); background: var(--solvely-brand); color: var(--solvely-on-brand); }
+.exam-app.dark-mode .question-report-dialog > footer .submit-report-button:hover { border-color: var(--solvely-brand-hover); background: var(--solvely-brand-hover); color: var(--solvely-on-brand-hover); }
 
 .exam-app.dark-mode .exam-toast {
   border-color: var(--exam-border);
@@ -2539,8 +2555,8 @@ body.mock-exam-route.mock-exam-dark {
 
 .review-grid button.answered {
   border-style: solid;
-  border-color: #2dbce2;
-  background: #d9f8ff;
+  border-color: var(--solvely-brand);
+  background: var(--solvely-brand-tint);
 }
 
 .review-grid button.current {
@@ -2827,15 +2843,15 @@ body.mock-exam-route.mock-exam-dark {
   margin-top: 31px;
   border: 0;
   border-radius: 15px;
-  background: #063f76;
-  color: #18c2e6;
+  background: var(--solvely-brand);
+  color: var(--solvely-on-brand);
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
 }
 
 .resume-button:hover {
-  background: #07518f;
+  background: var(--solvely-brand-hover);
 }
 
 .break-copy {
