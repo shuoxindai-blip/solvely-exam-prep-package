@@ -151,6 +151,27 @@ const isCourseStarted = computed(
 const lastActivityCta = computed(() =>
   lastActivity.value.kind === "learning" ? "Continue learning" : "Resume exam",
 );
+const hasPackageProgress = computed(() => {
+  const activity = lastActivity.value;
+  return activity.kind === "learning"
+    ? activity.progressPercent > 0
+    : activity.answered > 0;
+});
+const lastActivityProgressLabel = computed(() => {
+  const activity = lastActivity.value;
+  return activity.kind === "learning"
+    ? `${activity.progressPercent}% Complete`
+    : `${activity.answered} of ${activity.total} Answered`;
+});
+const lastActivityContextLabel = computed(() => {
+  const activity = lastActivity.value;
+  const activityType =
+    activity.kind === "learning" ? activity.resourceLabel : activity.moduleLabel;
+  return `${activity.sectionTitle} · ${activityType}`;
+});
+const lastActivityIsAct = computed(() =>
+  lastActivity.value.examTitle.toUpperCase().startsWith("ACT"),
+);
 
 const practiceResultReport = computed(() => resultExam.value
   ? (isActPackage.value ? buildActReport(resultExam.value) : buildSatReport(resultExam.value))
@@ -1177,7 +1198,9 @@ const filteredCourses = computed(() => {
     );
   });
 });
-const examLibraryTotal = computed(() => createdPredictions.value.length + 1);
+const examLibraryTotal = computed(
+  () => createdPredictions.value.length + 1 + (hasPackageProgress.value ? 1 : 0),
+);
 const packageLibraryTotal = computed(() => filteredCourses.value.length);
 
 const courseSectionOptions = computed(() => [...new Set((manifest.value?.topics ?? []).map((topic) => topic.section))]);
@@ -1570,9 +1593,13 @@ function resumeLastActivity() {
     void router.push({
       name: "study-guide",
       params: { topicId: lastActivity.value.topicId },
-      query: isActPackage.value ? { exam: "act" } : {},
+      query: lastActivityIsAct.value ? { exam: "act" } : {},
     });
-  else startMockExam(lastActivity.value.examId);
+  else
+    startMockExam(
+      lastActivity.value.examId,
+      lastActivityIsAct.value ? "act" : "sat",
+    );
 }
 function openCourseFromHome(course: Course) {
   if (lastActivity.value.examTitle === course.title) {
@@ -1589,17 +1616,20 @@ function courseHomeAction(course: Course) {
     ? lastActivityCta.value
     : "Open package";
 }
-function startMockExam(examId: number) {
+function startMockExam(
+  examId: number,
+  examFamily: "sat" | "act" = isActPackage.value ? "act" : "sat",
+) {
   if (!isProMember.value) {
-    openCommercialPaywall(`the ${examName.value} Full-Length Practice Test`, () =>
-      startMockExam(examId),
+    openCommercialPaywall(`the ${examFamily.toUpperCase()} Full-Length Practice Test`, () =>
+      startMockExam(examId, examFamily),
     );
     return;
   }
   void router.push({
     name: "mock-exam",
     params: { examId },
-    query: { access: accessState.value, ...(isActPackage.value ? { exam: "act" } : {}) },
+    query: { access: accessState.value, ...(examFamily === "act" ? { exam: "act" } : {}) },
   });
 }
 function requestRetake() {
@@ -2629,6 +2659,23 @@ onBeforeUnmount(() => {
             <span>{{ examLibraryTotal }} Total</span>
           </div>
           <div class="predictor-library-grid">
+            <button
+              v-if="hasPackageProgress"
+              class="predictor-library-card package-progress"
+              type="button"
+              :aria-label="`${lastActivityCta}: ${lastActivity.examTitle}, ${lastActivity.itemTitle}`"
+              @click="resumeLastActivity"
+            >
+              <div class="predictor-library-banner">
+                <span class="predictor-library-state">IN PROGRESS</span>
+                <h3>{{ lastActivity.examTitle }}</h3>
+              </div>
+              <div class="predictor-library-details">
+                <span><svg class="icon" aria-hidden="true"><use href="#i-target" /></svg>{{ lastActivityProgressLabel }}</span>
+                <span><svg class="icon" aria-hidden="true"><use href="#i-history" /></svg>{{ lastActivityContextLabel }}</span>
+                <small>{{ lastActivity.itemTitle }}</small>
+              </div>
+            </button>
             <button
               v-for="prediction in createdPredictions"
               :key="prediction.id"

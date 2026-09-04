@@ -1135,6 +1135,7 @@
     button.predictor-library-card { cursor:pointer; transition:border-color .16s ease,box-shadow .16s ease,transform .16s ease; }
     button.predictor-library-card:hover { border-color:rgba(0,122,255,.35); box-shadow:0 8px 24px rgba(0,122,255,.09); transform:translateY(-1px); }
     .predictor-library-banner { min-height:92px; display:flex; align-items:center; gap:9px; padding:16px 24px 0; background:linear-gradient(135deg,rgba(0,122,255,.08),rgba(90,156,255,.19)); }
+    .predictor-library-card.package-progress .predictor-library-banner { background:linear-gradient(135deg,rgba(0,122,255,.12),rgba(90,156,255,.22)); }
     .predictor-library-card.created .predictor-library-banner { background:linear-gradient(135deg,rgba(0,122,255,.11),rgba(116,99,255,.15)); }
     .predictor-library-state { min-width:max-content; display:inline-flex; align-items:center; justify-content:center; padding:6px 7px; border-radius:5px; background:#087cf4; color:#fff; font-size:9px; font-weight:800; letter-spacing:.06em; }
     .predictor-library-card h3 { margin:0; overflow:hidden; color:var(--text); font-size:15px; font-weight:650; line-height:1.35; text-overflow:ellipsis; white-space:nowrap; }
@@ -1142,6 +1143,7 @@
     .predictor-library-details span { display:inline-flex; align-items:center; gap:6px; color:#4a5565; font-size:12px; }
     .predictor-library-details span .icon { width:14px; height:14px; color:#7c8798; }
     .predictor-library-details small { width:100%; color:#9aa1ac; font-size:11px; }
+    .predictor-library-card.package-progress .predictor-library-details small { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
     .new-prediction-card { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:15px; border-style:dashed; border-color:#d0d5dd; color:var(--text); cursor:pointer; transition:border-color .16s ease,background .16s ease,transform .16s ease,box-shadow .16s ease; }
     .new-prediction-card > span { width:48px; height:48px; display:grid; place-items:center; border-radius:50%; background:#f5f6f8; color:#546172; }
     .new-prediction-card .icon { width:20px; height:20px; }
