@@ -4,16 +4,16 @@ import { useRoute, useRouter } from "vue-router";
 import CommercialDemoController from "../components/CommercialDemoController.vue";
 import ProPaywall from "../components/ProPaywall.vue";
 import { useProAccess } from "../composables/useProAccess";
-import { loadEpExam, loadSatManifest } from "../data/satData";
+import { loadEpExam, loadSatManifest, loadTopicQuiz } from "../data/satData";
 import { buildSatDiagnosticExam } from "../data/satDiagnostic";
 import { buildReviewQuestions, buildSatReport } from "../data/satReport";
-import { loadActEpExam, loadActManifest } from "../data/actData";
+import { loadActEpExam, loadActManifest, loadActTopicQuiz } from "../data/actData";
 import { buildActDiagnosticExam } from "../data/actDiagnostic";
 import { buildActReport } from "../data/actReport";
 import { loadImprovePracticeProgress } from "../data/improvePracticeProgress";
 import type { SatReportReviewQuestion } from "../data/satReport";
 import type { EpExam } from "../types/epV2";
-import type { SatManifest, SatTopic } from "../types/sat";
+import type { SatManifest, SatQuizQuestion, SatTopic } from "../types/sat";
 
 type CourseTab = "study" | "results";
 type ResultView = "full" | "score" | "review" | "improve";
@@ -96,6 +96,16 @@ const predictionExamName = ref("");
 const predictionExamDate = ref("");
 const predictionFocus = ref("Balanced review");
 const createdPrediction = ref<{ title: string; date: string; focus: string } | null>(null);
+const similarQuizDrawer = ref<HTMLDialogElement | null>(null);
+const similarQuizTopic = ref<SatTopic | null>(null);
+const similarQuizQuestions = ref<SatQuizQuestion[]>([]);
+const similarQuizIndex = ref(0);
+const similarQuizAnswers = ref<Record<string, number | string>>({});
+const similarQuizResponse = ref("");
+const similarQuizLoading = ref(false);
+const similarQuizLoadError = ref("");
+const similarQuizComplete = ref(false);
+let similarQuizRequestId = 0;
 let pendingCommercialAction: (() => void) | null = null;
 let practiceScoringTimer: number | null = null;
 let diagnosticScoringTimer: number | null = null;
@@ -748,6 +758,47 @@ const selectedReviewQuestionPosition = computed(() =>
       )
     : -1,
 );
+const similarQuizCurrentQuestion = computed(
+  () => similarQuizQuestions.value[similarQuizIndex.value] ?? null,
+);
+const similarQuizCurrentAnswer = computed(() => {
+  const question = similarQuizCurrentQuestion.value;
+  return question ? similarQuizAnswers.value[question.id] : undefined;
+});
+const similarQuizCurrentCorrect = computed(
+  () =>
+    similarQuizCurrentQuestion.value !== null &&
+    similarQuizCurrentAnswer.value !== undefined &&
+    isSimilarQuizAnswerCorrect(
+      similarQuizCurrentQuestion.value,
+      similarQuizCurrentAnswer.value,
+    ),
+);
+const similarQuizAnsweredCount = computed(
+  () => Object.keys(similarQuizAnswers.value).length,
+);
+const similarQuizCorrectCount = computed(() =>
+  similarQuizQuestions.value.reduce(
+    (total, question) =>
+      total +
+      (similarQuizAnswers.value[question.id] !== undefined &&
+      isSimilarQuizAnswerCorrect(
+        question,
+        similarQuizAnswers.value[question.id],
+      )
+        ? 1
+        : 0),
+    0,
+  ),
+);
+const similarQuizProgress = computed(() => {
+  if (!similarQuizQuestions.value.length) return 0;
+  return Math.round(
+    (similarQuizAnsweredCount.value /
+      similarQuizQuestions.value.length) *
+      100,
+  );
+});
 const reviewQuestionGroups = computed(() => {
   const groups = new Map<
     string,
@@ -1745,18 +1796,135 @@ function reviewTopicTitle(question: SatReportReviewQuestion) {
 }
 function practiceReviewQuestion(question: SatReportReviewQuestion) {
   if (!isProMember.value) {
-    openCommercialPaywall(`question review and targeted ${examName.value} practice`, () =>
+    openCommercialPaywall(`extra similar-question practice in your ${examName.value} Question Review`, () =>
       practiceReviewQuestion(question),
     );
     return;
   }
   const topic = reviewTopic(question);
-  if (topic)
-    void router.push({
-      name: "quiz",
-      params: { topicId: topic.id },
-      query: { access: accessState.value, ...(isActPackage.value ? { exam: "act" } : {}) },
-    });
+  if (!topic) return;
+  similarQuizTopic.value = topic;
+  restartSimilarQuiz();
+  if (!similarQuizDrawer.value?.open) similarQuizDrawer.value?.showModal();
+  void loadSimilarQuiz(topic);
+}
+async function loadSimilarQuiz(topic: SatTopic) {
+  const requestId = ++similarQuizRequestId;
+  similarQuizLoading.value = true;
+  similarQuizLoadError.value = "";
+  try {
+    const questions = await (isActPackage.value
+      ? loadActTopicQuiz(topic.id)
+      : loadTopicQuiz(topic.id));
+    if (requestId !== similarQuizRequestId) return;
+    similarQuizQuestions.value = questions.slice(0, 5);
+    if (!questions.length)
+      similarQuizLoadError.value =
+        "No extra questions are available for this topic yet.";
+  } catch {
+    if (requestId !== similarQuizRequestId) return;
+    similarQuizLoadError.value =
+      "We couldn’t load these similar questions. Please try again.";
+  } finally {
+    if (requestId === similarQuizRequestId) similarQuizLoading.value = false;
+  }
+}
+function retrySimilarQuiz() {
+  if (similarQuizTopic.value) void loadSimilarQuiz(similarQuizTopic.value);
+}
+function closeSimilarQuiz() {
+  similarQuizRequestId += 1;
+  similarQuizLoading.value = false;
+  similarQuizDrawer.value?.close();
+}
+function restartSimilarQuiz() {
+  similarQuizIndex.value = 0;
+  similarQuizAnswers.value = {};
+  similarQuizResponse.value = "";
+  similarQuizQuestions.value = [];
+  similarQuizLoadError.value = "";
+  similarQuizComplete.value = false;
+}
+function retryCompletedSimilarQuiz() {
+  similarQuizIndex.value = 0;
+  similarQuizAnswers.value = {};
+  similarQuizResponse.value = "";
+  similarQuizComplete.value = false;
+}
+function answerSimilarQuiz(index: number) {
+  const question = similarQuizCurrentQuestion.value;
+  if (!question || similarQuizCurrentAnswer.value !== undefined) return;
+  similarQuizAnswers.value = {
+    ...similarQuizAnswers.value,
+    [question.id]: index,
+  };
+}
+function submitSimilarQuizResponse() {
+  const question = similarQuizCurrentQuestion.value;
+  const response = similarQuizResponse.value.trim();
+  if (
+    !question ||
+    question.options.length ||
+    !response ||
+    similarQuizCurrentAnswer.value !== undefined
+  )
+    return;
+  similarQuizAnswers.value = {
+    ...similarQuizAnswers.value,
+    [question.id]: response,
+  };
+}
+function advanceSimilarQuiz() {
+  if (similarQuizCurrentAnswer.value === undefined) return;
+  if (similarQuizIndex.value >= similarQuizQuestions.value.length - 1) {
+    similarQuizComplete.value = true;
+    return;
+  }
+  similarQuizIndex.value += 1;
+  similarQuizResponse.value = "";
+}
+function similarQuizOptionState(index: number) {
+  const question = similarQuizCurrentQuestion.value;
+  if (!question || similarQuizCurrentAnswer.value === undefined)
+    return "neutral";
+  if (index === question.correctIndex) return "correct";
+  return typeof similarQuizCurrentAnswer.value === "number" &&
+    index === similarQuizCurrentAnswer.value
+    ? "incorrect"
+    : "neutral";
+}
+function isSimilarQuizAnswerCorrect(
+  question: SatQuizQuestion,
+  answer: number | string,
+) {
+  if (question.options.length)
+    return typeof answer === "number" && answer === question.correctIndex;
+  return normalizeSimilarQuizAnswer(answer) === normalizeSimilarQuizAnswer(question.answer);
+}
+function normalizeSimilarQuizAnswer(value: number | string) {
+  return String(value).trim().toLocaleLowerCase().replace(/\s+/g, " ");
+}
+function quizChoiceLabel(index: number) {
+  let number = index + 1;
+  let label = "";
+  while (number > 0) {
+    number -= 1;
+    label = String.fromCharCode(65 + (number % 26)) + label;
+    number = Math.floor(number / 26);
+  }
+  return label;
+}
+function similarQuizPrompt(question: SatQuizQuestion) {
+  const firstOption = question.options[0];
+  if (!firstOption) return question.question;
+  const optionIndex = question.question.indexOf(firstOption);
+  if (optionIndex > 0) {
+    const markerIndex = question.question.lastIndexOf("A)", optionIndex);
+    if (markerIndex > 0 && optionIndex - markerIndex <= 4)
+      return question.question.slice(0, markerIndex).trim();
+  }
+  const marker = question.question.search(/(?:\s|\n)A[).:]\s+/);
+  return marker > 0 ? question.question.slice(0, marker).trim() : question.question;
 }
 function optionEntries(question: SatReportReviewQuestion) {
   return Object.entries(question.options).sort(([left], [right]) =>
@@ -2009,6 +2177,8 @@ onMounted(async () => {
 });
 
 onBeforeUnmount(() => {
+  similarQuizRequestId += 1;
+  if (similarQuizDrawer.value?.open) similarQuizDrawer.value.close();
   clearPracticeScoringTimer();
   clearDiagnosticScoringTimer();
   if (studyTopicPopoverReleaseTimer !== null) {
@@ -4018,20 +4188,20 @@ onBeforeUnmount(() => {
                     </section>
                     <section class="review-skill-panel">
                       <div>
-                        <span>Skill to review</span
+                        <span>Similar questions · Extra practice</span
                         ><strong>{{
-                          selectedReviewQuestion.officialSkill
+                          reviewTopicTitle(selectedReviewQuestion)
                         }}</strong>
                         <p>
-                          {{ selectedReviewQuestion.contentDomain }} ·
-                          {{ reviewTopicTitle(selectedReviewQuestion) }}
+                          {{ Math.min(5, reviewTopic(selectedReviewQuestion)?.quizCount ?? 0) }}
+                          quick questions · Does not affect your Study Plan
                         </p>
                       </div>
                       <button
                         type="button"
                         @click="practiceReviewQuestion(selectedReviewQuestion)"
                       >
-                        Practice this topic
+                        Open mini quiz
                       </button>
                     </section>
                     <footer class="review-detail-pagination">
@@ -4641,6 +4811,217 @@ onBeforeUnmount(() => {
           </button>
         </footer>
       </form>
+    </dialog>
+    <dialog
+      ref="similarQuizDrawer"
+      class="similar-quiz-drawer"
+      aria-labelledby="similarQuizTitle"
+      aria-describedby="similarQuizContext"
+      @cancel.prevent="closeSimilarQuiz"
+      @click.self="closeSimilarQuiz"
+    >
+      <div class="similar-quiz-shell">
+        <header class="similar-quiz-head">
+          <span class="similar-quiz-icon" aria-hidden="true">
+            <svg class="icon"><use href="#i-spark" /></svg>
+          </span>
+          <div>
+            <span>Extra practice</span>
+            <h2 id="similarQuizTitle">Similar-question quiz</h2>
+            <p>{{ similarQuizTopic?.title ?? "Topic practice" }}</p>
+          </div>
+          <button
+            class="similar-quiz-close"
+            type="button"
+            aria-label="Close similar-question quiz"
+            @click="closeSimilarQuiz"
+          >
+            <svg class="icon"><use href="#i-close" /></svg>
+          </button>
+        </header>
+
+        <p id="similarQuizContext" class="similar-quiz-context">
+          <svg class="icon" aria-hidden="true"><use href="#i-target" /></svg>
+          <span>
+            These are optional questions based on the same topic. Your answers
+            stay in Question Review and won’t change your Study Plan progress.
+          </span>
+        </p>
+
+        <div class="similar-quiz-body">
+          <div v-if="similarQuizLoading" class="similar-quiz-loading" role="status">
+            <span aria-hidden="true" />
+            <strong>Preparing similar questions…</strong>
+            <p>Building a short extra-practice set for this topic.</p>
+          </div>
+
+          <div v-else-if="similarQuizLoadError" class="similar-quiz-error" role="alert">
+            <span aria-hidden="true">!</span>
+            <strong>Similar questions aren’t available</strong>
+            <p>{{ similarQuizLoadError }}</p>
+            <button type="button" @click="retrySimilarQuiz">Try again</button>
+          </div>
+
+          <section v-else-if="similarQuizComplete" class="similar-quiz-complete">
+            <span class="similar-quiz-complete-icon" aria-hidden="true">
+              <svg class="icon"><use href="#i-target" /></svg>
+            </span>
+            <small>Optional practice complete</small>
+            <h3>{{ similarQuizCorrectCount }} of {{ similarQuizQuestions.length }} correct</h3>
+            <p>
+              This result stays in Question Review. Nothing was added to or
+              changed in your Study Plan.
+            </p>
+            <div>
+              <button type="button" class="similar-quiz-secondary" @click="retryCompletedSimilarQuiz">
+                Practice again
+              </button>
+              <button type="button" class="similar-quiz-primary" @click="closeSimilarQuiz">
+                Back to Question Review
+              </button>
+            </div>
+          </section>
+
+          <article
+            v-else-if="similarQuizCurrentQuestion"
+            class="similar-quiz-question"
+          >
+            <div class="similar-quiz-meta">
+              <span>
+                Question {{ similarQuizIndex + 1 }} of
+                {{ similarQuizQuestions.length }}
+              </span>
+              <span>{{ similarQuizCorrectCount }} correct</span>
+            </div>
+            <div
+              class="similar-quiz-progress"
+              role="progressbar"
+              :aria-valuenow="similarQuizProgress"
+              aria-valuemin="0"
+              aria-valuemax="100"
+              aria-label="Extra practice progress"
+            >
+              <i :style="{ width: `${similarQuizProgress}%` }" />
+            </div>
+            <div class="similar-quiz-topic-label">
+              {{ examName }} · {{ similarQuizTopic?.title }}
+            </div>
+            <h3>{{ similarQuizPrompt(similarQuizCurrentQuestion) }}</h3>
+            <figure
+              v-if="similarQuizCurrentQuestion.pictureKey"
+              class="similar-quiz-figure"
+            >
+              <img
+                :src="similarQuizCurrentQuestion.pictureKey"
+                :alt="`Reference for question ${similarQuizIndex + 1}`"
+              />
+            </figure>
+            <div
+              v-if="similarQuizCurrentQuestion.options.length"
+              class="similar-quiz-options"
+              role="radiogroup"
+              :aria-label="similarQuizPrompt(similarQuizCurrentQuestion)"
+            >
+              <button
+                v-for="(option, index) in similarQuizCurrentQuestion.options"
+                :key="`${similarQuizCurrentQuestion.id}-${index}`"
+                :class="[
+                  'similar-quiz-choice',
+                  similarQuizOptionState(index),
+                ]"
+                type="button"
+                role="radio"
+                :aria-checked="similarQuizCurrentAnswer === index"
+                :disabled="similarQuizCurrentAnswer !== undefined"
+                @click="answerSimilarQuiz(index)"
+              >
+                <i>{{ quizChoiceLabel(index) }}</i>
+                <span>{{ option }}</span>
+                <b
+                  v-if="
+                    similarQuizCurrentAnswer !== undefined &&
+                    index === similarQuizCurrentQuestion.correctIndex
+                  "
+                  >Correct</b
+                >
+                <b
+                  v-else-if="
+                    similarQuizCurrentAnswer === index &&
+                    index !== similarQuizCurrentQuestion.correctIndex
+                  "
+                  >Your answer</b
+                >
+              </button>
+            </div>
+            <div v-else class="similar-quiz-short-response">
+              <label :for="`similar-response-${similarQuizCurrentQuestion.id}`">
+                Enter your answer
+              </label>
+              <div>
+                <input
+                  :id="`similar-response-${similarQuizCurrentQuestion.id}`"
+                  v-model="similarQuizResponse"
+                  type="text"
+                  autocomplete="off"
+                  :disabled="similarQuizCurrentAnswer !== undefined"
+                  placeholder="Type your answer"
+                  @keydown.enter.prevent="submitSimilarQuizResponse"
+                />
+                <button
+                  type="button"
+                  :disabled="
+                    !similarQuizResponse.trim() ||
+                    similarQuizCurrentAnswer !== undefined
+                  "
+                  @click="submitSimilarQuizResponse"
+                >
+                  Check answer
+                </button>
+              </div>
+            </div>
+            <section
+              v-if="similarQuizCurrentAnswer !== undefined"
+              :class="[
+                'similar-quiz-feedback',
+                { correct: similarQuizCurrentCorrect },
+              ]"
+              aria-live="polite"
+            >
+              <strong>{{ similarQuizCurrentCorrect ? "Correct" : "Not quite" }}</strong>
+              <span v-if="!similarQuizCurrentQuestion.options.length">
+                Correct answer: <b>{{ similarQuizCurrentQuestion.answer }}</b>
+              </span>
+              <p>{{ similarQuizCurrentQuestion.explanation }}</p>
+            </section>
+          </article>
+        </div>
+
+        <footer
+          v-if="
+            !similarQuizLoading &&
+            !similarQuizLoadError &&
+            !similarQuizComplete &&
+            similarQuizCurrentQuestion
+          "
+          class="similar-quiz-actions"
+        >
+          <button type="button" class="similar-quiz-secondary" @click="closeSimilarQuiz">
+            Close quiz
+          </button>
+          <button
+            type="button"
+            class="similar-quiz-primary"
+            :disabled="similarQuizCurrentAnswer === undefined"
+            @click="advanceSimilarQuiz"
+          >
+            {{
+              similarQuizIndex >= similarQuizQuestions.length - 1
+                ? "See results"
+                : "Next question"
+            }}
+          </button>
+        </footer>
+      </div>
     </dialog>
     <ProPaywall
       :open="paywallOpen"
