@@ -185,20 +185,48 @@ const resultReport = computed(() =>
     ? diagnosticResultReport.value
     : practiceResultReport.value,
 );
-const actCompositeCards = computed(() => {
+const actScorePathways = computed(() => {
   if (!isActPackage.value || !resultReport.value) return [];
-  return (resultReport.value.combinedScores ?? []).map((score) => ({
-    id: score.id.toLowerCase(),
-    label: score.label,
-    detail: score.formula,
-    value: score.score,
-    muted: score.status === "NOT_AVAILABLE",
-    note: score.id === "ELA" && score.status === "NOT_AVAILABLE"
-      ? "Requires the optional Writing test"
-      : score.id === "STEM"
-        ? "Reported because Mathematics and Science are included"
-        : "",
-  }));
+  const report = resultReport.value;
+  const combinedScores = new Map(
+    (report.combinedScores ?? []).map((score) => [score.id, score]),
+  );
+  const sectionById = new Map(
+    report.sections.map((section) => [section.sectionId, section]),
+  );
+  const buildPathway = (
+    id: "STEM" | "ELA",
+    sectionIds: string[],
+    missingSections: { id: string; label: string; optional: boolean }[],
+  ) => {
+    const summary = combinedScores.get(id);
+    return {
+      id: id.toLowerCase(),
+      sections: sectionIds
+        .map((sectionId) => sectionById.get(sectionId))
+        .filter((section) => section !== undefined),
+      missingSections,
+      summary: {
+        label: summary?.label ?? id + " Score",
+        value: summary?.score ?? null,
+        maximumScore: summary?.maximumScore ?? 36,
+        muted: summary?.status === "NOT_AVAILABLE",
+        note: id === "STEM" ? "Math + Science" : "Requires optional Writing",
+        tooltip:
+          id === "STEM"
+            ? (summary?.formula ?? "(Mathematics + Science) ÷ 2, rounded") +
+              ". ACT reports the score when Mathematics and Science are both included."
+            : (summary?.formula ?? "(English + Reading + Writing) ÷ 3, rounded") +
+              ". This test does not include the optional Writing section.",
+      },
+    };
+  };
+  return [
+    buildPathway("STEM", ["mathematics", "science"], []),
+    buildPathway("ELA", ["english", "reading"], [
+      { id: "writing", label: "Writing", optional: true },
+    ]),
+  ];
 });
 const practiceTestQuestionCount = computed(
   () => resultExam.value?.questions.length ?? resultExam.value?.totalCount ?? 0,
@@ -3116,7 +3144,12 @@ onBeforeUnmount(() => {
                         : "Score report"
                     }}</small>
                   </header>
-                  <div class="score-report-main">
+                  <div
+                    :class="[
+                      'score-report-main',
+                      { 'act-report-main': isActPackage },
+                    ]"
+                  >
                     <div class="score-report-total">
                       <span>{{
                         isActPackage
@@ -3155,7 +3188,94 @@ onBeforeUnmount(() => {
                         ><em>{{ formatOrdinal(resultReport.percentile) }} percentile</em>
                       </div>
                     </div>
-                    <div class="score-report-sections">
+                    <div
+                      v-if="isActPackage"
+                      class="act-score-pathways"
+                      aria-label="ACT section and combined scores"
+                    >
+                      <section
+                        v-for="pathway in actScorePathways"
+                        :key="pathway.id"
+                        :class="[
+                          'act-score-pathway',
+                          'is-' + pathway.id,
+                        ]"
+                      >
+                        <div class="act-pathway-section-list">
+                          <article
+                            v-for="section in pathway.sections"
+                            :key="section.sectionId"
+                            class="act-pathway-section"
+                          >
+                            <div>
+                              <span>{{ section.sectionTitle }}</span>
+                              <p v-if="resultSource === 'diagnostic'">
+                                {{ section.accuracy }}% accuracy ·
+                                {{
+                                  section.correct +
+                                  section.incorrect +
+                                  section.omitted
+                                }}
+                                questions
+                              </p>
+                              <p v-else>
+                                Score range {{ section.scoreRange[0] }}–{{
+                                  section.scoreRange[1]
+                                }}
+                                · {{ formatOrdinal(section.percentile) }} percentile
+                              </p>
+                            </div>
+                            <strong
+                              >{{ section.score }}<small
+                                >/{{ section.maximumScore }}</small
+                              ></strong
+                            >
+                          </article>
+                          <article
+                            v-for="missingSection in pathway.missingSections"
+                            :key="missingSection.id"
+                            class="act-pathway-section is-missing"
+                          >
+                            <div>
+                              <span
+                                >{{ missingSection.label }}
+                                <em v-if="missingSection.optional"
+                                  >Optional</em
+                                ></span
+                              >
+                              <p>Not included in this test</p>
+                            </div>
+                            <strong aria-label="Not available">—</strong>
+                          </article>
+                        </div>
+                        <footer
+                          :class="[
+                            'act-pathway-summary',
+                            { muted: pathway.summary.muted },
+                          ]"
+                        >
+                          <div>
+                            <span>{{ pathway.summary.label }}</span>
+                            <small>{{ pathway.summary.note }}</small>
+                          </div>
+                          <b v-if="pathway.summary.value !== null"
+                            >{{ pathway.summary.value }}<small
+                              >/{{ pathway.summary.maximumScore }}</small
+                            ></b
+                          >
+                          <b v-else aria-label="Not available">—</b>
+                          <button
+                            type="button"
+                            class="act-score-info"
+                            :aria-label="'How ' + pathway.summary.label + ' is calculated'"
+                          >
+                            <span aria-hidden="true">i</span>
+                            <span role="tooltip">{{ pathway.summary.tooltip }}</span>
+                          </button>
+                        </footer>
+                      </section>
+                    </div>
+                    <div v-else class="score-report-sections">
                       <article
                         v-for="section in resultReport.sections"
                         :key="section.sectionId"
@@ -3188,17 +3308,6 @@ onBeforeUnmount(() => {
                         }}</em>
                       </article>
                     </div>
-                  </div>
-                  <div v-if="isActPackage" class="act-composite-grid" aria-label="ACT combined scores">
-                    <article v-for="composite in actCompositeCards" :key="composite.id" :class="{ muted: composite.muted }">
-                      <div>
-                        <strong>{{ composite.label }}</strong>
-                        <span>{{ composite.detail }}</span>
-                        <small>{{ composite.note }}</small>
-                      </div>
-                      <b v-if="composite.value !== null">{{ composite.value }}<small>/36</small></b>
-                      <b v-else class="act-not-tested">Not available</b>
-                    </article>
                   </div>
                 </section>
 
