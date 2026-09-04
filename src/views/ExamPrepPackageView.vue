@@ -1180,17 +1180,13 @@ const courses: Course[] = [
   },
 ];
 
-const availableCourses = courses.filter(
-  (course) => course.family === "sat" || course.family === "act",
-);
-
 const filteredCourses = computed(() => {
   const terms = searchQuery.value
     .trim()
     .toLowerCase()
     .split(/\s+/)
     .filter(Boolean);
-  return availableCourses.filter((course) => {
+  return courses.filter((course) => {
     const haystack = `${course.title} ${course.search}`.toLowerCase();
     return (
       (familyFilter.value === "all" || course.family === familyFilter.value) &&
@@ -1602,19 +1598,23 @@ function resumeLastActivity() {
     );
 }
 function openCourseFromHome(course: Course) {
+  if (!isCourseAvailable(course)) return;
   if (lastActivity.value.examTitle === course.title) {
     resumeLastActivity();
     return;
   }
   openCourse(course);
 }
+function isCourseAvailable(course: Course) {
+  return course.family === "sat" || course.family === "act";
+}
 function courseHomeState(course: Course) {
-  return lastActivity.value.examTitle === course.title ? "IN PROGRESS" : "READY";
+  if (lastActivity.value.examTitle === course.title) return "IN PROGRESS";
+  return isCourseAvailable(course) ? "READY" : "COMING SOON";
 }
 function courseHomeAction(course: Course) {
-  return lastActivity.value.examTitle === course.title
-    ? lastActivityCta.value
-    : "Open package";
+  if (lastActivity.value.examTitle === course.title) return lastActivityCta.value;
+  return isCourseAvailable(course) ? "Open course" : "Coming soon";
 }
 function startMockExam(
   examId: number,
@@ -2966,35 +2966,42 @@ onBeforeUnmount(() => {
 
         <section class="exam-catalog" aria-labelledby="examCatalogTitle">
           <div class="predictor-library-heading exam-catalog-heading">
-            <h2 id="examCatalogTitle">Exam Prep Packages</h2>
+            <h2 id="examCatalogTitle">Standard Test Courses</h2>
             <span>{{ packageLibraryTotal }} {{ searchQuery || familyFilter !== 'all' ? 'Found' : 'Total' }}</span>
           </div>
           <p class="exam-catalog-description">
-            Choose a ready-made study path and start preparing right away.
+            Choose a ready-made course for the exam you are preparing for.
           </p>
           <div class="exam-catalog-toolbar">
             <label class="exam-search-wrap"
               ><svg class="icon"><use href="#i-search" /></svg
               ><input
                 v-model="searchQuery"
-                aria-label="Search standardized exam courses"
-                placeholder="Search SAT or ACT packages..." /></label
+                aria-label="Search standard test courses"
+                placeholder="Search SAT, ACT, AP, or Abitur courses..." /></label
             ><label class="exam-filter-wrap"
-              ><span class="sr-only">Filter exam packages</span
-              ><select v-model="familyFilter" aria-label="Filter exam packages">
-                <option value="all">All packages</option>
+              ><span class="sr-only">Filter standard test courses</span
+              ><select v-model="familyFilter" aria-label="Filter standard test courses">
+                <option value="all">All courses</option>
                 <option value="sat">SAT</option>
                 <option value="act">ACT</option>
+                <option value="ap">AP</option>
+                <option value="abitur">Abitur</option>
                 </select
               ><svg class="icon"><use href="#i-chevron" /></svg
             ></label>
           </div>
-          <div class="course-grid" aria-label="Pre-made exam courses">
+          <div class="course-grid" aria-label="Standard test courses">
             <button
               v-for="course in filteredCourses"
               :key="course.title"
-              :class="['course-card', `course-card-${course.family}`]"
+              :class="[
+                'course-card',
+                `course-card-${course.family}`,
+                { 'sample-course': !isCourseAvailable(course) },
+              ]"
               type="button"
+              :disabled="!isCourseAvailable(course)"
               :aria-label="`${courseHomeAction(course)}: ${course.title}`"
               @click="openCourseFromHome(course)"
             >
@@ -3014,7 +3021,7 @@ onBeforeUnmount(() => {
                 </span>
                 <strong class="course-card-action">
                   {{ courseHomeAction(course) }}
-                  <svg class="icon" aria-hidden="true"><use href="#i-chevron" /></svg>
+                  <svg v-if="isCourseAvailable(course)" class="icon" aria-hidden="true"><use href="#i-chevron" /></svg>
                 </strong>
               </span>
             </button>
