@@ -792,16 +792,27 @@ const similarQuizCorrectCount = computed(() =>
     0,
   ),
 );
-const similarQuizEncouragement = computed(() => {
-  const total = similarQuizQuestions.value.length;
+const similarQuizResultCopy = computed(() => {
   const correct = similarQuizCorrectCount.value;
-  if (total > 0 && correct === total) {
-    return "Excellent work — you’ve got this topic down.";
-  }
-  if (correct >= Math.ceil(total * 0.6)) {
-    return "Nice work — keep the momentum going.";
-  }
-  return "Good effort — every question helps you improve.";
+  if (correct === 3)
+    return {
+      title: "Flawless! 🏆",
+      description: "Perfect score! You've truly locked it in.",
+    };
+  if (correct === 2)
+    return {
+      title: "So close! ⭐",
+      description: "Almost perfect — a quick recap and you'll ace it.",
+    };
+  if (correct === 1)
+    return {
+      title: "Nice effort! 💪",
+      description: "Solid start — a quick review and you'll nail it.",
+    };
+  return {
+    title: "Keep going! 🌱",
+    description: "Every attempt sharpens your understanding.",
+  };
 });
 const similarQuizProgress = computed(() => {
   if (!similarQuizQuestions.value.length) return 0;
@@ -1829,7 +1840,7 @@ async function loadSimilarQuiz(topic: SatTopic) {
       ? loadActTopicQuiz(topic.id)
       : loadTopicQuiz(topic.id));
     if (requestId !== similarQuizRequestId) return;
-    similarQuizQuestions.value = questions.slice(0, 5);
+    similarQuizQuestions.value = questions.slice(0, 3);
     if (!questions.length)
       similarQuizLoadError.value =
         "No extra questions are available for this topic yet.";
@@ -1861,10 +1872,13 @@ function restartSimilarQuiz() {
   similarQuizComplete.value = false;
   resetSimilarQuizScroll();
 }
-function retryCompletedSimilarQuiz() {
+function reviewCompletedSimilarQuiz() {
   similarQuizIndex.value = 0;
-  similarQuizAnswers.value = {};
-  similarQuizResponse.value = "";
+  const firstAnswer = similarQuizQuestions.value[0]
+    ? similarQuizAnswers.value[similarQuizQuestions.value[0].id]
+    : undefined;
+  similarQuizResponse.value =
+    typeof firstAnswer === "string" ? firstAnswer : "";
   similarQuizComplete.value = false;
   resetSimilarQuizScroll();
 }
@@ -1899,7 +1913,12 @@ function advanceSimilarQuiz() {
     return;
   }
   similarQuizIndex.value += 1;
-  similarQuizResponse.value = "";
+  const nextQuestion = similarQuizQuestions.value[similarQuizIndex.value];
+  const nextAnswer = nextQuestion
+    ? similarQuizAnswers.value[nextQuestion.id]
+    : undefined;
+  similarQuizResponse.value =
+    typeof nextAnswer === "string" ? nextAnswer : "";
   resetSimilarQuizScroll();
 }
 function similarQuizOptionState(index: number) {
@@ -4213,7 +4232,7 @@ onBeforeUnmount(() => {
                         ><strong>{{
                           reviewTopicTitle(selectedReviewQuestion)
                         }}</strong>
-                        <p>5 questions</p>
+                        <p>3 questions</p>
                       </div>
                       <button
                         type="button"
@@ -4864,17 +4883,23 @@ onBeforeUnmount(() => {
           </div>
 
           <section v-else-if="similarQuizComplete" class="similar-quiz-complete">
-            <h3>Quiz complete</h3>
-            <strong>
-              {{ similarQuizCorrectCount }} of {{ similarQuizQuestions.length }} correct
-            </strong>
-            <p>{{ similarQuizEncouragement }}</p>
-            <div>
-              <button type="button" class="similar-quiz-secondary" @click="retryCompletedSimilarQuiz">
-                Try again
-              </button>
-              <button type="button" class="similar-quiz-primary" @click="closeSimilarQuiz">
-                Done
+            <div class="similar-quiz-result-card">
+              <div class="similar-quiz-result-main">
+                <div class="similar-quiz-score">
+                  <span>Your Score</span>
+                  <strong :aria-label="`${similarQuizCorrectCount} of ${similarQuizQuestions.length} correct`">
+                    <b>{{ similarQuizCorrectCount }}</b>
+                    <i>/</i>
+                    <em>{{ similarQuizQuestions.length }}</em>
+                  </strong>
+                </div>
+                <div class="similar-quiz-result-copy">
+                  <h3>{{ similarQuizResultCopy.title }}</h3>
+                  <p>{{ similarQuizResultCopy.description }}</p>
+                </div>
+              </div>
+              <button type="button" class="similar-quiz-review-button" @click="reviewCompletedSimilarQuiz">
+                Review Quiz
               </button>
             </div>
           </section>
