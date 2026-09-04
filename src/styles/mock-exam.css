@@ -238,9 +238,8 @@ button:focus-visible,
   cursor: pointer;
 }
 
-.tool-button:hover { background: var(--solvely-brand-hover-tint); color: var(--solvely-brand-hover); }
-.tool-button.active { background: var(--solvely-brand); color: var(--solvely-on-brand); }
-.tool-button.active:hover { background: var(--solvely-brand-hover); color: var(--solvely-on-brand-hover); }
+.tool-button:hover,
+.tool-button.active { background: var(--solvely-brand-hover-tint); color: var(--solvely-brand-hover); }
 
 .tool-button svg {
   width: 24px;
@@ -2251,9 +2250,8 @@ body.mock-exam-route.mock-exam-dark {
 }
 
 .exam-app.dark-mode .tool-button { color: var(--exam-muted-foreground); }
-.exam-app.dark-mode .tool-button:hover { background: var(--solvely-brand-hover-tint); color: var(--solvely-brand-text); }
-.exam-app.dark-mode .tool-button.active { background: var(--solvely-brand); color: var(--solvely-on-brand); }
-.exam-app.dark-mode .tool-button.active:hover { background: var(--solvely-brand-hover); color: var(--solvely-on-brand-hover); }
+.exam-app.dark-mode .tool-button:hover,
+.exam-app.dark-mode .tool-button.active { background: var(--solvely-brand-hover-tint); color: var(--solvely-brand-text); }
 
 .exam-app.dark-mode .exam-more-menu {
   border-color: var(--exam-border);

@@ -91,6 +91,11 @@ const practiceTestState = ref<PracticeTestState>("in-progress");
 const resultsAccessState = ref<ResultsAccessState>("locked");
 const paywallOpen = ref(false);
 const paywallContext = ref("the complete exam prep package");
+const newPredictionDialog = ref<HTMLDialogElement | null>(null);
+const predictionExamName = ref("");
+const predictionExamDate = ref("");
+const predictionFocus = ref("Balanced review");
+const createdPrediction = ref<{ title: string; date: string; focus: string } | null>(null);
 let pendingCommercialAction: (() => void) | null = null;
 let practiceScoringTimer: number | null = null;
 let diagnosticScoringTimer: number | null = null;
@@ -1092,6 +1097,7 @@ const filteredCourses = computed(() => {
     );
   });
 });
+const examLibraryTotal = computed(() => createdPrediction.value ? 2 : 1);
 
 const courseSectionOptions = computed(() => [...new Set((manifest.value?.topics ?? []).map((topic) => topic.section))]);
 const reportSectionOptions = computed(() => resultReport.value?.sections ?? []);
@@ -1329,6 +1335,36 @@ function openCourse(course: Course) {
 
 function closeCourse() {
   void router.push({ name: "package", hash: "#examCatalogTitle" });
+}
+function openExamPredictorHome() {
+  void router.push({ name: "package" });
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+function openNewPrediction() {
+  if (!predictionExamName.value) predictionExamName.value = "AP Biology Midterm";
+  if (!predictionExamDate.value) predictionExamDate.value = "2026-11-12";
+  newPredictionDialog.value?.showModal();
+}
+function closeNewPrediction() {
+  newPredictionDialog.value?.close();
+}
+function createNewPrediction() {
+  const title = predictionExamName.value.trim();
+  if (!title || !predictionExamDate.value) return;
+  createdPrediction.value = {
+    title,
+    date: predictionExamDate.value,
+    focus: predictionFocus.value,
+  };
+  closeNewPrediction();
+}
+function formatPredictionDate(value: string) {
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(new Date(`${value}T00:00:00Z`));
 }
 function selectTab(tab: CourseTab) {
   activeTab.value = tab;
@@ -2002,6 +2038,11 @@ onBeforeUnmount(() => {
       <rect x="8" y="2" width="8" height="13" rx="4" />
       <path d="M5 11a7 7 0 0 0 14 0M12 18v4M8 22h8" />
     </symbol>
+    <symbol id="i-interview" viewBox="0 0 18 18">
+      <path d="M2 4.5C2 3.5335 2.7835 2.75 3.75 2.75H14.25C15.2165 2.75 16 3.5335 16 4.5V11C16 11.9665 15.2165 12.75 14.25 12.75H8L4.25 15.75V12.75H3.75C2.7835 12.75 2 11.9665 2 11V4.5Z" />
+      <path d="M7.5 9C7.5 9.55229 8.17157 10 9 10C9.82845 10 10.5 9.55229 10.5 9" />
+      <path d="M6.655 5.5v2M11.155 5.5v2" />
+    </symbol>
     <symbol id="i-wand" viewBox="0 0 24 24">
       <path d="m15 4 5 5L8 21l-5-5zM6 3l1 3 3 1-3 1-1 3-1-3-3-1 3-1z" />
     </symbol>
@@ -2095,6 +2136,9 @@ onBeforeUnmount(() => {
       <circle cx="11" cy="11" r="7" />
       <path d="m16.5 16.5 4 4" />
     </symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24">
+      <path d="M5 12h14M12 5v14" />
+    </symbol>
     <symbol id="i-upload" viewBox="0 0 24 24">
       <path d="M12 16V4M7 9l5-5 5 5" />
       <path d="M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4" />
@@ -2144,13 +2188,17 @@ onBeforeUnmount(() => {
         </button>
       </div>
       <nav class="sidebar-nav">
-        <button class="nav-button active" type="button">
+        <button class="nav-button" type="button" aria-disabled="true">
           <svg class="icon"><use href="#i-home" /></svg
           ><span class="nav-label">Home</span>
         </button>
         <button class="nav-button" type="button" aria-disabled="true">
           <svg class="icon"><use href="#i-book" /></svg
           ><span class="nav-label">AI Study</span>
+        </button>
+        <button class="nav-button" type="button" aria-disabled="true">
+          <svg class="icon"><use href="#i-interview" /></svg
+          ><span class="nav-label">AI Interview</span>
         </button>
         <button class="nav-button" type="button" aria-disabled="true">
           <svg class="icon"><use href="#i-mic" /></svg
@@ -2160,7 +2208,7 @@ onBeforeUnmount(() => {
           <svg class="icon"><use href="#i-wand" /></svg
           ><span class="nav-label">AI Writing Tools</span>
         </button>
-        <button class="nav-button" type="button" aria-disabled="true">
+        <button class="nav-button active" type="button" @click="openExamPredictorHome">
           <svg class="icon"><use href="#i-exam" /></svg
           ><span class="nav-label">Exam Predictor</span>
         </button>
@@ -2232,7 +2280,7 @@ onBeforeUnmount(() => {
 
     <main>
       <div
-        v-if="!isCourseOpen"
+        v-if="false"
         class="extension-entry"
         aria-label="Solvely Chrome extension"
       >
@@ -2250,7 +2298,7 @@ onBeforeUnmount(() => {
         >
       </div>
       <button
-        v-if="!isCourseOpen"
+        v-if="false"
         class="history-entry"
         type="button"
         aria-disabled="true"
@@ -2258,8 +2306,71 @@ onBeforeUnmount(() => {
         <svg class="icon"><use href="#i-history" /></svg><span>History</span>
       </button>
 
-      <div v-if="!isCourseOpen" class="workspace">
-        <header class="hero">
+      <div v-if="!isCourseOpen" class="workspace predictor-home-workspace">
+        <section class="predictor-home-hero" aria-labelledby="predictorHomeTitle">
+          <div class="predictor-home-copy">
+            <h1 id="predictorHomeTitle">
+              <span>Exam Predictor</span>
+              <strong>Predict. Prepare. Pass.</strong>
+            </h1>
+            <p>
+              Your AI Exam Coach: tell us about your exams and let AI predict
+              high-probability topics, generate mock exams, create a cheat
+              sheet, and build a personalized study plan.
+            </p>
+          </div>
+          <button
+            class="new-prediction-button"
+            type="button"
+            @click="openNewPrediction"
+          >
+            <svg class="icon" aria-hidden="true"><use href="#i-plus" /></svg>
+            <span>New Prediction</span>
+          </button>
+        </section>
+
+        <section class="predictor-library" aria-labelledby="examLibraryTitle">
+          <div class="predictor-library-heading">
+            <h2 id="examLibraryTitle">Exam Library</h2>
+            <span>{{ examLibraryTotal }} Total</span>
+          </div>
+          <div class="predictor-library-grid">
+            <article
+              v-if="createdPrediction"
+              class="predictor-library-card created"
+            >
+              <div class="predictor-library-banner">
+                <span class="predictor-library-state">READY</span>
+                <h3>{{ createdPrediction.title }}</h3>
+              </div>
+              <div class="predictor-library-details">
+                <span><svg class="icon"><use href="#i-target" /></svg>0% Mastered</span>
+                <span><svg class="icon"><use href="#i-history" /></svg>{{ createdPrediction.focus }}</span>
+                <small>Exam Date {{ formatPredictionDate(createdPrediction.date) }}</small>
+              </div>
+            </article>
+            <article class="predictor-library-card">
+              <div class="predictor-library-banner">
+                <span class="predictor-library-state">IN PROGRESS</span>
+                <h3>Biology 101 Final Exam</h3>
+              </div>
+              <div class="predictor-library-details">
+                <span><svg class="icon"><use href="#i-target" /></svg>3% Mastered</span>
+                <small>Exam Date Oct 24</small>
+              </div>
+            </article>
+            <button
+              class="new-prediction-card"
+              type="button"
+              @click="openNewPrediction"
+            >
+              <span><svg class="icon" aria-hidden="true"><use href="#i-plus" /></svg></span>
+              <strong>New Exam Prediction</strong>
+            </button>
+          </div>
+        </section>
+
+        <header class="hero" hidden>
           <h1>Solvely: Your AI Study Companion</h1>
           <div
             class="workspace-mode-switch"
@@ -2294,7 +2405,7 @@ onBeforeUnmount(() => {
             </button>
           </div>
         </header>
-        <section class="composer-shell" aria-label="Solvely learning composer">
+        <section class="composer-shell" aria-label="Solvely learning composer" hidden>
           <div class="composer-input-wrap">
             <textarea
               class="composer-input"
@@ -2328,7 +2439,7 @@ onBeforeUnmount(() => {
           </div>
         </section>
 
-        <section class="examples-section" aria-label="Exam prep examples">
+        <section class="examples-section" aria-label="Exam prep examples" hidden>
           <div class="examples-heading">
             <div class="examples-copy"><h2>Exam prep plan</h2></div>
             <p class="examples-description">
@@ -2510,8 +2621,14 @@ onBeforeUnmount(() => {
 
         <section class="exam-catalog" aria-labelledby="examCatalogTitle">
           <div class="exam-catalog-heading">
-            <div><h2 id="examCatalogTitle">Standardized test courses</h2></div>
-            <p>Topic study, mock exams, results, and targeted improvement.</p>
+            <div>
+              <span class="exam-catalog-eyebrow">READY-MADE</span>
+              <h2 id="examCatalogTitle">Exam Prep Packages</h2>
+            </div>
+            <p>
+              Skip setup and start with a complete path for topic study, mock
+              exams, score insights, and targeted improvement.
+            </p>
           </div>
           <section
             class="diagnostic-entry jump-back-entry"
@@ -2539,7 +2656,7 @@ onBeforeUnmount(() => {
               ><input
                 v-model="searchQuery"
                 aria-label="Search standardized exam courses"
-                placeholder="Search SAT, ACT, AP, Abitur..." /></label
+                placeholder="Search SAT, ACT, AP, Abitur packages..." /></label
             ><label class="exam-filter-wrap"
               ><span class="sr-only">Filter exam packages</span
               ><select v-model="familyFilter" aria-label="Filter exam packages">
@@ -4466,6 +4583,65 @@ onBeforeUnmount(() => {
         </section>
       </template>
     </aside>
+    <dialog
+      ref="newPredictionDialog"
+      class="new-prediction-dialog"
+      aria-labelledby="newPredictionTitle"
+      @cancel.prevent="closeNewPrediction"
+      @click.self="closeNewPrediction"
+    >
+      <form class="new-prediction-form" @submit.prevent="createNewPrediction">
+        <header>
+          <span class="new-prediction-dialog-icon" aria-hidden="true">
+            <svg class="icon"><use href="#i-exam" /></svg>
+          </span>
+          <div>
+            <h2 id="newPredictionTitle">Create an exam prediction</h2>
+            <p>Tell Solvely what you are preparing for to build your plan.</p>
+          </div>
+          <button
+            class="new-prediction-close"
+            type="button"
+            aria-label="Close"
+            @click="closeNewPrediction"
+          >
+            <svg class="icon"><use href="#i-close" /></svg>
+          </button>
+        </header>
+        <div class="new-prediction-fields">
+          <label>
+            <span>Exam or course name</span>
+            <input
+              v-model="predictionExamName"
+              type="text"
+              required
+              placeholder="e.g. Biology 101 Final Exam"
+            />
+          </label>
+          <label>
+            <span>Exam date</span>
+            <input v-model="predictionExamDate" type="date" required />
+          </label>
+          <label>
+            <span>Plan focus</span>
+            <select v-model="predictionFocus">
+              <option>Balanced review</option>
+              <option>High-probability topics</option>
+              <option>Mock exam practice</option>
+            </select>
+          </label>
+        </div>
+        <footer>
+          <button type="button" class="prediction-secondary" @click="closeNewPrediction">
+            Cancel
+          </button>
+          <button type="submit" class="prediction-primary">
+            <svg class="icon"><use href="#i-spark" /></svg>
+            Create prep plan
+          </button>
+        </footer>
+      </form>
+    </dialog>
     <ProPaywall
       :open="paywallOpen"
       :context="paywallContext"
