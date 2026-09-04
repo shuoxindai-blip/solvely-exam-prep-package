@@ -9,6 +9,7 @@ import { buildSatDiagnosticExam, SAT_DIAGNOSTIC_QUESTIONS_PER_SECTION } from '..
 import { loadActEpExam } from '../data/actData'
 import { buildActDiagnosticExam, ACT_DIAGNOSTIC_QUESTIONS_PER_SECTION } from '../data/actDiagnostic'
 import type { EpExam } from '../types/epV2'
+import { parseActPassage, type TextReference } from '../utils/actReference'
 
 type SectionKind = 'reading' | 'math' | 'english' | 'science'
 type ExamStage = 'exam' | 'review' | 'break' | 'complete' | 'results'
@@ -38,6 +39,7 @@ type ModuleDefinition = {
 type Question = {
   prompt: string
   passage: string
+  referenceHighlights: TextReference[]
   passageTitle?: string
   passageType?: string
   pictureUrl?: string
@@ -181,13 +183,12 @@ function sourceQuestionFor(module: ModuleDefinition, number: number) {
 }
 
 function displayQuestion(source: SourceQuestion | undefined): Question {
-  if (!source) return { prompt: 'Question unavailable', passage: '', options: [], optionLabels: [], correctIndex: -1, answer: '', explanation: '', difficulty: '', domain: '' }
+  if (!source) return { prompt: 'Question unavailable', passage: '', referenceHighlights: [], options: [], optionLabels: [], correctIndex: -1, answer: '', explanation: '', difficulty: '', domain: '' }
   if (isActExam.value) {
+    const parsedPassage = parseActPassage(source.stimulusMaterial?.body ?? '', source.question)
     return {
       ...source,
-      passage: (source.stimulusMaterial?.body ?? '')
-        .replace(/^(ENGLISH|READING|SCIENCE) PASSAGE[^\n]*\n/i, '')
-        .replace(/\[\[([^\]]+)\]\]/g, '$1'),
+      ...parsedPassage,
       passageTitle: source.stimulusMaterial?.title,
       passageType: source.stimulusMaterial?.type,
       pictureUrl: source.stimulusMaterial?.pictureUrl,
@@ -200,10 +201,10 @@ function displayQuestion(source: SourceQuestion | undefined): Question {
     const markers = ['Which choice', 'According to', 'Based on the', 'What is the']
     const splitAt = Math.max(...markers.map((marker) => source.question.lastIndexOf(marker)))
     if (splitAt > 20) {
-      return { ...source, passage: source.question.slice(0, splitAt).trim(), prompt: source.question.slice(splitAt).trim(), graph: false, diagram: false }
+      return { ...source, passage: source.question.slice(0, splitAt).trim(), referenceHighlights: [], prompt: source.question.slice(splitAt).trim(), graph: false, diagram: false }
     }
   }
-  return { ...source, passage: '', prompt: source.question.replace(/\nEnter your answer\.?$/i, ''), graph: false, diagram: false }
+  return { ...source, passage: '', referenceHighlights: [], prompt: source.question.replace(/\nEnter your answer\.?$/i, ''), graph: false, diagram: false }
 }
 
 const stage = ref<ExamStage>('exam')
@@ -1031,7 +1032,7 @@ onBeforeUnmount(() => {
                 <g class="legend"><rect x="25" y="367" width="310" height="36" /><path class="winter-line" d="M46 385h50" /><rect class="winter-dot" x="66" y="380" width="10" height="10" /><text x="108" y="391">Winter</text><path class="summer-line" d="M183 385h50" /><path class="summer-dot" d="m208 378 7 7-7 7-7-7Z" /><text x="246" y="391">Summer</text></g>
               </svg>
             </figure>
-            <HighlightablePassage :key="questionKey" :text="currentQuestion.passage" :enabled="highlighterEnabled" :model-value="highlights[questionKey] ?? []" :extra-class="currentQuestion.graph ? 'graph-copy' : ''" @update:model-value="updateHighlights" />
+            <HighlightablePassage :key="questionKey" :text="currentQuestion.passage" :enabled="highlighterEnabled" :model-value="highlights[questionKey] ?? []" :reference-highlights="currentQuestion.referenceHighlights" :extra-class="currentQuestion.graph ? 'graph-copy' : ''" @update:model-value="updateHighlights" />
             <div v-if="lineReaderEnabled" class="line-reader-overlay" :style="{ '--line-y': `${lineReaderY}%` }" aria-hidden="true"><span /></div>
           </div>
         </article>
@@ -1051,7 +1052,7 @@ onBeforeUnmount(() => {
         <article ref="questionScroller" class="math-question-panel" aria-label="Math question"><div class="math-question-shell" :class="{ 'diagram-question': currentQuestion.diagram }">
           <div class="question-toolbar"><span class="number-badge">{{ currentNumber }}</span><button class="review-button" :class="{ active: review.has(questionKey) }" type="button" @click="toggleReview"><svg viewBox="0 0 18 22" aria-hidden="true"><path d="M3 2.5h12v17l-6-4-6 4v-17Z" /></svg>Mark for Review</button><button class="elimination-mode-button" :class="{ active: eliminationMode }" type="button" :aria-pressed="eliminationMode" :aria-label="eliminationMode ? 'Hide answer elimination controls' : 'Show answer elimination controls'" @mouseenter="showToolTooltip($event, 'Cross out answer choices you think are wrong', 'above')" @mouseleave="hideToolTooltip" @focus="showToolTooltip($event, 'Cross out answer choices you think are wrong', 'above')" @blur="hideToolTooltip" @click="toggleEliminationMode"><span aria-hidden="true">{{ eliminationBadge }}</span></button></div>
           <figure v-if="currentQuestion.diagram" class="circle-diagram"><svg viewBox="0 0 620 560" role="img" aria-label="Circle with intersecting lines through O"><circle cx="310" cy="260" r="210" /><path d="M228 66 393 458M395 69 226 457" /><text x="201" y="67">S</text><text x="397" y="67">R</text><text x="198" y="489">P</text><text x="401" y="489">Q</text><text x="321" y="280">O</text></svg><figcaption>Note: Figure not drawn to scale.</figcaption></figure>
-          <HighlightablePassage :key="questionKey" :text="currentQuestion.passage" :enabled="highlighterEnabled" :model-value="highlights[questionKey] ?? []" extra-class="math-stem-copy" @update:model-value="updateHighlights" />
+          <HighlightablePassage :key="questionKey" :text="currentQuestion.passage" :enabled="highlighterEnabled" :model-value="highlights[questionKey] ?? []" :reference-highlights="currentQuestion.referenceHighlights" extra-class="math-stem-copy" @update:model-value="updateHighlights" />
           <h1>{{ currentQuestion.prompt }}</h1>
           <div v-if="currentQuestion.options.length" class="choices math-choices" role="radiogroup" :aria-label="currentQuestion.prompt"><div v-for="(option, index) in currentQuestion.options" :key="`${questionKey}-${index}`" class="choice-row" :class="{ selected: answers[questionKey] === index, eliminated: eliminated[questionKey]?.has(index), 'elimination-mode': eliminationMode }"><button class="choice-card" type="button" role="radio" :aria-checked="answers[questionKey] === index" @click="selectAnswer(index)"><span class="choice-letter">{{ choiceLabel(index) }}</span><span class="choice-copy">{{ option }}</span></button><button v-if="eliminationMode" class="eliminate-button" type="button" :aria-label="`${eliminated[questionKey]?.has(index) ? 'Restore' : 'Cross out'} answer ${choiceLabel(index)}`" :aria-pressed="eliminated[questionKey]?.has(index) ?? false" @click="toggleEliminated(index)"><span>{{ choiceLabel(index) }}</span></button></div></div>
           <div v-else class="student-response-field"><label :for="`response-${questionKey}`">Student-produced response</label><input :id="`response-${questionKey}`" inputmode="decimal" :value="responses[questionKey] || ''" placeholder="Enter your answer" @input="setResponse" /><small>You may enter an integer, decimal, or fraction.</small></div>

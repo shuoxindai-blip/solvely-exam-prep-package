@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import type { TextReference } from '../utils/actReference'
 
 type HighlightColor = 'yellow' | 'pink' | 'blue'
 type HighlightUnderline = 'solid' | 'dashed' | 'dotted' | 'none'
@@ -16,6 +17,7 @@ type TextHighlight = {
 type TextSegment = {
   text: string
   highlight?: TextHighlight
+  reference?: TextReference
 }
 
 const props = withDefaults(
@@ -23,9 +25,11 @@ const props = withDefaults(
     text: string
     enabled: boolean
     modelValue: TextHighlight[]
+    referenceHighlights?: TextReference[]
     extraClass?: string
   }>(),
   {
+    referenceHighlights: () => [],
     extraClass: '',
   },
 )
@@ -46,6 +50,7 @@ const noteDraft = ref('')
 const noteInput = ref<HTMLTextAreaElement | null>(null)
 let scrollOwner: HTMLElement | null = null
 let toolbarAnchorRect: DOMRect | null = null
+let referenceScrollFrame: number | undefined
 
 const palette: Array<{ color: HighlightColor; label: string }> = [
   { color: 'yellow', label: 'Yellow highlight' },
@@ -65,23 +70,25 @@ const activeUnderline = computed<HighlightUnderline>(() => activeHighlight.value
 const hasActiveNote = computed(() => Boolean(activeHighlight.value?.note?.trim()))
 
 const segments = computed<TextSegment[]>(() => {
-  const ordered = [...props.modelValue]
+  const orderedHighlights = [...props.modelValue]
     .filter((highlight) => highlight.start >= 0 && highlight.end > highlight.start && highlight.end <= props.text.length)
     .sort((a, b) => a.start - b.start)
-  const output: TextSegment[] = []
-  let cursor = 0
+  const orderedReferences = [...props.referenceHighlights]
+    .filter((reference) => reference.start >= 0 && reference.end > reference.start && reference.end <= props.text.length)
+    .sort((a, b) => a.start - b.start)
+  const boundaries = new Set([0, props.text.length])
+  orderedHighlights.forEach((highlight) => { boundaries.add(highlight.start); boundaries.add(highlight.end) })
+  orderedReferences.forEach((reference) => { boundaries.add(reference.start); boundaries.add(reference.end) })
+  const positions = [...boundaries].sort((a, b) => a - b)
 
-  ordered.forEach((highlight) => {
-    if (highlight.start > cursor) output.push({ text: props.text.slice(cursor, highlight.start) })
-    if (highlight.end > cursor) {
-      const start = Math.max(cursor, highlight.start)
-      output.push({ text: props.text.slice(start, highlight.end), highlight: { ...highlight, start } })
-      cursor = highlight.end
+  return positions.slice(0, -1).map((start, index) => {
+    const end = positions[index + 1]
+    return {
+      text: props.text.slice(start, end),
+      highlight: orderedHighlights.find((item) => item.start <= start && item.end >= end),
+      reference: orderedReferences.find((item) => item.start <= start && item.end >= end),
     }
-  })
-
-  if (cursor < props.text.length) output.push({ text: props.text.slice(cursor) })
-  return output
+  }).filter((segment) => segment.text.length > 0)
 })
 
 const toolbarStyle = computed(() => ({
@@ -251,6 +258,24 @@ function onViewportChange() {
   if (toolbarVisible.value) closeToolbar(false)
 }
 
+function scheduleReferenceScroll() {
+  if (referenceScrollFrame !== undefined) window.cancelAnimationFrame(referenceScrollFrame)
+  referenceScrollFrame = window.requestAnimationFrame(() => {
+    referenceScrollFrame = undefined
+    const reference = passageRoot.value?.querySelector<HTMLElement>('.reference-highlight')
+    if (!reference || !scrollOwner) return
+    const ownerRect = scrollOwner.getBoundingClientRect()
+    const referenceRect = reference.getBoundingClientRect()
+    const inset = 24
+    if (referenceRect.top >= ownerRect.top + inset && referenceRect.bottom <= ownerRect.bottom - inset) return
+    const top = scrollOwner.scrollTop + referenceRect.top - ownerRect.top - Math.max(inset, (ownerRect.height - referenceRect.height) * 0.42)
+    scrollOwner.scrollTo({
+      top: Math.max(0, top),
+      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+    })
+  })
+}
+
 watch(
   () => props.enabled,
   (enabled) => {
@@ -263,15 +288,23 @@ watch(
   () => closeToolbar(),
 )
 
+watch(
+  () => props.referenceHighlights,
+  scheduleReferenceScroll,
+  { deep: true, flush: 'post' },
+)
+
 onMounted(() => {
   scrollOwner = passageRoot.value?.closest('.passage-panel') as HTMLElement | null
   scrollOwner?.addEventListener('scroll', onViewportChange, { passive: true })
   window.addEventListener('resize', onViewportChange, { passive: true })
   document.addEventListener('pointerdown', onDocumentPointerdown)
   document.addEventListener('keydown', onEscape)
+  scheduleReferenceScroll()
 })
 
 onBeforeUnmount(() => {
+  if (referenceScrollFrame !== undefined) window.cancelAnimationFrame(referenceScrollFrame)
   scrollOwner?.removeEventListener('scroll', onViewportChange)
   window.removeEventListener('resize', onViewportChange)
   document.removeEventListener('pointerdown', onDocumentPointerdown)
@@ -285,10 +318,11 @@ onBeforeUnmount(() => {
     class="passage-copy highlightable-passage"
     :class="[extraClass, { 'highlight-mode-active': enabled }]"
     @mouseup="onPassageMouseup"
-  ><template v-for="(segment, index) in segments" :key="segment.highlight?.id ?? `text-${index}`"><mark
+  ><template v-for="(segment, index) in segments" :key="`${segment.highlight?.id ?? 'text'}-${segment.reference?.id ?? 'plain'}-${index}`"><mark
       v-if="segment.highlight"
       class="user-highlight"
       :class="[
+        { 'reference-highlight': segment.reference },
         `highlight-${segment.highlight.color}`,
         (segment.highlight.underline ?? 'none') !== 'none' ? `underline-${segment.highlight.underline}` : '',
       ]"
@@ -298,7 +332,7 @@ onBeforeUnmount(() => {
       @click="openExistingHighlight($event, segment.highlight.id)"
       @keydown.enter.stop.prevent="openExistingHighlight($event, segment.highlight.id)"
       @keydown.space.stop.prevent="openExistingHighlight($event, segment.highlight.id)"
-    >{{ segment.text }}</mark><span v-else>{{ segment.text }}</span></template></p>
+    >{{ segment.text }}</mark><mark v-else-if="segment.reference" class="reference-highlight" :data-reference-id="segment.reference.id">{{ segment.text }}</mark><span v-else>{{ segment.text }}</span></template></p>
 
   <Teleport to="body">
     <div
@@ -401,6 +435,14 @@ onBeforeUnmount(() => {
 .highlightable-passage.highlight-mode-active::selection,
 .highlightable-passage.highlight-mode-active :deep(*)::selection {
   background: rgba(255, 235, 52, 0.72);
+  color: inherit;
+}
+
+.reference-highlight:not(.user-highlight) {
+  margin: 0;
+  padding: 0.8px 2.4px;
+  border-radius: 2.4px;
+  background: oklch(0.92 0.16 95);
   color: inherit;
 }
 
