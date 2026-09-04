@@ -4188,20 +4188,17 @@ onBeforeUnmount(() => {
                     </section>
                     <section class="review-skill-panel">
                       <div>
-                        <span>Similar questions · Extra practice</span
+                        <span>Similar questions</span
                         ><strong>{{
                           reviewTopicTitle(selectedReviewQuestion)
                         }}</strong>
-                        <p>
-                          {{ Math.min(5, reviewTopic(selectedReviewQuestion)?.quizCount ?? 0) }}
-                          quick questions · Does not affect your Study Plan
-                        </p>
+                        <p>5 questions</p>
                       </div>
                       <button
                         type="button"
                         @click="practiceReviewQuestion(selectedReviewQuestion)"
                       >
-                        Open mini quiz
+                        Start mini quiz
                       </button>
                     </section>
                     <footer class="review-detail-pagination">
@@ -4816,68 +4813,46 @@ onBeforeUnmount(() => {
       ref="similarQuizDrawer"
       class="similar-quiz-drawer"
       aria-labelledby="similarQuizTitle"
-      aria-describedby="similarQuizContext"
       @cancel.prevent="closeSimilarQuiz"
       @click.self="closeSimilarQuiz"
     >
       <div class="similar-quiz-shell">
         <header class="similar-quiz-head">
-          <span class="similar-quiz-icon" aria-hidden="true">
-            <svg class="icon"><use href="#i-spark" /></svg>
-          </span>
-          <div>
-            <span>Extra practice</span>
-            <h2 id="similarQuizTitle">Similar-question quiz</h2>
-            <p>{{ similarQuizTopic?.title ?? "Topic practice" }}</p>
-          </div>
+          <h2 id="similarQuizTitle">Mini quiz</h2>
           <button
             class="similar-quiz-close"
             type="button"
-            aria-label="Close similar-question quiz"
+            aria-label="Close mini quiz"
             @click="closeSimilarQuiz"
           >
             <svg class="icon"><use href="#i-close" /></svg>
           </button>
         </header>
 
-        <p id="similarQuizContext" class="similar-quiz-context">
-          <svg class="icon" aria-hidden="true"><use href="#i-target" /></svg>
-          <span>
-            These are optional questions based on the same topic. Your answers
-            stay in Question Review and won’t change your Study Plan progress.
-          </span>
-        </p>
-
         <div class="similar-quiz-body">
           <div v-if="similarQuizLoading" class="similar-quiz-loading" role="status">
             <span aria-hidden="true" />
-            <strong>Preparing similar questions…</strong>
-            <p>Building a short extra-practice set for this topic.</p>
+            <strong>Loading questions…</strong>
           </div>
 
           <div v-else-if="similarQuizLoadError" class="similar-quiz-error" role="alert">
             <span aria-hidden="true">!</span>
-            <strong>Similar questions aren’t available</strong>
+            <strong>Questions unavailable</strong>
             <p>{{ similarQuizLoadError }}</p>
             <button type="button" @click="retrySimilarQuiz">Try again</button>
           </div>
 
           <section v-else-if="similarQuizComplete" class="similar-quiz-complete">
-            <span class="similar-quiz-complete-icon" aria-hidden="true">
-              <svg class="icon"><use href="#i-target" /></svg>
-            </span>
-            <small>Optional practice complete</small>
-            <h3>{{ similarQuizCorrectCount }} of {{ similarQuizQuestions.length }} correct</h3>
-            <p>
-              This result stays in Question Review. Nothing was added to or
-              changed in your Study Plan.
-            </p>
+            <h3>Quiz complete</h3>
+            <strong>
+              {{ similarQuizCorrectCount }} of {{ similarQuizQuestions.length }} correct
+            </strong>
             <div>
               <button type="button" class="similar-quiz-secondary" @click="retryCompletedSimilarQuiz">
-                Practice again
+                Try again
               </button>
               <button type="button" class="similar-quiz-primary" @click="closeSimilarQuiz">
-                Back to Question Review
+                Done
               </button>
             </div>
           </section>
@@ -4891,7 +4866,6 @@ onBeforeUnmount(() => {
                 Question {{ similarQuizIndex + 1 }} of
                 {{ similarQuizQuestions.length }}
               </span>
-              <span>{{ similarQuizCorrectCount }} correct</span>
             </div>
             <div
               class="similar-quiz-progress"
@@ -4899,12 +4873,9 @@ onBeforeUnmount(() => {
               :aria-valuenow="similarQuizProgress"
               aria-valuemin="0"
               aria-valuemax="100"
-              aria-label="Extra practice progress"
+              aria-label="Mini quiz progress"
             >
               <i :style="{ width: `${similarQuizProgress}%` }" />
-            </div>
-            <div class="similar-quiz-topic-label">
-              {{ examName }} · {{ similarQuizTopic?.title }}
             </div>
             <h3>{{ similarQuizPrompt(similarQuizCurrentQuestion) }}</h3>
             <figure
@@ -5006,7 +4977,7 @@ onBeforeUnmount(() => {
           class="similar-quiz-actions"
         >
           <button type="button" class="similar-quiz-secondary" @click="closeSimilarQuiz">
-            Close quiz
+            Close
           </button>
           <button
             type="button"
@@ -5016,8 +4987,8 @@ onBeforeUnmount(() => {
           >
             {{
               similarQuizIndex >= similarQuizQuestions.length - 1
-                ? "See results"
-                : "Next question"
+                ? "Results"
+                : "Next"
             }}
           </button>
         </footer>
