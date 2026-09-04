@@ -791,6 +791,17 @@ const similarQuizCorrectCount = computed(() =>
     0,
   ),
 );
+const similarQuizEncouragement = computed(() => {
+  const total = similarQuizQuestions.value.length;
+  const correct = similarQuizCorrectCount.value;
+  if (total > 0 && correct === total) {
+    return "Excellent work — you’ve got this topic down.";
+  }
+  if (correct >= Math.ceil(total * 0.6)) {
+    return "Nice work — keep the momentum going.";
+  }
+  return "Good effort — every question helps you improve.";
+});
 const similarQuizProgress = computed(() => {
   if (!similarQuizQuestions.value.length) return 0;
   return Math.round(
@@ -4847,6 +4858,7 @@ onBeforeUnmount(() => {
             <strong>
               {{ similarQuizCorrectCount }} of {{ similarQuizQuestions.length }} correct
             </strong>
+            <p>{{ similarQuizEncouragement }}</p>
             <div>
               <button type="button" class="similar-quiz-secondary" @click="retryCompletedSimilarQuiz">
                 Try again

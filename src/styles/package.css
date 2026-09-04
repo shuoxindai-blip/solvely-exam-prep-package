@@ -2298,7 +2298,8 @@
     .similar-quiz-error > span { width:38px; height:38px; display:grid; place-items:center; margin-bottom:14px; border-radius:50%; background:#fff0ed; color:#bd4e28; font-size:18px; font-weight:800; }
     .similar-quiz-error button { min-height:36px; margin-top:16px; padding:0 14px; border:1px solid #007aff; border-radius:10px; background:#007aff; color:#fff; font-size:9px; font-weight:700; cursor:pointer; }
     .similar-quiz-complete h3 { margin:0; font:650 23px/1.25 Poppins,Inter,sans-serif; letter-spacing:-.025em; }
-    .similar-quiz-complete > strong { margin-top:8px; color:var(--muted); font-size:11px; }
+    .similar-quiz-complete > strong { margin-top:8px; font-size:11px; }
+    .similar-quiz-complete > p { max-width:330px; margin:9px 0 0; color:var(--muted); font-size:10px; line-height:1.5; }
     .similar-quiz-complete > div { display:flex; gap:9px; margin-top:22px; }
     body.dark .similar-quiz-choice:hover:not(:disabled) { border-color:rgba(81,169,254,.42); background:rgba(50,75,104,.24); }
     body.dark .similar-quiz-choice.correct,body.dark .similar-quiz-feedback.correct { background:rgba(22,134,93,.16); }
