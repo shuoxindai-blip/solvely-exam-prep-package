@@ -2950,7 +2950,7 @@ onBeforeUnmount(() => {
               ><input
                 v-model="searchQuery"
                 aria-label="Search standardized test prep courses"
-                placeholder="Search SAT, ACT, AP, or Abitur courses..." /></label
+                placeholder="Search a ready-made course for the exam you are preparing for..." /></label
             ><label class="exam-filter-wrap"
               ><span class="sr-only">Filter standardized test prep courses</span
               ><select v-model="familyFilter" aria-label="Filter standardized test prep courses">
