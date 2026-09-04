@@ -3012,12 +3012,13 @@ onBeforeUnmount(() => {
               </span>
               <span class="course-card-body">
                 <span class="course-card-detail">
-                  <svg class="icon" aria-hidden="true"><use href="#i-grid" /></svg>
-                  {{ course.topics }} topics · {{ course.questions }} questions
+                  • {{ course.topics }} topics • {{ course.videos }} video lessons
                 </span>
                 <span class="course-card-detail">
-                  <svg class="icon" aria-hidden="true"><use href="#i-exam" /></svg>
-                  Full test · Score insights
+                  • {{ course.questions }} practice questions
+                </span>
+                <span class="course-card-detail">
+                  • 1 full-length test • Score insights
                 </span>
                 <strong class="course-card-action">
                   {{ courseHomeAction(course) }}
