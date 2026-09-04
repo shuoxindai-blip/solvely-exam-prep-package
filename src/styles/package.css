@@ -1184,17 +1184,17 @@
     .exam-filter-wrap { position:relative; width:160px; }
     .exam-filter-wrap select { width:100%; height:43px; appearance:none; padding:0 38px 0 13px; border:1px solid var(--line); border-radius:11px; background:var(--surface); color:var(--text); }
     .exam-filter-wrap .icon { position:absolute; right:12px; top:12px; pointer-events:none; color:var(--muted); }
-    .course-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:24px; }
+    .course-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,392px)); gap:24px; }
     .course-card { min-height:211px; display:flex; flex-direction:column; padding:0; overflow:hidden; border:1px solid #e5e7eb; border-radius:24px; background:var(--surface); color:var(--text); text-align:left; cursor:pointer; box-shadow:0 2px 8px rgba(16,24,40,.06); transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease; }
     .course-card:hover { transform:translateY(-1px); border-color:rgba(0,122,255,.35); box-shadow:0 8px 24px rgba(0,122,255,.09); }
-    .course-card-banner { min-height:92px; display:flex; align-content:center; align-items:center; flex-wrap:wrap; gap:8px; padding:17px 24px 13px; background:linear-gradient(135deg,rgba(0,122,255,.08),rgba(90,156,255,.19)); }
+    .course-card-banner { min-height:92px; display:grid; grid-template-columns:40px minmax(0,1fr); align-items:center; gap:12px; padding:17px 24px 13px; background:linear-gradient(135deg,rgba(0,122,255,.08),rgba(90,156,255,.19)); }
     .course-card-act .course-card-banner { background:linear-gradient(135deg,rgba(0,122,255,.07),rgba(96,118,255,.17)); }
     .course-card.sample-course .course-card-banner { background:linear-gradient(135deg,rgba(124,135,152,.08),rgba(183,191,204,.18)); }
-    .course-card-state,.course-family { min-width:max-content; display:inline-flex; align-items:center; justify-content:center; padding:6px 7px; border-radius:5px; font-size:9px; font-weight:800; line-height:1; letter-spacing:.06em; }
-    .course-card-state { background:#087cf4; color:#fff; }
-    .course-card.sample-course .course-card-state { background:#7c8798; }
-    .course-family { background:rgba(255,255,255,.68); color:#087cf4; }
-    .course-card-banner > strong { width:100%; overflow:hidden; color:var(--text); font-size:15px; font-weight:650; line-height:1.35; text-overflow:ellipsis; white-space:nowrap; }
+    .course-card-icon { width:40px; height:40px; display:grid; place-items:center; border-radius:12px; background:rgba(255,255,255,.76); color:#087cf4; box-shadow:0 2px 8px rgba(0,122,255,.08); }
+    .course-card-icon .icon { width:22px; height:22px; }
+    .course-card-icon-exam span { font-size:10px; font-weight:850; letter-spacing:-.02em; }
+    .course-card.sample-course .course-card-icon { color:#657184; box-shadow:none; }
+    .course-card-banner > strong { min-width:0; overflow:hidden; color:var(--text); font-size:15px; font-weight:650; line-height:1.35; text-overflow:ellipsis; white-space:nowrap; }
     .course-card-body { min-height:118px; flex:1; display:flex; align-content:flex-start; align-items:center; flex-wrap:wrap; gap:2px 14px; padding:12px 24px 13px; }
     .course-card-detail { width:100%; color:#4a5565; font-size:11px; line-height:17px; }
     .course-card-action { display:inline-flex; align-items:center; gap:4px; margin-top:5px; color:#087cf4; font-size:11px; font-weight:700; }
@@ -1208,7 +1208,7 @@
     body.dark .course-card-banner { background:linear-gradient(135deg,rgba(0,122,255,.2),rgba(50,75,104,.55)); }
     body.dark .course-card.sample-course .course-card-banner { background:linear-gradient(135deg,rgba(99,110,127,.2),rgba(53,61,73,.58)); }
     body.dark .course-card-detail { color:var(--muted); }
-    body.dark .course-family { background:rgba(255,255,255,.1); color:#79bbff; }
+    body.dark .course-card-icon { background:rgba(255,255,255,.1); color:#79bbff; box-shadow:none; }
 
     .new-prediction-dialog { width:min(560px,calc(100vw - 32px)); max-height:calc(100vh - 32px); padding:0; overflow:hidden; border:1px solid var(--line); border-radius:24px; background:var(--surface); color:var(--text); box-shadow:0 30px 90px rgba(15,30,52,.28); }
     .new-prediction-dialog[open] { display:block; }

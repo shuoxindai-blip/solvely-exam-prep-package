@@ -31,6 +31,7 @@ type ReviewSectionFilter = string;
 type Course = {
   family: string;
   label: string;
+  icon: string;
   title: string;
   topics: string;
   videos: string;
@@ -1010,6 +1011,7 @@ const courses: Course[] = [
   {
     family: "sat",
     label: "SAT",
+    icon: "exam",
     title: "SAT Prep 2026",
     topics: "100",
     videos: "100",
@@ -1019,6 +1021,7 @@ const courses: Course[] = [
   {
     family: "act",
     label: "ACT",
+    icon: "exam",
     title: "ACT Prep 2026",
     topics: "235",
     videos: "235",
@@ -1028,6 +1031,7 @@ const courses: Course[] = [
   {
     family: "ap",
     label: "AP",
+    icon: "math",
     title: "AP Calculus AB",
     topics: "42+",
     videos: "42+",
@@ -1037,6 +1041,7 @@ const courses: Course[] = [
   {
     family: "ap",
     label: "AP",
+    icon: "biology",
     title: "AP Biology",
     topics: "55+",
     videos: "55+",
@@ -1046,6 +1051,7 @@ const courses: Course[] = [
   {
     family: "ap",
     label: "AP",
+    icon: "history",
     title: "AP United States History",
     topics: "45+",
     videos: "45+",
@@ -1055,6 +1061,7 @@ const courses: Course[] = [
   {
     family: "ap",
     label: "AP",
+    icon: "globe",
     title: "AP World History: Modern",
     topics: "42+",
     videos: "42+",
@@ -1064,6 +1071,7 @@ const courses: Course[] = [
   {
     family: "ap",
     label: "AP",
+    icon: "psychology",
     title: "AP Psychology",
     topics: "40+",
     videos: "40+",
@@ -1073,6 +1081,7 @@ const courses: Course[] = [
   {
     family: "ap",
     label: "AP",
+    icon: "chemistry",
     title: "AP Chemistry",
     topics: "50+",
     videos: "50+",
@@ -1082,6 +1091,7 @@ const courses: Course[] = [
   {
     family: "ap",
     label: "AP",
+    icon: "statistics",
     title: "AP Statistics",
     topics: "38+",
     videos: "38+",
@@ -1091,6 +1101,7 @@ const courses: Course[] = [
   {
     family: "ap",
     label: "AP",
+    icon: "globe",
     title: "AP Human Geography",
     topics: "35+",
     videos: "35+",
@@ -1100,6 +1111,7 @@ const courses: Course[] = [
   {
     family: "ap",
     label: "AP",
+    icon: "language",
     title: "AP English Language and Composition",
     topics: "32+",
     videos: "32+",
@@ -1109,6 +1121,7 @@ const courses: Course[] = [
   {
     family: "ap",
     label: "AP",
+    icon: "code",
     title: "AP Computer Science A",
     topics: "40+",
     videos: "40+",
@@ -1118,6 +1131,7 @@ const courses: Course[] = [
   {
     family: "abitur",
     label: "ABITUR",
+    icon: "language",
     title: "Abitur Deutsch",
     topics: "26",
     videos: "26",
@@ -1127,6 +1141,7 @@ const courses: Course[] = [
   {
     family: "abitur",
     label: "ABITUR",
+    icon: "math",
     title: "Abitur Mathematik",
     topics: "32",
     videos: "32",
@@ -1136,6 +1151,7 @@ const courses: Course[] = [
   {
     family: "abitur",
     label: "ABITUR",
+    icon: "language",
     title: "Abitur Englisch",
     topics: "24",
     videos: "24",
@@ -1145,6 +1161,7 @@ const courses: Course[] = [
   {
     family: "abitur",
     label: "ABITUR",
+    icon: "language",
     title: "Abitur Französisch",
     topics: "21",
     videos: "21",
@@ -1154,6 +1171,7 @@ const courses: Course[] = [
   {
     family: "abitur",
     label: "ABITUR",
+    icon: "biology",
     title: "Abitur Biologie",
     topics: "25",
     videos: "25",
@@ -1163,6 +1181,7 @@ const courses: Course[] = [
   {
     family: "abitur",
     label: "ABITUR",
+    icon: "chemistry",
     title: "Abitur Chemie",
     topics: "22",
     videos: "22",
@@ -1172,6 +1191,7 @@ const courses: Course[] = [
   {
     family: "abitur",
     label: "ABITUR",
+    icon: "physics",
     title: "Abitur Physik",
     topics: "20",
     videos: "20",
@@ -1607,10 +1627,6 @@ function openCourseFromHome(course: Course) {
 }
 function isCourseAvailable(course: Course) {
   return course.family === "sat" || course.family === "act";
-}
-function courseHomeState(course: Course) {
-  if (lastActivity.value.examTitle === course.title) return "IN PROGRESS";
-  return isCourseAvailable(course) ? "READY" : "COMING SOON";
 }
 function courseHomeAction(course: Course) {
   if (lastActivity.value.examTitle === course.title) return lastActivityCta.value;
@@ -2478,6 +2494,45 @@ onBeforeUnmount(() => {
     <symbol id="i-close" viewBox="0 0 24 24">
       <path d="m6 6 12 12M18 6 6 18" />
     </symbol>
+    <symbol id="i-course-math" viewBox="0 0 24 24">
+      <rect x="4" y="3" width="16" height="18" rx="3" />
+      <path d="M7.5 7.5h9M8 12h2M14 12h2M8 16h2M14 16h2" />
+    </symbol>
+    <symbol id="i-course-biology" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="8" />
+      <circle cx="13" cy="11" r="2.5" />
+      <path d="M7.5 9.5h.01M9 16h.01M16.5 15h.01" />
+    </symbol>
+    <symbol id="i-course-history" viewBox="0 0 24 24">
+      <path d="M3 9h18L12 3zM5 20h14M7 9v8M12 9v8M17 9v8" />
+    </symbol>
+    <symbol id="i-course-globe" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="9" />
+      <path d="M3 12h18M12 3c2.5 2.5 3.8 5.5 3.8 9s-1.3 6.5-3.8 9c-2.5-2.5-3.8-5.5-3.8-9S9.5 5.5 12 3Z" />
+    </symbol>
+    <symbol id="i-course-psychology" viewBox="0 0 24 24">
+      <path d="M10 19H8a4 4 0 0 1-3.2-6.4A4.5 4.5 0 0 1 8 5a4 4 0 0 1 4 4v10M14 19h2a4 4 0 0 0 3.2-6.4A4.5 4.5 0 0 0 16 5a4 4 0 0 0-4 4M8 10h1M15 10h1M7 15h2M15 15h2" />
+    </symbol>
+    <symbol id="i-course-chemistry" viewBox="0 0 24 24">
+      <path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 1.7 3h10.6a2 2 0 0 0 1.7-3l-5-9V3M7.5 16h9" />
+    </symbol>
+    <symbol id="i-course-statistics" viewBox="0 0 24 24">
+      <path d="M4 20V10M10 20V5M16 20v-8M21 20H2" />
+      <circle cx="19" cy="7" r="2" />
+    </symbol>
+    <symbol id="i-course-language" viewBox="0 0 24 24">
+      <path d="M4 5h10v8H8l-4 3zM11 16h5l4 3V9h-3" />
+      <path d="m8 10 2-4 2 4M8.7 8.5h2.6" />
+    </symbol>
+    <symbol id="i-course-code" viewBox="0 0 24 24">
+      <path d="m8 7-5 5 5 5M16 7l5 5-5 5M14 4l-4 16" />
+    </symbol>
+    <symbol id="i-course-physics" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="1.5" />
+      <ellipse cx="12" cy="12" rx="9" ry="3.8" />
+      <ellipse cx="12" cy="12" rx="9" ry="3.8" transform="rotate(60 12 12)" />
+      <ellipse cx="12" cy="12" rx="9" ry="3.8" transform="rotate(120 12 12)" />
+    </symbol>
   </svg>
 
   <div
@@ -3006,8 +3061,13 @@ onBeforeUnmount(() => {
               @click="openCourseFromHome(course)"
             >
               <span class="course-card-banner">
-                <span class="course-card-state">{{ courseHomeState(course) }}</span>
-                <span class="course-family">{{ course.label }}</span>
+                <span
+                  :class="['course-card-icon', { 'course-card-icon-exam': course.icon === 'exam' }]"
+                  aria-hidden="true"
+                >
+                  <span v-if="course.icon === 'exam'">{{ course.label }}</span>
+                  <svg v-else class="icon"><use :href="`#i-course-${course.icon}`" /></svg>
+                </span>
                 <strong>{{ course.title }}</strong>
               </span>
               <span class="course-card-body">
