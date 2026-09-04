@@ -17,10 +17,10 @@ body.pro-paywall-open { overflow: hidden; }
 .package-route .commercial-demo-controller { bottom: 132px; }
 .topic-tool-route .commercial-demo-controller { bottom: 82px; }
 .commercial-demo-controller header { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 9px; }
-.commercial-demo-controller header strong { font-size: 9px; letter-spacing: .04em; text-transform: uppercase; }
-.commercial-demo-controller header span { color: #9da9bb; font-size: 8px; }
+.commercial-demo-controller header strong { font-size: 12px; line-height: 18px; letter-spacing: .04em; text-transform: uppercase; }
+.commercial-demo-controller header span { color: #9da9bb; font-size: 12px; line-height: 18px; }
 .commercial-demo-controller nav { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
-.commercial-demo-controller button { min-height: 32px; border: 1px solid rgba(255,255,255,.1); border-radius: 999px; color: #c9d1df; background: rgba(255,255,255,.06); font-size: 9px; font-weight: 700; cursor: pointer; }
+.commercial-demo-controller button { min-height: 36px; border: 1px solid rgba(255,255,255,.1); border-radius: 999px; color: #c9d1df; background: rgba(255,255,255,.06); font-size: 12px; font-weight: 700; line-height: 18px; cursor: pointer; }
 .commercial-demo-controller button.active { border-color: #4d8dff; color: #fff; background: #2368f0; }
 
 .pro-paywall-backdrop {

@@ -102,7 +102,7 @@
     body.dark .app-qr-popover { border-color:#344157; background:#202a3a; color:#f3f6fb; }
     body.dark .app-qr-popover::after { border-color:#344157; background:#202a3a; }
     .upgrade { position:relative; margin:0 1px; height:47px; border:0; border-radius:8px; cursor:pointer; background:linear-gradient(90deg,#ffd24b,#ffca49); color:#111827; font-size:18px; font-weight:750; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:inset 0 -1px 0 rgba(153,92,0,.12); }
-    .discount { position:absolute; left:-8px; width:52px; height:52px; display:grid; place-items:center; clip-path:polygon(50% 0%,61% 9%,76% 5%,83% 19%,98% 23%,94% 39%,100% 50%,91% 61%,95% 77%,79% 82%,74% 97%,59% 91%,49% 100%,38% 91%,22% 96%,17% 81%,2% 76%,8% 61%,0 50%,8% 38%,3% 23%,18% 18%,23% 3%,39% 9%); background:#ff4e43; color:white; font-size:11px; line-height:11px; font-weight:800; transform:rotate(-7deg); }
+    .discount { position:absolute; left:-8px; width:52px; height:52px; display:grid; place-items:center; clip-path:polygon(50% 0%,61% 9%,76% 5%,83% 19%,98% 23%,94% 39%,100% 50%,91% 61%,95% 77%,79% 82%,74% 97%,59% 91%,49% 100%,38% 91%,22% 96%,17% 81%,2% 76%,8% 61%,0 50%,8% 38%,3% 23%,18% 18%,23% 3%,39% 9%); background:#ff4e43; color:white; font-size:12px; line-height:12px; font-weight:800; transform:rotate(-7deg); }
     .user-row { margin:0 -13px -12px; padding:16px 21px; border-top:1px solid #e2e7ef; display:flex; align-items:center; gap:10px; }
     body.dark .user-row { border-color:#344157; }
     .avatar { width:27px; height:27px; border-radius:50%; display:grid; place-items:center; color:white; background:#1085f7; }
@@ -1137,12 +1137,12 @@
     .predictor-library-banner { min-height:92px; display:flex; align-items:center; gap:9px; padding:16px 24px 0; background:linear-gradient(135deg,rgba(0,122,255,.08),rgba(90,156,255,.19)); }
     .predictor-library-card.package-progress .predictor-library-banner { background:linear-gradient(135deg,rgba(0,122,255,.12),rgba(90,156,255,.22)); }
     .predictor-library-card.created .predictor-library-banner { background:linear-gradient(135deg,rgba(0,122,255,.11),rgba(116,99,255,.15)); }
-    .predictor-library-state { min-width:max-content; display:inline-flex; align-items:center; justify-content:center; padding:6px 7px; border-radius:5px; background:#087cf4; color:#fff; font-size:9px; font-weight:800; letter-spacing:.06em; }
-    .predictor-library-card h3 { margin:0; overflow:hidden; color:var(--text); font-size:15px; font-weight:650; line-height:1.35; text-overflow:ellipsis; white-space:nowrap; }
+    .predictor-library-state { min-width:max-content; display:inline-flex; align-items:center; justify-content:center; padding:5px 8px; border-radius:6px; background:#087cf4; color:#fff; font-size:12px; font-weight:800; line-height:18px; letter-spacing:.04em; }
+    .predictor-library-card h3 { margin:0; overflow:hidden; color:var(--text); font-size:16px; font-weight:650; line-height:24px; text-overflow:ellipsis; white-space:nowrap; }
     .predictor-library-details { min-height:90px; display:flex; align-content:flex-start; align-items:center; flex-wrap:wrap; gap:8px 18px; padding:14px 24px 15px; }
-    .predictor-library-details span { display:inline-flex; align-items:center; gap:6px; color:#4a5565; font-size:12px; }
+    .predictor-library-details span { display:inline-flex; align-items:center; gap:6px; color:#4a5565; font-size:12px; line-height:18px; }
     .predictor-library-details span .icon { width:14px; height:14px; color:#7c8798; }
-    .predictor-library-details small { width:100%; color:#9aa1ac; font-size:11px; }
+    .predictor-library-details small { width:100%; color:#9aa1ac; font-size:12px; line-height:18px; }
     .predictor-library-card.package-progress .predictor-library-details small { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
     .new-prediction-card { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:15px; border-style:dashed; border-color:#d0d5dd; color:var(--text); cursor:pointer; transition:border-color .16s ease,background .16s ease,transform .16s ease,box-shadow .16s ease; }
     .new-prediction-card > span { width:48px; height:48px; display:grid; place-items:center; border-radius:50%; background:#f5f6f8; color:#546172; }
@@ -1192,12 +1192,12 @@
     .course-card.sample-course .course-card-banner { background:linear-gradient(135deg,rgba(124,135,152,.08),rgba(183,191,204,.18)); }
     .course-card-icon { width:40px; height:40px; display:grid; place-items:center; border-radius:12px; background:rgba(255,255,255,.76); color:#087cf4; box-shadow:0 2px 8px rgba(0,122,255,.08); }
     .course-card-icon .icon { width:22px; height:22px; }
-    .course-card-icon-exam span { font-size:10px; font-weight:850; letter-spacing:-.02em; }
+    .course-card-icon-exam span { font-size:12px; font-weight:850; letter-spacing:-.02em; }
     .course-card.sample-course .course-card-icon { color:#657184; box-shadow:none; }
-    .course-card-banner > strong { min-width:0; overflow:hidden; color:var(--text); font-size:15px; font-weight:650; line-height:1.35; text-overflow:ellipsis; white-space:nowrap; }
+    .course-card-banner > strong { min-width:0; overflow:hidden; color:var(--text); font-size:16px; font-weight:650; line-height:24px; text-overflow:ellipsis; white-space:nowrap; }
     .course-card-body { min-height:118px; flex:1; display:flex; align-content:flex-start; align-items:center; flex-wrap:wrap; gap:2px 14px; padding:12px 24px 13px; }
-    .course-card-detail { width:100%; color:#4a5565; font-size:11px; line-height:17px; }
-    .course-card-action { display:inline-flex; align-items:center; gap:4px; margin-top:5px; color:#087cf4; font-size:11px; font-weight:700; }
+    .course-card-detail { width:100%; color:#4a5565; font-size:12px; line-height:18px; }
+    .course-card-action { display:inline-flex; align-items:center; gap:4px; margin-top:5px; color:#087cf4; font-size:12px; font-weight:700; line-height:18px; }
     .course-card.sample-course .course-card-action { color:#7c8798; }
     .course-card-action .icon { width:14px; height:14px; transform:rotate(-90deg); }
     .course-empty { padding:24px; border:1px dashed var(--line); border-radius:14px; color:var(--muted); text-align:center; }
