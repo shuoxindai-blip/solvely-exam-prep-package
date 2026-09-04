@@ -283,7 +283,42 @@ button:focus-visible,
 .exam-more-menu button:hover { background: #f1f3f5; }
 .exam-more-menu svg { width: 19px; height: 19px; flex: 0 0 19px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.7; }
 .exam-more-menu button b { margin-left: auto; color: #0b77eb; font-size: 12px; }
-.accessibility-tools-menu { right: 232px; width: 205px; }
+
+.exam-hover-tooltip {
+  position: fixed;
+  z-index: 500;
+  max-width: calc(100vw - 32px);
+  padding: 7px 13px;
+  border-radius: 8px;
+  background: #0b0b0b;
+  color: #fff;
+  font: 500 13px/18px Arial, Helvetica, sans-serif;
+  white-space: nowrap;
+  pointer-events: none;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, .18);
+}
+
+.exam-hover-tooltip::after {
+  position: absolute;
+  left: var(--tooltip-arrow-x, 50%);
+  width: 0;
+  height: 0;
+  border: 7px solid transparent;
+  content: '';
+  transform: translateX(-50%);
+}
+
+.exam-hover-tooltip.is-below { transform: translateX(-50%); }
+.exam-hover-tooltip.is-below::after { bottom: 100%; border-bottom-color: #0b0b0b; }
+.exam-hover-tooltip.is-above { transform: translate(-50%, -100%); }
+.exam-hover-tooltip.is-above::after { top: 100%; border-top-color: #0b0b0b; }
+
+@media (max-width: 480px) {
+  .exam-hover-tooltip {
+    text-align: center;
+    white-space: normal;
+  }
+}
 
 .exam-dialog-backdrop {
   position: fixed;
@@ -588,7 +623,6 @@ body.is-resizing * {
   align-items: center;
   width: 100%;
   min-height: 40px;
-  overflow: hidden;
   border-radius: 7px;
   background: #f1f1f1;
 }
@@ -606,8 +640,7 @@ body.is-resizing * {
   font-weight: 500;
 }
 
-.review-button,
-.report-button {
+.review-button {
   display: inline-flex;
   align-items: center;
   gap: 7px;
@@ -638,28 +671,11 @@ body.is-resizing * {
   stroke: #ef1f24;
 }
 
-.report-button {
-  margin-left: auto;
-  padding: 0 6px;
-  color: #616161;
-  font-size: 13px;
-}
-
-.report-button svg {
-  width: 17px;
-  height: 17px;
-  fill: #777;
-  stroke: #777;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-width: 1.6;
-}
-
 .elimination-mode-button {
   display: grid;
   width: 36px;
   height: 36px;
-  margin: 0 3px 0 5px;
+  margin: 0 3px 0 auto;
   flex: 0 0 36px;
   place-items: center;
   border: 1px solid #7a7a7a;
@@ -674,10 +690,10 @@ body.is-resizing * {
 }
 
 .elimination-mode-button.active {
-  border-color: #172f86;
-  background: #294bc1;
+  border-color: #0b0b0b;
+  background: #0b0b0b;
   color: #fff;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.26);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .22);
 }
 
 .elimination-mode-button span {
@@ -2276,12 +2292,9 @@ body.mock-exam-route.mock-exam-dark {
 
 .exam-app.dark-mode .question-toolbar { background: var(--exam-muted); }
 .exam-app.dark-mode .number-badge { background: var(--exam-foreground); color: #171717; }
-.exam-app.dark-mode .review-button,
-.exam-app.dark-mode .report-button { color: var(--exam-muted-foreground); }
-.exam-app.dark-mode .review-button:hover,
-.exam-app.dark-mode .report-button:hover { color: var(--exam-foreground); }
-.exam-app.dark-mode .review-button svg,
-.exam-app.dark-mode .report-button svg { fill: var(--exam-muted-foreground); stroke: var(--exam-muted-foreground); }
+.exam-app.dark-mode .review-button { color: var(--exam-muted-foreground); }
+.exam-app.dark-mode .review-button:hover { color: var(--exam-foreground); }
+.exam-app.dark-mode .review-button svg { fill: var(--exam-muted-foreground); stroke: var(--exam-muted-foreground); }
 
 .exam-app.dark-mode .elimination-mode-button {
   border-color: #404040;
@@ -2290,7 +2303,7 @@ body.mock-exam-route.mock-exam-dark {
 }
 
 .exam-app.dark-mode .elimination-mode-button:hover { background: var(--exam-secondary); color: var(--exam-foreground); }
-.exam-app.dark-mode .elimination-mode-button.active { border-color: var(--exam-accent); background: var(--exam-accent-bg); color: var(--exam-accent); }
+.exam-app.dark-mode .elimination-mode-button.active { border-color: #0b0b0b; background: #0b0b0b; color: #fff; }
 
 .exam-app.dark-mode .choice-card,
 .exam-app.dark-mode .student-response-field input {

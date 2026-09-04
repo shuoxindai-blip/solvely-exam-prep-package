@@ -14,6 +14,7 @@ type SectionKind = 'reading' | 'math' | 'english' | 'science'
 type ExamStage = 'exam' | 'review' | 'break' | 'complete' | 'results'
 type HighlightColor = 'yellow' | 'pink' | 'blue'
 type HighlightUnderline = 'solid' | 'dashed' | 'dotted' | 'none'
+type ToolTooltipPlacement = 'above' | 'below'
 
 type TextHighlight = {
   id: string
@@ -219,7 +220,6 @@ const calculatorOpen = ref(false)
 const calculatorPoppedOut = ref(false)
 const referenceOpen = ref(false)
 const navigatorOpen = ref(false)
-const accessibilityToolsOpen = ref(false)
 const lineReaderEnabled = ref(false)
 const lineReaderY = ref(46)
 const moreOpen = ref(false)
@@ -242,6 +242,15 @@ const questionTimeSeconds = reactive<Record<string, number>>({})
 const leftWidth = ref(47.25)
 const passageScroller = ref<HTMLElement | null>(null)
 const questionScroller = ref<HTMLElement | null>(null)
+const toolTooltipElement = ref<HTMLElement | null>(null)
+const toolTooltip = reactive({
+  visible: false,
+  text: '',
+  placement: 'below' as ToolTooltipPlacement,
+  x: 0,
+  y: 0,
+  arrowX: 0,
+})
 let countdownId: number | undefined
 let toastId: number | undefined
 
@@ -640,14 +649,9 @@ function toggleReference() {
   moreOpen.value = false
 }
 
-function toggleAccessibilityTools() {
-  accessibilityToolsOpen.value = !accessibilityToolsOpen.value
-  moreOpen.value = false
-}
-
 function toggleLineReader() {
   lineReaderEnabled.value = !lineReaderEnabled.value
-  accessibilityToolsOpen.value = false
+  moreOpen.value = false
 }
 
 function moveLineReader(event: PointerEvent) {
@@ -659,7 +663,32 @@ function moveLineReader(event: PointerEvent) {
 
 function toggleMore() {
   moreOpen.value = !moreOpen.value
-  accessibilityToolsOpen.value = false
+}
+
+function showToolTooltip(event: Event, text: string, placement: ToolTooltipPlacement) {
+  const target = event.currentTarget as HTMLElement | null
+  if (!target) return
+  const rect = target.getBoundingClientRect()
+  const estimatedWidth = Math.min(window.innerWidth - 32, Math.max(220, text.length * 6.4 + 32))
+  const halfWidth = estimatedWidth / 2
+  const center = rect.left + rect.width / 2
+  toolTooltip.text = text
+  toolTooltip.placement = placement
+  toolTooltip.x = Math.max(16 + halfWidth, Math.min(window.innerWidth - 16 - halfWidth, center))
+  toolTooltip.y = placement === 'above' ? rect.top - 10 : rect.bottom + 10
+  toolTooltip.arrowX = estimatedWidth / 2 + center - toolTooltip.x
+  toolTooltip.visible = true
+  void nextTick(() => {
+    if (!toolTooltip.visible || toolTooltip.text !== text || !toolTooltipElement.value) return
+    const width = toolTooltipElement.value.offsetWidth
+    const clampedCenter = Math.max(16 + width / 2, Math.min(window.innerWidth - 16 - width / 2, center))
+    toolTooltip.x = clampedCenter
+    toolTooltip.arrowX = Math.max(13, Math.min(width - 13, width / 2 + center - clampedCenter))
+  })
+}
+
+function hideToolTooltip() {
+  toolTooltip.visible = false
 }
 
 async function toggleFullscreen() {
@@ -694,8 +723,8 @@ function closeTransientTools() {
   calculatorPoppedOut.value = false
   referenceOpen.value = false
   moreOpen.value = false
-  accessibilityToolsOpen.value = false
   highlighterEnabled.value = false
+  hideToolTooltip()
 }
 
 function updateHighlights(value: TextHighlight[]) {
@@ -731,7 +760,7 @@ function onKeydown(event: KeyboardEvent) {
     moreOpen.value = false
     shortcutsOpen.value = false
     reportOpen.value = false
-    accessibilityToolsOpen.value = false
+    hideToolTooltip()
     return
   }
   if (event.key === '?' && !target?.closest('input, select, textarea, [contenteditable]')) {
@@ -970,11 +999,8 @@ onBeforeUnmount(() => {
         <button class="timer-toggle" type="button" @click="timerVisible = !timerVisible">{{ timerVisible ? 'Hide' : 'Show' }}</button>
       </div>
       <div class="header-tools">
-        <button class="tool-button" :class="{ active: highlighterEnabled }" type="button" :aria-pressed="highlighterEnabled" :aria-label="highlighterEnabled ? 'Turn off highlight mode' : 'Turn on highlight mode'" @click="toggleHighlightMode"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 16 9.8-9.8a2 2 0 0 1 2.8 0l.2.2a2 2 0 0 1 0 2.8L8 19H5v-3Z" /><path d="M13.5 7.5 16.5 10.5M4 21h16" /></svg><span>Highlight</span></button>
-        <button v-if="isActExam && usesPassageLayout" class="tool-button" :class="{ active: accessibilityToolsOpen || lineReaderEnabled }" type="button" aria-haspopup="menu" :aria-expanded="accessibilityToolsOpen" @click="toggleAccessibilityTools"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10" /><circle cx="18" cy="17" r="2" /></svg><span>Tools</span></button>
-        <div v-if="accessibilityToolsOpen" class="exam-more-menu accessibility-tools-menu" role="menu" aria-label="Reading tools">
-          <button type="button" role="menuitemcheckbox" :aria-checked="lineReaderEnabled" @click="toggleLineReader"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 10h16M4 14h16M4 18h16" /></svg><span>Line Reader</span><b>{{ lineReaderEnabled ? 'On' : 'Off' }}</b></button>
-        </div>
+        <button class="tool-button" :class="{ active: highlighterEnabled }" type="button" :aria-pressed="highlighterEnabled" :aria-label="highlighterEnabled ? 'Turn off highlight mode' : 'Turn on highlight mode'" @mouseenter="showToolTooltip($event, 'Highlight and annotate text', 'below')" @mouseleave="hideToolTooltip" @focus="showToolTooltip($event, 'Highlight and annotate text', 'below')" @blur="hideToolTooltip" @click="toggleHighlightMode"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 16 9.8-9.8a2 2 0 0 1 2.8 0l.2.2a2 2 0 0 1 0 2.8L8 19H5v-3Z" /><path d="M13.5 7.5 16.5 10.5M4 21h16" /></svg><span>Highlight</span></button>
+        <button v-if="isActExam && usesPassageLayout" class="tool-button" :class="{ active: lineReaderEnabled }" type="button" :aria-pressed="lineReaderEnabled" :aria-label="lineReaderEnabled ? 'Turn off line reader' : 'Turn on line reader'" @mouseenter="showToolTooltip($event, 'Focus on one line of text at a time', 'below')" @mouseleave="hideToolTooltip" @focus="showToolTooltip($event, 'Focus on one line of text at a time', 'below')" @blur="hideToolTooltip" @click="toggleLineReader"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 10h16M4 14h16M4 18h16" /></svg><span>Line Reader</span></button>
         <button v-if="currentModule.section === 'math'" class="tool-button" :class="{ active: calculatorOpen }" type="button" :aria-pressed="calculatorOpen" @click="toggleCalculator"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="3" width="12" height="18" rx="2" /><path d="M8.5 6h7v3h-7zM9 13h.01M12 13h.01M15 13h.01M9 17h.01M12 17h.01M15 17h.01" /></svg><span>Calculator</span></button>
         <button v-if="currentModule.section === 'math'" class="tool-button" :class="{ active: referenceOpen }" type="button" :aria-pressed="referenceOpen" @click="toggleReference"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h8l3 3v15H7zM15 3v4h4M10 11h5M10 15h5" /></svg><span>Reference</span></button>
         <button class="tool-button" :class="{ active: moreOpen }" type="button" aria-haspopup="menu" :aria-expanded="moreOpen" @click="toggleMore"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.2" /><circle cx="12" cy="12" r="1.2" /><circle cx="19" cy="12" r="1.2" /></svg><span>More</span></button>
@@ -982,6 +1008,7 @@ onBeforeUnmount(() => {
           <button type="button" role="menuitem" @click="exitExam"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 5H5v14h5M14 8l4 4-4 4M8 12h10" /></svg><span>Save and Exit</span></button>
           <button type="button" role="menuitem" @click="toggleFullscreen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4H4v5M15 4h5v5M20 15v5h-5M4 15v5h5" /></svg><span>{{ isFullscreen ? 'Exit Fullscreen' : 'Fullscreen' }}</span></button>
           <button type="button" role="menuitem" @click="openKeyboardShortcuts"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="2" /><path d="M6 10h1M10 10h1M14 10h1M18 10h.01M6 14h8M16 14h2" /></svg><span>Keyboard shortcuts</span></button>
+          <button v-if="stage === 'exam'" type="button" role="menuitem" @click="openQuestionReport"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21V4m1 1h11l-2.2 4L17 13H6" /></svg><span>Report an issue</span></button>
           <button type="button" role="menuitem" @click="darkMode = !darkMode; moreOpen = false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 15.5A8 8 0 0 1 8.5 4 8.2 8.2 0 1 0 20 15.5Z" /></svg><span>Switch to {{ darkMode ? 'light' : 'dark' }} mode</span></button>
         </div>
       </div>
@@ -1010,7 +1037,7 @@ onBeforeUnmount(() => {
         </article>
         <div class="splitter" role="separator" aria-orientation="vertical" :aria-valuenow="Math.round(leftWidth)" tabindex="0" @pointerdown="beginResize"><span><i /><i /><i /></span></div>
         <article ref="questionScroller" class="question-panel" aria-label="Answer choices"><div class="question-shell">
-          <div class="question-toolbar"><span class="number-badge">{{ currentNumber }}</span><button class="review-button" :class="{ active: review.has(questionKey) }" type="button" @click="toggleReview"><svg viewBox="0 0 18 22" aria-hidden="true"><path d="M3 2.5h12v17l-6-4-6 4v-17Z" /></svg>Mark for Review</button><button class="report-button" type="button" @click="openQuestionReport"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21V4m1 1h11l-2.2 4L17 13H6" /></svg>Report</button><button class="elimination-mode-button" :class="{ active: eliminationMode }" type="button" :aria-pressed="eliminationMode" :aria-label="eliminationMode ? 'Hide answer elimination controls' : 'Show answer elimination controls'" :title="eliminationMode ? 'Hide answer elimination controls' : 'Eliminate answer choices'" @click="toggleEliminationMode"><span aria-hidden="true">{{ eliminationBadge }}</span></button></div>
+          <div class="question-toolbar"><span class="number-badge">{{ currentNumber }}</span><button class="review-button" :class="{ active: review.has(questionKey) }" type="button" @click="toggleReview"><svg viewBox="0 0 18 22" aria-hidden="true"><path d="M3 2.5h12v17l-6-4-6 4v-17Z" /></svg>Mark for Review</button><button class="elimination-mode-button" :class="{ active: eliminationMode }" type="button" :aria-pressed="eliminationMode" :aria-label="eliminationMode ? 'Hide answer elimination controls' : 'Show answer elimination controls'" @mouseenter="showToolTooltip($event, 'Cross out answer choices you think are wrong', 'above')" @mouseleave="hideToolTooltip" @focus="showToolTooltip($event, 'Cross out answer choices you think are wrong', 'above')" @blur="hideToolTooltip" @click="toggleEliminationMode"><span aria-hidden="true">{{ eliminationBadge }}</span></button></div>
           <h1>{{ currentQuestion.prompt }}</h1>
           <div class="choices" role="radiogroup" :aria-label="currentQuestion.prompt"><div v-for="(option, index) in currentQuestion.options" :key="`${questionKey}-${index}`" class="choice-row" :class="{ selected: answers[questionKey] === index, eliminated: eliminated[questionKey]?.has(index), 'elimination-mode': eliminationMode }"><button class="choice-card" type="button" role="radio" :aria-checked="answers[questionKey] === index" @click="selectAnswer(index)"><span class="choice-letter">{{ choiceLabel(index) }}</span><span class="choice-copy">{{ option }}</span></button><button v-if="eliminationMode" class="eliminate-button" type="button" :aria-label="`${eliminated[questionKey]?.has(index) ? 'Restore' : 'Cross out'} answer ${choiceLabel(index)}`" :aria-pressed="eliminated[questionKey]?.has(index) ?? false" @click="toggleEliminated(index)"><span>{{ choiceLabel(index) }}</span></button></div></div>
           <p class="keyboard-tip">Tip:&nbsp; press <kbd v-for="index in currentQuestion.options.length" :key="`passage-shortcut-${index}`">{{ index }}</kbd> to pick an answer, then <kbd class="enter-key">Enter</kbd> to go to the next question</p>
@@ -1022,7 +1049,7 @@ onBeforeUnmount(() => {
       <section class="math-workspace" :class="{ 'calculator-visible': calculatorOpen && !calculatorPoppedOut }">
         <div v-if="calculatorOpen" class="math-calculator-pane" :class="{ 'popped-out-host': calculatorPoppedOut }"><ScientificCalculator @close="calculatorOpen = false; calculatorPoppedOut = false" @popout-change="calculatorPoppedOut = $event" /></div><div v-if="calculatorOpen && !calculatorPoppedOut" class="math-splitter" aria-hidden="true"><span><i /><i /><i /></span></div>
         <article ref="questionScroller" class="math-question-panel" aria-label="Math question"><div class="math-question-shell" :class="{ 'diagram-question': currentQuestion.diagram }">
-          <div class="question-toolbar"><span class="number-badge">{{ currentNumber }}</span><button class="review-button" :class="{ active: review.has(questionKey) }" type="button" @click="toggleReview"><svg viewBox="0 0 18 22" aria-hidden="true"><path d="M3 2.5h12v17l-6-4-6 4v-17Z" /></svg>Mark for Review</button><button class="report-button" type="button" @click="openQuestionReport"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21V4m1 1h11l-2.2 4L17 13H6" /></svg>Report</button><button class="elimination-mode-button" :class="{ active: eliminationMode }" type="button" :aria-pressed="eliminationMode" :aria-label="eliminationMode ? 'Hide answer elimination controls' : 'Show answer elimination controls'" :title="eliminationMode ? 'Hide answer elimination controls' : 'Eliminate answer choices'" @click="toggleEliminationMode"><span aria-hidden="true">{{ eliminationBadge }}</span></button></div>
+          <div class="question-toolbar"><span class="number-badge">{{ currentNumber }}</span><button class="review-button" :class="{ active: review.has(questionKey) }" type="button" @click="toggleReview"><svg viewBox="0 0 18 22" aria-hidden="true"><path d="M3 2.5h12v17l-6-4-6 4v-17Z" /></svg>Mark for Review</button><button class="elimination-mode-button" :class="{ active: eliminationMode }" type="button" :aria-pressed="eliminationMode" :aria-label="eliminationMode ? 'Hide answer elimination controls' : 'Show answer elimination controls'" @mouseenter="showToolTooltip($event, 'Cross out answer choices you think are wrong', 'above')" @mouseleave="hideToolTooltip" @focus="showToolTooltip($event, 'Cross out answer choices you think are wrong', 'above')" @blur="hideToolTooltip" @click="toggleEliminationMode"><span aria-hidden="true">{{ eliminationBadge }}</span></button></div>
           <figure v-if="currentQuestion.diagram" class="circle-diagram"><svg viewBox="0 0 620 560" role="img" aria-label="Circle with intersecting lines through O"><circle cx="310" cy="260" r="210" /><path d="M228 66 393 458M395 69 226 457" /><text x="201" y="67">S</text><text x="397" y="67">R</text><text x="198" y="489">P</text><text x="401" y="489">Q</text><text x="321" y="280">O</text></svg><figcaption>Note: Figure not drawn to scale.</figcaption></figure>
           <HighlightablePassage :key="questionKey" :text="currentQuestion.passage" :enabled="highlighterEnabled" :model-value="highlights[questionKey] ?? []" extra-class="math-stem-copy" @update:model-value="updateHighlights" />
           <h1>{{ currentQuestion.prompt }}</h1>
@@ -1081,4 +1108,8 @@ onBeforeUnmount(() => {
 
     <div v-if="toastMessage" class="exam-toast" role="status">{{ toastMessage }}</div>
   </main>
+
+  <Teleport to="body">
+    <div v-if="toolTooltip.visible" ref="toolTooltipElement" class="exam-hover-tooltip" :class="`is-${toolTooltip.placement}`" :style="{ left: `${toolTooltip.x}px`, top: `${toolTooltip.y}px`, '--tooltip-arrow-x': `${toolTooltip.arrowX}px` }" role="tooltip">{{ toolTooltip.text }}</div>
+  </Teleport>
 </template>
