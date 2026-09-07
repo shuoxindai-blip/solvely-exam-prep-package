@@ -3847,6 +3847,7 @@ onBeforeUnmount(() => {
                 </div>
 
                 <section
+                  v-if="!isApPackage"
                   :class="[
                     'knowledge-report',
                     { 'results-locked-subsection': resultsLocked },
