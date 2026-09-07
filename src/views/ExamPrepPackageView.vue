@@ -10,12 +10,15 @@ import { buildReviewQuestions, buildSatReport } from "../data/satReport";
 import { loadActEpExam, loadActManifest, loadActTopicQuiz } from "../data/actData";
 import { buildActDiagnosticExam } from "../data/actDiagnostic";
 import { buildActReport } from "../data/actReport";
+import { loadApEpExam, loadApManifest, loadApTopicQuiz } from "../data/apData";
+import { buildApReport } from "../data/apReport";
 import { loadImprovePracticeProgress } from "../data/improvePracticeProgress";
 import type { SatReportReviewQuestion } from "../data/satReport";
 import type { EpExam } from "../types/epV2";
 import type { SatManifest, SatQuizQuestion, SatTopic } from "../types/sat";
 
 type CourseTab = "study" | "results";
+type ExamFamily = "sat" | "act" | "ap-calculus-bc";
 type ResultView = "full" | "score" | "review" | "improve";
 type ResultSource = "diagnostic" | "practice";
 type CourseEntryState = "first-visit" | "in-progress";
@@ -67,10 +70,18 @@ type LastActivity =
 
 const route = useRoute();
 const router = useRouter();
-const isActPackage = computed(() => String(route.query.exam || "").toLowerCase() === "act" || route.hash === "#course-1");
-const activeCourseHash = computed(() => isActPackage.value ? "#course-1" : "#course-0");
-const examName = computed(() => isActPackage.value ? "ACT" : "SAT");
-const packageTitle = computed(() => `${examName.value} Prep 2026`);
+const examFamily = computed<ExamFamily>(() => {
+  const queryExam = String(route.query.exam || "").toLowerCase();
+  if (queryExam === "ap-calculus-bc" || route.hash === "#course-2") return "ap-calculus-bc";
+  if (queryExam === "act" || route.hash === "#course-1") return "act";
+  return "sat";
+});
+const isActPackage = computed(() => examFamily.value === "act");
+const isApPackage = computed(() => examFamily.value === "ap-calculus-bc");
+const activeCourseHash = computed(() => isApPackage.value ? "#course-2" : isActPackage.value ? "#course-1" : "#course-0");
+const examName = computed(() => isApPackage.value ? "AP Calculus BC" : isActPackage.value ? "ACT" : "SAT");
+const packageTitle = computed(() => isApPackage.value ? "AP Calculus BC Prep 2027" : `${examName.value} Prep 2026`);
+const examRouteQuery = computed<Record<string, string>>(() => examFamily.value === "sat" ? {} as Record<string, string> : { exam: examFamily.value });
 const { accessState, isProMember, setProAccess } = useProAccess();
 const manifest = ref<SatManifest | null>(null);
 const loadError = ref("");
@@ -135,7 +146,7 @@ const lastActivity = ref<LastActivity>({
   progressPercent: 62,
   topicId: "sat_math_advanced_equivalent_expressions_01",
 });
-const isCourseOpen = computed(() => route.hash === "#course-0" || route.hash === "#course-1");
+const isCourseOpen = computed(() => ["#course-0", "#course-1", "#course-2"].includes(route.hash));
 const demoControllerStyle = computed(() =>
   demoControllerPosition.value
     ? {
@@ -175,15 +186,17 @@ const lastActivityIsAct = computed(() =>
 );
 
 const practiceResultReport = computed(() => resultExam.value
-  ? (isActPackage.value ? buildActReport(resultExam.value) : buildSatReport(resultExam.value))
+  ? (isApPackage.value ? buildApReport(resultExam.value) : isActPackage.value ? buildActReport(resultExam.value) : buildSatReport(resultExam.value))
   : null);
 const diagnosticExam = computed<EpExam | null>(() => {
   const exam = isActPackage.value ? diagnosticSourceExam.value : resultExam.value;
   if (!exam) return null;
+  if (isApPackage.value) return exam;
   return isActPackage.value ? buildActDiagnosticExam(exam) : buildSatDiagnosticExam(exam);
 });
 const diagnosticResultReport = computed(() => {
   if (!diagnosticExam.value) return null;
+  if (isApPackage.value) return buildApReport(diagnosticExam.value);
   const report = isActPackage.value ? buildActReport(diagnosticExam.value) : buildSatReport(diagnosticExam.value);
   if (isActPackage.value) return {
     ...report,
@@ -283,7 +296,7 @@ const practiceTestDurationMinutes = computed(() => {
   const sectionIds = new Set(
     (resultExam.value?.questions ?? []).map((question) => question.sectionId),
   );
-  return isActPackage.value ? 165 : (
+  return isApPackage.value ? 195 : isActPackage.value ? 165 : (
     (sectionIds.has("reading-writing") ? 64 : 0) +
     (sectionIds.has("math") ? 70 : 0)
   );
@@ -300,19 +313,16 @@ const diagnosticTestStates: { id: DiagnosticTestState; label: string }[] = [
   { id: "scoring", label: "评分中" },
   { id: "results", label: "结果已生成" },
 ];
-const resultSources: {
+const resultSources = computed<{
   id: ResultSource;
   label: string;
-}[] = [
-  {
-    id: "diagnostic",
-    label: "Diagnostic Test",
-  },
-  {
-    id: "practice",
-    label: "Full-Length Practice Test",
-  },
-];
+}[]>(() => isApPackage.value
+  ? [{ id: "practice", label: "Full-Length Practice Test" }]
+  : [
+      { id: "diagnostic", label: "Diagnostic Test" },
+      { id: "practice", label: "Full-Length Practice Test" },
+    ],
+);
 const retakeActionLabel = computed(() =>
   resultSource.value === "diagnostic"
     ? "Retake Diagnostic Test"
@@ -503,11 +513,11 @@ const practiceTestCard = computed(() => {
     return {
       stateLabel: "Pro",
       description:
-        `Take a realistic full-length ${isActPackage.value ? "ACT with Science" : "Digital SAT"} with official timing and section structure.`,
+        `Take a realistic full-length ${isApPackage.value ? "AP Calculus BC" : isActPackage.value ? "ACT with Science" : "Digital SAT"} with official timing and section structure.`,
       metrics: [
         { value: String(questionCount), label: "questions" },
         { value: String(durationMinutes), label: "min" },
-        { value: String(moduleCount), label: isActPackage.value ? "sections" : "modules" },
+        { value: String(moduleCount), label: isActPackage.value || isApPackage.value ? "sections" : "modules" },
       ],
       statusValue: "—",
       statusTotal: "",
@@ -527,7 +537,7 @@ const practiceTestCard = computed(() => {
           value: report ? formatReportDuration(report.durationSeconds) : "—",
           label: "time used",
         },
-        { value: String(moduleCount), label: isActPackage.value ? "sections" : "modules" },
+        { value: String(moduleCount), label: isActPackage.value || isApPackage.value ? "sections" : "modules" },
       ],
       statusValue: String(answeredCount),
       statusTotal: `/${questionCount}`,
@@ -540,7 +550,11 @@ const practiceTestCard = computed(() => {
     return {
       stateLabel: "Results ready",
       description: `Your score report and next-step recommendations are ready. Your result is in the ${formatOrdinal(report?.percentile ?? 70)} percentile.`,
-      metrics: isActPackage.value ? [
+      metrics: isApPackage.value ? [
+        { value: String(report?.totalScore ?? 4), label: "AP score" },
+        { value: formatOrdinal(report?.percentile ?? 70), label: "percentile" },
+        { value: "2", label: "sections" },
+      ] : isActPackage.value ? [
         { value: String(report?.totalScore ?? 25), label: "composite" },
         { value: String(report?.sections.find((section) => section.sectionId === "science")?.score ?? 25), label: "Science" },
         { value: "4", label: "sections" },
@@ -549,8 +563,8 @@ const practiceTestCard = computed(() => {
         { value: String(readingWritingScore), label: "Reading & Writing" },
         { value: String(mathScore), label: "Math" },
       ],
-      statusValue: String(report?.totalScore ?? (isActPackage.value ? 25 : 1280)),
-      statusTotal: isActPackage.value ? "/36" : "/1600",
+      statusValue: String(report?.totalScore ?? (isApPackage.value ? 4 : isActPackage.value ? 25 : 1280)),
+      statusTotal: isApPackage.value ? "/5" : isActPackage.value ? "/36" : "/1600",
       statusUnit: "Score",
       statusMeta: `Results ready · ${
         report ? formatReportDate(report.completedAt) : "Aug 21, 2026"
@@ -561,11 +575,11 @@ const practiceTestCard = computed(() => {
   return {
     stateLabel: "In progress",
     description:
-      `Resume your saved attempt from ${isActPackage.value ? "English, Section 1" : "Reading and Writing, Module 1"}. Your answers are saved automatically.`,
+      `Resume your saved attempt from ${isApPackage.value ? "Multiple Choice" : isActPackage.value ? "English, Section 1" : "Reading and Writing, Module 1"}. Your answers are saved automatically.`,
     metrics: [
       { value: String(questionCount), label: "questions" },
       { value: String(durationMinutes), label: "min" },
-      { value: String(moduleCount), label: isActPackage.value ? "sections" : "modules" },
+      { value: String(moduleCount), label: isActPackage.value || isApPackage.value ? "sections" : "modules" },
     ],
     statusValue: String(savedAnsweredCount),
     statusTotal: `/${questionCount}`,
@@ -1152,7 +1166,7 @@ const topicsBySection = computed(() => {
 
 const recommendedStartTopic = computed(() =>
   [...(manifest.value?.topics ?? [])]
-    .filter((topic) => topic.section === (isActPackage.value ? "English" : "Math") && topic.priority === "CORE")
+    .filter((topic) => topic.section === (isApPackage.value ? "AP Calculus BC" : isActPackage.value ? "English" : "Math") && topic.priority === "CORE")
     .sort((left, right) => left.order - right.order)[0] ?? null,
 );
 
@@ -1188,6 +1202,12 @@ const courseStartModule = computed(() => {
 
 function topicProgress(topic: SatTopic) {
   if (!isCourseStarted.value) return 0;
+  if (isApPackage.value) {
+    if (topic.order <= 2) return 100;
+    if (topic.order === 3) return 62;
+    if (topic.order === 4) return 33;
+    return 0;
+  }
   if (isActPackage.value) {
     if (topic.order <= 2) return 100;
     if (topic.order === 3) return 62;
@@ -1334,8 +1354,9 @@ function initializeSectionDisclosure() {
 function openCourse(course: Course) {
   activeTab.value = "study";
   const isAct = course.family === "act";
-  sectionFilter.value = isAct ? "English" : "Math";
-  void router.push({ name: "package", query: isAct ? { exam: "act" } : {}, hash: isAct ? "#course-1" : "#course-0" });
+  const isAp = course.family === "ap" && course.title === "AP Calculus BC";
+  sectionFilter.value = isAp ? "AP Calculus BC" : isAct ? "English" : "Math";
+  void router.push({ name: "package", query: isAp ? { exam: "ap-calculus-bc" } : isAct ? { exam: "act" } : {}, hash: isAp ? "#course-2" : isAct ? "#course-1" : "#course-0" });
 }
 
 function closeCourse() {
@@ -1417,7 +1438,7 @@ function openTopic(
   void router.push({
     name: tool,
     params: { topicId: topic.id },
-    query: { access: accessState.value, ...(isActPackage.value ? { exam: "act" } : {}) },
+    query: { access: accessState.value, ...examRouteQuery.value },
   });
 }
 
@@ -1476,7 +1497,7 @@ function openImprovePractice(topic: SatTopic) {
   void router.push({
     name: "quiz",
     params: { topicId: topic.id },
-    query: { source: "improve", access: accessState.value, ...(isActPackage.value ? { exam: "act" } : {}) },
+    query: { source: "improve", access: accessState.value, ...examRouteQuery.value },
   });
 }
 function dismissImportanceNote(note: "improve") {
@@ -1512,7 +1533,7 @@ function openCourseFromHome(course: Course) {
   openCourse(course);
 }
 function isCourseAvailable(course: Course) {
-  return course.family === "sat" || course.family === "act";
+  return course.family === "sat" || course.family === "act" || course.title === "AP Calculus BC";
 }
 function courseHomeAction(course: Course) {
   if (lastActivity.value.examTitle === course.title) return lastActivityCta.value;
@@ -1520,18 +1541,19 @@ function courseHomeAction(course: Course) {
 }
 function startMockExam(
   examId: number,
-  examFamily: "sat" | "act" = isActPackage.value ? "act" : "sat",
+  targetExamFamily: ExamFamily = examFamily.value,
 ) {
   if (!isProMember.value) {
-    openCommercialPaywall(`the ${examFamily.toUpperCase()} Full-Length Practice Test`, () =>
-      startMockExam(examId, examFamily),
+    const examLabel = targetExamFamily === "ap-calculus-bc" ? "AP Calculus BC" : targetExamFamily.toUpperCase();
+    openCommercialPaywall(`the ${examLabel} Full-Length Practice Test`, () =>
+      startMockExam(examId, targetExamFamily),
     );
     return;
   }
   void router.push({
     name: "mock-exam",
     params: { examId },
-    query: { access: accessState.value, ...(examFamily === "act" ? { exam: "act" } : {}) },
+    query: { access: accessState.value, ...(targetExamFamily === "sat" ? {} : { exam: targetExamFamily }) },
   });
 }
 function requestRetake() {
@@ -1694,7 +1716,7 @@ function handleDiagnosticTestAction() {
     query: {
       mode: "diagnostic",
       diagnosticState: "in-progress",
-      ...(isActPackage.value ? { exam: "act" } : {}),
+      ...examRouteQuery.value,
     },
   });
 }
@@ -1742,18 +1764,18 @@ function moveResultSource(event: KeyboardEvent) {
   if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key))
     return;
   event.preventDefault();
-  const currentIndex = resultSources.findIndex(
+  const currentIndex = resultSources.value.findIndex(
     (source) => source.id === resultSource.value,
   );
   const nextIndex =
     event.key === "Home"
       ? 0
       : event.key === "End"
-        ? resultSources.length - 1
+        ? resultSources.value.length - 1
         : (currentIndex + (event.key === "ArrowRight" ? 1 : -1) +
-            resultSources.length) %
-          resultSources.length;
-  const nextSource = resultSources[nextIndex];
+            resultSources.value.length) %
+          resultSources.value.length;
+  const nextSource = resultSources.value[nextIndex];
   if (!nextSource) return;
   setResultSource(nextSource.id);
   void nextTick(() => {
@@ -1819,9 +1841,11 @@ async function loadSimilarQuiz(topic: SatTopic) {
   similarQuizLoading.value = true;
   similarQuizLoadError.value = "";
   try {
-    const questions = await (isActPackage.value
-      ? loadActTopicQuiz(topic.id)
-      : loadTopicQuiz(topic.id));
+    const questions = await (isApPackage.value
+      ? loadApTopicQuiz(topic.id)
+      : isActPackage.value
+        ? loadActTopicQuiz(topic.id)
+        : loadTopicQuiz(topic.id));
     if (requestId !== similarQuizRequestId) return;
     similarQuizQuestions.value = questions.slice(0, 3);
     if (!questions.length)
@@ -2048,7 +2072,7 @@ watch(
     () => route.query.resultState,
   ],
   () => {
-    if (route.hash === "#course-0" || route.hash === "#course-1") syncTabFromRoute();
+    if (["#course-0", "#course-1", "#course-2"].includes(route.hash)) syncTabFromRoute();
     else activeTab.value = "study";
   },
 );
@@ -2165,23 +2189,23 @@ async function loadPackageData() {
   diagnosticSourceExam.value = null;
   loadError.value = "";
   resultLoadError.value = "";
-  sectionFilter.value = isActPackage.value ? "English" : "Math";
-  improveSection.value = isActPackage.value ? "english" : "math";
+  sectionFilter.value = isApPackage.value ? "AP Calculus BC" : isActPackage.value ? "English" : "Math";
+  improveSection.value = isApPackage.value ? "ap-calculus-bc" : isActPackage.value ? "english" : "math";
   try {
-    manifest.value = isActPackage.value ? await loadActManifest() : await loadSatManifest();
+    manifest.value = isApPackage.value ? await loadApManifest() : isActPackage.value ? await loadActManifest() : await loadSatManifest();
     initializeSectionDisclosure();
   } catch (error) {
     loadError.value = error instanceof Error ? error.message : `Unable to load ${examName.value} materials.`;
   }
   try {
-    resultExam.value = isActPackage.value ? await loadActEpExam(1) : await loadEpExam(1);
-    diagnosticSourceExam.value = isActPackage.value ? await loadActEpExam(2) : resultExam.value;
+    resultExam.value = isApPackage.value ? await loadApEpExam(1) : isActPackage.value ? await loadActEpExam(1) : await loadEpExam(1);
+    diagnosticSourceExam.value = isApPackage.value ? resultExam.value : isActPackage.value ? await loadActEpExam(2) : resultExam.value;
   } catch (error) {
     resultLoadError.value = error instanceof Error ? error.message : `Unable to load the ${examName.value} score report.`;
   }
 }
 
-watch(isActPackage, () => { void loadPackageData(); });
+watch(examFamily, () => { void loadPackageData(); });
 
 onMounted(async () => {
   document.body.classList.add("package-route");
@@ -3035,12 +3059,12 @@ onBeforeUnmount(() => {
                   <span
                     ><svg class="icon" aria-hidden="true">
                       <use href="#i-book" /></svg
-                    ><strong>{{ isActPackage ? '235' : '100' }}</strong> video lessons</span
+                    ><strong>{{ isApPackage ? '49' : isActPackage ? '235' : '100' }}</strong> video lessons</span
                   >
                   <span
                     ><svg class="icon" aria-hidden="true">
                       <use href="#i-grid" /></svg
-                    ><strong>{{ isActPackage ? '6,600' : '3,879' }}</strong> practice questions</span
+                    ><strong>{{ isApPackage ? '2,940' : isActPackage ? '6,600' : '3,879' }}</strong> practice questions</span
                   >
                   <span
                     ><svg class="icon" aria-hidden="true">
@@ -3337,6 +3361,7 @@ onBeforeUnmount(() => {
                   <h2 id="testsTitle">Tests</h2>
                 </header>
                 <article
+                  v-if="!isApPackage"
                   :class="[
                     'mock-entry-card',
                     'compact',
@@ -3501,6 +3526,7 @@ onBeforeUnmount(() => {
               <header class="course-region-heading results-page-heading">
                 <h2>Test Results</h2>
                 <nav
+                  v-if="!isApPackage"
                   :class="[
                     'results-source-switch',
                     { 'is-practice': resultSource === 'practice' },
@@ -3560,7 +3586,21 @@ onBeforeUnmount(() => {
                     { 'results-locked-subsection': resultsLocked },
                   ]"
                 >
-                <section class="score-report-card">
+                <section v-if="isApPackage" class="ap-score-report-card" aria-label="AP Calculus BC score summary">
+                  <header class="ap-score-report-cover">
+                    <img src="/assets/report/ap/calculus-bc-header.png" alt="" />
+                    <span>AP® Calculus BC</span>
+                  </header>
+                  <div class="ap-score-report-main">
+                    <em>{{ formatOrdinal(resultReport.percentile) }} percentile</em>
+                    <div class="ap-score-orbit">
+                      <span>Your score</span>
+                      <strong>{{ resultReport.totalScore }}</strong>
+                      <img src="/assets/report/ap/score-illustration.png" alt="" />
+                    </div>
+                  </div>
+                </section>
+                <section v-else class="score-report-card">
                   <header class="score-report-cover">
                     <span>{{ examName }} Prep 2026</span
                     ><small>{{
@@ -3736,13 +3776,27 @@ onBeforeUnmount(() => {
                   </div>
                 </section>
 
-                <section class="report-ai-overview">
-                  <span class="report-ai-icon"
+                <section :class="['report-ai-overview', { 'ap-report-overview': isApPackage }]">
+                  <img
+                    v-if="isApPackage"
+                    class="ap-overview-decoration"
+                    src="/assets/report/ap/overview-decoration.svg"
+                    alt=""
+                  />
+                  <img
+                    v-if="isApPackage"
+                    class="ap-overview-sparkles"
+                    src="/assets/report/ap/sparkles.svg"
+                    alt=""
+                  />
+                  <span v-else class="report-ai-icon"
                     ><svg class="icon"><use href="#i-spark" /></svg
                   ></span>
                   <div>
                     <span>{{
-                      resultSource === "diagnostic"
+                      isApPackage
+                        ? "AP Overview"
+                        : resultSource === "diagnostic"
                         ? "Diagnostic Overview"
                         : `${examName} Overview`
                     }}</span>

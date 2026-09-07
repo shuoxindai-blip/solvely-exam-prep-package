@@ -2090,6 +2090,37 @@
     .report-ai-icon .icon { width:19px; height:19px; }
     .report-ai-overview > div > span { color:#2591d5; font-size:12px; font-weight:780; letter-spacing:.03em; text-transform:uppercase; }
     .report-ai-overview p { margin:7px 0 0; max-width:760px; font-size:12px; line-height:1.6; }
+    .ap-score-report-card { width:min(100%,720px); overflow:hidden; margin-inline:auto; border:1px solid #d9e3ec; border-radius:22px; background:#fff; box-shadow:0 12px 34px rgba(37,58,86,.07); }
+    .ap-score-report-cover { position:relative; min-height:82px; display:grid; place-items:center; overflow:hidden; background:#327ba8; color:#fff; }
+    .ap-score-report-cover img { position:absolute; left:50%; top:50%; width:620px; max-width:none; opacity:.42; transform:translate(-50%,-48%); }
+    .ap-score-report-cover span { position:relative; z-index:1; font:500 18px/1.2 Poppins,Inter,sans-serif; letter-spacing:-.02em; }
+    .ap-score-report-main { position:relative; min-height:268px; display:grid; place-items:center; overflow:hidden; background:linear-gradient(180deg,#fff,#fbfdff); }
+    .ap-score-report-main > em { position:absolute; top:17px; right:18px; z-index:5; padding:6px 10px; border-radius:7px; background:#e8f3ff; color:#147ef5; font-size:12px; font-style:normal; font-weight:760; }
+    .ap-score-orbit { position:relative; width:224px; height:224px; display:flex; flex-direction:column; align-items:center; padding-top:52px; border-radius:50%; }
+    .ap-score-orbit::before { position:absolute; inset:0; border-radius:50%; background:conic-gradient(from 208deg,#267cab 0 72%,#e6edf2 72% 100%); content:""; -webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 4px),#000 calc(100% - 3px)); mask:radial-gradient(farthest-side,transparent calc(100% - 4px),#000 calc(100% - 3px)); }
+    .ap-score-orbit > span { position:relative; z-index:3; color:#327ba8; font-size:11px; font-weight:780; letter-spacing:.04em; text-transform:uppercase; }
+    .ap-score-orbit > strong { position:relative; z-index:3; margin-top:7px; color:#191d23; font:660 53px/1 Poppins,Inter,sans-serif; letter-spacing:-.07em; }
+    .ap-score-orbit > img { position:absolute; left:50%; bottom:3px; z-index:2; width:256px; max-width:none; transform:translateX(-50%); }
+    .report-ai-overview.ap-report-overview { position:relative; width:min(100%,720px); min-height:112px; grid-template-columns:minmax(0,1fr); overflow:hidden; margin-inline:auto; padding:23px 72px 23px 31px; border-color:#d8e8f8; border-radius:22px; background:linear-gradient(105deg,#fff 0%,#f5faff 100%); }
+    .ap-report-overview > div { position:relative; z-index:2; }
+    .ap-report-overview > div > span { color:#327ba8; }
+    .ap-report-overview p { max-width:560px; color:#394454; font-size:13px; line-height:1.65; }
+    .ap-overview-decoration { position:absolute; right:-8px; bottom:-13px; width:118px; opacity:.86; }
+    .ap-overview-sparkles { position:absolute; right:27px; top:17px; width:35px; }
+    body.dark .ap-score-report-card { border-color:#334252; background:#fff; }
+    body.dark .report-ai-overview.ap-report-overview { background:linear-gradient(105deg,#1c2734,#182432); }
+    body.dark .ap-report-overview p { color:#d6e3f2; }
+    @media (max-width:700px) {
+      .ap-score-report-cover { min-height:64px; }
+      .ap-score-report-cover img { width:470px; }
+      .ap-score-report-cover span { font-size:16px; }
+      .ap-score-report-main { min-height:276px; }
+      .ap-score-orbit { width:218px; height:218px; padding-top:51px; }
+      .ap-score-orbit > img { width:252px; }
+      .report-ai-overview.ap-report-overview { min-height:126px; padding:22px 60px 22px 23px; }
+      .ap-overview-decoration { right:-25px; width:112px; }
+      .ap-overview-sparkles { right:19px; top:14px; width:30px; }
+    }
 
     .knowledge-report,.report-performance-details { display:grid; gap:12px; margin-top:4px; padding-top:18px; border-top:1px solid var(--line); }
     .report-section-heading { display:flex; align-items:flex-end; justify-content:space-between; gap:18px; padding:2px 2px 0; }

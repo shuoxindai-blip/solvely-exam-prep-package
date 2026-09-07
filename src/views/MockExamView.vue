@@ -8,6 +8,7 @@ import { loadEpExam } from '../data/satData'
 import { buildSatDiagnosticExam, SAT_DIAGNOSTIC_QUESTIONS_PER_SECTION } from '../data/satDiagnostic'
 import { loadActEpExam } from '../data/actData'
 import { buildActDiagnosticExam, ACT_DIAGNOSTIC_QUESTIONS_PER_SECTION } from '../data/actDiagnostic'
+import { loadApEpExam } from '../data/apData'
 import type { EpExam } from '../types/epV2'
 import { parseActPassage, type TextReference } from '../utils/actReference'
 
@@ -102,14 +103,22 @@ const actDiagnosticModules: ModuleDefinition[] = [
   { id: 'act-diagnostic-reading', sectionNumber: 3, moduleNumber: 1, section: 'reading', title: 'Reading', total: ACT_DIAGNOSTIC_QUESTIONS_PER_SECTION, duration: 0 },
   { id: 'act-diagnostic-science', sectionNumber: 4, moduleNumber: 1, section: 'science', title: 'Science', total: ACT_DIAGNOSTIC_QUESTIONS_PER_SECTION, duration: 0 },
 ]
+const apCalculusBcModules: ModuleDefinition[] = [
+  { id: 'ap-calculus-bc-mcq', sectionNumber: 1, moduleNumber: 1, section: 'math', title: 'Multiple Choice', total: 42, duration: 105 * 60 },
+  { id: 'ap-calculus-bc-frq', sectionNumber: 2, moduleNumber: 1, section: 'math', title: 'Free Response', total: 6, duration: 90 * 60 },
+]
 
 const route = useRoute()
 const router = useRouter()
 const isDiagnostic = computed(() => String(route.query.mode || '') === 'diagnostic')
 const isActExam = computed(() => String(route.query.exam || '').toLowerCase() === 'act')
-const examName = computed(() => isActExam.value ? 'ACT' : 'SAT')
-const packageHash = computed(() => isActExam.value ? '#course-1' : '#course-0')
-const modules = computed(() => isActExam.value
+const isApExam = computed(() => String(route.query.exam || '').toLowerCase() === 'ap-calculus-bc')
+const examName = computed(() => isApExam.value ? 'AP Calculus BC' : isActExam.value ? 'ACT' : 'SAT')
+const packageHash = computed(() => isApExam.value ? '#course-2' : isActExam.value ? '#course-1' : '#course-0')
+const examQuery = computed(() => isApExam.value ? { exam: 'ap-calculus-bc' } : isActExam.value ? { exam: 'act' } : {})
+const modules = computed(() => isApExam.value
+  ? apCalculusBcModules
+  : isActExam.value
   ? (isDiagnostic.value ? actDiagnosticModules : actFullLengthModules)
   : (isDiagnostic.value ? diagnosticModules : fullLengthModules))
 const examId = computed(() => String(route.params.examId) === '2' ? 2 : 1)
@@ -122,7 +131,7 @@ function adaptEpExam(exam: EpExam, index: number, diagnostic = false): SourceExa
     id: String(exam._id),
     title: diagnostic
       ? `Free ${examName.value} Diagnostic Test`
-      : isActExam.value ? 'ACT Full-Length Practice Test' : `Digital SAT Full-Length Practice Test ${index + 1}`,
+      : isApExam.value ? 'AP Calculus BC Full-Length Practice Test' : isActExam.value ? 'ACT Full-Length Practice Test' : `Digital SAT Full-Length Practice Test ${index + 1}`,
     questions: exam.questions.map((question) => {
       const module = question.module === 'Module 2' ? 'M2' : 'M1'
       const moduleKey = `${question.sectionTitle}:${module}`
@@ -152,7 +161,7 @@ function adaptEpExam(exam: EpExam, index: number, diagnostic = false): SourceExa
 
 const activeExam = computed<SourceExam>(() => activeEpExam.value
   ? adaptEpExam(
-      isDiagnostic.value
+      isDiagnostic.value && !isApExam.value
         ? (isActExam.value ? buildActDiagnosticExam(activeEpExam.value) : buildSatDiagnosticExam(activeEpExam.value))
         : activeEpExam.value,
       examId.value - 1,
@@ -164,7 +173,9 @@ async function loadActiveExam() {
   examLoadError.value = ''
   activeEpExam.value = null
   try {
-    activeEpExam.value = await (isActExam.value
+    activeEpExam.value = await (isApExam.value
+      ? loadApEpExam(1)
+      : isActExam.value
       ? loadActEpExam(isDiagnostic.value ? 2 : examId.value)
       : loadEpExam(examId.value))
   } catch (error) {
@@ -172,14 +183,14 @@ async function loadActiveExam() {
   }
 }
 
-watch([examId, isActExam, isDiagnostic], () => { void loadActiveExam() })
+watch([examId, isActExam, isApExam, isDiagnostic], () => { void loadActiveExam() })
 
 function sourceQuestionFor(module: ModuleDefinition, number: number) {
-  const section = isActExam.value
+  const section = isActExam.value || isApExam.value
     ? module.title
     : module.section === 'reading' ? 'Reading and Writing' : 'Math'
   const moduleCode = module.moduleNumber === 1 ? 'M1' : 'M2'
-  return activeExam.value.questions.find((question) => question.section === section && (isActExam.value || question.module === moduleCode) && question.questionNumber === number)
+  return activeExam.value.questions.find((question) => question.section === section && (isActExam.value || isApExam.value || question.module === moduleCode) && question.questionNumber === number)
 }
 
 function displayQuestion(source: SourceQuestion | undefined): Question {
@@ -274,22 +285,22 @@ const questionKey = computed(() => `${currentModule.value.id}-${currentNumber.va
 const usesPassageLayout = computed(() => currentModule.value.section !== 'math')
 const activeSectionKinds = computed<SectionKind[]>(() => isActExam.value
   ? ['english', 'math', 'reading', 'science']
-  : ['reading', 'math'])
+  : isApExam.value ? ['math'] : ['reading', 'math'])
 function sectionName(section: SectionKind) {
   if (section === 'english') return 'English'
   if (section === 'reading') return isActExam.value ? 'Reading' : 'Reading and Writing'
   if (section === 'science') return 'Science'
-  return isActExam.value ? 'Mathematics' : 'Math'
+  return isApExam.value ? 'AP Calculus BC' : isActExam.value ? 'Mathematics' : 'Math'
 }
 const sectionLabel = computed(() =>
-  isActExam.value || isDiagnostic.value
+  isActExam.value || isApExam.value || isDiagnostic.value
     ? `Section ${currentModule.value.sectionNumber}`
     : `Section ${currentModule.value.sectionNumber}, Module ${currentModule.value.moduleNumber}`,
 )
 const primaryActionLabel = computed(() => {
   if (stage.value !== 'review') return 'Next'
   if (moduleIndex.value === modules.value.length - 1) return isDiagnostic.value ? 'Submit Diagnostic' : 'Finish Test'
-  return isActExam.value || isDiagnostic.value ? 'Next Section' : 'Next'
+  return isActExam.value || isApExam.value || isDiagnostic.value ? 'Next Section' : 'Next'
 })
 const timeLabel = computed(() => formatTime(timeRemaining.value))
 const displayedTimerLabel = computed(() => isDiagnostic.value ? formatTime(diagnosticElapsedSeconds.value) : timeLabel.value)
@@ -381,7 +392,9 @@ const subjectStats = computed(() =>
       attempted,
       accuracy: attempted ? Math.round((correct / attempted) * 100) : 0,
       averageSeconds: attempted ? Math.round(seconds / attempted) : 0,
-      score: isActExam.value
+      score: isApExam.value
+        ? Math.max(1, Math.min(5, Math.round(1 + (correct / Math.max(1, total)) * 4)))
+        : isActExam.value
         ? Math.max(1, Math.min(36, Math.round(1 + (correct / Math.max(1, total)) * 35)))
         : 200 + Math.round(((correct / Math.max(1, total)) * 600) / 10) * 10,
     }
@@ -399,7 +412,9 @@ const totalStats = computed(() => {
     incorrect,
     unattempted: total - attempted,
     accuracy: attempted ? Math.round((correct / attempted) * 100) : 0,
-    score: isActExam.value
+    score: isApExam.value
+      ? subjectStats.value[0]?.score ?? 1
+      : isActExam.value
       ? Math.round(subjectStats.value.filter((subject) => ['english', 'math', 'reading'].includes(subject.section)).reduce((sum, subject) => sum + subject.score, 0) / 3)
       : subjectStats.value.reduce((sum, subject) => sum + subject.score, 0),
   }
@@ -536,7 +551,7 @@ function startModule(index: number) {
 }
 
 function advanceFromReview() {
-  if (!isDiagnostic.value && moduleIndex.value === 1) {
+  if (!isDiagnostic.value && ((isApExam.value && moduleIndex.value === 0) || (!isApExam.value && !isActExam.value && moduleIndex.value === 1))) {
     stage.value = 'break'
     navigatorOpen.value = false
     return
@@ -546,7 +561,7 @@ function advanceFromReview() {
 }
 
 function resumeAfterBreak() {
-  startModule(2)
+  startModule(isApExam.value ? 1 : 2)
 }
 
 function restartExam() {
@@ -577,7 +592,6 @@ function openResults() {
 }
 
 function openPackageScoreReport() {
-  const examQuery = isActExam.value ? { exam: 'act' } : {}
   void router.push({
     name: 'package',
     query: isDiagnostic.value
@@ -585,9 +599,9 @@ function openPackageScoreReport() {
           tab: 'study',
           reportSource: 'diagnostic',
           diagnosticState: 'scoring',
-          ...examQuery,
+          ...examQuery.value,
         }
-      : { tab: 'study', practiceState: 'scoring', ...examQuery },
+      : { tab: 'study', practiceState: 'scoring', ...examQuery.value },
     hash: packageHash.value,
   })
 }
@@ -598,7 +612,6 @@ function backToCompletion() {
 }
 
 function exitExam() {
-  const examQuery = isActExam.value ? { exam: 'act' } : {}
   void router.push({
     name: 'package',
     query: isDiagnostic.value
@@ -606,9 +619,9 @@ function exitExam() {
           tab: 'study',
           reportSource: 'diagnostic',
           diagnosticState: 'in-progress',
-          ...examQuery,
+          ...examQuery.value,
         }
-      : { tab: 'study', ...examQuery },
+      : { tab: 'study', ...examQuery.value },
     hash: packageHash.value,
   })
 }

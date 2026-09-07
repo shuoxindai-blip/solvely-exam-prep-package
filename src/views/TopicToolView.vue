@@ -3,6 +3,7 @@ import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { loadSatManifest, loadTopicContent, loadTopicQuiz } from '../data/satData'
 import { loadActManifest, loadActTopicContent, loadActTopicQuiz } from '../data/actData'
+import { loadApManifest, loadApTopicContent, loadApTopicQuiz } from '../data/apData'
 import { loadImprovePracticeProgress, saveImprovePracticeProgress } from '../data/improvePracticeProgress'
 import AskSolvelyPanel from '../components/AskSolvelyPanel.vue'
 import CommercialDemoController from '../components/CommercialDemoController.vue'
@@ -19,8 +20,10 @@ const route = useRoute()
 const router = useRouter()
 const { accessState, isProMember, setProAccess } = useProAccess()
 const isActPackage = computed(() => String(route.query.exam || '').toLowerCase() === 'act')
-const examName = computed(() => isActPackage.value ? 'ACT' : 'SAT')
-const packageHash = computed(() => isActPackage.value ? '#course-1' : '#course-0')
+const isApPackage = computed(() => String(route.query.exam || '').toLowerCase() === 'ap-calculus-bc')
+const examName = computed(() => isApPackage.value ? 'AP Calculus BC' : isActPackage.value ? 'ACT' : 'SAT')
+const packageHash = computed(() => isApPackage.value ? '#course-2' : isActPackage.value ? '#course-1' : '#course-0')
+const examRouteQuery = computed(() => isApPackage.value ? { exam: 'ap-calculus-bc' } : isActPackage.value ? { exam: 'act' } : {})
 const manifest = ref<SatManifest | null>(null)
 const loadError = ref('')
 const collapsedSections = ref(new Set<string>())
@@ -118,7 +121,7 @@ const cardStatusCounts = computed(() => {
 
 function toolRoute(tool: ToolMode, target = topic.value) {
   if (!target) return
-  void router.push({ name: tool, params: { topicId: target.id }, query: { access: accessState.value, ...(isActPackage.value ? { exam: 'act' } : {}) } })
+  void router.push({ name: tool, params: { topicId: target.id }, query: { access: accessState.value, ...examRouteQuery.value } })
 }
 
 function openCommercialPaywall(context: string, action?: () => void) {
@@ -146,8 +149,8 @@ function unlockPro() {
 
 function backToPackage() {
   void router.push(isImprovePractice.value
-    ? { name: 'package', query: { tab: 'results', view: 'improve', access: accessState.value, ...(isActPackage.value ? { exam: 'act' } : {}) }, hash: packageHash.value }
-    : { name: 'package', query: { tab: 'study', access: accessState.value, ...(isActPackage.value ? { exam: 'act' } : {}) }, hash: packageHash.value })
+    ? { name: 'package', query: { tab: 'results', view: 'improve', access: accessState.value, ...examRouteQuery.value }, hash: packageHash.value }
+    : { name: 'package', query: { tab: 'study', access: accessState.value, ...examRouteQuery.value }, hash: packageHash.value })
 }
 
 function chooseTopic(target: SatTopic) {
@@ -278,7 +281,7 @@ function tryAnotherStudyPractice() {
 function advanceStudyTopic() {
   if (studyPracticeLoading.value) return
   if (isLastTopic.value) {
-    void router.push({ name: 'package', query: { tab: 'study', ...(isActPackage.value ? { exam: 'act' } : {}) }, hash: packageHash.value })
+    void router.push({ name: 'package', query: { tab: 'study', ...examRouteQuery.value }, hash: packageHash.value })
     return
   }
   if (!nextStudyTopic.value) return
@@ -288,7 +291,7 @@ function advanceStudyTopic() {
   const targetTopicId = nextStudyTopic.value.id
   studyPracticeTimer = window.setTimeout(() => {
     studyPracticeTimer = undefined
-    void router.push({ name: 'study-guide', params: { topicId: targetTopicId }, query: isActPackage.value ? { exam: 'act' } : {} })
+    void router.push({ name: 'study-guide', params: { topicId: targetTopicId }, query: examRouteQuery.value })
   }, 650)
 }
 
@@ -342,7 +345,7 @@ async function loadQuiz() {
   if (!topic.value || mode.value !== 'quiz') return
   quizLoading.value = true
   try {
-    quizQuestions.value = await (isActPackage.value ? loadActTopicQuiz(topic.value.id) : loadTopicQuiz(topic.value.id))
+    quizQuestions.value = await (isApPackage.value ? loadApTopicQuiz(topic.value.id) : isActPackage.value ? loadActTopicQuiz(topic.value.id) : loadTopicQuiz(topic.value.id))
     improvePracticeProgress.value = isImprovePractice.value ? (loadImprovePracticeProgress()[topic.value.id] ?? 0) : 0
     quizIndex.value = isImprovePractice.value && improvePracticeProgress.value > 0 && improvePracticeProgress.value < quizQuestions.value.length ? improvePracticeProgress.value : 0
     selectedAnswer.value = null
@@ -366,9 +369,9 @@ async function loadActiveContent() {
   contentLoading.value = true
   try {
     if (mode.value === 'study-guide') {
-      studyGuideContent.value = await (isActPackage.value ? loadActTopicContent(topic.value.id, 'studyGuide') : loadTopicContent(topic.value.id, 'studyGuide')) as EpStudyGuideContent
+      studyGuideContent.value = await (isApPackage.value ? loadApTopicContent(topic.value.id, 'studyGuide') : isActPackage.value ? loadActTopicContent(topic.value.id, 'studyGuide') : loadTopicContent(topic.value.id, 'studyGuide')) as EpStudyGuideContent
     } else {
-      flashCardContent.value = await (isActPackage.value ? loadActTopicContent(topic.value.id, 'flashCard') : loadTopicContent(topic.value.id, 'flashCard')) as EpFlashCardContent
+      flashCardContent.value = await (isApPackage.value ? loadApTopicContent(topic.value.id, 'flashCard') : isActPackage.value ? loadActTopicContent(topic.value.id, 'flashCard') : loadTopicContent(topic.value.id, 'flashCard')) as EpFlashCardContent
     }
   } catch (error) {
     loadError.value = error instanceof Error ? error.message : `Unable to load ${toolLabel.value}.`
@@ -401,8 +404,8 @@ onMounted(async () => {
   document.body.classList.add('topic-tool-route')
   window.addEventListener('keydown', onKeydown)
   try {
-    manifest.value = await (isActPackage.value ? loadActManifest() : loadSatManifest())
-    if (!topic.value && manifest.value.topics[0]) await router.replace({ name: mode.value, params: { topicId: manifest.value.topics[0].id }, query: isActPackage.value ? { exam: 'act' } : {} })
+    manifest.value = await (isApPackage.value ? loadApManifest() : isActPackage.value ? loadActManifest() : loadSatManifest())
+    if (!topic.value && manifest.value.topics[0]) await router.replace({ name: mode.value, params: { topicId: manifest.value.topics[0].id }, query: examRouteQuery.value })
     await loadActiveContent()
   } catch (error) {
     loadError.value = error instanceof Error ? error.message : `Unable to load ${examName.value} materials.`
@@ -422,7 +425,7 @@ onBeforeUnmount(() => {
       <button class="topic-back-button" type="button" @click="backToPackage" :aria-label="`Back to ${examName} exam prep`">←</button>
       <button class="topic-package-button" type="button" @click="backToPackage">
         <img src="/assets/solvely-ai-logo.jpeg" alt="" width="27" height="27" />
-        <span><strong>{{ isActPackage ? 'ACT Exam Prep' : 'Digital SAT Exam Prep' }}</strong><small>{{ isImprovePractice ? 'Targeted Practice' : toolLabel }}</small></span>
+        <span><strong>{{ isApPackage ? 'AP Calculus BC Exam Prep' : isActPackage ? 'ACT Exam Prep' : 'Digital SAT Exam Prep' }}</strong><small>{{ isImprovePractice ? 'Targeted Practice' : toolLabel }}</small></span>
       </button>
       <nav v-if="!isImprovePractice" class="topic-mode-switch" aria-label="Topic study tools">
         <button :class="{ active: mode === 'study-guide' }" type="button" @click="toolRoute('study-guide')">Study Guide</button>
@@ -430,7 +433,7 @@ onBeforeUnmount(() => {
         <button :class="{ active: mode === 'quiz' }" type="button" @click="toolRoute('quiz')">Quiz</button>
       </nav>
       <span v-else class="topic-practice-only-label">Quiz only</span>
-      <span class="topic-material-count">{{ isImprovePractice ? `${topic?.quizCount ?? 0} questions` : `${manifest?.totals.topics ?? (isActPackage ? 235 : 100)} ${examName} topics` }}</span>
+      <span class="topic-material-count">{{ isImprovePractice ? `${topic?.quizCount ?? 0} questions` : `${manifest?.totals.topics ?? (isApPackage ? 49 : isActPackage ? 235 : 100)} ${examName} topics` }}</span>
     </header>
 
     <div v-if="loadError" class="topic-load-state"><strong>Unable to load {{ examName }} materials</strong><p>{{ loadError }}</p></div>
@@ -631,7 +634,7 @@ onBeforeUnmount(() => {
       v-model:open="askSolvelyOpen"
       v-model:panel-width="askSolvelyPanelWidth"
       :context-title="topic.title"
-      :context-detail="isActPackage ? 'ACT Exam Prep' : 'Digital SAT Exam Prep'"
+      :context-detail="isApPackage ? 'AP Calculus BC Exam Prep' : isActPackage ? 'ACT Exam Prep' : 'Digital SAT Exam Prep'"
     />
     <CommercialDemoController
       :model-value="accessState"

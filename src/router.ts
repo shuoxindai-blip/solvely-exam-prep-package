@@ -20,7 +20,8 @@ const router = createRouter({
 })
 
 router.afterEach((to) => {
-  const exam = String(to.query.exam || '').toLowerCase() === 'act' ? 'ACT' : 'SAT'
+  const examQuery = String(to.query.exam || '').toLowerCase()
+  const exam = examQuery === 'ap-calculus-bc' ? 'AP Calculus BC' : examQuery === 'act' ? 'ACT' : 'SAT'
   const labels: Record<string, string> = { 'mock-exam': `${exam} Practice Test`, 'study-guide': `${exam} Study Guide`, flashcards: `${exam} Flashcards`, quiz: `${exam} Quiz` }
   const label = to.name === 'mock-exam' && to.query.mode === 'diagnostic'
     ? `${exam} Diagnostic Test`

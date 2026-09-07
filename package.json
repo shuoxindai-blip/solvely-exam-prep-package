@@ -4,10 +4,11 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "build:data": "node scripts/build-sat-data.mjs && node scripts/build-act-data.mjs",
+    "build:data": "node scripts/build-sat-data.mjs && node scripts/build-act-data.mjs && node scripts/build-ap-calculus-bc-data.mjs",
     "build:act-data": "node scripts/build-act-data.mjs",
+    "build:ap-data": "node scripts/build-ap-calculus-bc-data.mjs",
     "normalize:act-options": "node scripts/normalize-act-topic-options.mjs",
-    "verify:data": "node scripts/verify-sat-importance.mjs && node scripts/verify-sat-content-separation.mjs && node scripts/verify-exam-option-integrity.mjs",
+    "verify:data": "node scripts/verify-sat-importance.mjs && node scripts/verify-sat-content-separation.mjs && node scripts/verify-exam-option-integrity.mjs && node scripts/verify-ap-calculus-bc-data.mjs",
     "dev": "vite",
     "build": "vue-tsc -b && vite build",
     "preview": "vite preview",
