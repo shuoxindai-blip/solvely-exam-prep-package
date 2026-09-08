@@ -11,6 +11,7 @@ import { loadActEpExam, loadActManifest, loadActTopicQuiz } from "../data/actDat
 import { buildActDiagnosticExam } from "../data/actDiagnostic";
 import { buildActReport } from "../data/actReport";
 import { loadApEpExam, loadApManifest, loadApTopicQuiz } from "../data/apData";
+import { buildApDiagnosticExam } from "../data/apDiagnostic";
 import { buildApReport } from "../data/apReport";
 import { loadImprovePracticeProgress } from "../data/improvePracticeProgress";
 import type { SatReportReviewQuestion } from "../data/satReport";
@@ -191,12 +192,20 @@ const practiceResultReport = computed(() => resultExam.value
 const diagnosticExam = computed<EpExam | null>(() => {
   const exam = isActPackage.value ? diagnosticSourceExam.value : resultExam.value;
   if (!exam) return null;
-  if (isApPackage.value) return exam;
+  if (isApPackage.value) return buildApDiagnosticExam(exam);
   return isActPackage.value ? buildActDiagnosticExam(exam) : buildSatDiagnosticExam(exam);
 });
 const diagnosticResultReport = computed(() => {
   if (!diagnosticExam.value) return null;
-  if (isApPackage.value) return buildApReport(diagnosticExam.value);
+  if (isApPackage.value) {
+    const report = buildApReport(diagnosticExam.value);
+    return {
+      ...report,
+      attemptId: "ap-calculus-bc-diagnostic-anna-2026-09-08",
+      overview:
+        "Your AP Calculus BC diagnostic gives you a quick starting score estimate and a unit-level view of your strengths. Use the full-length test for a complete measure of pacing and exam endurance.",
+    };
+  }
   const report = isActPackage.value ? buildActReport(diagnosticExam.value) : buildSatReport(diagnosticExam.value);
   if (isActPackage.value) return {
     ...report,
@@ -316,13 +325,10 @@ const diagnosticTestStates: { id: DiagnosticTestState; label: string }[] = [
 const resultSources = computed<{
   id: ResultSource;
   label: string;
-}[]>(() => isApPackage.value
-  ? [{ id: "practice", label: "Full-Length Practice Test" }]
-  : [
-      { id: "diagnostic", label: "Diagnostic Test" },
-      { id: "practice", label: "Full-Length Practice Test" },
-    ],
-);
+}[]>(() => [
+  { id: "diagnostic", label: "Diagnostic Test" },
+  { id: "practice", label: "Full-Length Practice Test" },
+]);
 const retakeActionLabel = computed(() =>
   resultSource.value === "diagnostic"
     ? "Retake Diagnostic Test"
@@ -419,6 +425,7 @@ const resultsLockDescription = computed(() => {
 const diagnosticTestCard = computed(() => {
   const report = diagnosticResultReport.value;
   const questionCount = diagnosticExam.value?.questions.length ?? 20;
+  const sectionCount = isApPackage.value ? 1 : isActPackage.value ? 4 : 2;
   const readingWritingScore =
     report?.sections.find((section) => section.sectionId === "reading-writing")
       ?.score ?? 650;
@@ -429,17 +436,27 @@ const diagnosticTestCard = computed(() => {
     return {
       stateLabel: "Results ready",
       description: `Your predicted ${examName.value} score and free answer review are ready. This estimate does not replace the full-length test.`,
-      metrics: isActPackage.value ? [
-        { value: String(report?.totalScore ?? 25), label: "predicted composite" },
-        { value: String(report?.sections.find((section) => section.sectionId === "science")?.score ?? 25), label: "Science" },
-        { value: String(questionCount), label: "questions" },
-      ] : [
-        { value: String(report?.totalScore ?? 1280), label: "predicted total" },
-        { value: String(readingWritingScore), label: "Reading & Writing" },
-        { value: String(mathScore), label: "Math" },
-      ],
-      statusValue: String(report?.totalScore ?? (isActPackage.value ? 25 : 1280)),
-      statusTotal: isActPackage.value ? "/36" : "/1600",
+      metrics: isApPackage.value
+        ? [
+            { value: String(report?.totalScore ?? 4), label: "predicted AP score" },
+            { value: String(report?.correct ?? 16), label: "correct" },
+            { value: String(questionCount), label: "questions" },
+          ]
+        : isActPackage.value
+          ? [
+              { value: String(report?.totalScore ?? 25), label: "predicted composite" },
+              { value: String(report?.sections.find((section) => section.sectionId === "science")?.score ?? 25), label: "Science" },
+              { value: String(questionCount), label: "questions" },
+            ]
+          : [
+              { value: String(report?.totalScore ?? 1280), label: "predicted total" },
+              { value: String(readingWritingScore), label: "Reading & Writing" },
+              { value: String(mathScore), label: "Math" },
+            ],
+      statusValue: String(
+        report?.totalScore ?? (isApPackage.value ? 4 : isActPackage.value ? 25 : 1280),
+      ),
+      statusTotal: isApPackage.value ? "/5" : isActPackage.value ? "/36" : "/1600",
       statusUnit: "Score",
       statusMeta: "Results ready",
       cta: "View Free Results",
@@ -453,7 +470,7 @@ const diagnosticTestCard = computed(() => {
       metrics: [
         { value: String(questionCount), label: "questions" },
         { value: "Untimed", label: "" },
-        { value: isActPackage.value ? "4" : "2", label: "sections" },
+        { value: String(sectionCount), label: sectionCount === 1 ? "section" : "sections" },
       ],
       statusValue: String(questionCount),
       statusTotal: `/${questionCount}`,
@@ -470,7 +487,7 @@ const diagnosticTestCard = computed(() => {
       metrics: [
         { value: String(questionCount), label: "questions" },
         { value: "Untimed", label: "" },
-        { value: isActPackage.value ? "4" : "2", label: "sections" },
+        { value: String(sectionCount), label: sectionCount === 1 ? "section" : "sections" },
       ],
       statusValue: "4",
       statusTotal: `/${questionCount}`,
@@ -481,12 +498,13 @@ const diagnosticTestCard = computed(() => {
     };
   return {
     stateLabel: "Free",
-    description:
-      `Get an instant ${examName.value} score estimate and skill breakdown across ${isActPackage.value ? "English, Math, Reading, and Science" : "Reading & Writing and Math"}.`,
+    description: isApPackage.value
+      ? "Get an instant AP score estimate and unit-level skill breakdown with a focused multiple-choice diagnostic."
+      : `Get an instant ${examName.value} score estimate and skill breakdown across ${isActPackage.value ? "English, Math, Reading, and Science" : "Reading & Writing and Math"}.`,
     metrics: [
       { value: String(questionCount), label: "questions" },
       { value: "Untimed", label: "" },
-      { value: isActPackage.value ? "4" : "2", label: "sections" },
+      { value: String(sectionCount), label: sectionCount === 1 ? "section" : "sections" },
     ],
     statusValue: "—",
     statusTotal: "",
@@ -3361,7 +3379,6 @@ onBeforeUnmount(() => {
                   <h2 id="testsTitle">Tests</h2>
                 </header>
                 <article
-                  v-if="!isApPackage"
                   :class="[
                     'mock-entry-card',
                     'compact',
@@ -3526,7 +3543,6 @@ onBeforeUnmount(() => {
               <header class="course-region-heading results-page-heading">
                 <h2>Test Results</h2>
                 <nav
-                  v-if="!isApPackage"
                   :class="[
                     'results-source-switch',
                     { 'is-practice': resultSource === 'practice' },
@@ -4742,7 +4758,12 @@ onBeforeUnmount(() => {
                 v-if="resultView === 'full' || resultView === 'improve'"
                 class="report-footer full-report-footer"
               >
-                <p v-if="isActPackage">
+                <p v-if="isApPackage">
+                  AP® is a registered trademark of the College Board, which is
+                  not affiliated with or endorsed by this product. Practice
+                  scores are estimates, not official College Board scores.
+                </p>
+                <p v-else-if="isActPackage">
                   ACT® is a registered trademark of ACT, Inc., which is not
                   affiliated with or endorsed by this product. Practice scores
                   are estimates, not official ACT scores.

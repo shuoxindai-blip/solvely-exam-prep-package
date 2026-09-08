@@ -9,6 +9,7 @@ import { buildSatDiagnosticExam, SAT_DIAGNOSTIC_QUESTIONS_PER_SECTION } from '..
 import { loadActEpExam } from '../data/actData'
 import { buildActDiagnosticExam, ACT_DIAGNOSTIC_QUESTIONS_PER_SECTION } from '../data/actDiagnostic'
 import { loadApEpExam } from '../data/apData'
+import { AP_CALCULUS_BC_DIAGNOSTIC_QUESTION_COUNT, buildApDiagnosticExam } from '../data/apDiagnostic'
 import type { EpExam } from '../types/epV2'
 import { parseActPassage, type TextReference } from '../utils/actReference'
 
@@ -107,6 +108,9 @@ const apCalculusBcModules: ModuleDefinition[] = [
   { id: 'ap-calculus-bc-mcq', sectionNumber: 1, moduleNumber: 1, section: 'math', title: 'Multiple Choice', total: 42, duration: 105 * 60 },
   { id: 'ap-calculus-bc-frq', sectionNumber: 2, moduleNumber: 1, section: 'math', title: 'Free Response', total: 6, duration: 90 * 60 },
 ]
+const apCalculusBcDiagnosticModules: ModuleDefinition[] = [
+  { id: 'ap-calculus-bc-diagnostic', sectionNumber: 1, moduleNumber: 1, section: 'math', title: 'Multiple Choice', total: AP_CALCULUS_BC_DIAGNOSTIC_QUESTION_COUNT, duration: 0 },
+]
 
 const route = useRoute()
 const router = useRouter()
@@ -117,7 +121,7 @@ const examName = computed(() => isApExam.value ? 'AP Calculus BC' : isActExam.va
 const packageHash = computed(() => isApExam.value ? '#course-2' : isActExam.value ? '#course-1' : '#course-0')
 const examQuery = computed(() => isApExam.value ? { exam: 'ap-calculus-bc' } : isActExam.value ? { exam: 'act' } : {})
 const modules = computed(() => isApExam.value
-  ? apCalculusBcModules
+  ? (isDiagnostic.value ? apCalculusBcDiagnosticModules : apCalculusBcModules)
   : isActExam.value
   ? (isDiagnostic.value ? actDiagnosticModules : actFullLengthModules)
   : (isDiagnostic.value ? diagnosticModules : fullLengthModules))
@@ -161,8 +165,8 @@ function adaptEpExam(exam: EpExam, index: number, diagnostic = false): SourceExa
 
 const activeExam = computed<SourceExam>(() => activeEpExam.value
   ? adaptEpExam(
-      isDiagnostic.value && !isApExam.value
-        ? (isActExam.value ? buildActDiagnosticExam(activeEpExam.value) : buildSatDiagnosticExam(activeEpExam.value))
+      isDiagnostic.value
+        ? (isApExam.value ? buildApDiagnosticExam(activeEpExam.value) : isActExam.value ? buildActDiagnosticExam(activeEpExam.value) : buildSatDiagnosticExam(activeEpExam.value))
         : activeEpExam.value,
       examId.value - 1,
       isDiagnostic.value,
