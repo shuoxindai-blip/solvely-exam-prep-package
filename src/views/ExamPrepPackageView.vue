@@ -1187,7 +1187,6 @@ const filteredCourses = computed(() => {
 const examLibraryTotal = computed(
   () => createdPredictions.value.length + 1 + (hasPackageProgress.value ? 1 : 0),
 );
-const packageLibraryTotal = computed(() => filteredCourses.value.length);
 
 const courseSectionOptions = computed(() => [...new Set((manifest.value?.topics ?? []).map((topic) => topic.section))]);
 const reportSectionOptions = computed(() => resultReport.value?.sections ?? []);
@@ -2774,31 +2773,38 @@ onBeforeUnmount(() => {
             <header class="first-entry-heading">
               <h1 id="firstEntryTitle">Adaptive exam prep for your best score</h1>
               <p>
-                Predict likely exam questions and build a personalized prep plan, or start with an interactive standardized test prep course.
+                Predict likely exam questions and build a personalized prep plan, or start with a standardized test prep course.
               </p>
-              <div class="first-entry-tabs" role="tablist" aria-label="Choose how to prepare">
-                <button
-                  id="firstEntryCreateTab"
-                  class="first-entry-tab"
-                  type="button"
-                  role="tab"
-                  :aria-selected="firstEntryTab === 'create'"
-                  aria-controls="firstEntryCreatePanel"
-                  @click="firstEntryTab = 'create'"
-                >
-                  Create
-                </button>
-                <button
-                  id="firstEntryCoursesTab"
-                  class="first-entry-tab"
-                  type="button"
-                  role="tab"
-                  :aria-selected="firstEntryTab === 'courses'"
-                  aria-controls="firstEntryCoursesPanel"
-                  @click="firstEntryTab = 'courses'"
-                >
-                  Courses
-                </button>
+              <div class="first-entry-tabs-wrap">
+                <div class="first-entry-tabs" role="tablist" aria-label="Choose how to prepare">
+                  <button
+                    id="firstEntryCreateTab"
+                    class="first-entry-tab"
+                    type="button"
+                    role="tab"
+                    :aria-selected="firstEntryTab === 'create'"
+                    aria-controls="firstEntryCreatePanel"
+                    @click="firstEntryTab = 'create'"
+                  >
+                    Create
+                  </button>
+                  <button
+                    id="firstEntryCoursesTab"
+                    class="first-entry-tab"
+                    type="button"
+                    role="tab"
+                    :aria-selected="firstEntryTab === 'courses'"
+                    aria-controls="firstEntryCoursesPanel"
+                    @click="firstEntryTab = 'courses'"
+                  >
+                    Courses
+                  </button>
+                </div>
+                <span
+                  v-if="firstEntryTab === 'create'"
+                  class="first-entry-courses-guide"
+                  role="note"
+                >SAT, ACT and AP Prep</span>
               </div>
             </header>
             <div
@@ -3211,7 +3217,6 @@ onBeforeUnmount(() => {
         >
           <div class="predictor-library-heading exam-catalog-heading">
             <h2 id="examCatalogTitle">Standardized Test Prep Courses</h2>
-            <span>{{ packageLibraryTotal }} {{ searchQuery || familyFilter !== 'all' ? 'Found' : 'Total' }}</span>
           </div>
           <div class="exam-catalog-toolbar">
             <label class="exam-search-wrap"
