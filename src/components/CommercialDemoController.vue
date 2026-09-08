@@ -1,17 +1,45 @@
 <script setup lang="ts">
 import type { ProAccess } from '../composables/useProAccess'
 
-defineProps<{ modelValue: ProAccess }>()
-const emit = defineEmits<{ 'update:modelValue': [value: ProAccess] }>()
+type PrepHomeState = 'empty' | 'created'
+
+defineProps<{
+  modelValue: ProAccess
+  homeState?: PrepHomeState
+}>()
+const emit = defineEmits<{
+  'update:modelValue': [value: ProAccess]
+  'update:homeState': [value: PrepHomeState]
+}>()
 </script>
 
 <template>
-  <aside class="commercial-demo-controller" aria-label="Solvely Pro 演示会员控制器">
+  <aside
+    :class="['commercial-demo-controller', { 'has-home-state': homeState }]"
+    aria-label="Solvely 演示状态控制器"
+  >
     <header>
-      <strong>会员状态</strong>
+      <strong>{{ homeState ? '备考首页状态' : '会员状态' }}</strong>
       <span>仅供演示</span>
     </header>
-    <nav aria-label="预览会员状态">
+    <nav v-if="homeState" class="commercial-home-state" aria-label="预览备考首页状态">
+      <button
+        v-for="option in [
+          ['empty', '未创建备考'],
+          ['created', '已创建 1 个备考'],
+        ] as [PrepHomeState, string][]"
+        :key="option[0]"
+        type="button"
+        :class="{ active: homeState === option[0] }"
+        :aria-pressed="homeState === option[0]"
+        @click="emit('update:homeState', option[0])"
+      >
+        {{ option[1] }}
+      </button>
+    </nav>
+    <div :class="['commercial-member-state', { separated: homeState }]">
+      <span v-if="homeState" class="commercial-demo-label">会员状态</span>
+      <nav aria-label="预览会员状态">
       <button
         v-for="option in [
           ['free', '非会员'],
@@ -25,6 +53,7 @@ const emit = defineEmits<{ 'update:modelValue': [value: ProAccess] }>()
       >
         {{ option[1] }}
       </button>
-    </nav>
+      </nav>
+    </div>
   </aside>
 </template>

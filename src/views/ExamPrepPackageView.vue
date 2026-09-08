@@ -23,6 +23,7 @@ type ExamFamily = "sat" | "act" | "ap-calculus-bc";
 type ResultView = "full" | "score" | "review" | "improve";
 type ResultSource = "diagnostic" | "practice";
 type CourseEntryState = "first-visit" | "in-progress";
+type HomePreviewState = "empty" | "created";
 type PredictionSample = {
   id: number;
   school: string;
@@ -164,6 +165,9 @@ const showFirstEntryHome = computed(() => {
   if (override === "active") return false;
   return !homeExperienceActive.value && createdPredictions.value.length === 0;
 });
+const controllerHomeState = computed<HomePreviewState>(() =>
+  showFirstEntryHome.value ? "empty" : "created",
+);
 const demoControllerStyle = computed(() =>
   demoControllerPosition.value
     ? {
@@ -1479,6 +1483,14 @@ function markHomeExperienceActive() {
   } catch {
     /* The current session still switches to the active home experience. */
   }
+}
+function setHomeExperiencePreview(state: HomePreviewState) {
+  const nextQuery = {
+    ...route.query,
+    homeState: state === "empty" ? "first-entry" : "active",
+  };
+  void router.replace({ name: "package", query: nextQuery, hash: "" });
+  window.scrollTo({ top: 0, behavior: "smooth" });
 }
 function editCreatedPrediction(prediction: CreatedPrediction) {
   editingPredictionId.value = prediction.id;
@@ -4977,9 +4989,11 @@ onBeforeUnmount(() => {
       </section>
     </main>
     <CommercialDemoController
-      v-if="!isCourseOpen && !showFirstEntryHome"
+      v-if="!isCourseOpen"
       :model-value="accessState"
+      :home-state="controllerHomeState"
       @update:model-value="setProAccess"
+      @update:home-state="setHomeExperiencePreview"
     />
     <aside
       v-else-if="isCourseOpen"
