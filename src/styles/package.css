@@ -1143,7 +1143,7 @@
     .prediction-sample-stats { display:flex; gap:8px; margin-top:auto; }
     .prediction-sample-stats > span { min-width:0; height:32px; flex:1; display:flex; align-items:center; justify-content:center; padding:0 8px; border-radius:8px; background:#ecf5ff; color:#1681ed; font-size:12px; font-weight:650; line-height:14px; white-space:nowrap; }
     .prediction-sample-stats > span:last-child { background:#fff6d9; color:#e8a20a; }
-    .predictor-home-workspace.is-first-entry .exam-catalog { margin-top:56px; padding-top:34px; }
+    .predictor-home-workspace.is-first-entry .exam-catalog { width:100%; max-width:1000px; margin:56px auto 0; padding-top:34px; }
 
     body.dark .first-entry-heading h1 { color:var(--text); }
     body.dark .first-entry-heading p { color:var(--muted); }
