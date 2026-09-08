@@ -2788,7 +2788,7 @@ onBeforeUnmount(() => {
                     aria-controls="firstEntryCreatePanel"
                     @click="firstEntryTab = 'create'"
                   >
-                    Create
+                    Custom Plans
                   </button>
                   <button
                     id="firstEntryCoursesTab"
@@ -2799,7 +2799,7 @@ onBeforeUnmount(() => {
                     aria-controls="firstEntryCoursesPanel"
                     @click="firstEntryTab = 'courses'"
                   >
-                    Courses
+                    Prep Courses
                   </button>
                 </div>
                 <span
