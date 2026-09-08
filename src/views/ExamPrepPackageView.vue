@@ -2838,7 +2838,7 @@ onBeforeUnmount(() => {
               </div>
 
               <section class="prediction-samples" aria-labelledby="predictionSamplesTitle">
-                <h2 id="predictionSamplesTitle">Nothing to upload? Try a real prediction</h2>
+                <h2 id="predictionSamplesTitle">Exam prep plan examples</h2>
                 <div class="prediction-sample-grid">
                   <button
                     v-for="sample in predictionSamples"

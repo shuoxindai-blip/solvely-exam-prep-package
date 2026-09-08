@@ -1134,7 +1134,8 @@
     .first-entry-upload button { min-width:142px; height:40px; margin-top:8px; padding:0 32px; border:0; border-radius:999px; background:#007aff; color:#fff; font-size:16px; font-weight:650; line-height:24px; cursor:pointer; transition:background .16s ease,box-shadow .16s ease,transform .16s ease; }
     .first-entry-upload button:hover { background:#006fe8; box-shadow:0 7px 18px rgba(0,122,255,.22); transform:translateY(-1px); }
     .prediction-samples { width:100%; max-width:1000px; margin:48px auto 0; }
-    .prediction-samples > h2 { margin:0 0 20px; color:#181a1f; font-size:30px; font-weight:750; line-height:38px; letter-spacing:-.6px; }
+    .prediction-samples > h2,
+    .predictor-home-workspace.is-first-entry .exam-catalog-heading h2 { margin:0 0 20px; color:#181a1f; font-size:30px; font-weight:750; line-height:38px; letter-spacing:-.6px; }
     .prediction-sample-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:24px; }
     .prediction-sample-card { min-width:0; height:330px; display:flex; flex-direction:column; padding:12px; overflow:hidden; border:1px solid #e2e5e9; border-radius:24px; background:#fff; color:#181a1f; text-align:left; cursor:pointer; box-shadow:none; transition:border-color .16s ease,box-shadow .16s ease,transform .16s ease; }
     .prediction-sample-card:hover { border-color:rgba(0,122,255,.32); box-shadow:0 10px 26px rgba(28,74,130,.09); transform:translateY(-2px); }
@@ -1159,7 +1160,8 @@
     body.dark .first-entry-upload-icon.light { display:none; }
     body.dark .first-entry-upload-icon.dark { display:block; }
     body.dark .first-entry-upload h2 { color:var(--text); }
-    body.dark .prediction-samples > h2 { color:var(--text); }
+    body.dark .prediction-samples > h2,
+    body.dark .predictor-home-workspace.is-first-entry .exam-catalog-heading h2 { color:var(--text); }
     body.dark .prediction-sample-card,body.dark .prediction-sample-body { border-color:var(--line); background:var(--surface); color:var(--text); }
     body.dark .prediction-sample-image { border-color:var(--line); }
     body.dark .prediction-sample-body > small { color:var(--muted); }
@@ -2657,7 +2659,8 @@
       .first-entry-upload h2 { font-size:16px; line-height:24px; }
       .first-entry-upload p { font-size:12px; line-height:20px; }
       .prediction-samples { margin-top:34px; }
-      .prediction-samples > h2 { margin-bottom:16px; font-size:24px; line-height:31px; letter-spacing:-.35px; }
+      .prediction-samples > h2,
+      .predictor-home-workspace.is-first-entry .exam-catalog-heading h2 { margin-bottom:16px; font-size:24px; line-height:31px; letter-spacing:-.35px; }
       .prediction-sample-grid { grid-template-columns:1fr; gap:14px; }
       .prediction-sample-card { height:auto; min-height:330px; }
       .predictor-home-workspace.is-first-entry .exam-catalog { margin-top:0; padding-top:0; }
