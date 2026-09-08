@@ -3129,7 +3129,7 @@ onBeforeUnmount(() => {
             <nav
               class="course-package-tabs"
               role="tablist"
-              aria-label="Course sections"
+              aria-label="Course views"
             >
               <button
                 v-for="tab in [
@@ -3166,7 +3166,7 @@ onBeforeUnmount(() => {
                 >
                   <h2 id="lessonsTitle">Lessons</h2>
                   <div class="course-topic-filters">
-                    <label class="course-topic-select">
+                    <label v-if="!isApPackage" class="course-topic-select">
                       <select
                         v-model="sectionFilter"
                         aria-label="Filter lessons by section"
@@ -3230,7 +3230,7 @@ onBeforeUnmount(() => {
                       @click="toggleSection(section.id)"
                     >
                       <h3 :id="section.id">
-                        {{ section.examSection }} · {{ section.title }}
+                        {{ isApPackage ? section.title : `${section.examSection} · ${section.title}` }}
                       </h3>
                       <span class="study-section-meta"
                         ><span>{{ section.topics.length }} Topics</span
@@ -4169,7 +4169,7 @@ onBeforeUnmount(() => {
                 >
                   <h2>Question Review</h2>
                   <div class="course-topic-filters">
-                      <label class="course-topic-select">
+                      <label v-if="!isApPackage" class="course-topic-select">
                         <select
                           :value="reviewSectionFilter"
                           aria-label="Filter reviewed questions by section"
@@ -4506,7 +4506,7 @@ onBeforeUnmount(() => {
                 >
                   <h2>Targeted Practice</h2>
                   <div class="course-topic-filters">
-                      <label class="course-topic-select">
+                      <label v-if="!isApPackage" class="course-topic-select">
                         <select
                           v-model="improveSection"
                           aria-label="Filter improvement topics by section"
@@ -4616,7 +4616,7 @@ onBeforeUnmount(() => {
                         class="study-section-head static"
                       >
                         <h3 :id="section.id">
-                          {{ section.examSection }} · {{ section.title }}
+                          {{ isApPackage ? section.title : `${section.examSection} · ${section.title}` }}
                         </h3>
                         <span class="study-section-meta"
                           ><span
