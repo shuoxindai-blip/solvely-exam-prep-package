@@ -33,6 +33,10 @@ type PredictionSample = {
   mockCount: number;
   accuracy: number;
 };
+
+const EXAM_PREP_HOME_TITLE = "Adaptive exam prep for your best score";
+const EXAM_PREP_HOME_SUBTITLE =
+  "Predict likely exam questions and build a personalized prep plan, or start with a standardized test prep course.";
 type DiagnosticTestState =
   | "not-started"
   | "in-progress"
@@ -2668,7 +2672,7 @@ onBeforeUnmount(() => {
         </button>
         <button class="nav-button active" type="button" @click="openExamPredictorHome">
           <svg class="icon"><use href="#i-exam" /></svg
-          ><span class="nav-label">Exam Predictor</span>
+          ><span class="nav-label">Exam Prep &amp; Courses</span>
         </button>
         <button class="nav-button" type="button" aria-disabled="true">
           <svg class="icon"><use href="#i-game" /></svg
@@ -2771,10 +2775,8 @@ onBeforeUnmount(() => {
         <template v-if="showFirstEntryHome">
           <section class="first-entry-hero" aria-labelledby="firstEntryTitle">
             <header class="first-entry-heading">
-              <h1 id="firstEntryTitle">Adaptive exam prep for your best score</h1>
-              <p>
-                Predict likely exam questions and build a personalized prep plan, or start with a standardized test prep course.
-              </p>
+              <h1 id="firstEntryTitle">{{ EXAM_PREP_HOME_TITLE }}</h1>
+              <p>{{ EXAM_PREP_HOME_SUBTITLE }}</p>
               <div class="first-entry-tabs-wrap">
                 <div class="first-entry-tabs" role="tablist" aria-label="Choose how to prepare">
                   <button
@@ -2876,15 +2878,8 @@ onBeforeUnmount(() => {
         <template v-else>
           <section class="predictor-home-hero" aria-labelledby="predictorHomeTitle">
             <div class="predictor-home-copy">
-              <h1 id="predictorHomeTitle">
-                <span>Exam Predictor</span>
-                <strong>Predict. Prepare. Pass.</strong>
-              </h1>
-              <p>
-                Your AI Exam Coach: tell us about your exams and let AI predict
-                high-probability topics, generate mock exams, create a cheat
-                sheet, and build a personalized study plan.
-              </p>
+              <h1 id="predictorHomeTitle">{{ EXAM_PREP_HOME_TITLE }}</h1>
+              <p>{{ EXAM_PREP_HOME_SUBTITLE }}</p>
             </div>
             <button
               class="new-prediction-button"
