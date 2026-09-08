@@ -23,6 +23,14 @@ type ExamFamily = "sat" | "act" | "ap-calculus-bc";
 type ResultView = "full" | "score" | "review" | "improve";
 type ResultSource = "diagnostic" | "practice";
 type CourseEntryState = "first-visit" | "in-progress";
+type PredictionSample = {
+  id: number;
+  school: string;
+  course: string;
+  image: string;
+  mockCount: number;
+  accuracy: number;
+};
 type DiagnosticTestState =
   | "not-started"
   | "in-progress"
@@ -116,6 +124,8 @@ const predictionExamDate = ref("");
 const predictionFocus = ref("Balanced review");
 const createdPredictions = ref<CreatedPrediction[]>([]);
 const editingPredictionId = ref<string | null>(null);
+const prepFileInput = ref<HTMLInputElement | null>(null);
+const homeExperienceActive = ref(false);
 const similarQuizDrawer = ref<HTMLDialogElement | null>(null);
 const similarQuizBody = ref<HTMLElement | null>(null);
 const similarQuizTopic = ref<SatTopic | null>(null);
@@ -148,6 +158,12 @@ const lastActivity = ref<LastActivity>({
   topicId: "sat_math_advanced_equivalent_expressions_01",
 });
 const isCourseOpen = computed(() => ["#course-0", "#course-1", "#course-2"].includes(route.hash));
+const showFirstEntryHome = computed(() => {
+  const override = String(route.query.homeState || "").toLowerCase();
+  if (override === "first-entry") return true;
+  if (override === "active") return false;
+  return !homeExperienceActive.value && createdPredictions.value.length === 0;
+});
 const demoControllerStyle = computed(() =>
   demoControllerPosition.value
     ? {
@@ -1118,6 +1134,36 @@ const courses: Course[] = [
   catalogCourse("abitur", "Abitur Physik", 25, 1503, "physics", "german abitur physics physik science"),
 ];
 
+// Source: Solvely production /exam/home sample_ep_config.json, captured 2026-09-08.
+const predictionSamples: PredictionSample[] = [
+  {
+    id: 80304,
+    school: "University of Pennsylvania",
+    course: "BIOL 1101: Introduction to Biology A",
+    image: "/assets/ep-home/exam-sample-1.webp",
+    mockCount: 2,
+    accuracy: 94,
+  },
+  {
+    id: 80299,
+    school: "University of California -LA",
+    course: "STATS 10: Introduction to Statistical Reasoning",
+    image: "/assets/ep-home/exam-sample-2.webp",
+    mockCount: 2,
+    accuracy: 94,
+  },
+  {
+    id: 80294,
+    school: "Santa Monica College",
+    course: "PSYCH 1: General Psychology",
+    image: "/assets/ep-home/exam-sample-3.webp",
+    mockCount: 2,
+    accuracy: 94,
+  },
+];
+
+const HOME_EXPERIENCE_ACTIVE_KEY = "solvely:ep:home-active";
+
 const filteredCourses = computed(() => {
   const terms = searchQuery.value
     .trim()
@@ -1373,8 +1419,20 @@ function openCourse(course: Course) {
   activeTab.value = "study";
   const isAct = course.family === "act";
   const isAp = course.family === "ap" && course.title === "AP Calculus BC";
+  const isFirstEntrySelection = showFirstEntryHome.value;
+  const courseState: CourseEntryState = isFirstEntrySelection
+    ? "first-visit"
+    : "in-progress";
+  if (isFirstEntrySelection) markHomeExperienceActive();
   sectionFilter.value = isAp ? "AP Calculus BC" : isAct ? "English" : "Math";
-  void router.push({ name: "package", query: isAp ? { exam: "ap-calculus-bc" } : isAct ? { exam: "act" } : {}, hash: isAp ? "#course-2" : isAct ? "#course-1" : "#course-0" });
+  void router.push({
+    name: "package",
+    query: {
+      ...(isAp ? { exam: "ap-calculus-bc" } : isAct ? { exam: "act" } : {}),
+      courseState: courseState === "first-visit" ? "not-started" : "in-progress",
+    },
+    hash: isAp ? "#course-2" : isAct ? "#course-1" : "#course-0",
+  });
 }
 
 function closeCourse() {
@@ -1384,12 +1442,43 @@ function openExamPredictorHome() {
   void router.push({ name: "package" });
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
-function openNewPrediction() {
+function showNewPredictionDialog(title: string) {
   editingPredictionId.value = null;
-  predictionExamName.value = "AP Biology Midterm";
+  predictionExamName.value = title;
   predictionExamDate.value = "2026-11-12";
   predictionFocus.value = "Balanced review";
   newPredictionDialog.value?.showModal();
+}
+function openNewPrediction() {
+  showNewPredictionDialog("AP Biology Midterm");
+}
+function openSamplePrediction(sample: PredictionSample) {
+  showNewPredictionDialog(sample.course);
+}
+function openPrepFilePicker() {
+  prepFileInput.value?.click();
+}
+function handlePrepFileSelection(event: Event) {
+  const input = event.currentTarget as HTMLInputElement;
+  const file = input.files?.[0];
+  if (!file) return;
+  const fileTitle = file.name.replace(/\.[^.]+$/, "").trim();
+  showNewPredictionDialog(fileTitle || "My exam");
+  input.value = "";
+}
+function handlePrepFileDrop(event: DragEvent) {
+  const file = event.dataTransfer?.files?.[0];
+  if (!file) return;
+  const fileTitle = file.name.replace(/\.[^.]+$/, "").trim();
+  showNewPredictionDialog(fileTitle || "My exam");
+}
+function markHomeExperienceActive() {
+  homeExperienceActive.value = true;
+  try {
+    window.localStorage.setItem(HOME_EXPERIENCE_ACTIVE_KEY, "1");
+  } catch {
+    /* The current session still switches to the active home experience. */
+  }
 }
 function editCreatedPrediction(prediction: CreatedPrediction) {
   editingPredictionId.value = prediction.id;
@@ -1425,7 +1514,13 @@ function createNewPrediction() {
   } catch {
     /* The new plan still appears when browser storage is unavailable. */
   }
+  markHomeExperienceActive();
   closeNewPrediction();
+  if (route.query.homeState) {
+    const nextQuery = { ...route.query };
+    delete nextQuery.homeState;
+    void router.replace({ name: "package", query: nextQuery });
+  }
   void nextTick(() => {
     document
       .querySelector<HTMLElement>(".predictor-library-card.created")
@@ -1462,7 +1557,10 @@ function openTopic(
 
 function openCourseStartTopic() {
   const topic = courseStartTopic.value;
-  if (topic) openTopic(topic, "study-guide");
+  if (topic) {
+    markHomeExperienceActive();
+    openTopic(topic, "study-guide");
+  }
 }
 
 function openCommercialPaywall(context: string, action?: () => void) {
@@ -1512,6 +1610,7 @@ function openImprovePractice(topic: SatTopic) {
     );
     return;
   }
+  markHomeExperienceActive();
   void router.push({
     name: "quiz",
     params: { topicId: topic.id },
@@ -1544,7 +1643,7 @@ function resumeLastActivity() {
 }
 function openCourseFromHome(course: Course) {
   if (!isCourseAvailable(course)) return;
-  if (lastActivity.value.examTitle === course.title) {
+  if (!showFirstEntryHome.value && lastActivity.value.examTitle === course.title) {
     resumeLastActivity();
     return;
   }
@@ -1554,7 +1653,8 @@ function isCourseAvailable(course: Course) {
   return course.family === "sat" || course.family === "act" || course.title === "AP Calculus BC";
 }
 function courseHomeAction(course: Course) {
-  if (lastActivity.value.examTitle === course.title) return lastActivityCta.value;
+  if (!showFirstEntryHome.value && lastActivity.value.examTitle === course.title)
+    return lastActivityCta.value;
   return isCourseAvailable(course) ? "Open course" : "Coming soon";
 }
 function startMockExam(
@@ -1568,6 +1668,7 @@ function startMockExam(
     );
     return;
   }
+  markHomeExperienceActive();
   void router.push({
     name: "mock-exam",
     params: { examId },
@@ -2263,6 +2364,9 @@ onMounted(async () => {
         }];
       }
     }
+    homeExperienceActive.value =
+      createdPredictions.value.length > 0 ||
+      window.localStorage.getItem(HOME_EXPERIENCE_ACTIVE_KEY) === "1";
     showImproveImportanceNote.value =
       window.localStorage.getItem(
         `solvely:${examName.value.toLowerCase()}:improve-importance-note-dismissed`,
@@ -2647,90 +2751,162 @@ onBeforeUnmount(() => {
         <svg class="icon"><use href="#i-history" /></svg><span>History</span>
       </button>
 
-      <div v-if="!isCourseOpen" class="workspace predictor-home-workspace">
-        <section class="predictor-home-hero" aria-labelledby="predictorHomeTitle">
-          <div class="predictor-home-copy">
-            <h1 id="predictorHomeTitle">
-              <span>Exam Predictor</span>
-              <strong>Predict. Prepare. Pass.</strong>
-            </h1>
-            <p>
-              Your AI Exam Coach: tell us about your exams and let AI predict
-              high-probability topics, generate mock exams, create a cheat
-              sheet, and build a personalized study plan.
-            </p>
-          </div>
-          <button
-            class="new-prediction-button"
-            type="button"
-            @click="openNewPrediction"
-          >
-            <svg class="icon" aria-hidden="true"><use href="#i-plus" /></svg>
-            <span>New Prep Plan</span>
-          </button>
-        </section>
+      <div
+        v-if="!isCourseOpen"
+        :class="['workspace', 'predictor-home-workspace', { 'is-first-entry': showFirstEntryHome }]"
+      >
+        <template v-if="showFirstEntryHome">
+          <section class="first-entry-hero" aria-labelledby="firstEntryTitle">
+            <header class="first-entry-heading">
+              <h1 id="firstEntryTitle">Let's predict your next exam</h1>
+              <strong>Upload exam materials</strong>
+              <p>
+                Paste past exams, notes, and lecture slides to improve prediction accuracy
+              </p>
+            </header>
+            <div
+              class="first-entry-upload"
+              @dragover.prevent
+              @drop.prevent="handlePrepFileDrop"
+            >
+              <img
+                class="first-entry-upload-icon light"
+                src="/assets/ep-home/exam-upload-icon.webp"
+                alt=""
+              />
+              <img
+                class="first-entry-upload-icon dark"
+                src="/assets/ep-home/exam-upload-icon-dark.webp"
+                alt=""
+              />
+              <h2>Drag &amp; drop exam materials here</h2>
+              <p>Supported types: PDF, Word, PPT, TXT, JPG, JPEG, PNG, HEIC, WebP</p>
+              <p>We can only process the first 50 pages of each file</p>
+              <button type="button" @click="openPrepFilePicker">Select files</button>
+              <input
+                ref="prepFileInput"
+                class="sr-only"
+                type="file"
+                accept=".pdf,.doc,.docx,.ppt,.pptx,.txt,.jpg,.jpeg,.png,.heic,.webp"
+                aria-label="Choose exam materials"
+                @change="handlePrepFileSelection"
+              />
+            </div>
+          </section>
 
-        <section class="predictor-library" aria-labelledby="examLibraryTitle">
-          <div class="predictor-library-heading">
-            <h2 id="examLibraryTitle">Exam Library</h2>
-            <span>{{ examLibraryTotal }} Total</span>
-          </div>
-          <div class="predictor-library-grid">
+          <section class="prediction-samples" aria-labelledby="predictionSamplesTitle">
+            <h2 id="predictionSamplesTitle">Nothing to upload? Try a real prediction</h2>
+            <div class="prediction-sample-grid">
+              <button
+                v-for="sample in predictionSamples"
+                :key="sample.id"
+                class="prediction-sample-card"
+                type="button"
+                :aria-label="`Try ${sample.course}`"
+                @click="openSamplePrediction(sample)"
+              >
+                <span class="prediction-sample-image">
+                  <img :src="sample.image" :alt="`${sample.course} exam preview`" />
+                  <span>Final Exam</span>
+                </span>
+                <span class="prediction-sample-body">
+                  <strong>{{ sample.course }}</strong>
+                  <small>{{ sample.school }}</small>
+                  <span class="prediction-sample-stats">
+                    <span>{{ sample.mockCount }} Mock Exams</span>
+                    <span>{{ sample.accuracy }}% Accuracy</span>
+                  </span>
+                </span>
+              </button>
+            </div>
+          </section>
+        </template>
+
+        <template v-else>
+          <section class="predictor-home-hero" aria-labelledby="predictorHomeTitle">
+            <div class="predictor-home-copy">
+              <h1 id="predictorHomeTitle">
+                <span>Exam Predictor</span>
+                <strong>Predict. Prepare. Pass.</strong>
+              </h1>
+              <p>
+                Your AI Exam Coach: tell us about your exams and let AI predict
+                high-probability topics, generate mock exams, create a cheat
+                sheet, and build a personalized study plan.
+              </p>
+            </div>
             <button
-              v-if="hasPackageProgress"
-              class="predictor-library-card package-progress"
-              type="button"
-              :aria-label="`${lastActivityCta}: ${lastActivity.examTitle}, ${lastActivity.itemTitle}`"
-              @click="resumeLastActivity"
-            >
-              <div class="predictor-library-banner">
-                <span class="predictor-library-state">IN PROGRESS</span>
-                <h3>{{ lastActivity.examTitle }}</h3>
-              </div>
-              <div class="predictor-library-details">
-                <span><svg class="icon" aria-hidden="true"><use href="#i-target" /></svg>{{ lastActivityProgressLabel }}</span>
-                <span><svg class="icon" aria-hidden="true"><use href="#i-history" /></svg>{{ lastActivityContextLabel }}</span>
-                <small>{{ lastActivity.itemTitle }}</small>
-              </div>
-            </button>
-            <button
-              v-for="prediction in createdPredictions"
-              :key="prediction.id"
-              class="predictor-library-card created"
-              type="button"
-              :aria-label="`Edit ${prediction.title}`"
-              @click="editCreatedPrediction(prediction)"
-            >
-              <div class="predictor-library-banner">
-                <span class="predictor-library-state">READY</span>
-                <h3>{{ prediction.title }}</h3>
-              </div>
-              <div class="predictor-library-details">
-                <span><svg class="icon"><use href="#i-target" /></svg>0% Mastered</span>
-                <span><svg class="icon"><use href="#i-history" /></svg>{{ prediction.focus }}</span>
-                <small>Exam Date {{ formatPredictionDate(prediction.date) }}</small>
-              </div>
-            </button>
-            <article class="predictor-library-card">
-              <div class="predictor-library-banner">
-                <span class="predictor-library-state">IN PROGRESS</span>
-                <h3>Biology 101 Final Exam</h3>
-              </div>
-              <div class="predictor-library-details">
-                <span><svg class="icon"><use href="#i-target" /></svg>3% Mastered</span>
-                <small>Exam Date Oct 24</small>
-              </div>
-            </article>
-            <button
-              class="new-prediction-card"
+              class="new-prediction-button"
               type="button"
               @click="openNewPrediction"
             >
-              <span><svg class="icon" aria-hidden="true"><use href="#i-plus" /></svg></span>
-              <strong>New Prep Plan</strong>
+              <svg class="icon" aria-hidden="true"><use href="#i-plus" /></svg>
+              <span>New Prep Plan</span>
             </button>
-          </div>
-        </section>
+          </section>
+
+          <section class="predictor-library" aria-labelledby="examLibraryTitle">
+            <div class="predictor-library-heading">
+              <h2 id="examLibraryTitle">Exam Library</h2>
+              <span>{{ examLibraryTotal }} Total</span>
+            </div>
+            <div class="predictor-library-grid">
+              <button
+                v-if="hasPackageProgress"
+                class="predictor-library-card package-progress"
+                type="button"
+                :aria-label="`${lastActivityCta}: ${lastActivity.examTitle}, ${lastActivity.itemTitle}`"
+                @click="resumeLastActivity"
+              >
+                <div class="predictor-library-banner">
+                  <span class="predictor-library-state">IN PROGRESS</span>
+                  <h3>{{ lastActivity.examTitle }}</h3>
+                </div>
+                <div class="predictor-library-details">
+                  <span><svg class="icon" aria-hidden="true"><use href="#i-target" /></svg>{{ lastActivityProgressLabel }}</span>
+                  <span><svg class="icon" aria-hidden="true"><use href="#i-history" /></svg>{{ lastActivityContextLabel }}</span>
+                  <small>{{ lastActivity.itemTitle }}</small>
+                </div>
+              </button>
+              <button
+                v-for="prediction in createdPredictions"
+                :key="prediction.id"
+                class="predictor-library-card created"
+                type="button"
+                :aria-label="`Edit ${prediction.title}`"
+                @click="editCreatedPrediction(prediction)"
+              >
+                <div class="predictor-library-banner">
+                  <span class="predictor-library-state">READY</span>
+                  <h3>{{ prediction.title }}</h3>
+                </div>
+                <div class="predictor-library-details">
+                  <span><svg class="icon"><use href="#i-target" /></svg>0% Mastered</span>
+                  <span><svg class="icon"><use href="#i-history" /></svg>{{ prediction.focus }}</span>
+                  <small>Exam Date {{ formatPredictionDate(prediction.date) }}</small>
+                </div>
+              </button>
+              <article class="predictor-library-card">
+                <div class="predictor-library-banner">
+                  <span class="predictor-library-state">IN PROGRESS</span>
+                  <h3>Biology 101 Final Exam</h3>
+                </div>
+                <div class="predictor-library-details">
+                  <span><svg class="icon"><use href="#i-target" /></svg>3% Mastered</span>
+                  <small>Exam Date Oct 24</small>
+                </div>
+              </article>
+              <button
+                class="new-prediction-card"
+                type="button"
+                @click="openNewPrediction"
+              >
+                <span><svg class="icon" aria-hidden="true"><use href="#i-plus" /></svg></span>
+                <strong>New Prep Plan</strong>
+              </button>
+            </div>
+          </section>
+        </template>
 
         <header class="hero" hidden>
           <h1>Solvely: Your AI Study Companion</h1>
@@ -4801,12 +4977,12 @@ onBeforeUnmount(() => {
       </section>
     </main>
     <CommercialDemoController
-      v-if="!isCourseOpen"
+      v-if="!isCourseOpen && !showFirstEntryHome"
       :model-value="accessState"
       @update:model-value="setProAccess"
     />
     <aside
-      v-else
+      v-else-if="isCourseOpen"
       ref="demoController"
       :class="[
         'mock-demo-controller unified-demo-controller',
