@@ -1170,7 +1170,7 @@
     body.dark .prediction-sample-card,body.dark .prediction-sample-body { border-color:var(--line); background:var(--surface); color:var(--text); }
     body.dark .prediction-sample-image { border-color:var(--line); }
     body.dark .prediction-sample-body > small { color:var(--muted); }
-    .predictor-home-hero { min-height:306px; display:grid; grid-template-columns:minmax(0,900px) minmax(0,1fr); align-items:start; gap:48px; padding:32px 0; }
+    .predictor-home-hero { min-height:190px; display:grid; grid-template-columns:minmax(0,900px) minmax(0,1fr); align-items:start; gap:48px; padding:32px 0; }
     .predictor-home-copy { align-self:start; }
     .predictor-home-copy h1 { margin:0; color:var(--text); font:800 48px/1.1 Inter,ui-sans-serif,system-ui,sans-serif; letter-spacing:-1.2px; }
     .predictor-home-copy p { max-width:900px; margin:16px 0 0; color:#5f636b; font-size:15px; font-weight:400; line-height:24px; }
