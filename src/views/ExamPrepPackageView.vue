@@ -24,6 +24,7 @@ type ResultView = "full" | "score" | "review" | "improve";
 type ResultSource = "diagnostic" | "practice";
 type CourseEntryState = "first-visit" | "in-progress";
 type HomePreviewState = "empty" | "created";
+type FirstEntryTab = "create" | "courses";
 type PredictionSample = {
   id: number;
   school: string;
@@ -165,6 +166,7 @@ const showFirstEntryHome = computed(() => {
   if (override === "active") return false;
   return !homeExperienceActive.value && createdPredictions.value.length === 0;
 });
+const firstEntryTab = ref<FirstEntryTab>("create");
 const controllerHomeState = computed<HomePreviewState>(() =>
   showFirstEntryHome.value ? "empty" : "created",
 );
@@ -2770,66 +2772,97 @@ onBeforeUnmount(() => {
         <template v-if="showFirstEntryHome">
           <section class="first-entry-hero" aria-labelledby="firstEntryTitle">
             <header class="first-entry-heading">
-              <h1 id="firstEntryTitle">Let's predict your next exam</h1>
-              <strong>Upload exam materials</strong>
+              <h1 id="firstEntryTitle">Adaptive exam prep for your best score</h1>
               <p>
-                Paste past exams, notes, and lecture slides to improve prediction accuracy
+                Predict likely exam questions and build a personalized prep plan, or start with an interactive standardized test prep course.
               </p>
+              <div class="first-entry-tabs" role="tablist" aria-label="Choose how to prepare">
+                <button
+                  id="firstEntryCreateTab"
+                  class="first-entry-tab"
+                  type="button"
+                  role="tab"
+                  :aria-selected="firstEntryTab === 'create'"
+                  aria-controls="firstEntryCreatePanel"
+                  @click="firstEntryTab = 'create'"
+                >
+                  Create
+                </button>
+                <button
+                  id="firstEntryCoursesTab"
+                  class="first-entry-tab"
+                  type="button"
+                  role="tab"
+                  :aria-selected="firstEntryTab === 'courses'"
+                  aria-controls="firstEntryCoursesPanel"
+                  @click="firstEntryTab = 'courses'"
+                >
+                  Courses
+                </button>
+              </div>
             </header>
             <div
-              class="first-entry-upload"
-              @dragover.prevent
-              @drop.prevent="handlePrepFileDrop"
+              v-if="firstEntryTab === 'create'"
+              id="firstEntryCreatePanel"
+              class="first-entry-tab-panel"
+              role="tabpanel"
+              aria-labelledby="firstEntryCreateTab"
             >
-              <img
-                class="first-entry-upload-icon light"
-                src="/assets/ep-home/exam-upload-icon.webp"
-                alt=""
-              />
-              <img
-                class="first-entry-upload-icon dark"
-                src="/assets/ep-home/exam-upload-icon-dark.webp"
-                alt=""
-              />
-              <h2>Drag &amp; drop exam materials here</h2>
-              <p>Supported types: PDF, Word, PPT, TXT, JPG, JPEG, PNG, HEIC, WebP</p>
-              <p>We can only process the first 50 pages of each file</p>
-              <button type="button" @click="openPrepFilePicker">Select files</button>
-              <input
-                ref="prepFileInput"
-                class="sr-only"
-                type="file"
-                accept=".pdf,.doc,.docx,.ppt,.pptx,.txt,.jpg,.jpeg,.png,.heic,.webp"
-                aria-label="Choose exam materials"
-                @change="handlePrepFileSelection"
-              />
-            </div>
-          </section>
-
-          <section class="prediction-samples" aria-labelledby="predictionSamplesTitle">
-            <h2 id="predictionSamplesTitle">Nothing to upload? Try a real prediction</h2>
-            <div class="prediction-sample-grid">
-              <button
-                v-for="sample in predictionSamples"
-                :key="sample.id"
-                class="prediction-sample-card"
-                type="button"
-                :aria-label="`Try ${sample.course}`"
-                @click="openSamplePrediction(sample)"
+              <div
+                class="first-entry-upload"
+                @dragover.prevent
+                @drop.prevent="handlePrepFileDrop"
               >
-                <span class="prediction-sample-image">
-                  <img :src="sample.image" :alt="`${sample.course} exam preview`" />
-                  <span>Final Exam</span>
-                </span>
-                <span class="prediction-sample-body">
-                  <strong>{{ sample.course }}</strong>
-                  <small>{{ sample.school }}</small>
-                  <span class="prediction-sample-stats">
-                    <span>{{ sample.mockCount }} Mock Exams</span>
-                    <span>{{ sample.accuracy }}% Accuracy</span>
-                  </span>
-                </span>
-              </button>
+                <img
+                  class="first-entry-upload-icon light"
+                  src="/assets/ep-home/exam-upload-icon.webp"
+                  alt=""
+                />
+                <img
+                  class="first-entry-upload-icon dark"
+                  src="/assets/ep-home/exam-upload-icon-dark.webp"
+                  alt=""
+                />
+                <h2>Drag &amp; drop exam materials here</h2>
+                <p>Supported types: PDF, Word, PPT, TXT, JPG, JPEG, PNG, HEIC, WebP</p>
+                <p>We can only process the first 50 pages of each file</p>
+                <button type="button" @click="openPrepFilePicker">Select files</button>
+                <input
+                  ref="prepFileInput"
+                  class="sr-only"
+                  type="file"
+                  accept=".pdf,.doc,.docx,.ppt,.pptx,.txt,.jpg,.jpeg,.png,.heic,.webp"
+                  aria-label="Choose exam materials"
+                  @change="handlePrepFileSelection"
+                />
+              </div>
+
+              <section class="prediction-samples" aria-labelledby="predictionSamplesTitle">
+                <h2 id="predictionSamplesTitle">Nothing to upload? Try a real prediction</h2>
+                <div class="prediction-sample-grid">
+                  <button
+                    v-for="sample in predictionSamples"
+                    :key="sample.id"
+                    class="prediction-sample-card"
+                    type="button"
+                    :aria-label="`Try ${sample.course}`"
+                    @click="openSamplePrediction(sample)"
+                  >
+                    <span class="prediction-sample-image">
+                      <img :src="sample.image" :alt="`${sample.course} exam preview`" />
+                      <span>Final Exam</span>
+                    </span>
+                    <span class="prediction-sample-body">
+                      <strong>{{ sample.course }}</strong>
+                      <small>{{ sample.school }}</small>
+                      <span class="prediction-sample-stats">
+                        <span>{{ sample.mockCount }} Mock Exams</span>
+                        <span>{{ sample.accuracy }}% Accuracy</span>
+                      </span>
+                    </span>
+                  </button>
+                </div>
+              </section>
             </div>
           </section>
         </template>
@@ -3169,7 +3202,13 @@ onBeforeUnmount(() => {
           </div>
         </section>
 
-        <section class="exam-catalog" aria-labelledby="examCatalogTitle">
+        <section
+          v-if="!showFirstEntryHome || firstEntryTab === 'courses'"
+          id="firstEntryCoursesPanel"
+          :class="['exam-catalog', { 'first-entry-courses-panel': showFirstEntryHome }]"
+          :role="showFirstEntryHome ? 'tabpanel' : undefined"
+          :aria-labelledby="showFirstEntryHome ? 'firstEntryCoursesTab' : 'examCatalogTitle'"
+        >
           <div class="predictor-library-heading exam-catalog-heading">
             <h2 id="examCatalogTitle">Standardized Test Prep Courses</h2>
             <span>{{ packageLibraryTotal }} {{ searchQuery || familyFilter !== 'all' ? 'Found' : 'Total' }}</span>
