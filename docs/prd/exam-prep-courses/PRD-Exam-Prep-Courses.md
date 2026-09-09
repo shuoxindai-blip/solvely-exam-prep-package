@@ -10,17 +10,6 @@
 
 | 日期 | 版本 | 变更内容 | 负责人 |
 |---|---|---|---|
-| 2026-09-09 | v1.0 | 基于当前 Demo 反向生成完整 PRD；补齐页面、交互、可达状态组合、SAT/ACT/AP 差异、商业化规则、埋点与验收用例 | 产品 / 设计 / 开发 / 数据 / QA |
-| 2026-09-09 | v1.1 | 严格按 Solvely canonical PRD 结构重排，并统一三列模块表、实验、埋点和自检。 | 产品 |
-| 2026-09-09 | v1.2 | 补充 Web SAT Performance details 的汇总指标、Topic matrix、四象限及 Score Report 计算与验收口径。 | 产品 |
-| 2026-09-09 | v1.3 | 将 iOS 备考包物料纳入 Web 内容基线，明确可复用资产、Web 适配、发布门槛、版本治理与验收规则。 | 产品 / Content / Backend / QA |
-| 2026-09-09 | v1.4 | 补充免费课程留存、专业能力证明与长期转化的商业化依据，并明确 AP 与 SAT/ACT 的课程价值和考试前置原因。 | 产品 / Growth / Content |
-| 2026-09-09 | v1.5 | 对齐 Demo 与 PRD 的考试状态，补齐提交后返回课程、评分等待、结果查看与异常恢复规则；商业化规则收口到 4.8。 | 产品 / 设计 / 开发 / QA |
-| 2026-09-09 | v1.6 | 报告改为每个报告模块独立锁定；Free 用户查看 Full-Length 报告预览时由 Pro 权益门槛优先于考试前置状态，锁定层精简为 Pro icon、单一标题与 CTA。 | 产品 / 设计 / 开发 / QA |
-| 2026-09-09 | v1.7 | 完成 38 条 PRD 事件映射，明确 8 条旧事件的条件复用、Custom Plan Submit/Result 客户端与服务端边界、request_id 关联及 subscription_period 参数。 | 产品 / Data / Engineering / QA |
-| 2026-09-09 | v1.8 | 补齐 Diagnostic 与 Full-Length 卡片/报告文案，统一 Full-Length Free 解锁入口，明确 Diagnostic Mini Quiz 免费，并规范新增 Web 事件命名。 | 产品 / 设计 / Data / Engineering / QA |
-| 2026-09-09 | v1.9 | 删除 Assessment 组合枚举、重复报告状态和重复用户旅程，核心流程改为无缩写的单次测试主链路；详细状态与商业化文案只在对应功能章节维护。 | 产品 / 设计 / Engineering / QA |
-| 2026-09-09 | v1.10 | 完成全篇可读性与交互完整性审计；补充术语表，清除遗留状态缩写和旧验收项，统一 AP 考试部分表述，并确认全部功能具备展示、交互、跳转与埋点说明。 | 产品 / 设计 / Engineering / Data / QA |
 
 ### 1.1 本文档的判定口径
 
