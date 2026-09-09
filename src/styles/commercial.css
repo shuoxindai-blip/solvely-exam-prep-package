@@ -13,13 +13,19 @@ body.pro-paywall-open { overflow: hidden; }
   background: rgba(24, 31, 43, .96);
   box-shadow: 0 18px 44px rgba(15, 23, 36, .28);
   backdrop-filter: blur(14px);
+  will-change: left, top;
 }
 .commercial-demo-controller.has-home-state { width: 300px; }
 .package-route .commercial-demo-controller { bottom: 132px; }
 .topic-tool-route .commercial-demo-controller { bottom: 82px; }
 .commercial-demo-controller header { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 9px; }
+.commercial-demo-controller.is-movable header { margin:-4px -4px 9px; padding:4px 4px 7px; border-bottom:1px solid rgba(255,255,255,.08); cursor:grab; touch-action:none; user-select:none; }
+.commercial-demo-controller.is-dragging { box-shadow:0 22px 54px rgba(15,23,36,.36); }
+.commercial-demo-controller.is-movable header:active,.commercial-demo-controller.is-dragging header { cursor:grabbing; }
+.commercial-demo-controller.is-movable header:focus-visible { outline:2px solid #77a5ff; outline-offset:3px; border-radius:5px; }
 .commercial-demo-controller header strong { font-size: 12px; line-height: 18px; letter-spacing: .04em; text-transform: uppercase; }
-.commercial-demo-controller header span { color: #9da9bb; font-size: 12px; line-height: 18px; }
+.commercial-demo-controller header span { display:inline-flex; align-items:center; gap:6px; color: #9da9bb; font-size: 12px; line-height: 18px; }
+.commercial-demo-drag-grip { width:12px; height:8px; display:block; opacity:.78; background:radial-gradient(circle,#9da9bb 1px,transparent 1.5px) 0 0/4px 4px; }
 .commercial-demo-controller nav { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
 .commercial-demo-controller button { min-width:0; min-height: 36px; padding:0 8px; border: 1px solid rgba(255,255,255,.1); border-radius: 999px; color: #c9d1df; background: rgba(255,255,255,.06); font-size: 12px; font-weight: 700; line-height: 18px; white-space:nowrap; cursor: pointer; }
 .commercial-demo-controller button.active { border-color: #4d8dff; color: #fff; background: #2368f0; }

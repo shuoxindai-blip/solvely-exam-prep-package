@@ -36,7 +36,7 @@ type PredictionSample = {
 
 const EXAM_PREP_HOME_TITLE = "Adaptive exam prep for your best score";
 const EXAM_PREP_HOME_SUBTITLE =
-  "Predict likely exam questions and build a personalized prep plan, or start with a standardized test prep course.";
+  "Create a personalized study plan, predict likely exam questions, or start a prep course.";
 type DiagnosticTestState =
   | "not-started"
   | "in-progress"
@@ -5031,6 +5031,7 @@ onBeforeUnmount(() => {
       v-if="!isCourseOpen"
       :model-value="accessState"
       :home-state="controllerHomeState"
+      movable
       @update:model-value="setProAccess"
       @update:home-state="setHomeExperiencePreview"
     />
