@@ -1,6 +1,6 @@
 # Exam Prep & Courses 完整产品需求文档（PRD）
 
-> 文档版本：v1.6  
+> 文档版本：v1.7
 > 基准日期：2026-09-09  
 > 产品范围：Exam Prep 首页、Standardized Test Prep Courses、课程学习工具、SAT/ACT/AP 模考、成绩报告与商业化门槛  
 > Demo 基准：`v1.6 state-aligned build`  
@@ -17,6 +17,7 @@
 | 2026-09-09 | v1.4 | 补充免费课程留存、专业能力证明与长期转化的商业化依据，并明确 AP 与 SAT/ACT 的课程价值和考试前置原因。 | 产品 / Growth / Content |
 | 2026-09-09 | v1.5 | 对齐 Demo 与 PRD 的唯一状态模型；穷举 12 种可达考试组合，补齐前置动作、写入、跳转、评分等待和异常归一；商业化规则收口到 4.8。 | 产品 / 设计 / 开发 / QA |
 | 2026-09-09 | v1.6 | 报告改为每个 Section 独立锁定；Free 用户查看 Full-Length 报告预览时由 Pro 权益门槛优先于考试前置状态。锁定层精简为 48px Pro icon、单一标题与 CTA，不再展示重复说明小字；N/I/S/R 使用不同购买价值文案。 | 产品 / 设计 / 开发 / QA |
+| 2026-09-09 | v1.7 | 将 38 条 PRD 事件映射到 Web_EP / FC_Web_EP 协议，明确 8 条旧事件的条件复用、Custom Plan Submit/Result 客户端与服务端边界、request_id 关联及 subscription_period 参数。 | 产品 / Data / Engineering / QA |
 
 ### 1.1 本文档的判定口径
 
@@ -516,7 +517,7 @@ Diagnostic 报告也必须按考试体系输出：
 | Topic performance matrix | `Each dot represents a tested topic. Its position shows how its accuracy and average response time compare with the section averages. Hover over or focus a dot to view details.` | Reading and Writing 与 Math 分别绘制 |
 | 关键交互 | Hover 或键盘 Focus 某点，展示 Topic、Section、Accuracy、Average response time、Answered questions、相对 Section 平均值和象限；Escape/移出焦点关闭。 | 重叠点可视觉偏移或聚合，但真实值和象限不变 |
 | 状态与边界 | Loading 使用 Skeleton；无可用 Topic 显示 `Not enough topic data yet.`；缺 topic 映射不生成点并记录数据错误；报告失败显示 Retry，不回退到 Demo 固定值。 | 本期只在 Web 展示 |
-| 埋点与指标 | 沿用 `exam_report_view`：`assessment_type=diagnostic|full_length`、`access=full|prerequisite|pro_locked`、`report_type=sat`；不对每次 Hover/Focus 上报。 | 数据一致性由服务端日志和专项用例验证 |
+| 埋点与指标 | 沿用 `FC_Web_EP_Report_View`：`assessment_type=diagnostic|full_length`、`access=full|prerequisite|pro_locked`、`report_type=sat`；不对每次 Hover/Focus 上报。 | 数据一致性由服务端日志和专项用例验证 |
 
 ##### Performance details 计算契约
 
@@ -537,7 +538,7 @@ Diagnostic 报告也必须按考试体系输出：
 | Correct | `count(status=CORRECT)` | `{correct}/{report_question_count}`；示例 **73/98** |
 | Incorrect | `count(status=INCORRECT)` | 示例 **20** |
 | Unanswered | `count(status=UNANSWERED)` | 示例 **5**；看过但未提交答案仍为 Unanswered |
-| 总量校验 | `Correct + Incorrect + Unanswered = report_question_count` | 示例 73 + 20 + 5 = 98；不守恒时内部原因 `data_inconsistent`，上报 `exam_scoring_result(error_type=data)`，不得展示部分汇总 |
+| 总量校验 | `Correct + Incorrect + Unanswered = report_question_count` | 示例 73 + 20 + 5 = 98；不守恒时内部原因 `data_inconsistent`，上报 `FC_Web_EP_Exam_Scoring_Result(result=failure,error_code=data_inconsistent)`，不得展示部分汇总 |
 | Answered | `Correct + Incorrect` | 只用于 Accuracy 与平均答题时间分母；示例为 93 |
 | Accuracy | `Correct ÷ Answered × 100%`；Unanswered 不进入分母 | 四舍五入为整数；73 ÷ 93 = 78.49%，展示 **78%**；Answered=0 时展示 `—`，不能显示 0% |
 | Time used | `sum(valid active_time_seconds)`；计时片段去重且不超过各 Module 有效上限 | 秒数向下取整到整分钟，再格式化；7,920 秒展示 **2h 12m**，小于 1 小时显示 `Xm` |
@@ -571,7 +572,7 @@ Diagnostic 报告也必须按考试体系输出：
 - 至少有 1 道已作答题才生成点；Tooltip 必须展示 Answered questions 以提示样本量。
 - Topic 点必须可 Tab Focus；Focus 与 Hover 内容一致，象限不能只用颜色表达。
 - Section 无已作答题时不计算基线，显示 `Not enough topic data yet.`。
-- 重复 `question_id`、缺 `section_id`、非法 response time、总量不守恒或跨 `report_id` 时，报告内部原因记为 `data_inconsistent`，并上报 `exam_scoring_result(error_type=data)`。
+- 重复 `question_id`、缺 `section_id`、非法 response time、总量不守恒或跨 `report_id` 时，报告内部原因记为 `data_inconsistent`，并上报 `FC_Web_EP_Exam_Scoring_Result(result=failure,error_code=data_inconsistent)`。
 
 ##### SAT / ACT / AP 量尺分计算边界
 
@@ -750,62 +751,95 @@ type Question = {
 - `attempt_id`: 一次考试 attempt 的稳定 ID（考试开始后必填）
 - `topic_id`: Topic 级事件必填
 
-当前未提供既有埋点协议，以下均按 **新增** 定义；上线前由数据团队检查是否有同义既有事件，若复用必须补充来源文档并更新本表。
+### 5.2 事件协议原则
 
-| 事件名 | 触发时机 | 事件状态 | 业务参数 | 验证方式 |
-|---|---|---|---|---|
-| `ep_home_view` | Exam Prep & Courses 首页首屏渲染完成 | 新增 | `home_state=empty|active`, `default_mode=custom_plan|prep_courses` | 两种首页状态各触发一次；Tab 切换不重复 |
-| `ep_home_mode_switch` | 用户切换 Custom Plan / Prep Courses | 新增 | `from_mode`, `to_mode`, `interaction=click|keyboard|drag` | 每次成功切换一次 |
-| `ep_plan_create_start` | 打开 Create a prep plan | 新增 | `entry_point=upload|sample|new_plan` | 三入口分别校验 |
-| `ep_plan_create_submit` | 点击 Create prep plan/Save changes | 新增 | `action=create|edit`, `focus`, `has_exam_date`, `file_count` | 校验失败不触发，成功请求发出时触发 |
-| `ep_plan_create_result` | 创建/编辑请求结束 | 新增 | `action`, `result=success|failure`, `error_code` | 成功与失败各一次 |
-| `ep_course_catalog_view` | 课程网格加载完成 | 新增 | `result_count`, `filter`, `query_present` | 搜索/筛选后再次触发，去抖 300ms |
-| `ep_course_search` | 用户提交或停输 500ms | 新增 | `query_length`, `filter`, `result_count` | 不上传原始搜索词，避免敏感信息 |
-| `ep_course_open` | 点击可用课程卡 | 新增 | `course_id`, `entry_point=first_entry|catalog|exam_library`, `course_state` | Coming soon 不触发 open |
-| `ep_course_coming_soon_click` | 用户尝试操作 Coming soon 卡 | 新增 | `course_id`, `exam_family` | 若卡片完全 disabled，可用曝光事件替代 |
-| `ep_course_view` | 课程首页渲染完成 | 新增 | `course_state=first_visit|in_progress`, `last_activity_type` | 每次进入一次 |
-| `ep_course_tab_switch` | Course Content / Performance & Insights 切换 | 新增 | `from_tab`, `to_tab` | 点击/键盘均触发一次 |
-| `ep_topic_tool_open` | 打开 Study Guide/Flashcards/Quiz | 新增 | `topic_id`, `tool`, `entry_point=topic_popover|report|resume` | 三种工具分别校验 |
-| `ep_topic_answer_submit` | Study Guide Quick Practice 或 Topic Quiz 提交 | 新增 | `topic_id`, `tool`, `question_id`, `response_type`, `is_correct`, `attempt_index` | 每次提交一次，不上报答案原文 |
-| `ep_ask_solvely_open` | Ask Solvely 点击 | 新增 | `topic_id`, `source_tool`, `access_result=opened|paywall` | Free/Pro 分别校验 |
-| `exam_assessment_card_view` | 测试卡进入视口 50% 且停留 1s | 新增 | `assessment_type`, `assessment_state`, `cta_label` | 同一页面状态仅一次 |
-| `exam_assessment_start` | 创建新考试 attempt 成功 | 新增 | `assessment_type`, `attempt_id`, `question_count`, `timed` | Paywall 展示不算 start |
-| `exam_assessment_resume` | 恢复已有 attempt | 新增 | `attempt_id`, `saved_question_index`, `answered_count` | 恢复成功后一次 |
-| `exam_question_answer` | 选择/输入答案并成功保存 | 新增 | `attempt_id`, `question_id`, `response_type`, `option_label`, `question_index`, `section`, `module` | F/G/H/J 原样上报；主观答案不上报原文 |
-| `exam_question_mark` | Mark for Review 状态变更 | 新增 | `attempt_id`, `question_id`, `marked=true|false` | 勾选/取消各一次 |
-| `exam_tool_toggle` | Highlight/Line Reader/Calculator/Reference/Dark mode 状态变更 | 新增 | `tool`, `enabled`, `section`, `question_id` | 仅状态实际改变时触发 |
-| `exam_issue_submit` | Report an issue 提交结果返回 | 新增 | `attempt_id`, `question_id`, `issue_type`, `result`, `error_code` | 不上传详情文本到分析平台 |
-| `exam_section_review_view` | 进入 Check Your Work | 新增 | `attempt_id`, `section`, `module`, `answered_count`, `marked_count` | 每次进入一次 |
-| `exam_break_view` | 进入 Break | 新增 | `attempt_id`, `after_section`, `duration_seconds` | SAT/AP 分别校验 |
-| `exam_assessment_submit` | 最终交卷成功 | 新增 | `attempt_id`, `answered_count`, `question_count`, `duration_seconds` | 服务端确认提交后一次，幂等 |
-| `exam_scoring_result` | 评分任务成功/失败 | 新增 | `attempt_id`, `result=success|failure`, `latency_ms`, `error_code` | 由服务端上报，和客户端去重 |
-| `exam_report_view` | 某来源报告首个有效模块渲染完成 | 新增 | `attempt_id`, `assessment_type`, `access=full|prerequisite|pro_locked`, `report_type=sat|act|ap` | 来源切换后重新触发 |
-| `exam_report_source_switch` | Diagnostic / Full-Length 切换 | 新增 | `from_source`, `to_source`, `target_state` | 每次成功切换一次 |
-| `exam_question_review_select` | 在 Question Map 选择题目 | 新增 | `attempt_id`, `question_id`, `answer_status`, `section`, `module` | 每次选择一次 |
-| `exam_mini_quiz_start` | Similar questions 的 3 题加载成功 | 新增 | `source_attempt_id`, `source_question_id`, `topic_id`, `quiz_session_id`, `question_count=3` | Loading/Retry 不重复，成功后一次 |
-| `exam_mini_quiz_complete` | 第 3 题提交并进入结果页 | 新增 | `quiz_session_id`, `correct_count`, `question_count=3`, `duration_seconds` | 幂等一次 |
-| `exam_targeted_practice_open` | 点击 Practice/Continue/Review | 新增 | `attempt_id`, `topic_id`, `action`, `entry_source`, `access_result=opened|paywall` | Free/Pro 分别校验 |
-| `pro_paywall_view` | Paywall 完整展示 | 新增 | `paywall_context=ask_solvely|full_test|full_report|diagnostic_targeted_practice`, `entry_point` | 每次展示一次 |
-| `pro_unlock_click` | 点击 Paywall 主 CTA | 新增 | `paywall_context`, `plan_id`, `display_price` | 不上报支付凭证 |
-| `pro_purchase_result` | 支付返回 | 新增 | `paywall_context`, `plan_id`, `result`, `error_code` | 支付成功服务端去重 |
+> **旧事件不等于新漏斗阶段。** `Web_EP_Tab`、`Web_EP_Create_Exam` 只表示入口动作；`Web_EP_Choose_File` 只表示打开文件选择器；`Web_EP_File_Picker` / `Web_EP_File_Drag` 发生在客户端校验与上传之前。它们不得当作页面曝光、文件上传成功或计划创建成功。旧 `Web_EP_Predict_Click` 在校验前触发，`Web_EP_Predict_Success` 只表示旧创建请求返回成功，均不得替代新的 Submit/Result 协议。
 
-### 5.2 指标口径
+- `Web_EP_Plan_Create_Submit`：仅在客户端校验通过且创建/编辑请求已发出时记录。
+- `Web_EP_Plan_Create_Result`：由服务端记录权威结果；使用与 Submit 相同的 `request_id` 一对一关联。
+- `action=create|edit` 在 Submit 与 Result 中必须一致；`result=success|failure` 只存在于 Result。
+- SAT、ACT、AP、Abitur 与 Custom Plan 使用 `exam_family` 分层；不为每个考试体系复制事件名。
+- 购买相关两行使用 `subscription_period` 表示套餐周期，不得复用 `plan_id`；`plan_id` 只表示 Custom Plan ID。
+
+### 5.3 38 条 PRD 事件一对一命名映射
+
+| 事件描述（业务价值与触发场景） | Event_Name | 类型 | Params (key/value) | 备注 | 埋点端 |
+|---|---|---|---|---|---|
+| 业务价值：建立首页曝光分母。<br>触发场景：首页关键内容首次成功渲染；同一 page_view 一次。 | `Web_EP_Home_View` | 新增 | 1. `key=home_state`<br>　`value=empty \| active`<br>2. `key=default_mode`<br>　`value=custom_plan \| prep_courses` | 原 PRD：`ep_home_view`。Tab 切换不重复。 | 客户端 |
+| 业务价值：衡量 Custom Plan / Prep Courses 偏好。<br>触发场景：滑块通过点击、键盘或拖动成功切换后一次。 | `Web_EP_Home_Mode_Switch` | 新增 | 1. `key=from_mode`<br>　`value=custom_plan \| prep_courses`<br>2. `key=to_mode`<br>　`value=custom_plan \| prep_courses`<br>3. `key=interaction`<br>　`value=click \| keyboard \| drag` | 原 PRD：`ep_home_mode_switch`。未改变模式不报。 | 客户端 |
+| 业务价值：建立创建表单真实曝光分母。<br>触发场景：创建/编辑界面完整可见后一次。 | `Web_EP_Plan_Create_View` | 新增 | 1. `key=action`<br>　`value=create \| edit`<br>2. `key=entry_point`<br>　`value=upload \| sample \| new_plan \| existing_plan` | 原 PRD：`ep_plan_create_start`；名称改为 View 以匹配触发阶段。 | 客户端 |
+| 业务价值：衡量文件上传服务成功率。<br>触发场景：服务端完成一次上传批次并返回成功/失败；每个 `upload_request_id` 一次。 | `Web_EP_Plan_Upload_Result` | 新增 | 1. `key=upload_request_id`<br>　`value=上传批次稳定 ID`<br>2. `key=result`<br>　`value=success \| failure`<br>3. `key=file_count`<br>　`value=本批次文件数`<br>4. `key=error_code`<br>　`value=失败时必填；成功为空` | 原 PRD：`ep_plan_upload_result`。发生在客户端文件校验通过之后；Picker/Drag 不能替代。 | 服务端 |
+| 业务价值：建立创建请求分母。<br>触发场景：表单校验通过且创建/编辑请求实际发出；每个 `request_id` 一次。 | `Web_EP_Plan_Create_Submit` | 新增 | 1. `key=request_id`<br>　`value=客户端生成并传给服务端的稳定 ID`<br>2. `key=action`<br>　`value=create \| edit`<br>3. `key=file_count`<br>　`value=提交时有效文件数`<br>4. `key=has_exam_date`<br>　`value=true \| false` | 原 PRD：`ep_plan_create_submit`。校验失败不报。 | 客户端 |
+| 业务价值：计算权威创建成功率。<br>触发场景：服务端创建/编辑请求结束；每个 `request_id` 幂等一次。 | `Web_EP_Plan_Create_Result` | 新增 | 1. `key=request_id`<br>　`value=与 Submit 完全一致`<br>2. `key=action`<br>　`value=create \| edit`<br>3. `key=result`<br>　`value=success \| failure`<br>4. `key=error_code`<br>　`value=失败时必填；成功为空`<br>5. `key=plan_id`<br>　`value=成功时必填的 Custom Plan ID` | 原 PRD：`ep_plan_create_result`。不得用 `Web_EP_Predict_Success` 替代。 | 服务端 |
+| 业务价值：建立课程目录曝光分母。<br>触发场景：课程网格按当前查询成功渲染；初次或查询变化后一次。 | `FC_Web_EP_Course_Catalog_View` | 新增 | 1. `key=result_count`<br>　`value=当前结果数`<br>2. `key=filter`<br>　`value=all \| sat \| act \| ap \| abitur`<br>3. `key=query_present`<br>　`value=true \| false` | 原 PRD：`ep_course_catalog_view`；查询去抖 300ms。 | 客户端 |
+| 业务价值：衡量课程搜索需求与零结果。<br>触发场景：提交搜索或停输 500ms；同一查询状态一次。 | `FC_Web_EP_Course_Search` | 新增 | 1. `key=query_length`<br>　`value=字符数，不上传原词`<br>2. `key=filter`<br>　`value=当前筛选`<br>3. `key=result_count`<br>　`value=结果数` | 原 PRD：`ep_course_search`；禁止上传原始搜索词。 | 客户端 |
+| 业务价值：衡量可用课程启动。<br>触发场景：点击 Ready 课程并成功进入；每次一次。 | `FC_Web_EP_Course_Open` | 新增 | 1. `key=course_id`<br>　`value=真实课程 ID`<br>2. `key=entry_point`<br>　`value=first_entry \| catalog \| exam_library`<br>3. `key=course_state`<br>　`value=first_visit \| in_progress` | 原 PRD：`ep_course_open`。Coming soon 不报。 | 客户端 |
+| 业务价值：衡量未开放课程需求。<br>触发场景：用户点击可交互的 Coming soon 卡；每次一次。 | `FC_Web_EP_Course_Coming_Soon_Click` | 新增 | 1. `key=course_id`<br>　`value=课程 ID` | 原 PRD：`ep_course_coming_soon_click`。完全 disabled 时改用曝光而非伪造点击。 | 客户端 |
+| 业务价值：衡量课程页到达与回访。<br>触发场景：课程首页关键内容渲染成功；每次进入一次。 | `FC_Web_EP_Course_View` | 新增 | 1. `key=course_state`<br>　`value=first_visit \| in_progress`<br>2. `key=last_activity_type`<br>　`value=无活动时为空；否则 lesson \| diagnostic \| full_length` | 原 PRD：`ep_course_view`。 | 客户端 |
+| 业务价值：衡量内容/报告导航。<br>触发场景：Course Content 与 Performance & Insights 成功切换后一次。 | `FC_Web_EP_Course_Tab_Switch` | 新增 | 1. `key=from_tab`<br>　`value=content \| insights`<br>2. `key=to_tab`<br>　`value=content \| insights` | 原 PRD：`ep_course_tab_switch`。 | 客户端 |
+| 业务价值：衡量 Topic 工具使用。<br>触发场景：Study Guide/Flashcards/Quiz 实际打开后一次。 | `FC_Web_EP_Topic_Tool_Open` | 新增 | 1. `key=topic_id`<br>　`value=Topic ID`<br>2. `key=tool`<br>　`value=study_guide \| flashcards \| quiz`<br>3. `key=entry_point`<br>　`value=topic_popover \| report \| resume` | 原 PRD：`ep_topic_tool_open`。 | 客户端 |
+| 业务价值：衡量免费练习完成与正确率。<br>触发场景：Quick Practice/Topic Quiz 答案成功保存；每次提交一次。 | `FC_Web_EP_Topic_Answer_Submit` | 新增 | 1. `key=topic_id`<br>　`value=Topic ID`<br>2. `key=tool`<br>　`value=study_guide \| quiz`<br>3. `key=question_id`<br>　`value=题目 ID`<br>4. `key=response_type`<br>　`value=choice \| student_produced`<br>5. `key=is_correct`<br>　`value=true \| false` | 原 PRD：`ep_topic_answer_submit`；不上传答案原文。 | 客户端 |
+| 业务价值：衡量 Ask Solvely 意图与商业化拦截。<br>触发场景：点击入口并得到 opened/paywall 结果；每次一次。 | `FC_Web_EP_Ask_Solvely_Open` | 新增 | 1. `key=topic_id`<br>　`value=Topic ID`<br>2. `key=source_tool`<br>　`value=study_guide \| flashcards \| quiz`<br>3. `key=access_result`<br>　`value=opened \| paywall` | 原 PRD：`ep_ask_solvely_open`。 | 客户端 |
+| 业务价值：建立考试卡曝光分母。<br>触发场景：卡片进入视口 50% 且停留 1 秒；同状态每页一次。 | `FC_Web_EP_Exam_Card_View` | 新增 | 1. `key=assessment_type`<br>　`value=diagnostic \| full_length`<br>2. `key=assessment_state`<br>　`value=not_started \| in_progress \| scoring \| results` | 原 PRD：`exam_assessment_card_view`；不传可变 CTA 文案。 | 客户端 |
+| 业务价值：计算考试启动率。<br>触发场景：新 attempt 创建成功；每个 attempt 一次。 | `FC_Web_EP_Exam_Start_Success` | 新增 | 1. `key=attempt_id`<br>　`value=稳定 attempt ID`<br>2. `key=assessment_type`<br>　`value=diagnostic \| full_length`<br>3. `key=question_count`<br>　`value=题数`<br>4. `key=timed`<br>　`value=true \| false` | 原 PRD：`exam_assessment_start`。Paywall 展示不算 Start。 | 客户端 |
+| 业务价值：衡量长考试恢复。<br>触发场景：已有 attempt 与保存位置成功加载；每次恢复一次。 | `FC_Web_EP_Exam_Resume_Success` | 新增 | 1. `key=attempt_id`<br>　`value=attempt ID`<br>2. `key=saved_question_index`<br>　`value=恢复题序`<br>3. `key=answered_count`<br>　`value=已答数` | 原 PRD：`exam_assessment_resume`。 | 客户端 |
+| 业务价值：衡量答题进度与选项数据质量。<br>触发场景：答案成功保存；每次状态变化一次。 | `FC_Web_EP_Exam_Question_Answer` | 新增 | 1. `key=attempt_id`<br>　`value=attempt ID`<br>2. `key=question_id`<br>　`value=题目 ID`<br>3. `key=response_type`<br>　`value=choice \| student_produced`<br>4. `key=option_label`<br>　`value=选择题原标签；主观题为空`<br>5. `key=question_index`<br>　`value=题序` | 原 PRD：`exam_question_answer`。F/G/H/J 原样上报；不上传主观答案原文。 | 客户端 |
+| 业务价值：衡量 Mark for Review 使用。<br>触发场景：标记状态成功改变；勾选/取消各一次。 | `FC_Web_EP_Exam_Question_Mark` | 新增 | 1. `key=attempt_id`<br>　`value=attempt ID`<br>2. `key=question_id`<br>　`value=题目 ID`<br>3. `key=marked`<br>　`value=true \| false` | 原 PRD：`exam_question_mark`。 | 客户端 |
+| 业务价值：衡量辅助工具使用。<br>触发场景：工具状态实际改变后一次。 | `FC_Web_EP_Exam_Tool_Toggle` | 新增 | 1. `key=tool`<br>　`value=highlight \| line_reader \| calculator \| reference \| dark_mode`<br>2. `key=enabled`<br>　`value=true \| false`<br>3. `key=question_id`<br>　`value=题内工具必填；全局工具可空` | 原 PRD：`exam_tool_toggle`。 | 客户端 |
+| 业务价值：衡量题目问题上报成功率。<br>触发场景：Report an issue 请求返回；每次请求一次。 | `FC_Web_EP_Exam_Issue_Submit_Result` | 新增 | 1. `key=attempt_id`<br>　`value=attempt ID`<br>2. `key=question_id`<br>　`value=题目 ID`<br>3. `key=issue_type`<br>　`value=问题类型枚举`<br>4. `key=result`<br>　`value=success \| failure`<br>5. `key=error_code`<br>　`value=失败时必填` | 原 PRD：`exam_issue_submit`。不上传详情文本到分析平台。 | 客户端 |
+| 业务价值：衡量 Section 完成与检查行为。<br>触发场景：进入 Check Your Work；每次进入一次。 | `FC_Web_EP_Exam_Section_Review_View` | 新增 | 1. `key=attempt_id`<br>　`value=attempt ID`<br>2. `key=section`<br>　`value=Section ID`<br>3. `key=module`<br>　`value=无 Module 时为空`<br>4. `key=answered_count`<br>　`value=已答数`<br>5. `key=marked_count`<br>　`value=标记数` | 原 PRD：`exam_section_review_view`。 | 客户端 |
+| 业务价值：衡量标准休息流程到达。<br>触发场景：Break 页面渲染完成；每次 Break 一次。 | `FC_Web_EP_Exam_Break_View` | 新增 | 1. `key=attempt_id`<br>　`value=attempt ID`<br>2. `key=after_section`<br>　`value=上一 Section ID`<br>3. `key=duration_seconds`<br>　`value=配置的休息时长` | 原 PRD：`exam_break_view`。SAT/AP 分别校验；ACT 未配置不报。 | 客户端 |
+| 业务价值：计算考试完成率。<br>触发场景：服务端确认最终提交成功；每个 attempt 幂等一次。 | `FC_Web_EP_Exam_Submit_Success` | 新增 | 1. `key=attempt_id`<br>　`value=attempt ID`<br>2. `key=answered_count`<br>　`value=已答数`<br>3. `key=question_count`<br>　`value=总题数`<br>4. `key=duration_seconds`<br>　`value=有效作答时间` | 原 PRD：`exam_assessment_submit`。仅成功事件；提交失败走业务错误日志，不伪造 Success。 | 服务端 |
+| 业务价值：监控评分成功率与耗时。<br>触发场景：评分任务终态；每个 attempt/result 组合幂等一次。 | `FC_Web_EP_Exam_Scoring_Result` | 新增 | 1. `key=attempt_id`<br>　`value=attempt ID`<br>2. `key=result`<br>　`value=success \| failure`<br>3. `key=latency_ms`<br>　`value=提交至评分终态耗时`<br>4. `key=error_code`<br>　`value=失败时必填` | 原 PRD：`exam_scoring_result`。权威服务端结果；客户端不得重复上报。 | 服务端 |
+| 业务价值：衡量报告查看及锁定曝光。<br>触发场景：报告首个有效模块渲染完成；来源切换后可再次报。 | `FC_Web_EP_Report_View` | 新增 | 1. `key=attempt_id`<br>　`value=无真实 attempt 的模板预览为空`<br>2. `key=assessment_type`<br>　`value=diagnostic \| full_length`<br>3. `key=access`<br>　`value=full \| prerequisite \| pro_locked`<br>4. `key=report_type`<br>　`value=sat \| act \| ap` | 原 PRD：`exam_report_view`。预生成模板不可计为真实成绩查看，须按 access 分层。 | 客户端 |
+| 业务价值：衡量 Diagnostic/Full-Length 报告偏好。<br>触发场景：来源成功切换且内容更新后一次。 | `FC_Web_EP_Report_Source_Switch` | 新增 | 1. `key=from_source`<br>　`value=diagnostic \| full_length`<br>2. `key=to_source`<br>　`value=diagnostic \| full_length`<br>3. `key=target_state`<br>　`value=N \| I \| S \| R` | 原 PRD：`exam_report_source_switch`。 | 客户端 |
+| 业务价值：衡量 Question Review 浏览。<br>触发场景：Question Map 选择新题后一次。 | `FC_Web_EP_Report_Question_Select` | 新增 | 1. `key=attempt_id`<br>　`value=attempt ID`<br>2. `key=question_id`<br>　`value=题目 ID`<br>3. `key=answer_status`<br>　`value=correct \| incorrect \| unanswered` | 原 PRD：`exam_question_review_select`。 | 客户端 |
+| 业务价值：衡量 Similar Questions 内容生成可用率。<br>触发场景：固定 3 题的加载请求进入最终成功或失败；每个 `load_request_id` 幂等一次。 | `FC_Web_EP_Mini_Quiz_Load_Result` | 新增 | 1. `key=load_request_id`<br>　`value=加载请求 ID`<br>2. `key=source_question_id`<br>　`value=来源报告题目 ID`<br>3. `key=result`<br>　`value=success \| failure`<br>4. `key=question_count`<br>　`value=成功时 3；失败时 0`<br>5. `key=error_code`<br>　`value=generation \| content \| network \| timeout \| unknown；成功为空` | 原 PRD：`exam_mini_quiz_load_result`；加载失败不得上报 Start Success。 | 客户端 |
+| 业务价值：建立 Similar questions 启动分母。<br>触发场景：固定 3 题加载成功；每个 quiz_session 一次。 | `FC_Web_EP_Mini_Quiz_Start_Success` | 新增 | 1. `key=source_attempt_id`<br>　`value=来源 attempt ID`<br>2. `key=source_question_id`<br>　`value=来源题 ID`<br>3. `key=topic_id`<br>　`value=Topic ID`<br>4. `key=quiz_session_id`<br>　`value=Mini Quiz 会话 ID`<br>5. `key=question_count`<br>　`value=固定 3` | 原 PRD：`exam_mini_quiz_start`。Loading/Retry 不报 Success。 | 客户端 |
+| 业务价值：计算 Mini Quiz 完成率与得分。<br>触发场景：第 3 题提交并进入结果页；会话幂等一次。 | `FC_Web_EP_Mini_Quiz_Complete` | 新增 | 1. `key=quiz_session_id`<br>　`value=会话 ID`<br>2. `key=correct_count`<br>　`value=0–3`<br>3. `key=question_count`<br>　`value=固定 3`<br>4. `key=duration_seconds`<br>　`value=有效用时` | 原 PRD：`exam_mini_quiz_complete`。不存在 Create more quiz 事件。 | 客户端 |
+| 业务价值：衡量 Targeted Practice 使用与付费意图。<br>触发场景：点击 Practice/Continue/Review 并得到 opened/paywall 结果。 | `FC_Web_EP_Targeted_Practice_Open` | 新增 | 1. `key=attempt_id`<br>　`value=来源考试 attempt ID`<br>2. `key=topic_id`<br>　`value=Topic ID`<br>3. `key=action`<br>　`value=start \| continue \| review`<br>4. `key=access_result`<br>　`value=opened \| paywall` | 原 PRD：`exam_targeted_practice_open`。 | 客户端 |
+| 业务价值：建立商业化曝光分母。<br>触发场景：Paywall 完整展示；每次 impression 一次。 | `FC_Web_EP_Paywall_View` | 新增 | 1. `key=paywall_context`<br>　`value=ask_solvely \| full_test \| full_report \| diagnostic_targeted_practice`<br>2. `key=entry_point`<br>　`value=触发入口枚举`<br>3. `key=paywall_impression_id`<br>　`value=本次曝光稳定 ID` | 原 PRD：`pro_paywall_view`。 | 客户端 |
+| 业务价值：计算 Paywall CTR。<br>触发场景：点击 Paywall 主 CTA；每个 impression 可多次尝试但每次 click 一次。 | `FC_Web_EP_Paywall_Unlock_Click` | 新增 | 1. `key=paywall_impression_id`<br>　`value=关联 View`<br>2. `key=paywall_context`<br>　`value=同 View`<br>3. `key=subscription_period`<br>　`value=monthly \| annual`<br>4. `key=display_price`<br>　`value=展示价格与币种` | 原 PRD：`pro_unlock_click`；不得使用 `plan_id` 表示套餐周期。 | 客户端 |
+| 业务价值：计算权威购买转化。<br>触发场景：服务端支付结果终态；每个订单幂等一次。 | `FC_Web_EP_Purchase_Result` | 新增 | 1. `key=paywall_impression_id`<br>　`value=可归因时关联 View`<br>2. `key=paywall_context`<br>　`value=同触发入口`<br>3. `key=subscription_period`<br>　`value=monthly \| annual`<br>4. `key=result`<br>　`value=success \| failure`<br>5. `key=error_code`<br>　`value=失败时必填` | 原 PRD：`pro_purchase_result`；不得上传支付凭证。 | 服务端 |
+| 业务价值：定位长考试答案保存失败和恢复风险。<br>触发场景：答案同步达到最终失败或进入需用户关注的重试状态；同一 `sync_request_id` 一次。 | `FC_Web_EP_Exam_Answer_Sync_Failure` | 新增 | 1. `key=sync_request_id`<br>　`value=答案同步请求 ID`<br>2. `key=attempt_id`<br>　`value=attempt ID`<br>3. `key=question_id`<br>　`value=题目 ID`<br>4. `key=error_code`<br>　`value=offline \| conflict \| timeout \| server`<br>5. `key=retry_count`<br>　`value=失败前自动重试次数` | 原 PRD：`exam_answer_sync_failure`；仅异常终态，不与正常答案保存重复。 | 客户端 |
+| 业务价值：定位 SAT/AP Reference 资源不可用问题。<br>触发场景：Reference 面板打开后，PDF/公式资源最终加载失败；同一资源每次打开最多一次。 | `FC_Web_EP_Exam_Reference_Load_Failure` | 新增 | 1. `key=reference_type`<br>　`value=sat_math_formula \| ap_pdf`<br>2. `key=exam_slug`<br>　`value=AP 考试 slug；SAT 时为空`<br>3. `key=error_code`<br>　`value=network \| missing_asset \| unsupported \| timeout` | 原 PRD：`exam_reference_load_failure`；仅对真实存在 Reference 入口的考试上报。 | 客户端 |
+
+### 5.4 旧事件条件复用清单（8 条）
+
+| 事件描述（业务价值与触发场景） | Event_Name | 类型 | Params (key/value) | 备注 | 埋点端 |
+|---|---|---|---|---|---|
+| 业务价值：侧栏入口意图。<br>触发场景：点击侧栏入口。 | `Web_EP_Tab` | 复用 | 1. `key=location`<br>　`value=sidebar` | 进入 38 条主映射；不能作为 Home View。 | 客户端 |
+| 业务价值：新建入口意图。<br>触发场景：点击新建计划入口。 | `Web_EP_Create_Exam` | 复用 | 1. `key=location`<br>　`value=home_empty \| home_active` | 进入 38 条主映射；不能作为 Create View/Result。 | 客户端 |
+| 业务价值：文件选择意图。<br>触发场景：系统文件选择器成功打开。 | `Web_EP_Choose_File` | 复用 | 1. `key=location`<br>　`value=upload_zone` | 未必选择文件；不能作为上传分母终点。 | 客户端 |
+| 业务价值：本地文件选取来源。<br>触发场景：用户在 Picker 中选到文件，发生在校验和上传前。 | `Web_EP_File_Picker` | 复用 | 1. `key=fileType`<br>　`value=文件扩展/MIME 分类`<br>2. `key=location`<br>　`value=upload_zone` | 保留既有字段名与语义。 | 客户端 |
+| 业务价值：拖拽上传意图。<br>触发场景：文件被拖入上传区，发生在校验和上传前。 | `Web_EP_File_Drag` | 复用 | 1. `key=fileType`<br>　`value=文件扩展/MIME 分类`<br>2. `key=location`<br>　`value=upload_zone` | 保留既有字段名与语义。 | 客户端 |
+| 业务价值：示例计划偏好。<br>触发场景：点击一张示例计划卡。 | `Web_EP_OB_Sample` | 复用 | 1. `key=sample`<br>　`value=1 \| 2 \| 3` | 不是示例保存成功。 | 客户端 |
+| 业务价值：文件移除/上传阻力。<br>触发场景：用户点击移除已列出的文件。 | `Web_EP_Upload_File_Del` | 复用 | 1. `key=fileType`<br>　`value=被移除文件类型`<br>2. `key=location`<br>　`value=upload_zone` | 只表示移除动作。 | 客户端 |
+| 业务价值：已有计划继续使用。<br>触发场景：点击已有 EP 计划卡。 | `Web_EP_Exam_Click` | 复用 | 1. `key=examId`<br>　`value=真实 EP examId` | 进入 38 条主映射；仅复用原 EP 对象时使用，课程卡另记。 | 客户端 |
+
+### 5.5 客户端文件校验失败补点建议
+
+| 事件描述（业务价值与触发场景） | Event_Name | 类型 | Params (key/value) | 备注 | 埋点端 |
+|---|---|---|---|---|---|
+| 业务价值：定位“选了文件但未进入上传”的损失原因。<br>触发场景：Picker/Drag 后客户端校验失败；每个文件每次校验结果一次。 | `Web_EP_Plan_File_Validation_Result` | 新增 | 1. `key=fileType`<br>　`value=文件扩展/MIME 分类`<br>2. `key=location`<br>　`value=picker \| drag`<br>3. `key=result`<br>　`value=failure`<br>4. `key=error_code`<br>　`value=unsupported_type \| file_too_large \| page_limit \| empty_file \| read_error` | 建议补点；与服务端 `Web_EP_Plan_Upload_Result` 互斥，避免重复计算。 | 客户端 |
+
+### 5.6 指标口径
 
 | 指标 | 公式 | 去重/归因 |
 |---|---|---|
-| Prep Course 打开率 | `ep_course_open` UV / `ep_course_catalog_view` UV | 同一用户同一天；按 `exam_family` 分层 |
-| Custom Plan 创建成功率 | `ep_plan_create_result(result=success)` / `ep_plan_create_submit` | 同一创建请求 ID |
-| Diagnostic 启动率 | `exam_assessment_start(diagnostic)` UV / `exam_assessment_card_view(diagnostic, not_started)` UV | 课程首次可见后 24h |
-| 考试完成率 | `exam_assessment_submit` distinct `attempt_id` / `exam_assessment_start` distinct `attempt_id` | 同一 attempt；Diagnostic/Full-Length 分开 |
-| 报告查看率 | `exam_report_view(access=full)` distinct `attempt_id` / `exam_scoring_result(success)` distinct `attempt_id` | 评分成功后 7 天 |
-| Mini quiz 完成率 | `exam_mini_quiz_complete` distinct `quiz_session_id` / `exam_mini_quiz_start` distinct `quiz_session_id` | 同一 quiz session |
-| Paywall CTR | `pro_unlock_click` / `pro_paywall_view` | 同一 paywall impression，按 context 分层 |
-| Paywall 购买转化 | `pro_purchase_result(success)` / `pro_paywall_view` | 7 天归因，按首次触点与最终触点双报 |
+| Prep Course 打开率 | `FC_Web_EP_Course_Open` UV / `FC_Web_EP_Course_Catalog_View` UV | 同一用户同一天；按 `exam_family` 分层 |
+| Custom Plan 创建成功率 | `Web_EP_Plan_Create_Result(result=success)` / `Web_EP_Plan_Create_Submit` | 以同一 `request_id` 一对一关联；Result/Submit 去重后计算 |
+| Diagnostic 启动率 | `FC_Web_EP_Exam_Start_Success(assessment_type=diagnostic)` UV / `FC_Web_EP_Exam_Card_View(assessment_type=diagnostic, assessment_state=not_started)` UV | 课程首次可见后 24h |
+| 考试完成率 | `FC_Web_EP_Exam_Submit_Success` distinct `attempt_id` / `FC_Web_EP_Exam_Start_Success` distinct `attempt_id` | 同一 attempt；Diagnostic/Full-Length 分开 |
+| 报告查看率 | `FC_Web_EP_Report_View(access=full)` distinct `attempt_id` / `FC_Web_EP_Exam_Scoring_Result(result=success)` distinct `attempt_id` | 评分成功后 7 天 |
+| Mini quiz 完成率 | `FC_Web_EP_Mini_Quiz_Complete` distinct `quiz_session_id` / `FC_Web_EP_Mini_Quiz_Start_Success` distinct `quiz_session_id` | 同一 quiz session |
+| Paywall CTR | `FC_Web_EP_Paywall_Unlock_Click` distinct `paywall_impression_id` / `FC_Web_EP_Paywall_View` distinct `paywall_impression_id` | 同一 impression；按 `paywall_context` 分层 |
+| Paywall 购买转化 | `FC_Web_EP_Purchase_Result(result=success)` distinct `paywall_impression_id` / `FC_Web_EP_Paywall_View` distinct `paywall_impression_id` | 7 天归因，按首次触点与最终触点双报；套餐周期用 `subscription_period` |
 | 题目数据错误率 | 渲染/校验失败 question 数 / 加载 question 数 | 按版本、exam_family；目标为 0 |
-| Course D7/D30 回访率 | 首次 `ep_course_open` 用户中，在第 7/30 天再次产生 `ep_course_view` 的 UV / 首次 `ep_course_open` UV | 以用户首次课程打开日建 cohort；D7、D30 分开计算，按 `exam_family` 分层 |
-| Course→Custom Plan 30 日转化 | 首次 `ep_course_open` 后 30 天内产生 `ep_plan_create_result(result=success)` 的 UV / 首次 `ep_course_open` UV | 以公共 `user_id` 关联；一个用户只计一次成功 |
-| Course→Ask Solvely 30 日意图率 | 首次 `ep_course_open` 后 30 天内产生 `ep_ask_solvely_open` 的 UV / 首次 `ep_course_open` UV | `access_result=opened|paywall` 均代表意图，另按结果分层 |
-| Course-assisted Pro 30 日转化 | 首次 `ep_course_open` 后 30 天内产生 `pro_purchase_result(result=success)` 的 UV / 首次 `ep_course_open` UV | 作为辅助转化观察，不替代 Paywall 直接归因；按首次 Course touch 建 cohort |
+| Course D7/D30 回访率 | 首次 `FC_Web_EP_Course_Open` 用户中，在第 7/30 天再次产生 `FC_Web_EP_Course_View` 的 UV / 首次 `FC_Web_EP_Course_Open` UV | 以用户首次课程打开日建 cohort；D7、D30 分开计算，按 `exam_family` 分层 |
+| Course→Custom Plan 30 日转化 | 首次 `FC_Web_EP_Course_Open` 后 30 天内产生 `Web_EP_Plan_Create_Result(result=success)` 的 UV / 首次 `FC_Web_EP_Course_Open` UV | 以公共 `user_id` 关联；一个用户只计一次成功 |
+| Course→Ask Solvely 30 日意图率 | 首次 `FC_Web_EP_Course_Open` 后 30 天内产生 `FC_Web_EP_Ask_Solvely_Open` 的 UV / 首次 `FC_Web_EP_Course_Open` UV | `access_result=opened|paywall` 均代表意图，另按结果分层 |
+| Course-assisted Pro 30 日转化 | 首次 `FC_Web_EP_Course_Open` 后 30 天内产生 `FC_Web_EP_Purchase_Result(result=success)` 的 UV / 首次 `FC_Web_EP_Course_Open` UV | 作为辅助转化观察，不替代 Paywall 直接归因；按首次 Course touch 建 cohort |
 
 Course→Writing 的跨产品转化复用 Writing Tools 已有埋点协议；在数据团队完成事件名和身份关联核对前，仅作为长期观察方向，不作为本需求上线门槛，也不在本 PRD 中虚构新事件。
 
@@ -939,7 +973,7 @@ Course→Writing 的跨产品转化复用 Writing Tools 已有埋点协议；在
 | TC-005 | 用户已有课程进度 | 进入首页 | Exam Library 出现课程进度卡和最近活动；课程目录卡尺寸不变 |
 | TC-006 | 课程库 | 搜索 `ACT`，再筛选 AP | 组合条件正确；无结果时显示 Empty State 和 Clear search |
 | TC-007 | 课程库只剩 2 张结果 | 调整筛选 | 单卡宽度仍为三列宽度，不拉伸占满 |
-| TC-008 | Coming soon 课程 | 点击/键盘操作 | 不进入空课程；状态可感知；不触发 `ep_course_open` |
+| TC-008 | Coming soon 课程 | 点击/键盘操作 | 不进入空课程；状态可感知；不触发 `FC_Web_EP_Course_Open` |
 | TC-009 | 新用户，无任何真实数据 | 仅打开课程后返回首页 | 首页仍为首次进入；不出现 Exam Library 或虚假进度 |
 | TC-010 | 新用户 | 创建一个计划后返回首页 | 自动切为已有进度布局；Exam Library 只出现真实计划 |
 | TC-011 | 新用户 | 首次开始一个 Topic 工具后返回首页 | 自动切为已有进度布局；Exam Library 只出现对应课程并可恢复准确 Topic/工具 |
@@ -998,7 +1032,7 @@ Course→Writing 的跨产品转化复用 Writing Tools 已有埋点协议；在
 | ID | 前置条件 | 操作 | 预期结果 |
 |---|---|---|---|
 | TC-211 | SAT report 含 98 题：73 Correct、20 Incorrect、5 Unanswered；有效时间 7,920 秒 | 打开 Web Score Report | Correct=73/98、Incorrect=20、Unanswered=5；Accuracy=round(73÷93×100%)=78%，不是 73÷98；Time used=2h 12m；与同一 report_id 的 Question Review 一致 |
-| TC-212 | 总量不守恒或存在重复 question_id | 生成报告 | 内部原因 `data_inconsistent` 并上报 `exam_scoring_result(error_type=data)`；保持 Scoring/Retry；不展示部分指标、0 分或 Demo 固定值 |
+| TC-212 | 总量不守恒或存在重复 question_id | 生成报告 | 内部原因 `data_inconsistent` 并上报 `FC_Web_EP_Exam_Scoring_Result(result=failure,error_code=data_inconsistent)`；保持 Scoring/Retry；不展示部分指标、0 分或 Demo 固定值 |
 | TC-213 | 某 Section 含多个题量不同的 Topic | 计算 Section 基线 | 按题目加权计算总 correct÷总 answered、总有效时间÷总 answered；不能简单平均 Topic 百分比或平均时间 |
 | TC-214 | 四个 Topic 分别满足四种 accuracy/time 组合 | 加载矩阵 | 分别进入 Proficient、Inefficient、Rushed、Struggling；R&W 与 Math 使用各自 Section 基线 |
 | TC-215 | Topic accuracy=Section accuracy 且 Topic average time=Section average time | 检查点位 | delta 均为 0，归入 Proficient；Tooltip 展示真实值 |
@@ -1039,6 +1073,25 @@ Course→Writing 的跨产品转化复用 Writing Tools 已有埋点协议；在
 | TC-409 | Diagnostic Targeted Practice + Free | 打开锁定区并点击 Unlock practice | 只显示 48px Pro 徽标、`Unlock targeted practice with Solvely Pro` 与 `Unlock practice`；无说明小字、灰锁底框或按钮内重复 Pro；点击后弹 Paywall，Question Review 仍保持免费可见 |
 | TC-410 | Full-Length Retake | 点击 Retake/Cancel/Confirm | 先确认；Cancel 保持报告；Confirm 创建新 attempt，旧报告进入历史 |
 
+### 9.6 埋点协议与数据链路
+
+| ID | 前置条件 | 操作 | 预期结果 |
+|---|---|---|---|
+| TC-501 | 首次进入首页 | 点击侧栏后等待页面渲染 | `Web_EP_Tab` 仅在点击时上报；`Web_EP_Home_View` 在首屏成功渲染后上报；两个事件各一次且互不替代 |
+| TC-502 | 打开创建界面 | 分别由上传、新建按钮、示例进入 | `Web_EP_Plan_Create_View` 在界面完整可见时上报；`entry_point` 准确；`Web_EP_Create_Exam` / `Web_EP_OB_Sample` 仍只表示入口动作 |
+| TC-503 | 选择有效文件 | 分别用 Picker 和 Drag，等待上传 | 先上报对应 `Web_EP_File_Picker` / `Web_EP_File_Drag`；服务端上传终态只上报一次 `Web_EP_Plan_Upload_Result`；失败与成功均不重复 |
+| TC-504 | 选择不支持、过大、超页或空文件 | 触发客户端校验 | 上报一次 `Web_EP_Plan_File_Validation_Result(result=failure)` 和准确 `error_code`；不调用上传接口、不产生 `Web_EP_Plan_Upload_Result` |
+| TC-505 | 创建/编辑表单有效 | 提交并分别模拟成功、失败、重复回调 | 客户端每个 `request_id` 仅一个 `Web_EP_Plan_Create_Submit`；服务端每个 `request_id` 仅一个 `Web_EP_Plan_Create_Result`；二者 `request_id/action` 一致，失败必有 `error_code` |
+| TC-506 | 表单校验失败 | 点击 Create/Save | 不上报 `Web_EP_Plan_Create_Submit` 或 Result；旧 `Web_EP_Predict_Click` 即使存在也不进入新创建成功率口径 |
+| TC-507 | Exam Library 同时有 Custom Plan 与 Course | 分别点击两类卡片 | 原 EP 对象计划使用 `Web_EP_Exam_Click(examId)`；课程使用 `FC_Web_EP_Course_Open(course_id)`；不得交叉复用 ID |
+| TC-508 | SAT、ACT、AP 分别执行同一考试动作 | Start、Submit、打开 Report | 均使用同一套 `FC_Web_EP_Exam_*` / `FC_Web_EP_Report_View` 名称，仅通过 `exam_family` 区分；不产生考试专属复制事件 |
+| TC-509 | Paywall 展示并选择月付/年付 | 点击 CTA 并完成/失败 | View、Unlock、Purchase 通过 `paywall_impression_id` 关联；购买两行只携带 `subscription_period=monthly|annual`，不使用 `plan_id` 表示套餐周期 |
+| TC-510 | 服务端提交/评分/购买回调重试 | 重放同一业务结果 | `FC_Web_EP_Exam_Submit_Success`、`FC_Web_EP_Exam_Scoring_Result`、`FC_Web_EP_Purchase_Result` 按各自业务 ID 幂等；客户端不重复上报服务端权威结果 |
+| TC-511 | 完整埋点协议表 | 自动解析事件注册表 | 38 条主映射 Event_Name 唯一；每行仅一个事件，类型只能为新增/复用，埋点端非空；8 条条件复用与 1 条补点建议均可追溯 |
+| TC-512 | Similar Questions 生成成功/失败/重试 | 重放同一 `load_request_id` 并分别返回成功、失败 | 每个请求只产生一个 `FC_Web_EP_Mini_Quiz_Load_Result`；仅成功且第 1 题可见后产生 `FC_Web_EP_Mini_Quiz_Start_Success`；失败不制造 Start |
+| TC-513 | 长考试答案同步失败 | 模拟离线、冲突、超时和服务端失败并自动重试 | 达到异常终态后每个 `sync_request_id` 只产生一个 `FC_Web_EP_Exam_Answer_Sync_Failure`；正常保存不报；`retry_count` 准确 |
+| TC-514 | SAT 公式与允许的 AP PDF Reference 加载失败 | 分别模拟网络、资源缺失、格式不支持和超时 | 每个资源每次打开最多一个 `FC_Web_EP_Exam_Reference_Load_Failure`；无 Reference 入口的 ACT/AP 课程不产生该事件 |
+
 ## 10. 视觉证据索引
 
 本 PRD 共附 92 张实际 Demo 截图，覆盖：首页 2 种主布局、2 类控制器、3 个考试课程、课程学习工具、测试 4 状态、商业化弹窗、模考共用交互、SAT/ACT/AP 专属结构、报告前置/锁定/完整态、Question Review、3 题 Mini Quiz 与 Targeted Practice。所有截图均存放在 [`./images`](./images/)；需求表中的 VIS 编号为唯一引用。
@@ -1061,6 +1114,7 @@ Course→Writing 的跨产品转化复用 Writing Tools 已有埋点协议；在
 - [ ] 报告的 prerequisite、locked、unlocked、Diagnostic Targeted Practice 锁定组合全部通过。
 - [ ] 92 张视觉基准对应页面完成 UI Review；所有可见文字 ≥ 12 px；主蓝、Hover、Selected 状态符合 Solvely Design System。
 - [ ] 埋点 QA 完成，核心指标可由事件唯一重建，无答案原文或问题详情泄露到分析平台。
+- [ ] 38 条主事件映射、8 条条件复用与 1 条客户端校验补点通过 TC-501–514；Submit/Result 可按 `request_id` 一对一关联，购买参数不存在套餐周期误用 `plan_id`；Mini Quiz 加载、答案同步与 Reference 失败均可幂等重建。
 - [ ] 错误、空态、断网恢复、评分超时和购买失败路径均完成测试。
 - [ ] Accessibility：键盘、焦点环、Dialog 焦点锁、ARIA、色彩对比、reduced-motion 全部通过。
 - [ ] GAP-01 与 GAP-02 在开发锁版前由负责人完成决策并更新本文档。
