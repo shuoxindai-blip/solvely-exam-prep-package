@@ -19,7 +19,10 @@ import type { EpExam } from "../types/epV2";
 import type { SatManifest, SatQuizQuestion, SatTopic } from "../types/sat";
 import {
   assessmentStates,
+  diagnosticReportPrerequisiteCopy,
   deriveHomeExperienceState,
+  fullLengthFreeGateCopy,
+  fullLengthMemberReportPrerequisiteCopy,
   isActiveAttemptState,
   normalizePrepState,
   type AssessmentKind,
@@ -423,23 +426,12 @@ const showResultsUnlockAction = computed(
 const resultsCommercialActionLabel = computed(() =>
   resultSource.value === "diagnostic" && resultView.value === "improve"
     ? "Unlock practice"
-    : resultSource.value === "practice" &&
-        (practiceTestState.value === "not-started" ||
-          practiceTestState.value === "in-progress")
-      ? "Unlock test & analysis"
-      : resultSource.value === "practice" &&
-          practiceTestState.value === "scoring"
-        ? "Unlock analysis"
-        : "Unlock report",
+    : fullLengthFreeGateCopy.cta,
 );
 const resultsCommercialBenefit = computed(() =>
   resultSource.value === "diagnostic" && resultView.value === "improve"
     ? `prioritized topics and adaptive ${examName.value} practice`
-    : resultSource.value === "practice" &&
-        (practiceTestState.value === "not-started" ||
-          practiceTestState.value === "in-progress")
-      ? `the full-length ${examName.value} test and score analysis`
-      : `your complete ${examName.value} score report`,
+    : `the full-length ${examName.value} test and score analysis`,
 );
 const resultsLocked = computed(
   () => resultsNeedAssessment.value || resultsProLocked.value,
@@ -473,27 +465,21 @@ const resultsLockTitle = computed(() => {
   if (showResultsUnlockAction.value) {
     if (resultSource.value === "diagnostic")
       return "Unlock targeted practice with Solvely Pro";
-    if (practiceTestState.value === "not-started")
-      return "Unlock the full-length test and score analysis with Solvely Pro";
-    if (practiceTestState.value === "in-progress")
-      return "Unlock to continue your full-length test with Solvely Pro";
-    if (practiceTestState.value === "scoring")
-      return "Unlock your score analysis with Solvely Pro";
-    return "Unlock this report with Solvely Pro";
+    return fullLengthFreeGateCopy.title;
   }
   if (resultsNeedAssessment.value) {
     if (resultSource.value === "diagnostic") {
-      if (diagnosticTestState.value === "scoring")
-        return "Your diagnostic test is being scored";
-      return diagnosticTestState.value === "in-progress"
-        ? "Finish your diagnostic test to see your score analysis"
-        : "Take the free diagnostic test to see your score analysis";
+      return (
+        diagnosticReportPrerequisiteCopy[
+          diagnosticTestState.value as keyof typeof diagnosticReportPrerequisiteCopy
+        ]?.title ?? "Your score report is ready"
+      );
     }
-    if (practiceTestState.value === "scoring")
-      return "Your full-length practice test is being scored";
-    return practiceTestState.value === "in-progress"
-      ? "Finish your full-length practice test to see your score analysis"
-      : "Take the full-length practice test to see your score analysis";
+    return (
+      fullLengthMemberReportPrerequisiteCopy[
+        practiceTestState.value as keyof typeof fullLengthMemberReportPrerequisiteCopy
+      ]?.title ?? "Your score report is ready"
+    );
   }
   return "Your score report is ready";
 });
@@ -548,8 +534,11 @@ const diagnosticTestCard = computed(() => {
   if (diagnosticTestState.value === "scoring")
     return {
       stateLabel: "Scoring",
-      description:
-        "Your answers were submitted. We are calculating your composite and section score predictions; results are usually ready in a few seconds.",
+      description: isApPackage.value
+        ? "Your answers were submitted. We are calculating your AP score and unit-level performance estimate; results are usually ready in a few seconds."
+        : isActPackage.value
+          ? "Your answers were submitted. We are calculating your composite and section score predictions; results are usually ready in a few seconds."
+          : "Your answers were submitted. We are calculating your total and section score predictions; results are usually ready in a few seconds.",
       metrics: [
         { value: String(questionCount), label: "questions" },
         { value: "Untimed", label: "" },
@@ -670,7 +659,7 @@ const practiceTestCard = computed(() => {
       statusMeta: `Results ready · ${
         report ? formatReportDate(report.completedAt) : "Aug 21, 2026"
       }`,
-      cta: isProMember.value ? "View Score Report" : "Unlock Score Report",
+      cta: isProMember.value ? "View Score Report" : fullLengthFreeGateCopy.cta,
       disabled: false,
     };
   return {
@@ -691,13 +680,18 @@ const practiceTestCard = computed(() => {
   };
 });
 const resultsPrerequisiteActionLabel = computed(() => {
-  if (resultSource.value === "diagnostic")
-    return diagnosticTestState.value === "in-progress"
-      ? "Continue diagnostic"
-      : "Start free diagnostic";
-  return practiceTestState.value === "in-progress"
-    ? "Continue practice test"
-    : "Start practice test";
+  if (resultSource.value === "diagnostic") {
+    return (
+      diagnosticReportPrerequisiteCopy[
+        diagnosticTestState.value as keyof typeof diagnosticReportPrerequisiteCopy
+      ]?.cta ?? "Start free diagnostic"
+    );
+  }
+  return (
+    fullLengthMemberReportPrerequisiteCopy[
+      practiceTestState.value as keyof typeof fullLengthMemberReportPrerequisiteCopy
+    ]?.cta ?? "Start practice test"
+  );
 });
 const showResultsStartAction = computed(() => {
   if (!resultsNeedAssessment.value || showResultsUnlockAction.value) return false;
@@ -1968,7 +1962,10 @@ function confirmRetake() {
 function handlePracticeTestAction() {
   if (practiceTestState.value === "scoring") return;
   if (practiceTestState.value === "results" && !isProMember.value) {
-    openCommercialPaywall(`your complete ${examName.value} score report`, handlePracticeTestAction);
+    openCommercialPaywall(
+      `the full-length ${examName.value} test and score analysis`,
+      handlePracticeTestAction,
+    );
     return;
   }
   if (practiceTestState.value === "results") {

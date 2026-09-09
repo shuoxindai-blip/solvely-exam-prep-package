@@ -1,7 +1,11 @@
 import assert from 'node:assert/strict'
+import { readFileSync } from 'node:fs'
 import {
   assessmentStates,
+  diagnosticReportPrerequisiteCopy,
   deriveHomeExperienceState,
+  fullLengthFreeGateCopy,
+  fullLengthMemberReportPrerequisiteCopy,
   isActiveAttemptState,
   isFullLengthRouteAllowed,
   normalizePrepState,
@@ -42,5 +46,19 @@ assert.equal(isFullLengthRouteAllowed('free', undefined), false)
 assert.equal(isFullLengthRouteAllowed('free', 'diagnostic'), true)
 assert.equal(isFullLengthRouteAllowed('member', undefined), true)
 
-console.log(`Verified ${reachablePairs.length} reachable assessment-state pairs and all home/access invariants.`)
+assert.deepEqual(fullLengthFreeGateCopy, {
+  title: 'Unlock the full-length test and score analysis with Solvely Pro',
+  cta: 'Unlock test & analysis',
+})
+assert.deepEqual(Object.keys(diagnosticReportPrerequisiteCopy), ['not-started', 'in-progress', 'scoring'])
+assert.deepEqual(Object.keys(fullLengthMemberReportPrerequisiteCopy), ['not-started', 'in-progress', 'scoring'])
 
+const packageViewSource = readFileSync(new URL('../src/views/ExamPrepPackageView.vue', import.meta.url), 'utf8')
+const miniQuizHandler = packageViewSource.match(/function practiceReviewQuestion[\s\S]*?\n}\nasync function loadSimilarQuiz/)?.[0] ?? ''
+assert.match(miniQuizHandler, /showModal\(\)/, 'Start mini quiz must open the drawer directly.')
+assert.doesNotMatch(miniQuizHandler, /openCommercialPaywall|isProMember/, 'Diagnostic mini quiz must stay free.')
+for (const forbiddenCopy of ['Unlock analysis', 'Unlock report', 'Unlock Score Report', 'Unlock to continue']) {
+  assert.doesNotMatch(packageViewSource, new RegExp(forbiddenCopy), `Removed Full-Length Free copy must not return: ${forbiddenCopy}`)
+}
+
+console.log(`Verified ${reachablePairs.length} reachable assessment-state pairs, report-gate copy, free mini quiz, and all home/access invariants.`)

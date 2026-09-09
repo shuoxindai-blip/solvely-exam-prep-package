@@ -11,6 +11,41 @@ export type CourseEntryState = 'first-visit' | 'in-progress'
 export type HomeExperienceState = 'empty' | 'active'
 export type HomePreviewState = 'first-entry' | 'active' | null
 
+export const fullLengthFreeGateCopy = {
+  title: 'Unlock the full-length test and score analysis with Solvely Pro',
+  cta: 'Unlock test & analysis',
+} as const
+
+export const diagnosticReportPrerequisiteCopy = {
+  'not-started': {
+    title: 'Take the free diagnostic test to see your score analysis',
+    cta: 'Start free diagnostic',
+  },
+  'in-progress': {
+    title: 'Finish your diagnostic test to see your score analysis',
+    cta: 'Continue diagnostic',
+  },
+  scoring: {
+    title: 'Your diagnostic test is being scored',
+    cta: null,
+  },
+} as const
+
+export const fullLengthMemberReportPrerequisiteCopy = {
+  'not-started': {
+    title: 'Take the full-length practice test to see your score analysis',
+    cta: 'Start practice test',
+  },
+  'in-progress': {
+    title: 'Finish your full-length practice test to see your score analysis',
+    cta: 'Continue practice test',
+  },
+  scoring: {
+    title: 'Your full-length practice test is being scored',
+    cta: null,
+  },
+} as const
+
 export type PrepStateSnapshot = {
   courseState: CourseEntryState
   diagnosticState: AssessmentState
@@ -75,4 +110,3 @@ export function deriveHomeExperienceState(input: {
 export function isFullLengthRouteAllowed(access: unknown, mode: unknown) {
   return mode === 'diagnostic' || access === 'member'
 }
-
