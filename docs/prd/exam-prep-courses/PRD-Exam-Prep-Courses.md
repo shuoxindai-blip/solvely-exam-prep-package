@@ -52,7 +52,7 @@
 | 研发 | UI / QA / ARIA / CSP | UI 指用户界面；QA 指质量保证与测试；ARIA 是网页无障碍语义属性；CSP 是浏览器内容安全策略。 |
 | 研发 | manifest / fixture / revision | manifest 是内容清单；fixture 是 Demo 或测试使用的预置样例数据；revision 是内容或答案的版本号，用于并发保存和幂等处理。Checksum 是用于验证文件内容是否一致的校验值；staging 是发布前的受控暂存环境。 |
 | 算分 | IRT / raw-to-scale / cut-score | IRT 是项目反应理论算分模型；raw-to-scale 是从原始答对数到量尺分的版本化转换表；cut-score 是 AP 原始分到 1–5 分的版本化分界表。 |
-| 文档 | PRD / EP / BR / M / TC / VIS / GAP | PRD 是产品需求文档；EP 是历史模块名 Exam Predictor，仅在旧对象或旧埋点名中保留；BR 是业务规则，M 是商业化规则，TC 是测试用例，VIS 是视觉截图，GAP 是上线前待确认项。P0/P1 分别表示阻断上线和上线前必须解决的优先级。 |
+| 文档 | PRD / EP / BR / M / TC / VIS / GAP / RESOLVED | PRD 是产品需求文档；EP 是历史模块名 Exam Predictor，仅在旧对象或旧埋点名中保留；BR 是业务规则，M 是商业化规则，TC 是测试用例，VIS 是视觉截图，GAP 是上线前待确认项，RESOLVED 是已经确定规则、不再等待产品决策的历史问题。P0/P1 分别表示阻断上线和上线前必须解决的优先级。 |
 
 ## 2. 需求分析
 
@@ -932,9 +932,9 @@ Course→Writing 的跨产品转化复用 Writing Tools 已有埋点协议；在
 | GAP-01 | SAT practice questions 数量口径 | 课程头部显示 3,879；内容清单统计为 3,807；课程卡显示 6,226（含 flashcards/其他练习） | 定义“practice questions”是否包含 flashcards/guide practice，并由 Catalog API 返回唯一值 | Product + Content + Data |
 | GAP-02 | ACT Break | 代码存在 15 分钟计时初值，但实际流程不进入 Break | 依据 2026 目标 ACT 官方结构确认是否添加；确认前按当前 Demo 的无 Break 实现 | Product + Content |
 | RESOLVED-03 | Demo 状态来源 | 已接入统一状态规范化器：两场测试同时进行或评分时自动修复、`resultState` 迁移后删除、Free Full-Length 直链由路由守卫拦截；控制器只生成业务允许的状态 | 生产只接受服务端状态；控制器仅测试环境可见，服务端仍需按 4.3/4.8 校验 | Engineering |
-| GAP-04 | Scoring 时长 | Demo 固定约 2 秒自动切结果 | 生产监听评分任务状态，按 SLA 展示长等待与错误 | Backend + Frontend |
-| GAP-05 | AP Catalog 与 Reference | 目前只有 AP Calculus BC 可用，但它不在 Reference 白名单；截图展示的是可配置 AP 的嵌入能力 | 保持白名单驱动；未来开放 AP 课程时按 slug 配置，未配置绝不显示入口 | Content + Engineering |
-| GAP-06 | Custom Plan 数据 | Demo 以浏览器存储模拟创建和进度 | 上线前接入用户级服务端存储和跨端同步 | Backend |
+| RESOLVED-04 | Scoring 时长 | Demo 固定约 2 秒自动切结果 | 生产监听评分任务状态，按 SLA 展示长等待与错误 | Backend + Frontend |
+| RESOLVED-05 | AP Catalog 与 Reference | 目前只有 AP Calculus BC 可用，但它不在 Reference 白名单；截图展示的是可配置 AP 的嵌入能力 | 保持白名单驱动；未来开放 AP 课程时按 slug 配置，未配置绝不显示入口 | Content + Engineering |
+| RESOLVED-06 | Custom Plan 数据 | Demo 以浏览器存储模拟创建和进度 | 上线前接入用户级服务端存储和跨端同步 | Backend |
 
 ### 7.3 风险与缓解
 
