@@ -7,6 +7,14 @@
 }
 
 * { box-sizing: border-box; }
+
+.pro-label-badge {
+  display: block;
+  width: 36px;
+  height: auto;
+  flex: 0 0 auto;
+  object-fit: contain;
+}
 html, body, #app { min-width: 320px; min-height: 100%; margin: 0; }
 body { background: #f7f9fc; }
 button, input, select, textarea { font: inherit; }

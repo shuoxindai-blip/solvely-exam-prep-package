@@ -387,9 +387,7 @@ const resultsCommercialLocked = computed(
   () => resultsRequirePro.value && !isProMember.value,
 );
 const resultsNeedAssessment = computed(
-  () =>
-    !activeAssessmentComplete.value &&
-    (resultSource.value === "diagnostic" || isProMember.value),
+  () => !activeAssessmentComplete.value,
 );
 const resultsProLocked = computed(
   () => resultsCommercialLocked.value && !resultsNeedAssessment.value,
@@ -401,12 +399,13 @@ const resultsLocked = computed(
   () => resultsNeedAssessment.value || resultsProLocked.value,
 );
 const targetedPracticeNeedsAssessment = computed(
-  () =>
-    !activeAssessmentComplete.value &&
-    (resultSource.value === "diagnostic" || isProMember.value),
+  () => !activeAssessmentComplete.value,
 );
 const targetedPracticeProLocked = computed(
-  () => !targetedPracticeNeedsAssessment.value && !isProMember.value,
+  () =>
+    resultSource.value === "diagnostic" &&
+    !targetedPracticeNeedsAssessment.value &&
+    !isProMember.value,
 );
 const targetedPracticeLocked = computed(
   () =>
@@ -555,7 +554,7 @@ const practiceTestCard = computed(() => {
     630;
   if (practiceTestState.value === "not-started")
     return {
-      stateLabel: "Pro",
+      stateLabel: "Free",
       description:
         `Take a realistic full-length ${isApPackage.value ? "AP Calculus BC" : isActPackage.value ? "ACT with Science" : "Digital SAT"} with official timing and section structure.`,
       metrics: [
@@ -613,7 +612,7 @@ const practiceTestCard = computed(() => {
       statusMeta: `Results ready · ${
         report ? formatReportDate(report.completedAt) : "Aug 21, 2026"
       }`,
-      cta: "View Results",
+      cta: isProMember.value ? "View Score Report" : "Unlock Score Report",
       disabled: false,
     };
   return {
@@ -1621,7 +1620,7 @@ function improvePracticeLabel(topic: SatTopic) {
       : "Practice";
 }
 function openImprovePractice(topic: SatTopic) {
-  if (!isProMember.value) {
+  if (resultSource.value === "diagnostic" && !isProMember.value) {
     openCommercialPaywall(`adaptive practice for your priority ${examName.value} topics`, () =>
       openImprovePractice(topic),
     );
@@ -1678,13 +1677,6 @@ function startMockExam(
   examId: number,
   targetExamFamily: ExamFamily = examFamily.value,
 ) {
-  if (!isProMember.value) {
-    const examLabel = targetExamFamily === "ap-calculus-bc" ? "AP Calculus BC" : targetExamFamily.toUpperCase();
-    openCommercialPaywall(`the ${examLabel} Full-Length Practice Test`, () =>
-      startMockExam(examId, targetExamFamily),
-    );
-    return;
-  }
   markHomeExperienceActive();
   void router.push({
     name: "mock-exam",
@@ -1706,10 +1698,6 @@ function requestRetake() {
       },
       hash: activeCourseHash.value,
     });
-    return;
-  }
-  if (!isProMember.value) {
-    openCommercialPaywall("Practice Test retakes and your saved score history", requestRetake);
     return;
   }
   if (retakeDialog.value && !retakeDialog.value.open)
@@ -1799,13 +1787,8 @@ function confirmRetake() {
 }
 function handlePracticeTestAction() {
   if (practiceTestState.value === "scoring") return;
-  if (!isProMember.value) {
-    openCommercialPaywall(
-      practiceTestState.value === "results"
-        ? `your complete ${examName.value} score report`
-        : `the ${examName.value} Full-Length Practice Test`,
-      handlePracticeTestAction,
-    );
+  if (practiceTestState.value === "results" && !isProMember.value) {
+    openCommercialPaywall(`your complete ${examName.value} score report`, handlePracticeTestAction);
     return;
   }
   if (practiceTestState.value === "results") {
@@ -1959,12 +1942,6 @@ function reviewTopicTitle(question: SatReportReviewQuestion) {
   return reviewTopic(question)?.title ?? question.officialSkill;
 }
 function practiceReviewQuestion(question: SatReportReviewQuestion) {
-  if (!isProMember.value) {
-    openCommercialPaywall(`extra similar-question practice in your ${examName.value} Question Review`, () =>
-      practiceReviewQuestion(question),
-    );
-    return;
-  }
   const topic = reviewTopic(question);
   if (!topic) return;
   similarQuizTopic.value = topic;
@@ -3258,7 +3235,7 @@ onBeforeUnmount(() => {
               </span>
               <span class="course-card-body">
                 <span class="course-card-detail">
-                  • {{ course.topics }} topics • {{ course.videos }} video lessons
+                  • {{ course.topics }} topics · video lessons
                 </span>
                 <span class="course-card-detail">
                   • {{ course.questions }} practice questions
@@ -3705,6 +3682,13 @@ onBeforeUnmount(() => {
                     </div>
                     <header class="mock-entry-title-row">
                       <h3>{{ examName }} Full-Length Practice Test</h3>
+                      <img
+                        v-if="!isProMember"
+                        class="pro-label-badge mock-entry-pro-label"
+                        src="/assets/solvely-pro-label.webp"
+                        alt="Pro score report"
+                        title="The practice test is free. The score report requires Pro."
+                      />
                       <span :class="['mock-entry-state', practiceTestState]"
                         ><i />{{ practiceTestCard.stateLabel }}</span
                       >
@@ -3749,6 +3733,12 @@ onBeforeUnmount(() => {
                         { disabled: practiceTestCard.disabled },
                       ]"
                     >
+                      <img
+                        v-if="!isProMember && practiceTestState === 'results'"
+                        class="pro-label-badge mock-card-pro-label"
+                        src="/assets/solvely-pro-label.webp"
+                        alt="Pro"
+                      />
                       <span>{{ practiceTestCard.cta }}</span
                       ><span class="mock-card-link-arrow" aria-hidden="true"
                         >→</span
@@ -4084,6 +4074,11 @@ onBeforeUnmount(() => {
                       type="button"
                       @click="openCommercialPaywall(`your complete ${examName} score report`)"
                     >
+                      <img
+                        class="pro-label-badge results-action-pro-label"
+                        src="/assets/solvely-pro-label.webp"
+                        alt="Pro"
+                      />
                       Unlock report
                     </button>
                   </div>
@@ -4174,6 +4169,11 @@ onBeforeUnmount(() => {
                       type="button"
                       @click="openCommercialPaywall(`your ${examName} knowledge and skills breakdown`)"
                     >
+                      <img
+                        class="pro-label-badge results-action-pro-label"
+                        src="/assets/solvely-pro-label.webp"
+                        alt="Pro"
+                      />
                       Unlock report
                     </button>
                   </div>
@@ -4356,6 +4356,11 @@ onBeforeUnmount(() => {
                       type="button"
                       @click="openCommercialPaywall(`detailed ${examName} performance insights`)"
                     >
+                      <img
+                        class="pro-label-badge results-action-pro-label"
+                        src="/assets/solvely-pro-label.webp"
+                        alt="Pro"
+                      />
                       Unlock report
                     </button>
                   </div>
@@ -4689,6 +4694,11 @@ onBeforeUnmount(() => {
                       type="button"
                       @click="openCommercialPaywall('every answer, explanation, and skill review')"
                     >
+                      <img
+                        class="pro-label-badge results-action-pro-label"
+                        src="/assets/solvely-pro-label.webp"
+                        alt="Pro"
+                      />
                       Unlock review
                     </button>
                   </div>
@@ -4932,6 +4942,11 @@ onBeforeUnmount(() => {
                           )
                         "
                       >
+                        <img
+                          class="pro-label-badge results-action-pro-label"
+                          src="/assets/solvely-pro-label.webp"
+                          alt="Pro"
+                        />
                         Unlock practice
                       </button>
                     </div>
@@ -4976,6 +4991,11 @@ onBeforeUnmount(() => {
                         )
                       "
                     >
+                      <img
+                        class="pro-label-badge results-action-pro-label"
+                        src="/assets/solvely-pro-label.webp"
+                        alt="Pro"
+                      />
                       Unlock practice
                     </button>
                   </div>

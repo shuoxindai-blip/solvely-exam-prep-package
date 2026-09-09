@@ -224,6 +224,7 @@ body.topic-tool-route main { margin-left: 0; }
 .solvely-chat-launch { position: fixed; z-index: 120; right: 22px; bottom: 22px; }
 .solvely-ask-button:hover { transform: translateY(-1px); box-shadow: 0 6px 15px rgba(85, 81, 230, .2); }
 .solvely-ask-button img { width: 20px; height: 20px; border-radius: 6px; }
+.solvely-ask-button .solvely-ask-pro-label { width: 36px; height: auto; border-radius: 0; }
 .solvely-ask-button.is-open { min-width: 128px; color: #474c58; background: #f3f4f6; box-shadow: none; }
 .solvely-chat-launch.is-open { right: calc(var(--ask-panel-width) + 22px); }
 

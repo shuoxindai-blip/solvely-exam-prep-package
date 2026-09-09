@@ -130,13 +130,11 @@ function openCommercialPaywall(context: string, action?: () => void) {
   paywallOpen.value = true
 }
 
-function openStudyGuidePaywall() {
-  openCommercialPaywall('the complete video lesson, Study Guide, and Quick Practice')
-}
-
 function closeCommercialPaywall() {
+  const returnToLockedTargetedPractice = isImprovePractice.value && !isProMember.value
   paywallOpen.value = false
   pendingCommercialAction = null
+  if (returnToLockedTargetedPractice) backToPackage()
 }
 
 function unlockPro() {
@@ -146,6 +144,22 @@ function unlockPro() {
   setProAccess('member')
   if (action) void nextTick(action)
 }
+
+function requestAskSolvely() {
+  if (!isProMember.value) {
+    openCommercialPaywall(`Ask Solvely for personalized help with ${topic.value?.title ?? examName.value}`, () => {
+      askSolvelyOpen.value = true
+    })
+    return
+  }
+  askSolvelyOpen.value = true
+}
+
+watch([isImprovePractice, isProMember], ([isTargetedPractice, isMember]) => {
+  if (isTargetedPractice && !isMember) {
+    openCommercialPaywall('personalized targeted practice')
+  }
+}, { immediate: true })
 
 function backToPackage() {
   void router.push(isImprovePractice.value
@@ -179,39 +193,23 @@ function markCard(status: CardStatus) {
 
 function nextCard() {
   if (!flashcards.value.length) return
-  if (!isProMember.value && flashcards.value.length > 1) {
-    openCommercialPaywall(`all flashcards for this ${examName.value} topic`, nextCard)
-    return
-  }
   cardIndex.value = (cardIndex.value + 1) % flashcards.value.length
   cardFlipped.value = false
 }
 
 function previousCard() {
   if (!flashcards.value.length) return
-  if (!isProMember.value && flashcards.value.length > 1) {
-    openCommercialPaywall(`all flashcards for this ${examName.value} topic`, previousCard)
-    return
-  }
   cardIndex.value = (cardIndex.value - 1 + flashcards.value.length) % flashcards.value.length
   cardFlipped.value = false
 }
 
 function shuffleCards() {
   if (!flashcards.value.length) return
-  if (!isProMember.value && flashcards.value.length > 1) {
-    openCommercialPaywall(`all flashcards for this ${examName.value} topic`, shuffleCards)
-    return
-  }
   cardIndex.value = Math.floor(Math.random() * flashcards.value.length)
   cardFlipped.value = false
 }
 
 function setCardView(view: 'card' | 'list') {
-  if (view === 'list' && !isProMember.value) {
-    openCommercialPaywall('the complete flashcard deck', () => setCardView(view))
-    return
-  }
   cardView.value = view
 }
 
@@ -310,10 +308,6 @@ function recordImprovePracticeAnswer() {
 
 function nextQuestion() {
   if (!quizQuestions.value.length) return
-  if (!isProMember.value && quizIndex.value === 0) {
-    openCommercialPaywall('the remaining questions and explanations in this Topic Quiz', nextQuestion)
-    return
-  }
   if (isImprovePractice.value && isLastQuizQuestion.value) {
     improvePracticeProgress.value = quizQuestions.value.length
     if (topic.value) saveImprovePracticeProgress(topic.value.id, improvePracticeProgress.value)
@@ -493,19 +487,18 @@ onBeforeUnmount(() => {
 
         <article v-else-if="mode === 'study-guide' && studyGuide && video" class="study-guide-view">
           <p class="study-guide-section-label">Video Lesson</p>
-          <section :class="['topic-video-card', { 'commercial-locked': !isProMember }]" aria-labelledby="topicVideoTitle">
+          <section class="topic-video-card" aria-labelledby="topicVideoTitle">
             <header><div><h2 id="topicVideoTitle">{{ video.title }}</h2><span>{{ video.description }}</span></div><a :href="video.playbackUrl" target="_blank" rel="noopener">Open video ↗</a></header>
-            <div class="topic-video-frame" :class="{ loaded: iframeLoaded && isProMember }">
+            <div class="topic-video-frame" :class="{ loaded: iframeLoaded }">
               <img :src="video.coverUrl" :alt="`${video.title} video cover`" />
-              <span v-if="isProMember" class="video-loading">Loading interactive lesson…</span>
-              <iframe v-if="isProMember" :src="video.playbackUrl" :title="video.title" loading="eager" allow="fullscreen" @load="iframeLoaded = true" />
+              <span class="video-loading">Loading interactive lesson…</span>
+              <iframe :src="video.playbackUrl" :title="video.title" loading="eager" allow="fullscreen" @load="iframeLoaded = true" />
             </div>
-            <button v-if="!isProMember" class="topic-video-paywall-hitarea" type="button" aria-label="Unlock this video lesson with Solvely Pro" @click="openStudyGuidePaywall" />
           </section>
 
           <p class="study-guide-section-label exam-essentials">Exam Essentials</p>
-          <div :class="['study-guide-content-gate', { locked: !isProMember }]">
-            <div class="study-guide-gated-content" :inert="!isProMember">
+          <div class="study-guide-content-gate">
+            <div class="study-guide-gated-content">
             <section class="guide-article">
             <div class="guide-overview"><span>OVERVIEW</span><p>{{ studyGuide.overview }}</p></div>
             <section v-if="studyGuide.learning_objectives?.length" class="guide-objectives">
@@ -561,20 +554,12 @@ onBeforeUnmount(() => {
             </article>
             </section>
             </div>
-            <div v-if="!isProMember" class="study-guide-inline-gate">
-              <section class="study-guide-inline-gate-card">
-                <span aria-hidden="true">x²</span>
-                <strong>Keep Learning with Solvely Pro</strong>
-                <small>Unlock the full written guide, worked examples, exam tips, and Quick Practice.</small>
-                <button type="button" @click="openStudyGuidePaywall">Unlock Study Guide</button>
-              </section>
-            </div>
           </div>
         </article>
 
         <section v-else-if="mode === 'flashcards' && flashCardContent" class="flashcard-view">
           <div class="tool-view-toolbar">
-            <div><strong>{{ cardView === 'card' ? `${cardIndex + 1}/${flashcards.length} Cards` : `${flashcards.length} Cards` }}<span v-if="!isProMember" class="tool-free-preview-badge">Card 1 preview</span></strong><span>{{ cardStatusCounts.review }} Need Review · {{ cardStatusCounts.mastered }} Mastered</span></div>
+            <div><strong>{{ cardView === 'card' ? `${cardIndex + 1}/${flashcards.length} Cards` : `${flashcards.length} Cards` }}</strong><span>{{ cardStatusCounts.review }} Need Review · {{ cardStatusCounts.mastered }} Mastered</span></div>
             <div class="view-mode-buttons"><button type="button" :class="{ active: cardView === 'card' }" @click="setCardView('card')">Card</button><button type="button" :class="{ active: cardView === 'list' }" @click="setCardView('list')">List</button></div>
           </div>
 
@@ -604,7 +589,7 @@ onBeforeUnmount(() => {
         <section v-else class="quiz-view">
           <div v-if="quizLoading" class="topic-load-state inline"><span class="topic-loader" /><strong>Loading {{ topic.quizCount }} questions…</strong></div>
           <template v-else-if="currentQuestion">
-            <div class="quiz-progress-row"><span>Question {{ quizIndex + 1 }} of {{ quizQuestions.length }}<em v-if="!isProMember" class="tool-free-preview-badge">Question 1 preview</em></span><div><i :style="{ width: `${((quizIndex + 1) / quizQuestions.length) * 100}%` }" /></div><b>{{ currentQuestion.difficulty }}</b></div>
+            <div class="quiz-progress-row"><span>Question {{ quizIndex + 1 }} of {{ quizQuestions.length }}</span><div><i :style="{ width: `${((quizIndex + 1) / quizQuestions.length) * 100}%` }" /></div><b>{{ currentQuestion.difficulty }}</b></div>
             <article class="quiz-card">
               <span class="quiz-kicker">{{ currentQuestion.domain }} · {{ currentQuestion.skill }}</span>
               <h2>{{ currentQuestion.question }}</h2>
@@ -635,6 +620,7 @@ onBeforeUnmount(() => {
       v-model:panel-width="askSolvelyPanelWidth"
       :context-title="topic.title"
       :context-detail="isApPackage ? 'AP Calculus BC Exam Prep' : isActPackage ? 'ACT Exam Prep' : 'Digital SAT Exam Prep'"
+      @request-open="requestAskSolvely"
     />
     <CommercialDemoController
       :model-value="accessState"

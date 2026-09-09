@@ -19,6 +19,7 @@ const props = defineProps<{
 const emit = defineEmits<{
   'update:open': [value: boolean]
   'update:panelWidth': [value: number]
+  'request-open': []
 }>()
 
 const composer = ref('')
@@ -41,8 +42,11 @@ let recognition: any = null
 const contextCopy = computed(() => props.contextDetail || props.contextTitle)
 
 function togglePanel() {
-  emit('update:open', !props.open)
-  if (!props.open) void nextTick(() => composerInput.value?.focus())
+  if (!props.open) {
+    emit('request-open')
+    return
+  }
+  emit('update:open', false)
 }
 
 function closePanel() {
@@ -223,6 +227,12 @@ onBeforeUnmount(() => {
   <button type="button" class="solvely-ask-button solvely-chat-launch" :class="{ 'is-open': open }" :aria-expanded="open" @click="togglePanel">
     <img v-if="!open" src="/assets/solvely-ai-logo.jpeg" alt="" />
     <span>{{ open ? 'Hide Solvely' : 'Ask Solvely' }}</span>
+    <img
+      v-if="!open"
+      class="pro-label-badge solvely-ask-pro-label"
+      src="/assets/solvely-pro-label.webp"
+      alt="Pro"
+    />
   </button>
 
   <div v-if="open && !floating" class="solvely-chat-resize" role="separator" aria-label="Resize chat panel" aria-orientation="vertical" @pointerdown="beginResize" />
