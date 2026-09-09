@@ -1677,6 +1677,17 @@ function startMockExam(
   examId: number,
   targetExamFamily: ExamFamily = examFamily.value,
 ) {
+  if (!isProMember.value) {
+    const targetExamName = targetExamFamily === "ap-calculus-bc"
+      ? "AP Calculus BC"
+      : targetExamFamily === "act"
+        ? "ACT"
+        : "SAT";
+    openCommercialPaywall(`the full-length ${targetExamName} practice test`, () =>
+      startMockExam(examId, targetExamFamily),
+    );
+    return;
+  }
   markHomeExperienceActive();
   void router.push({
     name: "mock-exam",
@@ -3686,8 +3697,8 @@ onBeforeUnmount(() => {
                         v-if="!isProMember"
                         class="pro-label-badge mock-entry-pro-label"
                         src="/assets/solvely-pro-label.webp"
-                        alt="Pro score report"
-                        title="The practice test is free. The score report requires Pro."
+                        alt="Pro membership required"
+                        title="Full-length practice tests and score reports require Pro."
                       />
                       <span
                         v-if="practiceTestCard.stateLabel"

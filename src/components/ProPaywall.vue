@@ -134,7 +134,7 @@ onBeforeUnmount(() => {
                 <strong role="columnheader">Free</strong>
                 <strong class="pro-infinity" role="columnheader" aria-label="Solvely Pro">∞</strong>
               </div>
-              <div v-for="feature in ['Unlimited Exam Predictions', 'Full Mock Exam Score Reports', 'Personalized Targeted Practice', 'Ask Solvely AI Tutor', 'Unlimited AI Live Notes']" :key="feature" class="pro-feature-row" role="row">
+              <div v-for="feature in ['Unlimited Exam Predictions', 'Full-Length Practice Tests & Score Reports', 'Personalized Targeted Practice', 'Ask Solvely AI Tutor', 'Unlimited AI Live Notes']" :key="feature" class="pro-feature-row" role="row">
                 <span role="cell">{{ feature }}</span>
                 <i role="cell" aria-label="Not included">−</i>
                 <svg role="cell" viewBox="0 0 24 24" aria-label="Included">
