@@ -1,6 +1,6 @@
 # Exam Prep & Courses 完整产品需求文档（PRD）
 
-> 文档版本：v1.8
+> 文档版本：v1.9
 > 基准日期：2026-09-09  
 > 产品范围：Exam Prep 首页、Standardized Test Prep Courses、课程学习工具、SAT/ACT/AP 模考、成绩报告与商业化门槛  
 > Demo 基准：`v1.8 state-and-copy-aligned build`
@@ -15,10 +15,11 @@
 | 2026-09-09 | v1.2 | 补充 Web SAT Performance details 的汇总指标、Topic matrix、四象限及 Score Report 计算与验收口径。 | 产品 |
 | 2026-09-09 | v1.3 | 将 iOS 备考包物料纳入 Web 内容基线，明确可复用资产、Web 适配、发布门槛、版本治理与验收规则。 | 产品 / Content / Backend / QA |
 | 2026-09-09 | v1.4 | 补充免费课程留存、专业能力证明与长期转化的商业化依据，并明确 AP 与 SAT/ACT 的课程价值和考试前置原因。 | 产品 / Growth / Content |
-| 2026-09-09 | v1.5 | 对齐 Demo 与 PRD 的唯一状态模型；穷举 12 种可达考试组合，补齐前置动作、写入、跳转、评分等待和异常归一；商业化规则收口到 4.8。 | 产品 / 设计 / 开发 / QA |
-| 2026-09-09 | v1.6 | 报告改为每个 Section 独立锁定；Free 用户查看 Full-Length 报告预览时由 Pro 权益门槛优先于考试前置状态。锁定层精简为 48px Pro icon、单一标题与 CTA，不再展示重复说明小字；N/I/S/R 使用不同购买价值文案。 | 产品 / 设计 / 开发 / QA |
+| 2026-09-09 | v1.5 | 对齐 Demo 与 PRD 的考试状态，补齐提交后返回课程、评分等待、结果查看与异常恢复规则；商业化规则收口到 4.8。 | 产品 / 设计 / 开发 / QA |
+| 2026-09-09 | v1.6 | 报告改为每个 Section 独立锁定；Free 用户查看 Full-Length 报告预览时由 Pro 权益门槛优先于考试前置状态，锁定层精简为 Pro icon、单一标题与 CTA。 | 产品 / 设计 / 开发 / QA |
 | 2026-09-09 | v1.7 | 完成 38 条 PRD 事件映射，明确 8 条旧事件的条件复用、Custom Plan Submit/Result 客户端与服务端边界、request_id 关联及 subscription_period 参数。 | 产品 / Data / Engineering / QA |
-| 2026-09-09 | v1.8 | 穷举 Diagnostic 与 Full-Length 卡片/报告全部可达状态文案，Full-Length Free 报告统一为 `Unlock test & analysis`，明确 Diagnostic Mini Quiz 免费，并将新增 Web 事件统一为全小写 `web_` 命名。 | 产品 / 设计 / Data / Engineering / QA |
+| 2026-09-09 | v1.8 | 补齐 Diagnostic 与 Full-Length 卡片/报告文案，统一 Full-Length Free 解锁入口，明确 Diagnostic Mini Quiz 免费，并规范新增 Web 事件命名。 | 产品 / 设计 / Data / Engineering / QA |
+| 2026-09-09 | v1.9 | 删除 Assessment 组合枚举、重复报告状态和重复用户旅程，核心流程改为无缩写的单次测试主链路；详细状态与商业化文案只在对应功能章节维护。 | 产品 / 设计 / Engineering / QA |
 
 ### 1.1 本文档的判定口径
 
@@ -136,7 +137,7 @@ Exam Prep & Courses
 | Course Progress | 用户 × 课程的服务端 activity | `courseActivities` 本地记录 | 仅开始 Lesson/Study Guide/Flashcards/Quiz/考试后写入；仅打开课程不写入。 |
 | Assessment Attempt | Attempt 服务端状态 | URL 状态 + 规范化器 | Diagnostic 与 Full-Length 各自只有一个 latest attempt。 |
 | Report Result | 评分服务返回的 attempt result | Demo 的已完成报告 fixture | 用户真实成绩是否存在由 attempt 决定，不允许单独设置“已解锁结果”。 |
-| Report Template | 考试类型对应的报告模块配置 | Demo 的预生成报告封面与 Section 布局 | 可在 N/I/S 与 Pro-locked 状态用于价值预览；不得被识别、存储或埋点为用户成绩。 |
+| Report Template | 考试类型对应的报告模块配置 | Demo 的预生成报告封面与 Section 布局 | 可在 Not started、In progress、Scoring 与 Pro-locked 状态用于价值预览；不得被识别、存储或埋点为用户成绩。 |
 | Entitlement | 订阅服务实时权益 | `access=free/member` 控制器 | 只影响可执行动作和内容遮罩，不反推学习/考试进度。 |
 
 ### 4.2 全局业务规则
@@ -157,9 +158,9 @@ Exam Prep & Courses
 | BR-012 | 所有商业化差异只以 **4.8 商业化与权限** 为准；其他章节只引用规则编号，不重复定义 Free/Pro。 |
 | BR-013 | 报告未生成或被 Pro 锁定时可展示对应考试的预生成封面与 Section 结构预览；预览模板不可交互、不写入成绩也不计入真实报告埋点，真实成绩仍只在 Attempt=Results ready 后生成。 |
 
-### 4.3 唯一可达状态模型与用户旅程
+### 4.3 核心用户流程
 
-#### 4.3.1 首页可达状态
+#### 4.3.1 首页展示
 
 会员状态与进度相互独立，因此只有以下四种真实组合：
 
@@ -174,78 +175,24 @@ Exam Prep & Courses
 
 ![VIS-06 首页已有进度 + Pro 状态](./images/VIS-06-demo-controller-home-created-pro.png)
 
-#### 4.3.2 课程、Diagnostic 与 Full-Length 的可达组合
+#### 4.3.2 从开始学习到查看结果
 
-用 `N/I/S/R` 分别表示 Not started / In progress / Scoring / Results ready。任一时刻最多一个考试为 I 或 S；另一个考试可以是 N 或 R，因此 16 个笛卡尔积中只有以下 12 个可达：
+课程进度、考试卡片文案、报告权限和异常处理已分别在 4.5–4.8 定义；本节只说明用户实际经历的一条主流程，不重复枚举状态组合。
 
-| Diagnostic | Full-Length | 是否可达 | 典型来源 |
-|---|---|---|---|
-| N | N | 是 | 从未开始考试；课程可能仍因 Lesson 活动处于 In progress |
-| N | I / S / R | 是 | 先开始 Full-Length，尚未做 Diagnostic |
-| I / S | N | 是 | Diagnostic 正在作答或评分，尚未做 Full-Length |
-| I / S | R | 是 | 已完成 Full-Length，之后开始/重做 Diagnostic |
-| R | N | 是 | 只完成 Diagnostic |
-| R | I / S / R | 是 | Diagnostic 已完成，之后开始/完成 Full-Length |
-
-明确不可达：`I/I`、`I/S`、`S/I`、`S/S`。进入另一场考试前必须保存并离开当前 attempt；Demo 控制器选择冲突状态时自动把较早的 active attempt 规范化为 Not started，生产环境由服务端拒绝冲突写入。
-
-| Course State | 判定条件 | 页面表现 |
+| 步骤 | 用户看到什么 | 产品行为 |
 |---|---|---|
-| First visit | 无 Lesson 活动且 Diagnostic=N、Full-Length=N | 不展示进度；展示 `Start your prep journey` |
-| In progress | 有任一 Lesson 活动，或任一考试不为 N | 展示真实完成度、最近活动与 Resume 入口；同步出现在 Exam Library |
+| 1. 浏览课程 | 可以查看课程首页和内容目录，但首页仍不显示学习进度 | 仅浏览不写进度；真正打开 Study Guide、Flashcards、Quiz 或开始考试后，课程才进入 In progress，并出现在 Exam Library |
+| 2. 开始测试 | 权限校验通过后进入第 1 题；已做过一部分时从保存位置继续 | 创建或恢复同一场测试；答案、题号、标记与用时自动保存 |
+| 3. 提交试卷 | Submit 成功后立即回到 Course Content，测试卡显示 Scoring | 锁定本次作答并启动评分；不展示独立“完成”页面 |
+| 4. 等待评分 | 用户仍停留在课程首页；评分完成后卡片自动变为 Results ready | 保存成绩和报告；不会自动跳转，避免打断用户 |
+| 5. 查看结果 | 用户主动点击 View Free Results、View Score Report 或 `Unlock test & analysis` | 打开对应 Diagnostic / Full-Length 报告；Free/Pro 差异以 4.8 为唯一规则源 |
+| 6. 继续学习 | Question Review 可免费启动 3 题 Mini Quiz；Targeted Practice 按权限进入 | Mini Quiz 在右侧抽屉完成，不进入 Study Plan；Retake 会创建新测试并保留旧报告 |
+
+> 同一用户同一时间只允许进行一场尚未提交的测试。开始另一场测试前需先 Save and Exit；无效直链或冲突请求返回课程页，不展示拼接状态，也不删除已经保存的学习进度或历史报告。
 
 ![VIS-70 课程状态控制器](./images/VIS-70-controller-course-content-states.png)
 
-#### 4.3.3 单次考试状态机
-
-| 当前状态 | 前置条件与触发动作 | 权威写入 | 下一状态与导航 | 失败/恢复 |
-|---|---|---|---|---|
-| N | 点击 Start；权限满足 M-04/M-06 | 创建 attempt，记录 start time | I；进入第 1 题 | 创建失败留在原页并 Retry；不得伪造进度 |
-| I | 作答、切题、Mark、Save and Exit | 持续保存答案、题号、工具状态、elapsed time | I；退出回课程，Continue 回保存位置 | 断网本地排队并提示未同步；重进从服务端最后成功快照恢复 |
-| I | 最终 Review 点击 Submit | attempt=`submitted` | S；立即返回课程首页，保持 Course Content，测试卡显示 Scoring | 提交失败保留 Review 和答案，可 Retry |
-| S | 收到评分完成事件 | 保存 score、section/topic metrics、report id | R；仍停留课程首页，测试卡变为 Results ready | 超时展示 Retry status，不重复提交答案 |
-| R | View Results / View Score Report | 不改 attempt | 打开正确来源的报告 | 报告拉取失败保留 R，支持 Retry |
-| R | Retake 并确认 | 创建新的 attempt；旧结果只读保留 | 新 attempt=I；进入第 1 题 | 创建失败仍停留旧报告 |
-
-Demo 的短暂 scoring 计时仅用于演示异步状态；生产环境不得以固定秒数假装评分成功。
-
-#### 4.3.4 报告来源与前置状态
-
-| 报告来源 | Attempt=N | Attempt=I | Attempt=S | Attempt=R |
-|---|---|---|---|---|
-| Diagnostic | Start Free Diagnostic | Continue Diagnostic | 只读评分中 | 展示 Score、Question Review；Targeted Practice 按 M-05 |
-| Full-Length | Pro：Start；Free：报告预览按 M-07 锁定 | Pro：Continue；Free：报告预览按 M-07 锁定 | 课程卡显示评分中；报告预览仍按实时权益应用 M-07 | 完整报告按 M-07 |
-
-报告视图只能由对应 latest attempt 推导。`resultState=unlocked` 一类独立开关不是业务状态；旧 Demo 链接若包含该字段，只能迁移为 `Full-Length=R` 后删除该字段。
-
-N/I/S 与 Free Pro-locked 状态仍展示预生成的报告封面和 Section 结构预览，让用户在开始测试或购买前知道报告会包含哪些模块。该层只来自 `exam_report_template`，不读取或写入 attempt 成绩；预览内容不可交互且不进入真实成绩埋点，前景门槛文案承担真实状态说明。只有 Attempt=R 且报告生成成功后，分数、正确率、题目结果、Topic 分类及个性化建议才可作为该用户的真实结果呈现。
-
 ![VIS-71 报告状态控制器](./images/VIS-71-controller-report-states.png)
-
-#### 4.3.5 端到端用户旅程
-
-| Journey | 前置条件 | 用户动作与页面跳转 | 结束状态 |
-|---|---|---|---|
-| J-01 首次创建 Custom Plan | 无计划、无课程活动 | 首页 Custom Plan → 上传/示例 → Create a prep plan → 创建成功 → Plan Detail；Back → Active Home | Plan count +1；Exam Library 出现该计划 |
-| J-02 首次开始免费课程 | Empty Home，Free/Pro 均可 | Prep Courses → 打开课程（仍无进度）→ 打开 Topic 的 Study Guide/Flashcards/Quiz → 记录 activity → 学习页；Back/Home | Course=In progress；Exam Library 出现该课程与最近活动 |
-| J-03 Free Diagnostic | Course 可用，Diagnostic=N | Start Free Diagnostic → 作答 → Review → Submit → 回课程首页 Scoring → 卡片自动变 Results ready → View Free Results → Question Review → Similar Questions Drawer | Diagnostic=R；Mini Quiz 不写 Study Plan 进度 |
-| J-04 Diagnostic Targeted Practice | Diagnostic=R | 报告点击 Targeted Practice：Pro 直接进入纯 Quiz；Free 弹 M-05 Paywall，购买成功恢复原动作，取消留在报告 | Targeted attempt 独立保存；Diagnostic 结果不变 |
-| J-05 Pro Full-Length | Pro，Full-Length=N/I | Start/Continue → 模考 → Review → Submit → 回课程首页 Scoring → 卡片自动变 Results ready → View Score Report | Full-Length=R；报告与 attempt 绑定 |
-| J-06 Free Full-Length 商业化 | Free，Full-Length=N/I | 点击 Start/Continue 或访问直链 → M-06 Paywall；购买成功只恢复一次原动作；取消回原课程卡 | 购买前不得创建/推进 attempt |
-| J-07 回访继续 | 已有计划或课程活动 | Active Home → 点击 Exam Library 卡片 → 进入准确的 Plan/Course/Topic/attempt 保存位置 | 继续写回同一实体，不创建重复进度 |
-| J-08 权益到期 | 历史 attempt 可为 I/S/R，当前 Free | 首页仍显示真实进度；免费内容可继续；Full-Length Continue/Report、Ask、Targeted 重新按 M-03/M-05/M-06/M-07 校验 | 不删除历史答案或报告，不把状态重置为 N |
-
-#### 4.3.6 不可能状态、直链与恢复规则
-
-| 非法/不一致输入 | 规范化结果 | 用户可见处理 |
-|---|---|---|
-| Empty Home + 已创建计划/课程 activity | 以真实数据为准改为 Active Home | 不展示“初始状态但已有进度”的拼接页面 |
-| First visit + 任一考试 I/S/R | Course=In progress | 展示对应考试状态与真实进度 |
-| 两个考试同时 I/S | 保留最近操作的 attempt；另一个恢复为最近合法的 N 或 R | 不展示两场考试同时进行/评分 |
-| Full-Length=R + 独立 `resultState=locked/unlocked` | 删除独立字段；报告权限实时读取 entitlement | Free 展示锁定报告，Pro 展示完整报告 |
-| Free 直达 Full-Length 模考 URL | 服务端/路由守卫重定向课程页并携带 pending action | 立即显示 M-06 Paywall；不能看到试题 |
-| Coming soon 课程带 activity/attempt | 忽略非法 activity 并记录告警 | 课程仍 disabled，不进入课程详情 |
-| Scoring 刷新或重复回调 | 按 attempt id 幂等查询/写入 | 保持 Scoring 或进入 R，不生成重复报告 |
 
 ### 4.4 首页与课程发现
 
@@ -669,7 +616,7 @@ Mini Quiz 是 Diagnostic 免费 Question Review 的延伸练习，对 Free / Pro
 | M-04 | Diagnostic Test | 免费开始/继续/重做 | 可用 | 不弹 Paywall | 不适用 | 不适用 | `Free` 标签，不是 Pro |
 | M-05 | Diagnostic Targeted Practice | 不可进入 | 可用 | 报告点击 Unlock practice / Practice / Continue / Review 时校验 | 恢复同一 Topic、同一 action | 留在同一报告与滚动位置 | 48px Pro + 单一标题 + CTA；无说明小字、灰锁底框或按钮内重复 Pro |
 | M-06 | Full-Length Practice Test | 不可开始或继续 | 可用 | 点击 Start/Continue、或直达模考 URL 时校验；校验通过前不创建/推进 attempt | 只恢复一次 pending Start/Continue 并进入保存位置 | 回到原课程卡；attempt 保持原状态 | 卡片标题旁 Pro badge；不得显示 Free；Start/Continue/Results CTA 内不重复 Pro |
-| M-07 | Full-Length Test & Score Report | 任一 attempt 状态下都可预览模板化封面与完整 Section 结构，但每个报告 Section 独立锁定；N/I/S/R 全部只显示标题 `Unlock the full-length test and score analysis with Solvely Pro` 与 CTA `Unlock test & analysis` | 完整可见；N/I/S 时展示对应前置状态，R 时展示真实报告 | Free 点击任一 Section 的 `Unlock test & analysis` 时校验；不存在仅解锁 analysis/report 的子权益 | 刷新权益、解除全部 Section 锁，再按同一 attempt 状态 Start/Continue/等待评分/打开真实报告 | 保留锁定报告、当前 Section 与滚动位置 | 48px Pro + 单一标题 + CTA；无说明小字、考试/灰锁 icon 或按钮内重复 Pro |
+| M-07 | Full-Length Test & Score Report | 任一测试进度下都可预览模板化封面与完整 Section 结构，但每个报告 Section 独立锁定；Not started、In progress、Scoring、Results ready 全部只显示标题 `Unlock the full-length test and score analysis with Solvely Pro` 与 CTA `Unlock test & analysis` | 完整可见；结果生成前展示对应前置状态，Results ready 时展示真实报告 | Free 点击任一 Section 的 `Unlock test & analysis` 时校验；不存在仅解锁 analysis/report 的子权益 | 刷新权益、解除全部 Section 锁，再按同一测试进度开始、继续、等待评分或打开真实报告 | 保留锁定报告、当前 Section 与滚动位置 | 48px Pro + 单一标题 + CTA；无说明小字、考试/灰锁 icon 或按钮内重复 Pro |
 | M-08 | Scoring | 课程卡的 Scoring 状态可见；Full-Length 报告预览仍按 M-07 使用统一 `Unlock test & analysis` | 状态与只读评分中报告前置可见 | 评分期间不允许重复提交；Free 解锁只处理整项权益，不伪造评分完成 | 购买成功后继续等待同一评分任务 | 超时按评分恢复逻辑 | 无新增状态标签 |
 | M-09 | Diagnostic Score / Section or Unit / Question Review / Similar Questions Mini Quiz | 免费可见与可做；`Start mini quiz` 直接打开 3 题 Drawer，不弹 Paywall | 可用 | Diagnostic=Results ready 后直接展示 | 不适用 | 数据加载失败仅在 Drawer 内 Retry | 无 |
 | M-10 | 会员到期后的历史进度 | 免费内容和历史状态保留；受限动作重新校验 | 可继续 | 权益必须在每次受限动作执行前实时校验，不以进入页面时缓存为准 | 恢复原动作 | 不删除答案、进度或报告 | 按对应 M-03/05/06/07 |
@@ -827,7 +774,7 @@ type Question = {
 | 业务价值：计算考试完成率。<br>触发场景：服务端确认最终提交成功；每个 attempt 幂等一次。 | `web_ep_exam_submit_success` | 新增 | 1. `key=attempt_id`<br>　`value=attempt ID`<br>2. `key=answered_count`<br>　`value=已答数`<br>3. `key=question_count`<br>　`value=总题数`<br>4. `key=duration_seconds`<br>　`value=有效作答时间` | 原 PRD：`exam_assessment_submit`。仅成功事件；提交失败走业务错误日志，不伪造 Success。 | 服务端 |
 | 业务价值：监控评分成功率与耗时。<br>触发场景：评分任务终态；每个 attempt/result 组合幂等一次。 | `web_ep_exam_scoring_result` | 新增 | 1. `key=attempt_id`<br>　`value=attempt ID`<br>2. `key=result`<br>　`value=success \| failure`<br>3. `key=latency_ms`<br>　`value=提交至评分终态耗时`<br>4. `key=error_code`<br>　`value=失败时必填` | 原 PRD：`exam_scoring_result`。权威服务端结果；客户端不得重复上报。 | 服务端 |
 | 业务价值：衡量报告查看及锁定曝光。<br>触发场景：报告首个有效模块渲染完成；来源切换后可再次报。 | `web_ep_report_view` | 新增 | 1. `key=attempt_id`<br>　`value=无真实 attempt 的模板预览为空`<br>2. `key=assessment_type`<br>　`value=diagnostic \| full_length`<br>3. `key=access`<br>　`value=full \| prerequisite \| pro_locked`<br>4. `key=report_type`<br>　`value=sat \| act \| ap` | 原 PRD：`exam_report_view`。预生成模板不可计为真实成绩查看，须按 access 分层。 | 客户端 |
-| 业务价值：衡量 Diagnostic/Full-Length 报告偏好。<br>触发场景：来源成功切换且内容更新后一次。 | `web_ep_report_source_switch` | 新增 | 1. `key=from_source`<br>　`value=diagnostic \| full_length`<br>2. `key=to_source`<br>　`value=diagnostic \| full_length`<br>3. `key=target_state`<br>　`value=N \| I \| S \| R` | 原 PRD：`exam_report_source_switch`。 | 客户端 |
+| 业务价值：衡量 Diagnostic/Full-Length 报告偏好。<br>触发场景：来源成功切换且内容更新后一次。 | `web_ep_report_source_switch` | 新增 | 1. `key=from_source`<br>　`value=diagnostic \| full_length`<br>2. `key=to_source`<br>　`value=diagnostic \| full_length`<br>3. `key=target_state`<br>　`value=not_started \| in_progress \| scoring \| results` | 原 PRD：`exam_report_source_switch`。 | 客户端 |
 | 业务价值：衡量 Question Review 浏览。<br>触发场景：Question Map 选择新题后一次。 | `web_ep_report_question_select` | 新增 | 1. `key=attempt_id`<br>　`value=attempt ID`<br>2. `key=question_id`<br>　`value=题目 ID`<br>3. `key=answer_status`<br>　`value=correct \| incorrect \| unanswered` | 原 PRD：`exam_question_review_select`。 | 客户端 |
 | 业务价值：衡量 Similar Questions 内容生成可用率。<br>触发场景：固定 3 题的加载请求进入最终成功或失败；每个 `load_request_id` 幂等一次。 | `web_ep_mini_quiz_load_result` | 新增 | 1. `key=load_request_id`<br>　`value=加载请求 ID`<br>2. `key=source_question_id`<br>　`value=来源报告题目 ID`<br>3. `key=result`<br>　`value=success \| failure`<br>4. `key=question_count`<br>　`value=成功时 3；失败时 0`<br>5. `key=error_code`<br>　`value=generation \| content \| network \| timeout \| unknown；成功为空` | 原 PRD：`exam_mini_quiz_load_result`；加载失败不得上报 Start Success。 | 客户端 |
 | 业务价值：建立 Similar questions 启动分母。<br>触发场景：固定 3 题加载成功；每个 quiz_session 一次。 | `web_ep_mini_quiz_start_success` | 新增 | 1. `key=source_attempt_id`<br>　`value=来源 attempt ID`<br>2. `key=source_question_id`<br>　`value=来源题 ID`<br>3. `key=topic_id`<br>　`value=Topic ID`<br>4. `key=quiz_session_id`<br>　`value=Mini Quiz 会话 ID`<br>5. `key=question_count`<br>　`value=固定 3` | 原 PRD：`exam_mini_quiz_start`。Loading/Retry 不报 Success。 | 客户端 |
@@ -991,8 +938,8 @@ Course→Writing 的跨产品转化复用 Writing Tools 已有埋点协议；在
 | `report.diagnostic.in_progress.title` | Finish your diagnostic test to see your score analysis | Diagnostic 前置 |
 | `report.diagnostic.in_progress.cta` | Continue diagnostic | Diagnostic 前置 |
 | `report.diagnostic.scoring.title` | Your diagnostic test is being scored | Diagnostic 前置 |
-| `report.full.free.title` | Unlock the full-length test and score analysis with Solvely Pro | Full-Length Free N/I/S/R 共用 |
-| `report.full.free.cta` | Unlock test & analysis | Full-Length Free N/I/S/R 共用 |
+| `report.full.free.title` | Unlock the full-length test and score analysis with Solvely Pro | Full-Length Free 的所有测试进度共用 |
+| `report.full.free.cta` | Unlock test & analysis | Full-Length Free 的所有测试进度共用 |
 | `report.full.pro.not_started.title` | Take the full-length practice test to see your score analysis | Full-Length Pro 前置 |
 | `report.full.pro.not_started.cta` | Start practice test | Full-Length Pro 前置 |
 | `report.full.pro.in_progress.title` | Finish your full-length practice test to see your score analysis | Full-Length Pro 前置 |
@@ -1061,18 +1008,18 @@ Course→Writing 的跨产品转化复用 Writing Tools 已有埋点协议；在
 | TC-204 | Diagnostic Results + Free | 打开报告并点击 Similar questions 的 Start mini quiz | 分数与 Question Review 可见；Mini quiz 直接免费打开固定 3 题 Drawer，不弹 Paywall；只有 Targeted Practice 锁定 |
 | TC-205 | Diagnostic Results + Pro | 打开报告 | 分数、Review、Targeted Practice 全部可用 |
 | TC-206 | Full-Length Not started + Free | 点击课程卡 Start；再打开报告预览 | 卡片标题旁有 Pro badge、无 Free；CTA 内没有 Pro；点击立即 Paywall，不能进入题目。报告每个 Section 都显示 48px Pro icon、`Unlock the full-length test and score analysis with Solvely Pro` 与 `Unlock test & analysis`，无说明小字或考试前置 icon |
-| TC-207 | Full-Length N/I/S/R + Free | 逐状态打开并滚动完整 Performance & Insights | 四个 attempt 状态都可预览完整报告模板但不被记为真实成绩；每个 Section 均有独立锁定层；全部只保留 48px Pro icon、`Unlock the full-length test and score analysis with Solvely Pro` 与 `Unlock test & analysis`；全页不存在 `Unlock analysis`、`Unlock report`、`Unlock Score Report` 或 `Unlock to continue…` |
+| TC-207 | Full-Length 为 Not started、In progress、Scoring、Results ready，用户为 Free | 逐状态打开并滚动完整 Performance & Insights | 四种测试进度都可预览完整报告模板但不被记为真实成绩；每个 Section 均有独立锁定层；全部只保留 48px Pro icon、`Unlock the full-length test and score analysis with Solvely Pro` 与 `Unlock test & analysis`；全页不存在 `Unlock analysis`、`Unlock report`、`Unlock Score Report` 或 `Unlock to continue…` |
 | TC-208 | Full-Length Results + Pro | 打开报告 | 按考试体系展示完整报告，无 Paywall |
 | TC-209 | 任一考试 Scoring | 打开报告 | 显示对应评分中精确文案；无重复提交按钮 |
 | TC-210 | 切 Diagnostic/Full-Length | 切换来源 | 状态、文案、分数和商业化门槛同时更新；页面回顶部 |
-| TC-220 | 任意合法状态 | 穷举 Diagnostic/Full-Length 组合 | 只允许 4.3.2 的 12 个组合；`I/I`、`I/S`、`S/I`、`S/S` 均被拒绝或规范化 |
-| TC-221 | Course=First visit，任一考试被注入 I/S/R | 刷新课程 | Course 自动规范化为 In progress，并同步 Exam Library |
-| TC-222 | Full-Length=R，URL 含独立 resultState | 刷新报告 | 迁移后删除独立字段；报告权限只按实时 entitlement 判断 |
+| TC-220 | 已有一场未提交或评分中的测试 | 尝试开始另一场测试，或用旧直链构造冲突状态 | 不进入第二场测试；返回课程页并保留当前进度，服务端拒绝冲突写入且记录异常日志 |
+| TC-221 | Course=First visit，但任一考试已开始、评分中或已出结果 | 刷新课程 | Course 自动规范化为 In progress，并同步 Exam Library |
+| TC-222 | Full-Length=Results ready，URL 含独立 resultState | 刷新报告 | 迁移后删除独立字段；报告权限只按实时 entitlement 判断 |
 | TC-223 | Free 用户直达 Full-Length 模考 URL | 粘贴地址并打开 | 重定向课程并弹 M-06 Paywall；试题和 attempt 创建接口均未调用 |
 | TC-224 | Free Paywall 已打开 | Cancel / 支付失败 | 返回原课程/报告和滚动位置；状态与进度无变化，可重试 |
 | TC-225 | Free Paywall 已打开 | 支付成功 | 刷新 entitlement 后仅恢复一次 pending action；不重复创建 attempt |
-| TC-226 | Pro 用户有 Full-Length I/R，随后会员到期 | 继续考试/打开报告 | 历史进度保留；受限动作按 M-06/M-07 拦截，不重置成 N |
-| TC-227 | 任一考试 N/I/S | 打开对应报告 | 展示对应考试的预生成封面与 Section 结构；前景状态/权益文案准确；模板数据不写入 attempt/report、不进入真实成绩埋点且不可交互 |
+| TC-226 | Pro 用户有进行中或已出结果的 Full-Length，随后会员到期 | 继续考试/打开报告 | 历史进度保留；受限动作按 M-06/M-07 拦截，不重置为 Not started |
+| TC-227 | 任一考试为 Not started、In progress 或 Scoring | 打开对应报告 | 展示对应考试的预生成封面与 Section 结构；前景状态/权益文案准确；模板数据不写入 attempt/report、不进入真实成绩埋点且不可交互 |
 
 #### Score Report 与 Performance details 计算专项
 
