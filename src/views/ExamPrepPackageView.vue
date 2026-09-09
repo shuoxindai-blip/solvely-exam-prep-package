@@ -17,12 +17,21 @@ import { loadImprovePracticeProgress } from "../data/improvePracticeProgress";
 import type { SatReportReviewQuestion } from "../data/satReport";
 import type { EpExam } from "../types/epV2";
 import type { SatManifest, SatQuizQuestion, SatTopic } from "../types/sat";
+import {
+  assessmentStates,
+  deriveHomeExperienceState,
+  isActiveAttemptState,
+  normalizePrepState,
+  type AssessmentKind,
+  type AssessmentState,
+  type CourseEntryState,
+  type HomePreviewState as RouteHomePreviewState,
+} from "../domain/prepState";
 
 type CourseTab = "study" | "results";
 type ExamFamily = "sat" | "act" | "ap-calculus-bc";
 type ResultView = "full" | "score" | "review" | "improve";
 type ResultSource = "diagnostic" | "practice";
-type CourseEntryState = "first-visit" | "in-progress";
 type HomePreviewState = "empty" | "created";
 type FirstEntryTab = "create" | "courses";
 type PredictionSample = {
@@ -37,13 +46,8 @@ type PredictionSample = {
 const EXAM_PREP_HOME_TITLE = "Adaptive exam prep for your best score";
 const EXAM_PREP_HOME_SUBTITLE =
   "Create a personalized study plan, predict likely exam questions, or start a prep course.";
-type DiagnosticTestState =
-  | "not-started"
-  | "in-progress"
-  | "scoring"
-  | "results";
-type PracticeTestState = "not-started" | "in-progress" | "scoring" | "results";
-type ResultsAccessState = "locked" | "unlocked";
+type DiagnosticTestState = AssessmentState;
+type PracticeTestState = AssessmentState;
 type ReviewFilter = "ALL" | "INCORRECT" | "CORRECT" | "OMITTED";
 type ReviewSectionFilter = string;
 type Course = {
@@ -65,6 +69,7 @@ type CreatedPrediction = {
 type LastActivity =
   | {
       kind: "learning";
+      examFamily: ExamFamily;
       examTitle: string;
       sectionTitle: string;
       itemTitle: string;
@@ -74,6 +79,7 @@ type LastActivity =
     }
   | {
       kind: "exam";
+      examFamily: ExamFamily;
       examTitle: string;
       sectionTitle: string;
       itemTitle: string;
@@ -82,6 +88,24 @@ type LastActivity =
       total: number;
       examId: number;
     };
+
+function isLastActivity(value: unknown): value is LastActivity {
+  if (typeof value !== "object" || value === null) return false;
+  const activity = value as Record<string, unknown>;
+  const validFamily = activity.examFamily === "sat" || activity.examFamily === "act" || activity.examFamily === "ap-calculus-bc";
+  const common = validFamily && typeof activity.examTitle === "string" &&
+    typeof activity.sectionTitle === "string" && typeof activity.itemTitle === "string";
+  if (!common) return false;
+  if (activity.kind === "learning") {
+    return typeof activity.resourceLabel === "string" &&
+      typeof activity.progressPercent === "number" && typeof activity.topicId === "string";
+  }
+  if (activity.kind === "exam") {
+    return typeof activity.moduleLabel === "string" && typeof activity.answered === "number" &&
+      typeof activity.total === "number" && typeof activity.examId === "number";
+  }
+  return false;
+}
 
 const route = useRoute();
 const router = useRouter();
@@ -120,8 +144,7 @@ const improvePracticeProgress = ref<Record<string, number>>({});
 const showImproveImportanceNote = ref(true);
 const resultSource = ref<ResultSource>("practice");
 const diagnosticTestState = ref<DiagnosticTestState>("not-started");
-const practiceTestState = ref<PracticeTestState>("in-progress");
-const resultsAccessState = ref<ResultsAccessState>("locked");
+const practiceTestState = ref<PracticeTestState>("not-started");
 const paywallOpen = ref(false);
 const paywallContext = ref("the complete exam prep package");
 const newPredictionDialog = ref<HTMLDialogElement | null>(null);
@@ -131,7 +154,8 @@ const predictionFocus = ref("Balanced review");
 const createdPredictions = ref<CreatedPrediction[]>([]);
 const editingPredictionId = ref<string | null>(null);
 const prepFileInput = ref<HTMLInputElement | null>(null);
-const homeExperienceActive = ref(false);
+const startedCourseFamilies = ref(new Set<ExamFamily>());
+const courseActivities = ref<Partial<Record<ExamFamily, LastActivity>>>({});
 const similarQuizDrawer = ref<HTMLDialogElement | null>(null);
 const similarQuizBody = ref<HTMLElement | null>(null);
 const similarQuizTopic = ref<SatTopic | null>(null);
@@ -156,6 +180,7 @@ let demoControllerDrag:
   | null = null;
 const lastActivity = ref<LastActivity>({
   kind: "learning",
+  examFamily: "sat",
   examTitle: "SAT Prep 2026",
   sectionTitle: "Advanced Math",
   itemTitle: "Expansion, factoring, and completing the square",
@@ -163,13 +188,28 @@ const lastActivity = ref<LastActivity>({
   progressPercent: 62,
   topicId: "sat_math_advanced_equivalent_expressions_01",
 });
+const courseActivityList = computed(() =>
+  Object.values(courseActivities.value).filter(Boolean) as LastActivity[],
+);
+const currentCourseActivity = computed(() => courseActivities.value[examFamily.value] ?? null);
 const isCourseOpen = computed(() => ["#course-0", "#course-1", "#course-2"].includes(route.hash));
-const showFirstEntryHome = computed(() => {
+const forcedHomePreview = computed<RouteHomePreviewState>(() => {
   const override = String(route.query.homeState || "").toLowerCase();
-  if (override === "first-entry") return true;
-  if (override === "active") return false;
-  return !homeExperienceActive.value && createdPredictions.value.length === 0;
+  return override === "first-entry" || override === "active" ? override : null;
 });
+const homeExperienceState = computed(() => deriveHomeExperienceState({
+  preview: forcedHomePreview.value,
+  createdPlanCount: createdPredictions.value.length,
+  startedCourseCount: courseActivityList.value.length,
+}));
+const showFirstEntryHome = computed(() => {
+  return homeExperienceState.value === "empty";
+});
+const showSeededPrediction = computed(() =>
+  forcedHomePreview.value === "active" &&
+  createdPredictions.value.length === 0 &&
+  startedCourseFamilies.value.size === 0,
+);
 const firstEntryTab = ref<FirstEntryTab>("create");
 const controllerHomeState = computed<HomePreviewState>(() =>
   showFirstEntryHome.value ? "empty" : "created",
@@ -185,33 +225,26 @@ const demoControllerStyle = computed(() =>
     : undefined,
 );
 const isCourseStarted = computed(
-  () => String(route.query.courseState || "") !== "not-started",
+  () => {
+    const override = String(route.query.courseState || "");
+    if (override === "not-started") return false;
+    if (override === "in-progress") return true;
+    return startedCourseFamilies.value.has(examFamily.value);
+  },
 );
-const lastActivityCta = computed(() =>
-  lastActivity.value.kind === "learning" ? "Continue learning" : "Resume exam",
-);
-const hasPackageProgress = computed(() => {
-  const activity = lastActivity.value;
-  return activity.kind === "learning"
-    ? activity.progressPercent > 0
-    : activity.answered > 0;
-});
-const lastActivityProgressLabel = computed(() => {
-  const activity = lastActivity.value;
+function activityCta(activity: LastActivity) {
+  return activity.kind === "learning" ? "Continue learning" : "Resume exam";
+}
+function activityProgressLabel(activity: LastActivity) {
   return activity.kind === "learning"
     ? `${activity.progressPercent}% Complete`
     : `${activity.answered} of ${activity.total} Answered`;
-});
-const lastActivityContextLabel = computed(() => {
-  const activity = lastActivity.value;
+}
+function activityContextLabel(activity: LastActivity) {
   const activityType =
     activity.kind === "learning" ? activity.resourceLabel : activity.moduleLabel;
   return `${activity.sectionTitle} · ${activityType}`;
-});
-const lastActivityIsAct = computed(() =>
-  lastActivity.value.examTitle.toUpperCase().startsWith("ACT"),
-);
-
+}
 const practiceResultReport = computed(() => resultExam.value
   ? (isApPackage.value ? buildApReport(resultExam.value) : isActPackage.value ? buildActReport(resultExam.value) : buildSatReport(resultExam.value))
   : null);
@@ -336,18 +369,14 @@ const practiceTestDurationMinutes = computed(() => {
     (sectionIds.has("math") ? 70 : 0)
   );
 });
-const practiceTestStates: { id: PracticeTestState; label: string }[] = [
-  { id: "not-started", label: "未开始" },
-  { id: "in-progress", label: "进行中" },
-  { id: "scoring", label: "评分中" },
-  { id: "results", label: "结果已生成" },
-];
-const diagnosticTestStates: { id: DiagnosticTestState; label: string }[] = [
-  { id: "not-started", label: "未开始" },
-  { id: "in-progress", label: "进行中" },
-  { id: "scoring", label: "评分中" },
-  { id: "results", label: "结果已生成" },
-];
+const assessmentStateLabels: Record<AssessmentState, string> = {
+  "not-started": "未开始",
+  "in-progress": "进行中",
+  scoring: "评分中",
+  results: "结果已生成",
+};
+const practiceTestStates = assessmentStates.map((id) => ({ id, label: assessmentStateLabels[id] }));
+const diagnosticTestStates = assessmentStates.map((id) => ({ id, label: assessmentStateLabels[id] }));
 const resultSources = computed<{
   id: ResultSource;
   label: string;
@@ -371,14 +400,10 @@ const courseEntryStates: { id: CourseEntryState; label: string }[] = [
 const courseEntryState = computed<CourseEntryState>(() =>
   isCourseStarted.value ? "in-progress" : "first-visit",
 );
-const resultsAccessStates: { id: ResultsAccessState; label: string }[] = [
-  { id: "locked", label: "未完成" },
-  { id: "unlocked", label: "结果已生成" },
-];
 const activeAssessmentComplete = computed(() =>
   resultSource.value === "diagnostic"
     ? diagnosticTestState.value === "results"
-    : resultsAccessState.value === "unlocked",
+    : practiceTestState.value === "results",
 );
 const resultsRequirePro = computed(
   () => resultSource.value === "practice" || resultView.value === "improve",
@@ -390,10 +415,31 @@ const resultsNeedAssessment = computed(
   () => !activeAssessmentComplete.value,
 );
 const resultsProLocked = computed(
-  () => resultsCommercialLocked.value && !resultsNeedAssessment.value,
+  () => resultsCommercialLocked.value,
 );
 const showResultsUnlockAction = computed(
   () => resultsProLocked.value,
+);
+const resultsCommercialActionLabel = computed(() =>
+  resultSource.value === "diagnostic" && resultView.value === "improve"
+    ? "Unlock practice"
+    : resultSource.value === "practice" &&
+        (practiceTestState.value === "not-started" ||
+          practiceTestState.value === "in-progress")
+      ? "Unlock test & analysis"
+      : resultSource.value === "practice" &&
+          practiceTestState.value === "scoring"
+        ? "Unlock analysis"
+        : "Unlock report",
+);
+const resultsCommercialBenefit = computed(() =>
+  resultSource.value === "diagnostic" && resultView.value === "improve"
+    ? `prioritized topics and adaptive ${examName.value} practice`
+    : resultSource.value === "practice" &&
+        (practiceTestState.value === "not-started" ||
+          practiceTestState.value === "in-progress")
+      ? `the full-length ${examName.value} test and score analysis`
+      : `your complete ${examName.value} score report`,
 );
 const resultsLocked = computed(
   () => resultsNeedAssessment.value || resultsProLocked.value,
@@ -404,48 +450,60 @@ const targetedPracticeNeedsAssessment = computed(
 const targetedPracticeProLocked = computed(
   () =>
     resultSource.value === "diagnostic" &&
-    !targetedPracticeNeedsAssessment.value &&
     !isProMember.value,
 );
 const targetedPracticeLocked = computed(
   () =>
-    targetedPracticeNeedsAssessment.value || targetedPracticeProLocked.value,
+    resultsLocked.value || targetedPracticeProLocked.value,
 );
 const showTargetedPracticeUnlockAction = computed(
-  () => targetedPracticeProLocked.value,
+  () => targetedPracticeProLocked.value || resultsProLocked.value,
+);
+const targetedPracticeCommercialActionLabel = computed(() =>
+  resultSource.value === "diagnostic"
+    ? "Unlock practice"
+    : resultsCommercialActionLabel.value,
+);
+const targetedPracticeCommercialBenefit = computed(() =>
+  resultSource.value === "diagnostic"
+    ? `prioritized topics and adaptive ${examName.value} practice`
+    : resultsCommercialBenefit.value,
 );
 const resultsLockTitle = computed(() => {
-  if (resultsNeedAssessment.value || targetedPracticeNeedsAssessment.value) {
+  if (showResultsUnlockAction.value) {
+    if (resultSource.value === "diagnostic")
+      return "Unlock targeted practice with Solvely Pro";
+    if (practiceTestState.value === "not-started")
+      return "Unlock the full-length test and score analysis with Solvely Pro";
+    if (practiceTestState.value === "in-progress")
+      return "Unlock to continue your full-length test with Solvely Pro";
+    if (practiceTestState.value === "scoring")
+      return "Unlock your score analysis with Solvely Pro";
+    return "Unlock this report with Solvely Pro";
+  }
+  if (resultsNeedAssessment.value) {
     if (resultSource.value === "diagnostic") {
       if (diagnosticTestState.value === "scoring")
-        return "Your Diagnostic Test is being scored";
+        return "Your diagnostic test is being scored";
       return diagnosticTestState.value === "in-progress"
-        ? "Finish your Diagnostic Test to see your results"
-        : "Take the Free Diagnostic Test to see your results";
+        ? "Finish your diagnostic test to see your score analysis"
+        : "Take the free diagnostic test to see your score analysis";
     }
     if (practiceTestState.value === "scoring")
-      return "Your Full-Length Practice Test is being scored";
+      return "Your full-length practice test is being scored";
     return practiceTestState.value === "in-progress"
-      ? "Finish your Full-Length Practice Test to see your results"
-      : "Take the Full-Length Practice Test to see your results";
+      ? "Finish your full-length practice test to see your score analysis"
+      : "Take the full-length practice test to see your score analysis";
   }
-  return resultSource.value === "diagnostic"
-    ? "Unlock Targeted Practice with Solvely Pro"
-    : "Unlock this report with Solvely Pro";
+  return "Your score report is ready";
 });
-const resultsLockDescription = computed(() => {
-  if (resultsNeedAssessment.value || targetedPracticeNeedsAssessment.value) {
-    if (resultSource.value === "diagnostic")
-      return diagnosticTestState.value === "scoring"
-        ? "Your score estimate and free question review will appear here automatically in a few seconds."
-        : `Complete ${isActPackage.value ? 20 : 20} untimed questions to generate your score estimate and free question review.`;
-    return practiceTestState.value === "scoring"
-      ? "Your score analysis, question review, and targeted practice will appear here automatically."
-      : "Complete the test to generate your score analysis, question review, and targeted practice.";
+const targetedPracticeLockTitle = computed(() => {
+  if (showTargetedPracticeUnlockAction.value) {
+    return resultSource.value === "diagnostic"
+      ? "Unlock targeted practice with Solvely Pro"
+      : resultsLockTitle.value;
   }
-  return resultSource.value === "diagnostic"
-    ? "Upgrade to turn your diagnostic results into prioritized topics and adaptive practice."
-    : "Get your full score report, every explanation, and adaptive topics to improve.";
+  return resultsLockTitle.value;
 });
 const diagnosticTestCard = computed(() => {
   const report = diagnosticResultReport.value;
@@ -632,13 +690,17 @@ const practiceTestCard = computed(() => {
     disabled: false,
   };
 });
-const resultsPrerequisiteActionLabel = computed(() =>
-  resultSource.value === "diagnostic"
-    ? diagnosticTestCard.value.cta
-    : practiceTestCard.value.cta,
-);
+const resultsPrerequisiteActionLabel = computed(() => {
+  if (resultSource.value === "diagnostic")
+    return diagnosticTestState.value === "in-progress"
+      ? "Continue diagnostic"
+      : "Start free diagnostic";
+  return practiceTestState.value === "in-progress"
+    ? "Continue practice test"
+    : "Start practice test";
+});
 const showResultsStartAction = computed(() => {
-  if (!resultsNeedAssessment.value) return false;
+  if (!resultsNeedAssessment.value || showResultsUnlockAction.value) return false;
   return resultSource.value === "diagnostic"
     ? !diagnosticTestCard.value.disabled
     : !practiceTestCard.value.disabled;
@@ -647,7 +709,11 @@ const showResultsGateAction = computed(
   () => showResultsStartAction.value || showResultsUnlockAction.value,
 );
 const showTargetedPracticeStartAction = computed(() => {
-  if (!targetedPracticeNeedsAssessment.value) return false;
+  if (
+    !targetedPracticeNeedsAssessment.value ||
+    showTargetedPracticeUnlockAction.value
+  )
+    return false;
   return resultSource.value === "diagnostic"
     ? !diagnosticTestCard.value.disabled
     : !practiceTestCard.value.disabled;
@@ -1171,7 +1237,7 @@ const predictionSamples: PredictionSample[] = [
   },
 ];
 
-const HOME_EXPERIENCE_ACTIVE_KEY = "solvely:ep:home-active";
+const COURSE_ACTIVITY_STORAGE_KEY = "solvely:ep:course-activity";
 
 const filteredCourses = computed(() => {
   const terms = searchQuery.value
@@ -1188,7 +1254,8 @@ const filteredCourses = computed(() => {
   });
 });
 const examLibraryTotal = computed(
-  () => createdPredictions.value.length + 1 + (hasPackageProgress.value ? 1 : 0),
+  () => createdPredictions.value.length + (showSeededPrediction.value ? 1 : 0) +
+    (forcedHomePreview.value === "first-entry" ? 0 : courseActivityList.value.length),
 );
 
 const courseSectionOptions = computed(() => [...new Set((manifest.value?.topics ?? []).map((topic) => topic.section))]);
@@ -1243,8 +1310,8 @@ const recommendedStartTopic = computed(() =>
 );
 
 const courseStartTopic = computed(() => {
-  const activity = lastActivity.value;
-  if (isCourseStarted.value && activity.kind === "learning") {
+  const activity = currentCourseActivity.value;
+  if (isCourseStarted.value && activity?.kind === "learning") {
     const recentTopic = manifest.value?.topics.find(
       (topic) => topic.id === activity.topicId,
     );
@@ -1256,16 +1323,16 @@ const courseStartTopic = computed(() => {
 const courseStartModule = computed(() => {
   const topic = courseStartTopic.value;
   if (!topic) return null;
-  const activity = lastActivity.value;
+  const activity = currentCourseActivity.value;
   const isContinuing =
     isCourseStarted.value &&
-    activity.kind === "learning" &&
+    activity?.kind === "learning" &&
     activity.topicId === topic.id;
   return {
     label: isContinuing ? "Continue learning" : "Recommended start",
     title: topic.title,
     domain: topic.domain,
-    detail: isContinuing && activity.kind === "learning"
+    detail: isContinuing && activity?.kind === "learning"
       ? `${activity.progressPercent}% complete`
       : `${topic.importanceScore}% ${priorityLabel(topic.priority)} priority`,
     cta: isContinuing ? "Continue learning" : "Start learning",
@@ -1423,19 +1490,25 @@ function initializeSectionDisclosure() {
   collapsedSections.value = new Set(sectionIds.slice(1));
 }
 
-function openCourse(course: Course) {
-  activeTab.value = "study";
+function examFamilyForCourse(course: Course): ExamFamily {
   const isAct = course.family === "act";
   const isAp = course.family === "ap" && course.title === "AP Calculus BC";
-  const isFirstEntrySelection = showFirstEntryHome.value;
-  const courseState: CourseEntryState = isFirstEntrySelection
-    ? "first-visit"
-    : "in-progress";
-  if (isFirstEntrySelection) markHomeExperienceActive();
+  return isAp ? "ap-calculus-bc" : isAct ? "act" : "sat";
+}
+function openCourse(course: Course) {
+  activeTab.value = "study";
+  const targetFamily = examFamilyForCourse(course);
+  const isAct = targetFamily === "act";
+  const isAp = targetFamily === "ap-calculus-bc";
+  const courseState: CourseEntryState = startedCourseFamilies.value.has(targetFamily)
+    ? "in-progress"
+    : "first-visit";
   sectionFilter.value = isAp ? "AP Calculus BC" : isAct ? "English" : "Math";
   void router.push({
     name: "package",
     query: {
+      access: accessState.value,
+      ...(forcedHomePreview.value ? { homeState: forcedHomePreview.value } : {}),
       ...(isAp ? { exam: "ap-calculus-bc" } : isAct ? { exam: "act" } : {}),
       courseState: courseState === "first-visit" ? "not-started" : "in-progress",
     },
@@ -1444,7 +1517,14 @@ function openCourse(course: Course) {
 }
 
 function closeCourse() {
-  void router.push({ name: "package", hash: "#examCatalogTitle" });
+  void router.push({
+    name: "package",
+    query: {
+      access: accessState.value,
+      ...(forcedHomePreview.value ? { homeState: forcedHomePreview.value } : {}),
+    },
+    hash: "#examCatalogTitle",
+  });
 }
 function openExamPredictorHome() {
   void router.push({ name: "package" });
@@ -1480,17 +1560,54 @@ function handlePrepFileDrop(event: DragEvent) {
   const fileTitle = file.name.replace(/\.[^.]+$/, "").trim();
   showNewPredictionDialog(fileTitle || "My exam");
 }
-function markHomeExperienceActive() {
-  homeExperienceActive.value = true;
+function persistCourseActivity() {
   try {
-    window.localStorage.setItem(HOME_EXPERIENCE_ACTIVE_KEY, "1");
+    window.localStorage.setItem(COURSE_ACTIVITY_STORAGE_KEY, JSON.stringify({
+      startedCourseFamilies: [...startedCourseFamilies.value],
+      courseActivities: courseActivities.value,
+      lastActivity: lastActivity.value,
+    }));
   } catch {
-    /* The current session still switches to the active home experience. */
+    /* The current session still reflects the activity. */
   }
+}
+function recordCourseActivity(activity: LastActivity) {
+  startedCourseFamilies.value = new Set([...startedCourseFamilies.value, activity.examFamily]);
+  courseActivities.value = { ...courseActivities.value, [activity.examFamily]: activity };
+  lastActivity.value = activity;
+  persistCourseActivity();
+}
+function recordLearningActivity(topic: SatTopic) {
+  recordCourseActivity({
+    kind: "learning",
+    examFamily: examFamily.value,
+    examTitle: packageTitle.value,
+    sectionTitle: topic.section,
+    itemTitle: topic.title,
+    resourceLabel: "Study Guide",
+    progressPercent: Math.max(1, topicProgress(topic)),
+    topicId: topic.id,
+  });
+}
+function recordExamActivity(kind: ResultSource, answered = 0) {
+  const total = kind === "diagnostic"
+    ? diagnosticExam.value?.questions.length ?? 20
+    : practiceTestQuestionCount.value;
+  recordCourseActivity({
+    kind: "exam",
+    examFamily: examFamily.value,
+    examTitle: packageTitle.value,
+    sectionTitle: kind === "diagnostic" ? "Diagnostic Test" : "Full-Length Practice Test",
+    itemTitle: answered > 0 ? `Question ${answered} of ${total}` : "Ready to begin",
+    moduleLabel: kind === "diagnostic" ? "Diagnostic" : "Practice Test",
+    answered,
+    total,
+    examId: 1,
+  });
 }
 function setHomeExperiencePreview(state: HomePreviewState) {
   const nextQuery = {
-    ...route.query,
+    access: accessState.value,
     homeState: state === "empty" ? "first-entry" : "active",
   };
   void router.replace({ name: "package", query: nextQuery, hash: "" });
@@ -1530,7 +1647,6 @@ function createNewPrediction() {
   } catch {
     /* The new plan still appears when browser storage is unavailable. */
   }
-  markHomeExperienceActive();
   closeNewPrediction();
   if (route.query.homeState) {
     const nextQuery = { ...route.query };
@@ -1564,6 +1680,7 @@ function openTopic(
   topic: SatTopic,
   tool: "study-guide" | "flashcards" | "quiz",
 ) {
+  recordLearningActivity(topic);
   void router.push({
     name: tool,
     params: { topicId: topic.id },
@@ -1574,7 +1691,6 @@ function openTopic(
 function openCourseStartTopic() {
   const topic = courseStartTopic.value;
   if (topic) {
-    markHomeExperienceActive();
     openTopic(topic, "study-guide");
   }
 }
@@ -1585,9 +1701,17 @@ function openCommercialPaywall(context: string, action?: () => void) {
   paywallOpen.value = true;
 }
 
+function clearPaywallRouteIntent() {
+  if (!route.query.paywall) return;
+  const nextQuery = { ...route.query };
+  delete nextQuery.paywall;
+  void router.replace({ name: "package", query: nextQuery, hash: route.hash });
+}
+
 function closeCommercialPaywall() {
   paywallOpen.value = false;
   pendingCommercialAction = null;
+  clearPaywallRouteIntent();
 }
 
 function unlockPro() {
@@ -1596,6 +1720,12 @@ function unlockPro() {
   paywallOpen.value = false;
   setProAccess("member");
   if (action) void nextTick(action);
+}
+function syncDirectPaywallIntent() {
+  if (route.query.paywall !== "full-length" || isProMember.value) return;
+  openCommercialPaywall(`the full-length ${examName.value} practice test`, () =>
+    startMockExam(1),
+  );
 }
 function improveAnswered(topic: SatTopic) {
   return Math.min(
@@ -1626,7 +1756,7 @@ function openImprovePractice(topic: SatTopic) {
     );
     return;
   }
-  markHomeExperienceActive();
+  recordLearningActivity(topic);
   void router.push({
     name: "quiz",
     params: { topicId: topic.id },
@@ -1644,23 +1774,28 @@ function dismissImportanceNote(note: "improve") {
     /* The notice still closes when browser storage is unavailable. */
   }
 }
-function resumeLastActivity() {
-  if (lastActivity.value.kind === "learning")
+function resumeActivity(activity: LastActivity) {
+  if (activity.kind === "learning") {
     void router.push({
       name: "study-guide",
-      params: { topicId: lastActivity.value.topicId },
-      query: lastActivityIsAct.value ? { exam: "act" } : {},
+      params: { topicId: activity.topicId },
+      query: {
+        access: accessState.value,
+        ...(activity.examFamily === "sat" ? {} : { exam: activity.examFamily }),
+      },
     });
-  else
+  } else {
     startMockExam(
-      lastActivity.value.examId,
-      lastActivityIsAct.value ? "act" : "sat",
+      activity.examId,
+      activity.examFamily,
     );
+  }
 }
 function openCourseFromHome(course: Course) {
   if (!isCourseAvailable(course)) return;
-  if (!showFirstEntryHome.value && lastActivity.value.examTitle === course.title) {
-    resumeLastActivity();
+  const activity = courseActivities.value[examFamilyForCourse(course)];
+  if (!showFirstEntryHome.value && activity) {
+    resumeActivity(activity);
     return;
   }
   openCourse(course);
@@ -1669,8 +1804,9 @@ function isCourseAvailable(course: Course) {
   return course.family === "sat" || course.family === "act" || course.title === "AP Calculus BC";
 }
 function courseHomeAction(course: Course) {
-  if (!showFirstEntryHome.value && lastActivity.value.examTitle === course.title)
-    return lastActivityCta.value;
+  const activity = courseActivities.value[examFamilyForCourse(course)];
+  if (!showFirstEntryHome.value && activity)
+    return activityCta(activity);
   return isCourseAvailable(course) ? "Open course" : "Coming soon";
 }
 function startMockExam(
@@ -1688,7 +1824,7 @@ function startMockExam(
     );
     return;
   }
-  markHomeExperienceActive();
+  recordExamActivity("practice");
   void router.push({
     name: "mock-exam",
     params: { examId },
@@ -1727,43 +1863,84 @@ function clearDiagnosticScoringTimer() {
     window.clearTimeout(diagnosticScoringTimer);
   diagnosticScoringTimer = null;
 }
-function setPracticeTestState(state: PracticeTestState) {
+function scheduleScoringCompletion(kind: AssessmentKind) {
+  if (kind === "diagnostic") {
+    clearDiagnosticScoringTimer();
+    if (diagnosticTestState.value !== "scoring") return;
+    diagnosticScoringTimer = window.setTimeout(() => {
+      diagnosticScoringTimer = null;
+      diagnosticTestState.value = "results";
+      resultSource.value = "diagnostic";
+      activeTab.value = "study";
+      void router.replace({
+        name: "package",
+        query: {
+          ...route.query,
+          tab: "study",
+          view: undefined,
+          reportSource: "diagnostic",
+          courseState: "in-progress",
+          diagnosticState: "results",
+          practiceState: practiceTestState.value,
+          resultState: undefined,
+        },
+        hash: activeCourseHash.value,
+      });
+    }, 2000);
+    return;
+  }
+
   clearPracticeScoringTimer();
-  practiceTestState.value = state;
-  resultsAccessState.value = state === "results" ? "unlocked" : "locked";
-  if (state !== "scoring") return;
+  if (practiceTestState.value !== "scoring") return;
   practiceScoringTimer = window.setTimeout(() => {
     practiceScoringTimer = null;
     practiceTestState.value = "results";
-    resultsAccessState.value = "unlocked";
-    void router.replace({
-      name: "package",
-      query: { ...route.query, tab: "study", practiceState: "results" },
-      hash: activeCourseHash.value,
-    });
-  }, 2000);
-}
-function setDiagnosticTestState(state: DiagnosticTestState) {
-  clearDiagnosticScoringTimer();
-  diagnosticTestState.value = state;
-  if (state === "results") resultSource.value = "diagnostic";
-  if (state !== "scoring") return;
-  resultSource.value = "diagnostic";
-  diagnosticScoringTimer = window.setTimeout(() => {
-    diagnosticScoringTimer = null;
-    diagnosticTestState.value = "results";
-    resultSource.value = "diagnostic";
+    resultSource.value = "practice";
+    activeTab.value = "study";
     void router.replace({
       name: "package",
       query: {
         ...route.query,
         tab: "study",
-        reportSource: "diagnostic",
-        diagnosticState: "results",
+        view: undefined,
+        reportSource: "practice",
+        courseState: "in-progress",
+        diagnosticState: diagnosticTestState.value,
+        practiceState: "results",
+        resultState: undefined,
       },
       hash: activeCourseHash.value,
     });
   }, 2000);
+}
+function setAssessmentTestState(kind: AssessmentKind, state: AssessmentState) {
+  const normalized = normalizePrepState({
+    courseHasLearningProgress: isCourseStarted.value,
+    diagnosticState: kind === "diagnostic" ? state : diagnosticTestState.value,
+    practiceState: kind === "practice" ? state : practiceTestState.value,
+    preferredActiveAssessment: kind,
+  });
+  diagnosticTestState.value = normalized.diagnosticState;
+  practiceTestState.value = normalized.practiceState;
+  if (state === "results" || state === "scoring") resultSource.value = kind;
+  void router.replace({
+    name: "package",
+    query: {
+      ...route.query,
+      courseState: normalized.courseState === "first-visit" ? "not-started" : "in-progress",
+      diagnosticState: normalized.diagnosticState,
+      practiceState: normalized.practiceState,
+      resultState: undefined,
+    },
+    hash: activeCourseHash.value,
+  });
+  scheduleScoringCompletion(kind);
+}
+function setPracticeTestState(state: PracticeTestState) {
+  setAssessmentTestState("practice", state);
+}
+function setDiagnosticTestState(state: DiagnosticTestState) {
+  setAssessmentTestState("diagnostic", state);
 }
 function setCourseEntryState(state: CourseEntryState) {
   void router.replace({
@@ -1776,18 +1953,10 @@ function setCourseEntryState(state: CourseEntryState) {
         ? {
             diagnosticState: "not-started",
             practiceState: "not-started",
-            resultState: "locked",
+            resultState: undefined,
           }
         : {}),
     },
-    hash: activeCourseHash.value,
-  });
-}
-function setResultsAccessState(state: ResultsAccessState) {
-  resultsAccessState.value = state;
-  void router.replace({
-    name: "package",
-    query: { ...route.query, tab: "results", resultState: state },
     hash: activeCourseHash.value,
   });
 }
@@ -1811,7 +1980,8 @@ function handlePracticeTestAction() {
       query: {
         ...route.query,
         tab: "results",
-        resultState: "unlocked",
+        resultState: undefined,
+        practiceState: "results",
         reportSource: "practice",
       },
       hash: activeCourseHash.value,
@@ -1839,11 +2009,13 @@ function handleDiagnosticTestAction() {
     });
     return;
   }
+  recordExamActivity("diagnostic");
   setDiagnosticTestState("in-progress");
   void router.push({
     name: "mock-exam",
     params: { examId: 1 },
     query: {
+      access: accessState.value,
       mode: "diagnostic",
       diagnosticState: "in-progress",
       ...examRouteQuery.value,
@@ -2146,42 +2318,62 @@ function syncTabFromRoute() {
   const requestedTab = String(route.query.tab || "");
   activeTab.value = requestedTab === "results" ? "results" : "study";
   const requestedResultSource = String(route.query.reportSource || "");
-  const requestedDiagnosticState = String(
-    route.query.diagnosticState || "",
+  const requestedDiagnosticState = String(route.query.diagnosticState || "not-started");
+  const legacyResultState = String(route.query.resultState || "");
+  const requestedPracticeState = String(
+    route.query.practiceState || (legacyResultState === "unlocked" ? "results" : "not-started"),
   );
-  if (
-    requestedDiagnosticState === "not-started" ||
-    requestedDiagnosticState === "in-progress" ||
-    requestedDiagnosticState === "scoring" ||
-    requestedDiagnosticState === "results"
-  )
-    setDiagnosticTestState(requestedDiagnosticState);
-  const requestedPracticeState = String(route.query.practiceState || "");
-  if (
-    requestedPracticeState === "not-started" ||
-    requestedPracticeState === "in-progress" ||
-    requestedPracticeState === "scoring" ||
-    requestedPracticeState === "results"
-  ) {
-    setPracticeTestState(requestedPracticeState);
-  }
+  const courseOverride = String(route.query.courseState || "");
+  const courseHasLearningProgress = courseOverride === "in-progress"
+    ? true
+    : courseOverride === "not-started"
+      ? false
+      : startedCourseFamilies.value.has(examFamily.value);
+  const preferredActiveAssessment: AssessmentKind = requestedResultSource === "diagnostic"
+    ? "diagnostic"
+    : "practice";
+  const normalized = normalizePrepState({
+    courseHasLearningProgress,
+    diagnosticState: requestedDiagnosticState,
+    practiceState: requestedPracticeState,
+    preferredActiveAssessment,
+  });
+  diagnosticTestState.value = normalized.diagnosticState;
+  practiceTestState.value = normalized.practiceState;
   resultSource.value =
     requestedResultSource === "diagnostic" ||
     requestedResultSource === "practice"
       ? requestedResultSource
-      : requestedDiagnosticState === "results"
+      : normalized.diagnosticState === "results"
         ? "diagnostic"
         : "practice";
   if (activeTab.value === "results") {
-    resultView.value = "full";
-    const requestedResultState = String(route.query.resultState || "");
-    resultsAccessState.value =
-      requestedResultState === "locked" ||
-      requestedResultState === "unlocked"
-        ? requestedResultState
-        : practiceTestState.value === "results"
-          ? "unlocked"
-          : "locked";
+    const requestedView = String(route.query.view || "");
+    resultView.value = ["full", "score", "review", "improve"].includes(requestedView)
+      ? requestedView as ResultView
+      : "full";
+  }
+
+  scheduleScoringCompletion("diagnostic");
+  scheduleScoringCompletion("practice");
+
+  const hasInvalidConcurrentAttempts =
+    isActiveAttemptState(requestedDiagnosticState as AssessmentState) &&
+    isActiveAttemptState(requestedPracticeState as AssessmentState);
+  const needsCanonicalRoute = legacyResultState.length > 0 || hasInvalidConcurrentAttempts ||
+    (courseOverride === "not-started" && normalized.courseState === "in-progress");
+  if (needsCanonicalRoute) {
+    void router.replace({
+      name: "package",
+      query: {
+        ...route.query,
+        courseState: normalized.courseState === "first-visit" ? "not-started" : "in-progress",
+        diagnosticState: normalized.diagnosticState,
+        practiceState: normalized.practiceState,
+        resultState: undefined,
+      },
+      hash: activeCourseHash.value,
+    });
   }
 }
 
@@ -2194,12 +2386,14 @@ watch(
     () => route.query.diagnosticState,
     () => route.query.practiceState,
     () => route.query.resultState,
+    () => route.query.courseState,
   ],
   () => {
     if (["#course-0", "#course-1", "#course-2"].includes(route.hash)) syncTabFromRoute();
     else activeTab.value = "study";
   },
 );
+watch([() => route.query.paywall, isProMember], syncDirectPaywallIntent);
 
 watch(sectionFilter, initializeSectionDisclosure);
 
@@ -2369,9 +2563,43 @@ onMounted(async () => {
         }];
       }
     }
-    homeExperienceActive.value =
-      createdPredictions.value.length > 0 ||
-      window.localStorage.getItem(HOME_EXPERIENCE_ACTIVE_KEY) === "1";
+    const savedCourseActivity = window.localStorage.getItem(COURSE_ACTIVITY_STORAGE_KEY);
+    if (savedCourseActivity) {
+      const parsedActivity = JSON.parse(savedCourseActivity) as {
+        startedCourseFamilies?: unknown;
+        courseActivities?: unknown;
+        lastActivity?: unknown;
+      };
+      if (Array.isArray(parsedActivity.startedCourseFamilies)) {
+        const validFamilies = parsedActivity.startedCourseFamilies.filter(
+          (family): family is ExamFamily =>
+            family === "sat" || family === "act" || family === "ap-calculus-bc",
+        );
+        startedCourseFamilies.value = new Set(validFamilies);
+      }
+      if (typeof parsedActivity.courseActivities === "object" && parsedActivity.courseActivities !== null) {
+        const restoredActivities: Partial<Record<ExamFamily, LastActivity>> = {};
+        for (const [family, activity] of Object.entries(parsedActivity.courseActivities)) {
+          if (
+            (family === "sat" || family === "act" || family === "ap-calculus-bc") &&
+            isLastActivity(activity) && activity.examFamily === family
+          ) restoredActivities[family] = activity;
+        }
+        courseActivities.value = restoredActivities;
+        startedCourseFamilies.value = new Set([
+          ...startedCourseFamilies.value,
+          ...(Object.keys(restoredActivities) as ExamFamily[]),
+        ]);
+      }
+      const activity = parsedActivity.lastActivity;
+      if (isLastActivity(activity)) {
+        lastActivity.value = activity;
+        if (!courseActivities.value[activity.examFamily]) {
+          courseActivities.value = { ...courseActivities.value, [activity.examFamily]: activity };
+          startedCourseFamilies.value = new Set([...startedCourseFamilies.value, activity.examFamily]);
+        }
+      }
+    }
     showImproveImportanceNote.value =
       window.localStorage.getItem(
         `solvely:${examName.value.toLowerCase()}:improve-importance-note-dismissed`,
@@ -2379,6 +2607,8 @@ onMounted(async () => {
   } catch {
     /* Keep both notices visible when browser storage is unavailable. */
   }
+  syncTabFromRoute();
+  syncDirectPaywallIntent();
   improvePracticeProgress.value = loadImprovePracticeProgress();
   await loadPackageData();
 });
@@ -2886,20 +3116,21 @@ onBeforeUnmount(() => {
             </div>
             <div class="predictor-library-grid">
               <button
-                v-if="hasPackageProgress"
+                v-for="activity in (showFirstEntryHome ? [] : courseActivityList)"
+                :key="activity.examFamily"
                 class="predictor-library-card package-progress"
                 type="button"
-                :aria-label="`${lastActivityCta}: ${lastActivity.examTitle}, ${lastActivity.itemTitle}`"
-                @click="resumeLastActivity"
+                :aria-label="`${activityCta(activity)}: ${activity.examTitle}, ${activity.itemTitle}`"
+                @click="resumeActivity(activity)"
               >
                 <div class="predictor-library-banner">
                   <span class="predictor-library-state">IN PROGRESS</span>
-                  <h3>{{ lastActivity.examTitle }}</h3>
+                  <h3>{{ activity.examTitle }}</h3>
                 </div>
                 <div class="predictor-library-details">
-                  <span><svg class="icon" aria-hidden="true"><use href="#i-target" /></svg>{{ lastActivityProgressLabel }}</span>
-                  <span><svg class="icon" aria-hidden="true"><use href="#i-history" /></svg>{{ lastActivityContextLabel }}</span>
-                  <small>{{ lastActivity.itemTitle }}</small>
+                  <span><svg class="icon" aria-hidden="true"><use href="#i-target" /></svg>{{ activityProgressLabel(activity) }}</span>
+                  <span><svg class="icon" aria-hidden="true"><use href="#i-history" /></svg>{{ activityContextLabel(activity) }}</span>
+                  <small>{{ activity.itemTitle }}</small>
                 </div>
               </button>
               <button
@@ -2920,7 +3151,7 @@ onBeforeUnmount(() => {
                   <small>Exam Date {{ formatPredictionDate(prediction.date) }}</small>
                 </div>
               </button>
-              <article class="predictor-library-card">
+              <article v-if="showSeededPrediction" class="predictor-library-card">
                 <div class="predictor-library-banner">
                   <span class="predictor-library-state">IN PROGRESS</span>
                   <h3>Biology 101 Final Exam</h3>
@@ -3746,12 +3977,6 @@ onBeforeUnmount(() => {
                         { disabled: practiceTestCard.disabled },
                       ]"
                     >
-                      <img
-                        v-if="!isProMember && practiceTestState === 'results'"
-                        class="pro-label-badge mock-card-pro-label"
-                        src="/assets/solvely-pro-label.webp"
-                        alt="Pro"
-                      />
                       <span>{{ practiceTestCard.cta }}</span
                       ><span class="mock-card-link-arrow" aria-hidden="true"
                         >→</span
@@ -4067,14 +4292,19 @@ onBeforeUnmount(() => {
                       },
                     ]"
                   >
-                    <span aria-hidden="true"
+                    <img
+                      v-if="showResultsUnlockAction"
+                      class="pro-label-badge results-subsection-pro-label"
+                      src="/assets/solvely-pro-label.webp"
+                      alt="Solvely Pro"
+                    />
+                    <span v-else aria-hidden="true"
                       ><svg class="icon">
                         <use
                           :href="resultsNeedAssessment ? '#i-exam' : '#i-lock'"
                         /></svg
                     ></span>
                     <strong>{{ resultsLockTitle }}</strong>
-                    <small>{{ resultsLockDescription }}</small>
                     <button
                       v-if="showResultsStartAction"
                       type="button"
@@ -4085,14 +4315,9 @@ onBeforeUnmount(() => {
                     <button
                       v-else-if="showResultsUnlockAction"
                       type="button"
-                      @click="openCommercialPaywall(`your complete ${examName} score report`)"
+                      @click="openCommercialPaywall(resultsCommercialBenefit)"
                     >
-                      <img
-                        class="pro-label-badge results-action-pro-label"
-                        src="/assets/solvely-pro-label.webp"
-                        alt="Pro"
-                      />
-                      Unlock report
+                      {{ resultsCommercialActionLabel }}
                     </button>
                   </div>
                 </div>
@@ -4162,14 +4387,19 @@ onBeforeUnmount(() => {
                       },
                     ]"
                   >
-                    <span aria-hidden="true"
+                    <img
+                      v-if="showResultsUnlockAction"
+                      class="pro-label-badge results-subsection-pro-label"
+                      src="/assets/solvely-pro-label.webp"
+                      alt="Solvely Pro"
+                    />
+                    <span v-else aria-hidden="true"
                       ><svg class="icon">
                         <use
                           :href="resultsNeedAssessment ? '#i-exam' : '#i-lock'"
                         /></svg
                     ></span>
                     <strong>{{ resultsLockTitle }}</strong>
-                    <small>{{ resultsLockDescription }}</small>
                     <button
                       v-if="showResultsStartAction"
                       type="button"
@@ -4180,14 +4410,9 @@ onBeforeUnmount(() => {
                     <button
                       v-else-if="showResultsUnlockAction"
                       type="button"
-                      @click="openCommercialPaywall(`your ${examName} knowledge and skills breakdown`)"
+                      @click="openCommercialPaywall(resultsCommercialBenefit)"
                     >
-                      <img
-                        class="pro-label-badge results-action-pro-label"
-                        src="/assets/solvely-pro-label.webp"
-                        alt="Pro"
-                      />
-                      Unlock report
+                      {{ resultsCommercialActionLabel }}
                     </button>
                   </div>
                 </section>
@@ -4349,14 +4574,19 @@ onBeforeUnmount(() => {
                       },
                     ]"
                   >
-                    <span aria-hidden="true"
+                    <img
+                      v-if="showResultsUnlockAction"
+                      class="pro-label-badge results-subsection-pro-label"
+                      src="/assets/solvely-pro-label.webp"
+                      alt="Solvely Pro"
+                    />
+                    <span v-else aria-hidden="true"
                       ><svg class="icon">
                         <use
                           :href="resultsNeedAssessment ? '#i-exam' : '#i-lock'"
                         /></svg
                     ></span>
                     <strong>{{ resultsLockTitle }}</strong>
-                    <small>{{ resultsLockDescription }}</small>
                     <button
                       v-if="showResultsStartAction"
                       type="button"
@@ -4367,14 +4597,9 @@ onBeforeUnmount(() => {
                     <button
                       v-else-if="showResultsUnlockAction"
                       type="button"
-                      @click="openCommercialPaywall(`detailed ${examName} performance insights`)"
+                      @click="openCommercialPaywall(resultsCommercialBenefit)"
                     >
-                      <img
-                        class="pro-label-badge results-action-pro-label"
-                        src="/assets/solvely-pro-label.webp"
-                        alt="Pro"
-                      />
-                      Unlock report
+                      {{ resultsCommercialActionLabel }}
                     </button>
                   </div>
                 </section>
@@ -4687,14 +4912,19 @@ onBeforeUnmount(() => {
                       },
                     ]"
                   >
-                    <span aria-hidden="true"
+                    <img
+                      v-if="showResultsUnlockAction"
+                      class="pro-label-badge results-subsection-pro-label"
+                      src="/assets/solvely-pro-label.webp"
+                      alt="Solvely Pro"
+                    />
+                    <span v-else aria-hidden="true"
                       ><svg class="icon">
                         <use
                           :href="resultsNeedAssessment ? '#i-exam' : '#i-lock'"
                         /></svg
                     ></span>
                     <strong>{{ resultsLockTitle }}</strong>
-                    <small>{{ resultsLockDescription }}</small>
                     <button
                       v-if="showResultsStartAction"
                       type="button"
@@ -4705,14 +4935,9 @@ onBeforeUnmount(() => {
                     <button
                       v-else-if="showResultsUnlockAction"
                       type="button"
-                      @click="openCommercialPaywall('every answer, explanation, and skill review')"
+                      @click="openCommercialPaywall(resultsCommercialBenefit)"
                     >
-                      <img
-                        class="pro-label-badge results-action-pro-label"
-                        src="/assets/solvely-pro-label.webp"
-                        alt="Pro"
-                      />
-                      Unlock review
+                      {{ resultsCommercialActionLabel }}
                     </button>
                   </div>
                 </div>
@@ -4927,7 +5152,13 @@ onBeforeUnmount(() => {
                         },
                       ]"
                     >
-                      <span aria-hidden="true"
+                      <img
+                        v-if="showTargetedPracticeUnlockAction"
+                        class="pro-label-badge results-subsection-pro-label"
+                        src="/assets/solvely-pro-label.webp"
+                        alt="Solvely Pro"
+                      />
+                      <span v-else aria-hidden="true"
                         ><svg class="icon">
                           <use
                             :href="
@@ -4937,8 +5168,7 @@ onBeforeUnmount(() => {
                             "
                           /></svg
                       ></span>
-                      <strong>{{ resultsLockTitle }}</strong>
-                      <small>{{ resultsLockDescription }}</small>
+                      <strong>{{ targetedPracticeLockTitle }}</strong>
                       <button
                         v-if="showTargetedPracticeStartAction"
                         type="button"
@@ -4950,17 +5180,10 @@ onBeforeUnmount(() => {
                         v-else-if="showTargetedPracticeUnlockAction"
                         type="button"
                         @click="
-                          openCommercialPaywall(
-                            `prioritized topics and adaptive ${examName} practice`,
-                          )
+                          openCommercialPaywall(targetedPracticeCommercialBenefit)
                         "
                       >
-                        <img
-                          class="pro-label-badge results-action-pro-label"
-                          src="/assets/solvely-pro-label.webp"
-                          alt="Pro"
-                        />
-                        Unlock practice
+                        {{ targetedPracticeCommercialActionLabel }}
                       </button>
                     </div>
                   </div>
@@ -4976,7 +5199,13 @@ onBeforeUnmount(() => {
                       },
                     ]"
                   >
-                    <span aria-hidden="true"
+                    <img
+                      v-if="showTargetedPracticeUnlockAction"
+                      class="pro-label-badge results-subsection-pro-label"
+                      src="/assets/solvely-pro-label.webp"
+                      alt="Solvely Pro"
+                    />
+                    <span v-else aria-hidden="true"
                       ><svg class="icon">
                         <use
                           :href="
@@ -4986,8 +5215,7 @@ onBeforeUnmount(() => {
                           "
                         /></svg
                     ></span>
-                    <strong>{{ resultsLockTitle }}</strong>
-                    <small>{{ resultsLockDescription }}</small>
+                    <strong>{{ targetedPracticeLockTitle }}</strong>
                     <button
                       v-if="showTargetedPracticeStartAction"
                       type="button"
@@ -4999,17 +5227,10 @@ onBeforeUnmount(() => {
                       v-else-if="showTargetedPracticeUnlockAction"
                       type="button"
                       @click="
-                        openCommercialPaywall(
-                          `prioritized topics and adaptive ${examName} practice`,
-                        )
+                        openCommercialPaywall(targetedPracticeCommercialBenefit)
                       "
                     >
-                      <img
-                        class="pro-label-badge results-action-pro-label"
-                        src="/assets/solvely-pro-label.webp"
-                        alt="Pro"
-                      />
-                      Unlock practice
+                      {{ targetedPracticeCommercialActionLabel }}
                     </button>
                   </div>
                 </div>
@@ -5045,15 +5266,6 @@ onBeforeUnmount(() => {
               </footer>
               </template>
                 </div>
-                <section
-                  v-if="resultsLocked"
-                  class="results-lock-overlay"
-                  role="status"
-                  aria-live="polite"
-                >
-                  <h2>{{ resultsLockTitle }}</h2>
-                  <p>{{ resultsLockDescription }}</p>
-                </section>
               </div>
             </div>
           </div>
@@ -5211,15 +5423,15 @@ onBeforeUnmount(() => {
           <span class="mock-demo-controller-label">完整模考结果</span>
           <nav class="mock-state-nav" aria-label="预览完整模考结果状态">
             <button
-              v-for="state in resultsAccessStates"
+              v-for="state in practiceTestStates"
               :key="state.id"
               :class="[
                 'mock-state-button',
-                { active: resultsAccessState === state.id },
+                { active: practiceTestState === state.id },
               ]"
               type="button"
-              :aria-pressed="resultsAccessState === state.id"
-              @click="setResultsAccessState(state.id)"
+              :aria-pressed="practiceTestState === state.id"
+              @click="setPracticeTestState(state.id)"
             >
               {{ state.label }}
             </button>

@@ -252,10 +252,6 @@ const darkMode = ref(false)
 const isFullscreen = ref(false)
 const timerVisible = ref(!isDiagnostic.value)
 const toastMessage = ref('')
-const recommendationRating = ref<number | null>(null)
-const challengeRating = ref<number | null>(null)
-const feedbackText = ref('')
-const feedbackSubmitted = ref(false)
 const timeRemaining = ref(modules.value[0].duration)
 const diagnosticElapsedSeconds = ref(0)
 const breakRemaining = ref(isActExam.value ? 15 * 60 : 10 * 60)
@@ -572,7 +568,11 @@ function advanceFromReview() {
     return
   }
   if (moduleIndex.value < modules.value.length - 1) startModule(moduleIndex.value + 1)
-  else openPackageScoreReport()
+  else {
+    navigatorOpen.value = false
+    closeTransientTools()
+    openPackageScoreReport()
+  }
 }
 
 function resumeAfterBreak() {
@@ -586,10 +586,6 @@ function restartExam() {
   Object.keys(highlights).forEach((key) => delete highlights[key])
   Object.keys(questionTimeSeconds).forEach((key) => delete questionTimeSeconds[key])
   review.clear()
-  recommendationRating.value = null
-  challengeRating.value = null
-  feedbackText.value = ''
-  feedbackSubmitted.value = false
   eliminationMode.value = false
   moduleIndex.value = 0
   currentNumber.value = 1
@@ -607,16 +603,19 @@ function openResults() {
 }
 
 function openPackageScoreReport() {
+  const access = route.query.access === 'member' ? 'member' : 'free'
   void router.push({
     name: 'package',
     query: isDiagnostic.value
       ? {
+          access,
           tab: 'study',
           reportSource: 'diagnostic',
           diagnosticState: 'scoring',
+          courseState: 'in-progress',
           ...examQuery.value,
         }
-      : { tab: 'study', practiceState: 'scoring', ...examQuery.value },
+      : { access, tab: 'study', practiceState: 'scoring', courseState: 'in-progress', ...examQuery.value },
     hash: packageHash.value,
   })
 }
@@ -627,27 +626,28 @@ function backToCompletion() {
 }
 
 function exitExam() {
+  const access = route.query.access === 'member' ? 'member' : 'free'
+  const submitted = stage.value === 'complete'
   void router.push({
     name: 'package',
     query: isDiagnostic.value
       ? {
+          access,
           tab: 'study',
           reportSource: 'diagnostic',
-          diagnosticState: 'in-progress',
+          diagnosticState: submitted ? 'scoring' : 'in-progress',
+          courseState: 'in-progress',
           ...examQuery.value,
         }
-      : { tab: 'study', ...examQuery.value },
+      : {
+          access,
+          tab: 'study',
+          practiceState: submitted ? 'scoring' : 'in-progress',
+          courseState: 'in-progress',
+          ...examQuery.value,
+        },
     hash: packageHash.value,
   })
-}
-
-function submitFeedback() {
-  if (recommendationRating.value === null || challengeRating.value === null) {
-    showToast('Please answer both required rating questions.')
-    return
-  }
-  feedbackSubmitted.value = true
-  showToast('Thanks — your feedback has been recorded.')
 }
 
 function downloadReport() {
@@ -915,30 +915,9 @@ onBeforeUnmount(() => {
       <h1>Congratulations!</h1>
       <p>You've completed</p>
       <h2>{{ activeExam.title }}</h2>
+      <p class="completion-encouragement">Great work — every completed test brings you one step closer to your best score.</p>
+      <p class="completion-summary">{{ totalStats.total }} questions submitted · Your detailed results are being prepared.</p>
       <button class="view-results-button" type="button" @click="openResults">View Results</button>
-
-      <form class="feedback-card" @submit.prevent="submitFeedback">
-        <fieldset>
-          <legend>How likely are you to recommend this {{ examName }} practice test to a friend? <span aria-hidden="true">*</span></legend>
-          <div class="rating-row" role="radiogroup" aria-label="Recommendation rating">
-            <button v-for="rating in 11" :key="`recommend-${rating - 1}`" type="button" :class="{ selected: recommendationRating === rating - 1 }" :aria-pressed="recommendationRating === rating - 1" @click="recommendationRating = rating - 1">{{ rating - 1 }}</button>
-          </div>
-          <div class="rating-labels"><span>trash</span><span>amazinggg</span></div>
-        </fieldset>
-
-        <fieldset>
-          <legend>How much did that challenge you? <span aria-hidden="true">*</span></legend>
-          <div class="rating-row" role="radiogroup" aria-label="Challenge rating">
-            <button v-for="rating in 11" :key="`challenge-${rating - 1}`" type="button" :class="{ selected: challengeRating === rating - 1 }" :aria-pressed="challengeRating === rating - 1" @click="challengeRating = rating - 1">{{ rating - 1 }}</button>
-          </div>
-          <div class="rating-labels"><span>light work</span><span>pretty hard bruh</span></div>
-        </fieldset>
-
-        <label class="feedback-label" for="completion-feedback">Anything else you want to tell us? <span>(optional - we read all replies)</span></label>
-        <textarea id="completion-feedback" v-model="feedbackText" rows="5" />
-        <button class="feedback-submit" type="submit" :disabled="feedbackSubmitted">{{ feedbackSubmitted ? 'Submitted' : 'Submit' }} <span aria-hidden="true">→</span></button>
-        <p v-if="feedbackSubmitted" class="feedback-success" role="status">Thanks — your feedback has been recorded.</p>
-      </form>
     </section>
     <div v-if="toastMessage" class="exam-toast" role="status">{{ toastMessage }}</div>
   </main>

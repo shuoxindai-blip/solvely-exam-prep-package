@@ -1,0 +1,1066 @@
+# Exam Prep & Courses 完整产品需求文档（PRD）
+
+> 文档版本：v1.6  
+> 基准日期：2026-09-09  
+> 产品范围：Exam Prep 首页、Standardized Test Prep Courses、课程学习工具、SAT/ACT/AP 模考、成绩报告与商业化门槛  
+> Demo 基准：`v1.6 state-aligned build`  
+> 文档状态：评审稿
+
+## 1. 关键问题同步与变更记录
+
+| 日期 | 版本 | 变更内容 | 负责人 |
+|---|---|---|---|
+| 2026-09-09 | v1.0 | 基于当前 Demo 反向生成完整 PRD；补齐页面、交互、可达状态组合、SAT/ACT/AP 差异、商业化规则、埋点与验收用例 | 产品 / 设计 / 开发 / 数据 / QA |
+| 2026-09-09 | v1.1 | 严格按 Solvely canonical PRD 结构重排，并统一三列模块表、实验、埋点和自检。 | 产品 |
+| 2026-09-09 | v1.2 | 补充 Web SAT Performance details 的汇总指标、Topic matrix、四象限及 Score Report 计算与验收口径。 | 产品 |
+| 2026-09-09 | v1.3 | 将 iOS 备考包物料纳入 Web 内容基线，明确可复用资产、Web 适配、发布门槛、版本治理与验收规则。 | 产品 / Content / Backend / QA |
+| 2026-09-09 | v1.4 | 补充免费课程留存、专业能力证明与长期转化的商业化依据，并明确 AP 与 SAT/ACT 的课程价值和考试前置原因。 | 产品 / Growth / Content |
+| 2026-09-09 | v1.5 | 对齐 Demo 与 PRD 的唯一状态模型；穷举 12 种可达考试组合，补齐前置动作、写入、跳转、评分等待和异常归一；商业化规则收口到 4.8。 | 产品 / 设计 / 开发 / QA |
+| 2026-09-09 | v1.6 | 报告改为每个 Section 独立锁定；Free 用户查看 Full-Length 报告预览时由 Pro 权益门槛优先于考试前置状态。锁定层精简为 48px Pro icon、单一标题与 CTA，不再展示重复说明小字；N/I/S/R 使用不同购买价值文案。 | 产品 / 设计 / 开发 / QA |
+
+### 1.1 本文档的判定口径
+
+- 本 PRD 记录当前产品应支持的真实业务状态，不把 Demo 右下角“演示控制器”当作生产功能。
+- 所有状态矩阵只列在现有业务条件下可发生的组合。状态切换器能强行拼出的互斥组合、代码中没有入口的页面，不进入正式需求和验收范围。
+- Demo 截图是交互与视觉基准；生产环境中的用户身份、学习进度、考试作答、评分结果必须来自服务端，不能依赖 URL 查询参数或浏览器本地状态。
+- “考试”指 Diagnostic Test 或 Full-Length Practice Test；“课程”指 Standardized Test Prep Course；“Custom Plan”指用户用自己的资料创建的个性化备考计划。
+
+## 2. 需求分析
+
+### 2.1 背景
+
+现有 Exam Predictor 主要表达“上传资料并预测考试”，但用户同时存在两类备考需求：
+
+1. 用自己的课程资料创建个性化计划和预测题。
+2. 直接进入结构化、现成的 SAT、ACT、AP 等标准化考试课程。
+
+本项目将入口统一为 **Exam Prep & Courses**，让用户在同一首页完成 Custom Plan 创建、现成课程发现、学习、模考、成绩分析和针对性练习，形成从“选择备考方式”到“持续提升”的闭环。
+
+标准化备考用户通常并非从零开始学习。AP 学生已经在学校修读所选课程并完成了相当一部分教学；他们寻找站外备考资源时，第一需求往往是定位薄弱点、判断考试准备度，再决定复习顺序。SAT/ACT 更偏向长期积累的阅读、语言和数学基础能力，提升主要来自高质量、成体系的练习；额外课程的差异化价值应是其他地方不容易学到的解题技巧、节奏判断和高效练习方法，而不是重复学校或通用教材已经讲过的内容。
+
+因此课程首页优先展示 Diagnostic Test 与 Full-Length Practice Test：先帮助用户判断“哪里需要补”，再承接 Study Guide、Flashcards、Topic Quiz 和 Targeted Practice。考试前置是信息层级与学习路径决策，不改变既定权限——Diagnostic 免费；Full-Length 仍为 Pro，且在开始前明确展示 Pro 门槛。
+
+### 2.2 用户问题
+
+- 首次进入时，不知道应该上传资料还是选择标准化考试课程。
+- 已经开始学习后，难以从首页快速找到最近进度或继续上次内容。
+- 课程、模考、报告之间缺少明确的状态连接和下一步行动。
+- SAT、ACT、AP 的考试结构、题型、分数体系和 Reference 规则不同，不能共用一套模糊文案。
+- 商业化边界若不清晰，会让用户在开始学习或完成长时间考试后感到被突然拦截。
+- ACT 存在 F/G/H/J 等非 A/B/C/D 选项标签；若数据解析错误，会把选项拼进题干或渲染成错误交互。
+
+### 2.3 目标
+
+| 目标 | 用户价值 | 业务价值 | 衡量方式 |
+|---|---|---|---|
+| 统一入口 | 清楚理解 Custom Plan 与 Prep Course 两条路径 | 提升首页到备考行为的转化 | 课程打开率、计划创建率 |
+| 串联学习闭环 | 从课程内容自然进入学习、模考、报告和练习 | 提升学习深度与回访 | 课程学习启动率、诊断完成率、7 日回访 |
+| 明确商业化预期 | 在 Pro 功能入口前可预期付费限制 | 提升付费转化并降低负反馈 | Paywall CTR、购买转化、退出率 |
+| 保证考试真实性 | SAT/ACT/AP 界面、结构、分数和工具符合各考试 | 提升产品可信度 | 模考完成率、数据错误率、QA 通过率 |
+
+### 2.3.1 商业化策略与课程价值假设
+
+> 课程层的首要任务不是立即把每个学习动作收费，而是为用户提供持续回访理由，并用内容质量证明 Solvely 的专业能力。用户未来出现个性化备考、AI 解题、写作或深度考试分析需求时，再自然进入高价值付费能力。
+
+| 策略决策 | 用户与考试依据 | 商业化价值 |
+|---|---|---|
+| 免费开放 Study Guide、Flashcards、Topic Quiz | 降低首次使用成本，让用户可以验证内容质量、题目质量和方法是否适合自己 | 扩大课程使用和回访；课程本身成为产品专业能力的可体验证明，而不是只靠营销文案建立信任 |
+| Diagnostic Test 免费且在课程前部突出 | AP 用户优先关心薄弱点；SAT/ACT 用户需要先判断能力缺口与练习方向 | 先交付明确价值，再在结果后的 Targeted Practice 承接高意图转化 |
+| Full-Length Practice Test 前置展示但仅 Pro 可开始 | 完整模考是准备度验证、正式节奏模拟和高成本分析入口 | 让用户提前感知产品深度；点击 Start 即明确 Paywall，避免完成长流程后才被拦截 |
+| Ask Solvely、Diagnostic Targeted Practice、Full-Length 与完整报告收费 | 这些能力具备更强个性化、即时反馈、计算成本或高价值诊断属性 | 将付费点放在用户已经表达明确问题或提升意图的时刻，而不是阻断基础课程探索 |
+| AP 内容侧重诊断与查漏补缺 | 学校已经承担主要授课，站外产品不应大篇幅重复课堂内容 | 通过准确的弱项识别、Reference、题型训练和复习路径建立差异化 |
+| SAT/ACT 内容侧重练习、技巧和效率 | 能力提升依赖反复练习；用户需要的不只是知识讲解，还包括解题策略和时间管理 | 用高质量题库与独家技巧提升长期使用价值，推动用户在需要 AI 辅导或深度分析时升级 |
+| 观察长期辅助转化，而非只看同次会话购买 | 免费课程可能先建立习惯与信任，用户的付费需求可能在数天或数周后出现 | 同时评估 Course→Custom Plan、Course→Ask Solvely 与 Course-assisted Pro conversion；Writing 转化复用主产品既有协议，未完成事件映射前不作为本需求上线门槛 |
+
+该策略不改变已确认的商业化边界：课程学习工具免费；Diagnostic 免费；Ask Solvely、Diagnostic Targeted Practice、Full-Length Practice Test 和 Full-Length Score Report 为 Pro。具体触发时机、Pro 标识、Paywall 恢复及会员过期逻辑以 4.8 为准。
+
+### 2.4 非目标
+
+- 本期不实现 AP/Abitur 全部 Coming soon 课程的完整内容生产。
+- 本期不改造 Solvely 全站侧边栏、账户、支付后端或应用商店入口。
+- 本期不把 Question Review 的 Similar Questions 纳入 Study Plan 进度；Mini quiz 是额外练习。
+- Diagnostic 与 Full-Length 最终交卷后不增加独立结算页：立即返回课程首页显示 Scoring；评分完成后卡片切为 Results ready。鼓励结算文案仅用于 3 题 Mini Quiz。
+- 本期不提供“Create more quiz”入口。
+
+### 2.5 目标用户与场景
+
+| 用户 | 核心场景 | 首要成功标准 |
+|---|---|---|
+| 首次进入、没有任何备考记录的用户 | 比较 Custom Plan 与 Prep Courses | 30 秒内找到并启动一种备考方式 |
+| 已创建 Custom Plan 的用户 | 从 Exam Library 继续自己的计划 | 一次点击回到最近内容 |
+| 已学习标准化课程的用户 | 继续课程、诊断或模考 | 首页显示课程进度及继续入口 |
+| 免费用户 | 免费使用学习内容和诊断结果 | 清楚知道哪些动作需要 Pro |
+| Pro 用户 | 完成全长模考、查看报告、使用 AI 和 Targeted Practice | 无重复商业化阻断，学习闭环完整 |
+
+## 3. 设计稿与实现基准
+
+| 类型 | 链接 | 说明 |
+|---|---|---|
+| 可交互 Demo | [solvely-exam-prep-package.vercel.app](https://solvely-exam-prep-package.vercel.app/) | 本 PRD 的视觉与交互基准 |
+| 当前生产页参考 | [solvely.ai/exam/home](https://solvely.ai/exam/home) | Exam Prep 原始入口与侧边栏语境 |
+| 仓库 | [GitHub Repository](https://github.com/shuoxindai-blip/solvely-exam-prep-package) | Demo 源码与内容数据 |
+| AP Reference 调研 | [Lazyweb evidence](https://www.lazyweb.com/agentic-search/88b5b117-7c74-4773-89bf-54da6fc8b025) | AP Reference Sheet 竞品与考试规则证据 |
+| iOS 备考物料源 | [iOS 备考包物料文档](https://pf6xrzskv9.feishu.cn/docx/I4kbdmNLKo2UYvxnaNecwqPBnre) | Web 可复用的课程/Topic、mock、study guide、flashcards、quiz、video、算分与报告物料索引；当前盘点基于 revision 1460 |
+
+### 3.1 视觉原则
+
+- 与 Solvely 首页保持同一设计语言：大标题、浅蓝主色、圆角卡片、柔和阴影、分段式 Tab。
+- 所有可见正文和功能文字不得小于 12 px；辅助标签同样不得低于 12 px。
+- 品牌交互蓝统一使用 Solvely Design System 的主蓝；选中态与 Hover 视觉强度接近，避免深色高亮抢占注意力。
+- 首页与课程库采用三列固定宽度卡片。即使筛选后只剩两张，也不得拉伸卡片占满一行。
+- SAT/ACT 使用对应考试图标；其他课程卡片只展示一个对应学科图标。
+
+## 4. 需求功能详细描述
+
+### 4.1 信息架构、真实数据源与入口
+
+```text
+Exam Prep & Courses
+├── 首页（由真实数据推导，不单独保存“空/有进度”布尔值）
+│   ├── 无任何计划或课程活动 → Custom Plan | Prep Courses
+│   └── 已创建计划或已开始课程 → Exam Library + Standardized Test Prep Courses
+├── Custom Plan → 上传资料/示例 → 创建计划 → Plan Detail
+└── Prep Course
+    ├── Course Content → Lessons / Diagnostic / Full-Length
+    └── Performance & Insights
+        ├── Score Analysis / Question Review
+        ├── Similar Questions → 3-question Mini Quiz Drawer
+        └── Targeted Practice
+```
+
+| 状态域 | 生产环境唯一数据源 | Demo 数据源 | 说明 |
+|---|---|---|---|
+| Custom Plan | Plan 服务端记录 | 本地创建记录 | 创建成功后才算有计划；打开弹窗或取消不写进度。 |
+| Course Progress | 用户 × 课程的服务端 activity | `courseActivities` 本地记录 | 仅开始 Lesson/Study Guide/Flashcards/Quiz/考试后写入；仅打开课程不写入。 |
+| Assessment Attempt | Attempt 服务端状态 | URL 状态 + 规范化器 | Diagnostic 与 Full-Length 各自只有一个 latest attempt。 |
+| Report Result | 评分服务返回的 attempt result | Demo 的已完成报告 fixture | 用户真实成绩是否存在由 attempt 决定，不允许单独设置“已解锁结果”。 |
+| Report Template | 考试类型对应的报告模块配置 | Demo 的预生成报告封面与 Section 布局 | 可在 N/I/S 与 Pro-locked 状态用于价值预览；不得被识别、存储或埋点为用户成绩。 |
+| Entitlement | 订阅服务实时权益 | `access=free/member` 控制器 | 只影响可执行动作和内容遮罩，不反推学习/考试进度。 |
+
+### 4.2 全局业务规则
+
+| 编号 | 规则 |
+|---|---|
+| BR-001 | 侧边栏入口统一命名为 **Exam Prep & Courses**。 |
+| BR-002 | 首页结构由 `createdPlanCount + startedCourseCount` 推导：两者均为 0 才是首次进入；任一大于 0 才展示 Exam Library。 |
+| BR-003 | 仅浏览课程库、打开课程、切换 Tab、搜索或取消弹窗都不得创建进度。 |
+| BR-004 | 同一考试尝试只允许处于 Not started、In progress、Scoring、Results ready 中一个状态；Diagnostic 与 Full-Length 不得同时处于 In progress/Scoring。 |
+| BR-005 | Scoring 完成后进入 Results ready；生产环境以评分服务事件为准，Demo 才使用短暂模拟等待。 |
+| BR-006 | 用户实际开始任何学习资源或考试后，课程由 First visit 进入 In progress，并同步进入 Exam Library。 |
+| BR-007 | Similar Questions Mini Quiz 固定 3 题，独立于 Study Plan 与 Targeted Practice；完成页仅提供 Review Quiz，不提供 Create More Quiz。 |
+| BR-008 | AP 页面不显示 Section 筛选；Topic 标题不重复课程名。 |
+| BR-009 | 所有题目选项必须使用结构化 `options` 渲染，不得并入题干。支持 A/B/C/D、F/G/H/J、其他标签及无选项 Student-Produced Response。 |
+| BR-010 | 课程目录展示 52 门课程：SAT 1、ACT 1、AP 43、Abitur 7；当前仅 SAT、ACT、AP Calculus BC 可进入，其余为 Coming soon。 |
+| BR-011 | 课程卡片固定三行：`• {topics} topics · video lessons`、`• {practiceQuestions} practice questions`、`• 1 full-length test • Score insights`；第一行不得重复 topics 数字。 |
+| BR-012 | 所有商业化差异只以 **4.8 商业化与权限** 为准；其他章节只引用规则编号，不重复定义 Free/Pro。 |
+| BR-013 | 报告未生成或被 Pro 锁定时可展示对应考试的预生成封面与 Section 结构预览；预览模板不可交互、不写入成绩也不计入真实报告埋点，真实成绩仍只在 Attempt=Results ready 后生成。 |
+
+### 4.3 唯一可达状态模型与用户旅程
+
+#### 4.3.1 首页可达状态
+
+会员状态与进度相互独立，因此只有以下四种真实组合：
+
+| 有真实计划/课程活动 | Entitlement | 首页结构 | 允许动作 |
+|---|---|---|---|
+| 否 | Free | 首次进入；`Custom Plan / Prep Courses` 切换器 | 创建计划、浏览课程；Pro 动作按 4.8 拦截 |
+| 否 | Pro | 同上 | 创建计划、浏览课程；Pro 动作直接执行 |
+| 是 | Free | `Exam Library + Standardized Test Prep Courses` | 继续真实活动、创建新计划；Pro 动作按 4.8 拦截 |
+| 是 | Pro | 同上 | 继续真实活动、创建新计划；Pro 动作直接执行 |
+
+![VIS-05 首页未创建 + 免费状态](./images/VIS-05-demo-controller-home-empty-free.png)
+
+![VIS-06 首页已有进度 + Pro 状态](./images/VIS-06-demo-controller-home-created-pro.png)
+
+#### 4.3.2 课程、Diagnostic 与 Full-Length 的可达组合
+
+用 `N/I/S/R` 分别表示 Not started / In progress / Scoring / Results ready。任一时刻最多一个考试为 I 或 S；另一个考试可以是 N 或 R，因此 16 个笛卡尔积中只有以下 12 个可达：
+
+| Diagnostic | Full-Length | 是否可达 | 典型来源 |
+|---|---|---|---|
+| N | N | 是 | 从未开始考试；课程可能仍因 Lesson 活动处于 In progress |
+| N | I / S / R | 是 | 先开始 Full-Length，尚未做 Diagnostic |
+| I / S | N | 是 | Diagnostic 正在作答或评分，尚未做 Full-Length |
+| I / S | R | 是 | 已完成 Full-Length，之后开始/重做 Diagnostic |
+| R | N | 是 | 只完成 Diagnostic |
+| R | I / S / R | 是 | Diagnostic 已完成，之后开始/完成 Full-Length |
+
+明确不可达：`I/I`、`I/S`、`S/I`、`S/S`。进入另一场考试前必须保存并离开当前 attempt；Demo 控制器选择冲突状态时自动把较早的 active attempt 规范化为 Not started，生产环境由服务端拒绝冲突写入。
+
+| Course State | 判定条件 | 页面表现 |
+|---|---|---|
+| First visit | 无 Lesson 活动且 Diagnostic=N、Full-Length=N | 不展示进度；展示 `Start your prep journey` |
+| In progress | 有任一 Lesson 活动，或任一考试不为 N | 展示真实完成度、最近活动与 Resume 入口；同步出现在 Exam Library |
+
+![VIS-70 课程状态控制器](./images/VIS-70-controller-course-content-states.png)
+
+#### 4.3.3 单次考试状态机
+
+| 当前状态 | 前置条件与触发动作 | 权威写入 | 下一状态与导航 | 失败/恢复 |
+|---|---|---|---|---|
+| N | 点击 Start；权限满足 M-04/M-06 | 创建 attempt，记录 start time | I；进入第 1 题 | 创建失败留在原页并 Retry；不得伪造进度 |
+| I | 作答、切题、Mark、Save and Exit | 持续保存答案、题号、工具状态、elapsed time | I；退出回课程，Continue 回保存位置 | 断网本地排队并提示未同步；重进从服务端最后成功快照恢复 |
+| I | 最终 Review 点击 Submit | attempt=`submitted` | S；立即返回课程首页，保持 Course Content，测试卡显示 Scoring | 提交失败保留 Review 和答案，可 Retry |
+| S | 收到评分完成事件 | 保存 score、section/topic metrics、report id | R；仍停留课程首页，测试卡变为 Results ready | 超时展示 Retry status，不重复提交答案 |
+| R | View Results / View Score Report | 不改 attempt | 打开正确来源的报告 | 报告拉取失败保留 R，支持 Retry |
+| R | Retake 并确认 | 创建新的 attempt；旧结果只读保留 | 新 attempt=I；进入第 1 题 | 创建失败仍停留旧报告 |
+
+Demo 的短暂 scoring 计时仅用于演示异步状态；生产环境不得以固定秒数假装评分成功。
+
+#### 4.3.4 报告来源与前置状态
+
+| 报告来源 | Attempt=N | Attempt=I | Attempt=S | Attempt=R |
+|---|---|---|---|---|
+| Diagnostic | Start Free Diagnostic | Continue Diagnostic | 只读评分中 | 展示 Score、Question Review；Targeted Practice 按 M-05 |
+| Full-Length | Pro：Start；Free：报告预览按 M-07 锁定 | Pro：Continue；Free：报告预览按 M-07 锁定 | 课程卡显示评分中；报告预览仍按实时权益应用 M-07 | 完整报告按 M-07 |
+
+报告视图只能由对应 latest attempt 推导。`resultState=unlocked` 一类独立开关不是业务状态；旧 Demo 链接若包含该字段，只能迁移为 `Full-Length=R` 后删除该字段。
+
+N/I/S 与 Free Pro-locked 状态仍展示预生成的报告封面和 Section 结构预览，让用户在开始测试或购买前知道报告会包含哪些模块。该层只来自 `exam_report_template`，不读取或写入 attempt 成绩；预览内容不可交互且不进入真实成绩埋点，前景门槛文案承担真实状态说明。只有 Attempt=R 且报告生成成功后，分数、正确率、题目结果、Topic 分类及个性化建议才可作为该用户的真实结果呈现。
+
+![VIS-71 报告状态控制器](./images/VIS-71-controller-report-states.png)
+
+#### 4.3.5 端到端用户旅程
+
+| Journey | 前置条件 | 用户动作与页面跳转 | 结束状态 |
+|---|---|---|---|
+| J-01 首次创建 Custom Plan | 无计划、无课程活动 | 首页 Custom Plan → 上传/示例 → Create a prep plan → 创建成功 → Plan Detail；Back → Active Home | Plan count +1；Exam Library 出现该计划 |
+| J-02 首次开始免费课程 | Empty Home，Free/Pro 均可 | Prep Courses → 打开课程（仍无进度）→ 打开 Topic 的 Study Guide/Flashcards/Quiz → 记录 activity → 学习页；Back/Home | Course=In progress；Exam Library 出现该课程与最近活动 |
+| J-03 Free Diagnostic | Course 可用，Diagnostic=N | Start Free Diagnostic → 作答 → Review → Submit → 回课程首页 Scoring → 卡片自动变 Results ready → View Free Results → Question Review → Similar Questions Drawer | Diagnostic=R；Mini Quiz 不写 Study Plan 进度 |
+| J-04 Diagnostic Targeted Practice | Diagnostic=R | 报告点击 Targeted Practice：Pro 直接进入纯 Quiz；Free 弹 M-05 Paywall，购买成功恢复原动作，取消留在报告 | Targeted attempt 独立保存；Diagnostic 结果不变 |
+| J-05 Pro Full-Length | Pro，Full-Length=N/I | Start/Continue → 模考 → Review → Submit → 回课程首页 Scoring → 卡片自动变 Results ready → View Score Report | Full-Length=R；报告与 attempt 绑定 |
+| J-06 Free Full-Length 商业化 | Free，Full-Length=N/I | 点击 Start/Continue 或访问直链 → M-06 Paywall；购买成功只恢复一次原动作；取消回原课程卡 | 购买前不得创建/推进 attempt |
+| J-07 回访继续 | 已有计划或课程活动 | Active Home → 点击 Exam Library 卡片 → 进入准确的 Plan/Course/Topic/attempt 保存位置 | 继续写回同一实体，不创建重复进度 |
+| J-08 权益到期 | 历史 attempt 可为 I/S/R，当前 Free | 首页仍显示真实进度；免费内容可继续；Full-Length Continue/Report、Ask、Targeted 重新按 M-03/M-05/M-06/M-07 校验 | 不删除历史答案或报告，不把状态重置为 N |
+
+#### 4.3.6 不可能状态、直链与恢复规则
+
+| 非法/不一致输入 | 规范化结果 | 用户可见处理 |
+|---|---|---|
+| Empty Home + 已创建计划/课程 activity | 以真实数据为准改为 Active Home | 不展示“初始状态但已有进度”的拼接页面 |
+| First visit + 任一考试 I/S/R | Course=In progress | 展示对应考试状态与真实进度 |
+| 两个考试同时 I/S | 保留最近操作的 attempt；另一个恢复为最近合法的 N 或 R | 不展示两场考试同时进行/评分 |
+| Full-Length=R + 独立 `resultState=locked/unlocked` | 删除独立字段；报告权限实时读取 entitlement | Free 展示锁定报告，Pro 展示完整报告 |
+| Free 直达 Full-Length 模考 URL | 服务端/路由守卫重定向课程页并携带 pending action | 立即显示 M-06 Paywall；不能看到试题 |
+| Coming soon 课程带 activity/attempt | 忽略非法 activity 并记录告警 | 课程仍 disabled，不进入课程详情 |
+| Scoring 刷新或重复回调 | 按 attempt id 幂等查询/写入 | 保持 Scoring 或进入 R，不生成重复报告 |
+
+### 4.4 首页与课程发现
+
+#### 4.4.1 首次进入首页
+
+| 项目 | 说明 | 图示 |
+|---|---|---|
+| 页面头部 | 标题：**Adaptive exam prep for your best score**。副标题：**Create a personalized study plan, predict likely exam questions, or start a prep course.** 文案保持单行展示；窄屏可自然换行。 | ![VIS-01 首次进入 Custom Plan](./images/VIS-01-home-first-entry-custom-plan.png) |
+| 分段 Tab | `Custom Plan` / `Prep Courses`。Tab 视觉、键盘切换和滑块动画与课程内部状态切换器一致。首次进入默认 Custom Plan。Custom Plan 状态下，在 Prep Courses 旁展示 `SAT, ACT and AP Prep` 引导提示。 | ![VIS-02 首次进入 Prep Courses](./images/VIS-02-home-first-entry-prep-courses.png) |
+| Custom Plan 上传 | 拖拽或 Select files；支持 PDF、Word、PPT、TXT、JPG、JPEG、PNG、HEIC、WebP；每个文件只处理前 50 页。上传区宽度与下方三张示例卡组成的容器一致。 | ![VIS-01 上传入口](./images/VIS-01-home-first-entry-custom-plan.png) |
+| 示例计划 | 标题固定 `Exam prep plan examples`，字体、颜色与 `Standardized Test Prep Courses` 一致；展示三张真实感示例卡。点击后进入真实预测/计划体验。 | ![VIS-01 示例计划](./images/VIS-01-home-first-entry-custom-plan.png) |
+| 创建计划弹窗 | 标题 Create a prep plan；字段 Exam or course name、Exam date、Plan focus；Focus 选项为 Balanced review、High-probability topics、Mock exam practice。必填校验通过后创建；Cancel/X/Escape 关闭。编辑时标题改 Edit prep plan，CTA 改 Save changes。 | ![VIS-03 创建计划](./images/VIS-03-create-prep-plan-dialog.png) |
+
+#### 4.4.2 已有进度首页
+
+| 项目 | 说明 | 图示 |
+|---|---|---|
+| 页面头部 | 标题、副标题与首次进入完全一致；右上角展示 `+ New Prep Plan`。不再显示首次进入 Tab。 | ![VIS-04 已有进度首页](./images/VIS-04-home-active-exam-library.png) |
+| Exam Library | 同时展示用户创建的计划和已经学习的 Prep Course。课程卡显示 IN PROGRESS、完成度、最近资源类型和最近 Topic；计划卡显示 READY/IN PROGRESS 与考试日期。 | ![VIS-04 Exam Library](./images/VIS-04-home-active-exam-library.png) |
+| 继续学习 | 点击课程进度卡，进入上次学习的课程/Topic/工具；点击计划卡进入计划详情。Course 一旦有进度，就必须同步出现在 Exam Library。 | ![VIS-04 继续学习](./images/VIS-04-home-active-exam-library.png) |
+| 侧边栏 | 支持折叠/展开；折叠不改变主内容层级和三列卡片尺寸。 | ![VIS-78 侧边栏折叠](./images/VIS-78-home-sidebar-collapsed.png) |
+
+#### 4.4.3 Standardized Test Prep Courses
+
+| 项目 | 说明 | 图示 |
+|---|---|---|
+| 标题与搜索 | 标题：`Standardized Test Prep Courses`；删除说明句和 Total 数量。搜索 Placeholder：`Search a ready-made course for the exam you are preparing for...`。 | ![VIS-02 课程库](./images/VIS-02-home-first-entry-prep-courses.png) |
+| 分类筛选 | All courses、SAT、ACT、AP、Abitur。搜索和筛选组合生效；结果按课程配置顺序展示。 | ![VIS-72 搜索与 Coming soon](./images/VIS-72-course-search-and-coming-soon.png) |
+| 卡片网格 | 桌面端一行固定三张；卡片尺寸和间距与首页 Demo 一致。只有两张结果时，仍保持三列中单卡宽度，不拉伸。 | ![VIS-04 三列课程](./images/VIS-04-home-active-exam-library.png) |
+| 卡片状态 | 可用课程 CTA 为 Open course/Continue learning；不可用课程 CTA 为 Coming soon 且 disabled。左上角不展示 Coming soon/Ready/In progress 状态标签，状态只在 CTA 或 Exam Library 体现。 | ![VIS-72 Coming soon](./images/VIS-72-course-search-and-coming-soon.png) |
+| 空结果 | 搜索无匹配课程时展示明确 Empty State、保留搜索框和分类筛选，并提供 Clear search。 | ![VIS-73 搜索无结果](./images/VIS-73-course-search-empty.png) |
+
+### 4.5 课程首页与学习内容
+
+#### 4.5.1 SAT / ACT / AP 课程头部差异
+
+| 项目 | 说明 | 图示 |
+|---|---|---|
+| SAT | `SAT Prep 2026`；100 video lessons；课程数据层 practice questions 需统一口径；1 full-length test。 | ![VIS-07 SAT 首次进入](./images/VIS-07-sat-course-first-visit.png) |
+| ACT | `ACT Prep 2026`；235 video lessons；6,600 课程练习题；1 full-length test。 | ![VIS-09 ACT](./images/VIS-09-act-course-overview.png) |
+| AP Calculus BC | `AP Calculus BC Prep 2027`；49 video lessons；2,940 课程练习题；1 full-length test。 | ![VIS-10 AP](./images/VIS-10-ap-course-overview.png) |
+| 课程状态 | First visit 右侧展示 `Start your prep journey`；In progress 替换为真实学习进度，不重复展示营销标签。 | ![VIS-08 SAT 学习中](./images/VIS-08-sat-course-in-progress.png) |
+| 主 Tab | `Course Content` / `Performance & Insights`。Course Content 包含 Tests 和 Lessons；Performance & Insights 包含报告。 | ![VIS-07 课程 Tab](./images/VIS-07-sat-course-first-visit.png) |
+
+#### 4.5.2 Lessons
+
+| 项目 | 说明 | 图示 |
+|---|---|---|
+| SAT | Section 筛选显示 Reading and Writing、Math；Topic 分组标题包含对应 Section/Domain。 | ![VIS-11 SAT Lessons](./images/VIS-11-sat-lessons.png) |
+| ACT | Section 筛选显示 English、Mathematics、Reading、Science、Writing；Topic 分组按 ACT 官方结构。 | ![VIS-12 ACT Lessons](./images/VIS-12-act-lessons.png) |
+| AP | 不显示 Section 筛选；仅保留 Priority；分组标题为 Unit，Topic 名称不重复 AP Calculus BC。 | ![VIS-13 AP Lessons](./images/VIS-13-ap-lessons.png) |
+| Priority | 全部考试支持 All、Core、Likely、Possible；切换后只展示匹配 Topic，并保持分组空态处理。 | ![VIS-81 Priority 筛选](./images/VIS-81-lesson-priority-filter.png) |
+| 分组折叠 | 点击分组标题展开/折叠；状态在本次会话保持，且键盘可操作。 | ![VIS-80 Lessons 折叠](./images/VIS-80-lesson-section-collapsed.png) |
+| Topic 工具入口 | Hover 或键盘聚焦 Topic 行展示浮层：Study Guide、Flashcards、Quiz。浮层不因移动到浮层内部而消失。 | ![VIS-14 Topic 工具浮层](./images/VIS-14-topic-hover-study-tools.png) |
+
+#### 4.5.3 Diagnostic Test 卡片状态与文案
+
+| 状态 | 标签与说明 | 指标 / 进度 / CTA | 图示 |
+|---|---|---|---|
+| Not started | 标签 `Free`。SAT/ACT：`Get an instant {exam} score estimate and skill breakdown across {sections}.` AP：`Get an instant AP score estimate and unit-level skill breakdown with a focused multiple-choice diagnostic.` | `{20} questions · Untimed · {sectionCount} section(s)`；`—`；`Not started`；CTA `Start Free Diagnostic` | ![VIS-15 Diagnostic 未开始](./images/VIS-15-diagnostic-not-started.png) |
+| In progress | 标签 `In progress`。`Continue your quick {exam} score and skill check. Your answers are saved automatically.` | `4/20 Questions`；`In progress · {date}`；CTA `Continue Diagnostic` | ![VIS-16 Diagnostic 进行中](./images/VIS-16-diagnostic-in-progress.png) |
+| Scoring | 标签 `Scoring`。`Your answers were submitted. We are calculating your composite and section score predictions; results are usually ready in a few seconds.` | `20/20 Questions`；`Scoring results…`；CTA `Scoring…` disabled | ![VIS-17 Diagnostic 评分中](./images/VIS-17-diagnostic-scoring.png) |
+| Results ready | 标签 `Results ready`。`Your predicted {exam} score and free answer review are ready. This estimate does not replace the full-length test.` | SAT：总分/R&W/Math；ACT：Composite/Science/20 questions；AP：AP score/correct/20 questions；CTA `View Free Results` | ![VIS-18 Diagnostic 已出分](./images/VIS-18-diagnostic-results.png) |
+
+各考试 Diagnostic 的结构：SAT 20 题、2 Sections；ACT 20 题、4 Sections；AP 20 题、1 Section，均 Untimed。
+
+#### 4.5.4 Full-Length Practice Test 卡片状态与文案
+
+| 状态 | 标签与说明 | 指标 / 进度 / CTA | 权限规则 | 图示 |
+|---|---|---|---|---|
+| Not started | 无状态标签。`Take a realistic full-length {exam} with official timing and section structure.` | 题数、分钟、modules/sections；`Not started`；标题旁显示 Pro；CTA 仅为 `Start Practice Test`，按钮内不重复 Pro | M-06 | ![VIS-19 Full-Length 未开始](./images/VIS-19-full-test-not-started-free.png) |
+| In progress | 标签 `In progress`。`Resume your saved attempt from {saved location}. Your answers are saved automatically.` | `14/{questionCount} Questions`；`In progress · {date}`；CTA `Continue Practice Test` | M-06、M-10 | ![VIS-20 Full-Length 进行中](./images/VIS-20-full-test-in-progress-member.png) |
+| Scoring | 标签 `Scoring`。`Your answers were submitted. We are preparing your score report and personalized recommendations; results are usually ready in under a minute.` | 已答题数、time used、sections/modules；`Scoring results…`；CTA `Scoring…` disabled | M-08 | ![VIS-21 Full-Length 评分中](./images/VIS-21-full-test-scoring-member.png) |
+| Results ready | 标签 `Results ready`。`Your score report and next-step recommendations are ready. Your result is in the {percentile} percentile.` | SAT 总分/R&W/Math；ACT Composite/Science/4 sections；AP AP score/percentile/2 sections；Free CTA `Unlock Score Report`，按钮内不重复 Pro | M-07、M-10 | ![VIS-22 Full-Length 免费用户已出分](./images/VIS-22-full-test-results-free.png) |
+
+![VIS-23 点击 Full-Length 后的 Pro Paywall](./images/VIS-23-pro-paywall-full-length.png)
+
+#### 4.5.5 Study Guide
+
+| 项目 | 说明 | 图示 |
+|---|---|---|
+| 页面结构 | 保留课程侧栏、Topic 标题、学习工具 Tab；主体包含 Video lesson、Exam essentials、Worked examples、Quick Practice。 | ![VIS-24 Study Guide](./images/VIS-24-study-guide-overview.png) |
+| 视频课 | 可播放、暂停、拖动进度、全屏；完成阈值写入 Topic 学习进度。视频加载失败时显示 Retry 和文字版内容入口。 | ![VIS-24 视频课](./images/VIS-24-study-guide-overview.png) |
+| Quick Practice | 支持 Multiple Choice 与 Written Response；未作答前 Submit disabled。 | ![VIS-25 Quick Practice](./images/VIS-25-study-guide-quick-practice.png) |
+| 反馈 | 提交后在原位显示 Correct/Incorrect、正确答案与解释；提供 Try Another 和 Next Topic。 | ![VIS-26 Quick Practice 反馈](./images/VIS-26-study-guide-quick-practice-feedback.png) |
+
+#### 4.5.6 Flashcards
+
+| 项目 | 说明 | 图示 |
+|---|---|---|
+| Card 模式 | 默认展示正面；点击卡片或按 Space 翻面；Previous/Next 支持连续浏览；显示当前位置。 | ![VIS-27 Flashcard 正面](./images/VIS-27-flashcards-card-front.png) |
+| 翻面 | 背面展示答案/解释；翻转动效支持 reduced-motion。 | ![VIS-28 Flashcard 背面](./images/VIS-28-flashcards-card-back.png) |
+| 学习动作 | Star、Need to review、Mastered、Shuffle。状态保存到 Topic 级进度。 | ![VIS-27 Flashcard 动作](./images/VIS-27-flashcards-card-front.png) |
+| List 模式 | 一次查看全部卡片及掌握状态；可返回 Card 模式。 | ![VIS-29 Flashcard 列表](./images/VIS-29-flashcards-list.png) |
+
+#### 4.5.7 Topic Quiz 与 Targeted Practice Quiz
+
+| 项目 | 说明 | 图示 |
+|---|---|---|
+| Topic Quiz | 课程 Topic 内 Quiz 保留课程侧栏和 Study Guide/Flashcards/Quiz Tab；显示题号、进度、题干和选项/输入框。 | ![VIS-30 Topic Quiz](./images/VIS-30-topic-quiz-question.png) |
+| 选项渲染 | 选项标签来自题目数据。ACT 必须正确展示 F/G/H/J，不能强制映射成 A/B/C/D。无选项题渲染输入框，不创建空选项。 | ![VIS-74 ACT 非 ABCD 选项](./images/VIS-74-act-quiz-non-abcd-labels.png) |
+| 答题反馈 | 提交后显示正确性、解释、View Study Guide、Next；重新进入可恢复已作答状态。 | ![VIS-31 Quiz 反馈](./images/VIS-31-topic-quiz-feedback.png) |
+| Targeted Practice Quiz | 从报告点击 Practice/Continue/Review 后进入纯 Quiz 页面，仅包含答题所需内容，不展示课程侧栏、学习工具 Tab 或额外说明。 | ![VIS-68 Targeted Practice 纯 Quiz](./images/VIS-68-targeted-practice-quiz-only.png) |
+
+#### 4.5.8 Ask Solvely
+
+| 项目 | 说明 | 图示 |
+|---|---|---|
+| Pro 入口 | Study Guide、Flashcards、Quiz 页面均可显示 Ask Solvely + Pro badge。Free 点击弹商业化弹窗；不阻断页面其他免费学习功能。 | ![VIS-33 Ask Solvely 免费门槛](./images/VIS-33-ask-solvely-free-paywall.png) |
+| 对话面板 | Pro 点击打开右侧可调整宽度的对话面板；携带当前课程、Topic、题目和作答上下文；支持 New Chat、发送文本、关闭。 | ![VIS-32 Ask Solvely 面板](./images/VIS-32-ask-solvely-member.png) |
+| 连续对话 | 消息区区分用户/AI；发送中显示 loading；失败消息支持 Retry。 | ![VIS-75 Ask Solvely 对话](./images/VIS-75-ask-solvely-conversation.png) |
+| 语音 | 支持 Connecting、Listening、Mute、End；麦克风权限失败时给出浏览器设置指引并保留文字输入。 | ![VIS-76 Ask Solvely 语音](./images/VIS-76-ask-solvely-voice.png) |
+| 浮动模式 | 支持 Dock/Float；浮窗保持在视口内并可拖动、调整大小，最小尺寸仍可操作。 | ![VIS-77 Ask Solvely 浮窗](./images/VIS-77-ask-solvely-floating.png) |
+
+### 4.6 模考体验
+
+#### 4.6.1 共用考试壳层
+
+| 项目 | 说明 | 图示 |
+|---|---|---|
+| 顶部栏 | 左侧 Solvely 标识；中间 Section/Module 与计时；右侧按考试和题型显示 Calculator、Reference、Highlight、Line Reader、More。Diagnostic 显示已用时间，Full-Length 倒计时。 | ![VIS-34 SAT 模考默认态](./images/VIS-34-sat-mock-reading-default.png) |
+| 选择答案 | 点击整行或标签选择；品牌蓝选中态强度与 Hover 接近；选中后可改选。Mark for Review 独立保存。 | ![VIS-35 选中与 Mark](./images/VIS-35-mock-answer-selected-marked.png) |
+| 划掉选项 | 点击 cross-out 图标进入/退出排除态；工具激活时图标为黑色；被划掉的选项仍可恢复。Hover Tooltip：`Cross out answer choices you think are wrong`。 | ![VIS-36 排除选项](./images/VIS-36-mock-elimination-active.png) |
+| Highlight | 点击即 On；选中文字后高亮并可维护批注。选中态使用品牌蓝；Hover Tooltip：`Highlight and annotate text`。 | ![VIS-37 Highlighter](./images/VIS-37-mock-highlighter-active.png) |
+| Question Navigator | 点击底部题号打开；区分 Current、Answered、Unanswered、Marked；可直接跳题，不提交考试。 | ![VIS-42 Question Navigator](./images/VIS-42-mock-question-navigator.png) |
+| More | 菜单包含 Save and Exit、Fullscreen、Keyboard shortcuts、Report an issue、Dark mode。模考外部不显示独立旗子或 Report 文案。 | ![VIS-39 More 菜单](./images/VIS-39-mock-more-menu.png) |
+| Keyboard shortcuts | 弹窗列出选项键、Previous/Next、Mark、Navigator、Highlight、Line Reader 等；Escape 关闭。 | ![VIS-40 快捷键](./images/VIS-40-mock-keyboard-shortcuts.png) |
+| Report an issue | 从 More 打开；问题类型含 Typo、Wrong answer、Missing image、Display problem、Offensive content、Other；可填写详情并提交。成功后 Toast，失败保留输入并 Retry。 | ![VIS-41 Report issue](./images/VIS-41-mock-report-issue-dialog.png) |
+| Dark mode | 影响考试壳层、题目、工具、弹窗和浮层；品牌蓝与正确/错误色保持对比度。 | ![VIS-79 模考深色模式](./images/VIS-79-mock-dark-mode.png) |
+| Check Your Work | 每个 Module/Section 结束后展示题号网格和未答/已答/Marked 状态；Back 返回检查；Next Module/Section 进入下一阶段。 | ![VIS-50 Check Your Work](./images/VIS-50-mock-check-your-work.png) |
+| 最终交卷与评分等待 | 最后一个 Section 的 Review CTA 为 Submit Test；提交成功立即返回课程首页的 Course Content，当前测试卡进入 Scoring。评分成功后卡片自动切为 Results ready；Diagnostic CTA 为 `View Free Results`，Full-Length 按 M-07 显示查看或解锁入口。 |
+
+#### 4.6.2 阅读材料引用与 Line Reader
+
+| 项目 | 说明 | 图示 |
+|---|---|---|
+| 引用高亮 | 当题目指向文章中的单词、短语、句子或行号时，在 Passage 中自动突出对应内容；换题后自动滚动到相关位置。用户自己的 Highlight 与系统引用高亮可叠加但视觉可区分。 | ![VIS-43 ACT 引用高亮](./images/VIS-43-act-mock-english-reference-highlight.png) |
+| Line Reader | 直接替换原 Tools 入口，点击即 On；以阅读窗口帮助聚焦当前行，可拖动/键盘移动；再次点击关闭。Hover Tooltip 说明用途；激活色使用品牌蓝。 | ![VIS-44 Line Reader](./images/VIS-44-act-line-reader-active.png) |
+
+#### 4.6.3 Math / Calculator / Reference
+
+| 项目 | 说明 | 图示 |
+|---|---|---|
+| Student-Produced Response | SAT Math 和 AP FRQ/数值题无选项时，显示响应输入组件及格式说明；输入不转成虚假选项。 | ![VIS-45 SAT Student-Produced Response](./images/VIS-45-sat-math-student-response.png) |
+| Calculator | Math 相关部分提供内嵌计算器；答案区仍可独立操作。 | ![VIS-46 内嵌计算器](./images/VIS-46-calculator-embedded.png) |
+| Calculator 浮窗 | 支持 Pop out、拖动、缩放、关闭，保持输入状态。 | ![VIS-48 计算器浮窗](./images/VIS-48-calculator-popout.png)<br>![VIS-49 计算器缩放](./images/VIS-49-calculator-resized.png) |
+| SAT Math Reference | 点击 Reference 打开公式面板，支持折叠和关闭；不离开考试。 | ![VIS-47 SAT Math Reference](./images/VIS-47-sat-math-reference.png) |
+
+#### 4.6.4 SAT 考试结构
+
+| 类型 | 结构 | 题量/时间 | 阶段交互 |
+|---|---|---|---|
+| Diagnostic | Reading & Writing 10 + Math 10 | 20 题；Untimed | 各 Section Review 后继续；完成回课程评分 |
+| Full-Length | R&W Module 1 27、R&W Module 2 27、Math Module 1 22、Math Module 2 22 | 98 题；134 分钟；4 Modules | R&W Module 2 后 10 分钟 Break；可 Continue Break 提前结束；每个 Module 后 Review |
+
+![VIS-51 SAT Break](./images/VIS-51-sat-mock-break.png)
+
+#### 4.6.5 ACT 考试结构
+
+| 类型 | 结构 | 题量/时间 | 选项规则 |
+|---|---|---|---|
+| Diagnostic | English、Mathematics、Reading、Science，各 5 题 | 20 题；Untimed | 选项标签按题目数据 |
+| Full-Length | English 50/35m、Mathematics 45/50m、Reading 36/40m、Science 40/40m | 171 题；165 分钟；4 Sections | 题目可使用 A/B/C/D 或 F/G/H/J；原样渲染 |
+
+当前 Demo 在各 ACT Section 间直接进入 Review/Next Section，不展示 Break；是否需要在 Mathematics 后增加官方休息段，见 7.2 待确认项。
+
+#### 4.6.6 AP 考试结构与 Reference
+
+| 项目 | 说明 | 图示 |
+|---|---|---|
+| AP Diagnostic | 20 题 Multiple Choice、Untimed、1 Section；报告按 AP 1–5 分制。 | ![VIS-52 AP MCQ](./images/VIS-52-ap-mock-mcq.png) |
+| AP Full-Length | Multiple Choice 42 题/105m；Free Response 6 题/90m；总计 48 题/195m。 | ![VIS-52 AP MCQ](./images/VIS-52-ap-mock-mcq.png)<br>![VIS-54 AP FRQ](./images/VIS-54-ap-mock-frq.png) |
+| AP Break | Multiple Choice Review 后进入 10 分钟 Break，再开始 Free Response。 | ![VIS-53 AP Break](./images/VIS-53-ap-mock-break.png) |
+| AP 页面筛选 | 课程 Lessons、Question Review、Targeted Practice 均不展示 Section 筛选。 |
+| AP Reference | 仅当考试配置了官方 Reference Sheet 时显示右上角 Reference；点击后在考试内嵌 PDF，支持折叠/关闭。其他 AP 考试完全不显示入口。AP Calculus BC 当前没有配置 PDF，因此当前课程模考不显示此入口。 | ![VIS-55 AP PDF Reference](./images/VIS-55-ap-reference-pdf.png) |
+
+允许展示 AP Reference 的考试清单：
+
+| 考试 | PDF 页数 |
+|---|---:|
+| AP Biology | 3 |
+| AP Chemistry | 4 |
+| AP Computer Science A | 3 |
+| AP Computer Science Principles | 7 |
+| AP Physics 1: Algebra-Based | 3 |
+| AP Physics 2: Algebra-Based | 5 |
+| AP Physics C: Electricity and Magnetism | 5 |
+| AP Physics C: Mechanics | 4 |
+| AP Statistics | 11 |
+
+### 4.7 Performance & Insights / Report
+
+#### 4.7.1 报告入口与商业化门槛
+
+| 项目 | 说明 | 图示 |
+|---|---|---|
+| 来源切换 | 顶部 `Diagnostic Test` / `Full-Length Practice Test`。切换只改变当前课程的报告来源，不创建新考试。 | ![VIS-71 报告来源控制](./images/VIS-71-controller-report-states.png) |
+| Diagnostic 免费报告 | Results ready 后，Free 用户可查看预测分数、Section/Unit 表现、Question Review；页面说明它不替代 Full-Length。 | ![VIS-56 SAT Diagnostic 报告](./images/VIS-56-sat-diagnostic-free-report.png) |
+| 预生成报告结构预览 | Diagnostic / Full-Length 为 Not started、In progress、Scoring，或 Full-Length 已出分但 Free 未解锁时，背景保留该考试对应的完整报告封面与 Section 排布。Score Analysis、Knowledge & Skills、Performance details、Question Review、Targeted Practice 等模块分别覆盖独立锁定层；不是页面级单一锁。模板预览不代表用户成绩，除各模块锁定 CTA 外不可交互，也不进入成绩埋点口径。 | ![VIS-83 Diagnostic 报告未开始](./images/VIS-83-diagnostic-report-not-started.png)<br>![VIS-86 Full-Length 非会员未开始报告](./images/VIS-86-full-report-prerequisite.png)<br>![VIS-93 Full-Length 全报告逐 Section 锁定](./images/VIS-93-full-report-multi-section-locks.png) |
+| Diagnostic Targeted Practice 锁定 | Free 用户仍能看到报告和题目解析；只有 Targeted Practice 区域锁定。锁定层仅保留 48px 品牌 Pro 徽标、标题 `Unlock targeted practice with Solvely Pro` 与 CTA `Unlock practice`；不显示灰锁底框、说明小字或按钮内重复 Pro。 | ![VIS-57 Diagnostic Targeted Practice 锁定](./images/VIS-57-diagnostic-targeted-practice-locked.png) |
+| Full-Length 前置未完成 | 仅 Pro 用户展示前置状态：Not started 为 `Take the full-length practice test to see your score analysis`；In progress 为 `Finish your full-length practice test to see your score analysis`；Scoring 为 `Your full-length practice test is being scored`。Free 用户由下方商业门槛优先覆盖。 | ![VIS-21 Full-Length 评分中](./images/VIS-21-full-test-scoring-member.png) |
+| Full-Length 免费锁定 | Free 用户无论 Full-Length 为 Not started、In progress、Scoring 或 Results ready，进入报告预览时都由 Pro 门槛优先：报告各 Section 独立锁定，不展示考试前置 icon 或灰锁底框。每层只保留 48px Pro icon、当前状态的一个标题和一个 CTA，不显示说明小字。购买成功后再按 attempt 状态执行 Start/Continue/等待评分/展示真实结果。 | ![VIS-86 Full-Length 非会员未开始报告](./images/VIS-86-full-report-prerequisite.png)<br>![VIS-58 Full-Length 已出分报告锁定](./images/VIS-58-full-report-free-locked.png)<br>![VIS-93 全报告逐 Section 锁定](./images/VIS-93-full-report-multi-section-locks.png) |
+| Paywall | 点击锁定入口展示同一 Solvely Pro 付费弹窗；上下文参数区分 full-length test、score report、targeted practice、Ask Solvely。 | ![VIS-82 Score Report Paywall](./images/VIS-82-pro-paywall-score-report.png) |
+
+Diagnostic 未完成时的精确展示：
+
+| 状态 | 单一标题 | CTA |
+|---|---|---|
+| Not started | Take the free diagnostic test to see your score analysis | Start free diagnostic |
+| In progress | Finish your diagnostic test to see your score analysis | Continue diagnostic |
+| Scoring | Your diagnostic test is being scored | 无，等待自动刷新 |
+
+Full-Length Free 报告锁定层文案（所有 Section 同步使用；均无说明小字）：
+
+| Attempt | 单一标题 | CTA |
+|---|---|---|
+| Not started | Unlock the full-length test and score analysis with Solvely Pro | Unlock test & analysis |
+| In progress | Unlock to continue your full-length test with Solvely Pro | Unlock test & analysis |
+| Scoring | Unlock your score analysis with Solvely Pro | Unlock analysis |
+| Results ready | Unlock this report with Solvely Pro | Unlock report |
+
+![VIS-83 Diagnostic 报告未开始](./images/VIS-83-diagnostic-report-not-started.png)
+
+![VIS-84 Diagnostic 报告进行中](./images/VIS-84-diagnostic-report-in-progress.png)
+
+![VIS-85 Diagnostic 报告评分中](./images/VIS-85-diagnostic-report-scoring.png)
+
+#### 4.7.2 SAT / ACT / AP 报告差异
+
+| 模块 | SAT | ACT | AP Calculus BC |
+|---|---|---|---|
+| 总分 | 400–1600；预测区间；Percentile | Composite /36；预测区间；Percentile | AP Score /5；预测区间；Percentile |
+| 分项 | Reading & Writing 200–800；Math 200–800 | English、Math、Reading、Science 均为 1–36；STEM = round((Math + Science) ÷ 2)，仅 Math 与 Science 均可用时展示；ELA 仅在 English、Reading、Writing 均可用时按 ACT 批准的映射展示，缺任一项时显示 unavailable | Multiple Choice、Free Response 及 Unit 维度；不套用 SAT/ACT 分项结构 |
+| 诊断报告 | 20 题，R&W/Math | 20 题，English/Math/Reading/Science | 20 MCQ，AP 1–5 预测 |
+| Knowledge & Skills | 展示 Domain/Skill | 展示 Section/Domain/Skill | 不展示 SAT/ACT 风格 Knowledge & Skills 区块，使用 AP Unit/技能表达 |
+| Section 筛选 | Question Review、Targeted Practice 有 | Question Review、Targeted Practice 有 | 均无 |
+| Question Map | 98 题，按 Module 分组 | 171 题，按 Section 分组 | 48 题，按 Multiple Choice / Free Response 分组 |
+| 改进建议 | Section/Domain/Skill + Targeted Practice | Section/Domain/Skill + Targeted Practice | Unit/Topic + Targeted Practice |
+| 图示 | ![VIS-59 SAT Score Report](./images/VIS-59-sat-score-report.png) | ![VIS-60 ACT Score Report](./images/VIS-60-act-score-report.png) | ![VIS-61 AP Score Report](./images/VIS-61-ap-score-report.png) |
+
+Diagnostic 报告也必须按考试体系输出：
+
+| 考试 | 图示 |
+|---|---|
+| ACT Diagnostic | ![VIS-87 ACT Diagnostic Report](./images/VIS-87-act-diagnostic-report.png) |
+| AP Diagnostic | ![VIS-88 AP Diagnostic Report](./images/VIS-88-ap-diagnostic-report.png) |
+
+#### 4.7.3 报告内容顺序
+
+报告为一张连续纵向页面，不拆成额外 Score/Review 子路由：
+
+1. Score Analysis。
+2. AI Overview。
+3. Performance Details。
+4. SAT/ACT Confidence/Timing Matrix；AP 使用更简洁的 AP 专属表现结构。
+5. Question Review。
+6. Targeted Practice。
+7. Retake action。
+
+生产实现需保留浏览位置；在 Diagnostic / Full-Length 间切换时回到报告顶部。
+
+#### Web 专属：SAT Performance details
+
+> **平台差异：**Performance details 是本期 Web 备考包相对 iOS 备考包新增的 Score Report 模块；iOS 本期不增加该区域。SAT 使用下述完整模块；ACT 与 AP 继续使用各自的报告结构，不复用 SAT 文案或四象限，除非后续按考试单独配置并验收。
+
+| 项目 | 说明 | 图示 |
+|---|---|---|
+| 页面目标 | 帮助 SAT 用户同时理解答对多少、作答是否完整、正确率如何、时间花在哪里，并判断每个 Topic 是准确且高效，还是需要进一步复习。 | 沿用 VIS-59 SAT Score Report |
+| 展示文案 | `See which SAT skills are both accurate and efficient, and identify where extra review can help.` | 示例：Correct **73/98**、Incorrect **20**、Unanswered **5**、Accuracy **78%**、Time used **2h 12m** |
+| Topic performance matrix | `Each dot represents a tested topic. Its position shows how its accuracy and average response time compare with the section averages. Hover over or focus a dot to view details.` | Reading and Writing 与 Math 分别绘制 |
+| 关键交互 | Hover 或键盘 Focus 某点，展示 Topic、Section、Accuracy、Average response time、Answered questions、相对 Section 平均值和象限；Escape/移出焦点关闭。 | 重叠点可视觉偏移或聚合，但真实值和象限不变 |
+| 状态与边界 | Loading 使用 Skeleton；无可用 Topic 显示 `Not enough topic data yet.`；缺 topic 映射不生成点并记录数据错误；报告失败显示 Retry，不回退到 Demo 固定值。 | 本期只在 Web 展示 |
+| 埋点与指标 | 沿用 `exam_report_view`：`assessment_type=diagnostic|full_length`、`access=full|prerequisite|pro_locked`、`report_type=sat`；不对每次 Hover/Focus 上报。 | 数据一致性由服务端日志和专项用例验证 |
+
+##### Performance details 计算契约
+
+**数据来源与一致性**
+
+- Score Report、Performance details、Question Review、Targeted Practice 必须读取同一 `report_id`，禁止跨 attempt 拼接。
+- `attempt_id`、`exam_form_id` 唯一定位已提交考试和试卷版本；所有题目状态、用时和换算表均绑定该版本。
+- 服务端必须保存 `scoring_policy_version`，报告生成后不可静默漂移。
+- 每题且只能是 `CORRECT | INCORRECT | UNANSWERED` 之一；空字符串、仅空格或未提交答案统一为 `UNANSWERED`。
+- 矩阵每题必须有一个 `primary_topic_id` 和一个 `section_id`；附加标签不可重复计数。缺映射题仍进入汇总指标，但不生成 Topic 点。
+- `active_time_seconds` 来源于服务端确认的有效考试计时；排除 Instructions、Break、暂停、后台挂起、加载失败和离线重复片段，按 `progress_version` 去重。
+
+**汇总指标公式**
+
+| 指标 | 计算逻辑 | 展示与边界 |
+|---|---|---|
+| Report question count | 当前报告题目集合去重 `question_id` 的数量；SAT Full-Length 当前配置为 98 | Correct 的展示分母和总量校验基准；不得从页面常量读取 |
+| Correct | `count(status=CORRECT)` | `{correct}/{report_question_count}`；示例 **73/98** |
+| Incorrect | `count(status=INCORRECT)` | 示例 **20** |
+| Unanswered | `count(status=UNANSWERED)` | 示例 **5**；看过但未提交答案仍为 Unanswered |
+| 总量校验 | `Correct + Incorrect + Unanswered = report_question_count` | 示例 73 + 20 + 5 = 98；不守恒时内部原因 `data_inconsistent`，上报 `exam_scoring_result(error_type=data)`，不得展示部分汇总 |
+| Answered | `Correct + Incorrect` | 只用于 Accuracy 与平均答题时间分母；示例为 93 |
+| Accuracy | `Correct ÷ Answered × 100%`；Unanswered 不进入分母 | 四舍五入为整数；73 ÷ 93 = 78.49%，展示 **78%**；Answered=0 时展示 `—`，不能显示 0% |
+| Time used | `sum(valid active_time_seconds)`；计时片段去重且不超过各 Module 有效上限 | 秒数向下取整到整分钟，再格式化；7,920 秒展示 **2h 12m**，小于 1 小时显示 `Xm` |
+
+**Topic 与 Section 聚合**
+
+1. Topic answered = topic correct + topic incorrect；只有 Unanswered 的 Topic 不进入矩阵。
+2. Topic accuracy = topic correct ÷ topic answered × 100%。后端保留未取整值用于定位和象限，Tooltip 展示整数百分比。
+3. Topic average response time = Topic 已作答题有效 `response_time_seconds` 总和 ÷ topic answered；Unanswered 不进入分母。
+4. Section accuracy = Section 全部已作答报告题的 correct 总数 ÷ answered 总数；按题目加权，不能简单平均各 Topic accuracy。
+5. Section average response time = Section 全部已作答题有效 response time 总和 ÷ answered 总数；按题目加权，不能简单平均 Topic average time。
+
+| 矩阵值 | 公式 | 含义 |
+|---|---|---|
+| Y：`accuracy_delta_pp` | `topic_accuracy - section_accuracy` | ≥ 0 表示准确率达到或高于 Section 平均 |
+| X：`time_delta_pct` | `(topic_average_time ÷ section_average_time - 1) × 100%` | ≤ 0 表示同速或更快；> 0 表示更慢 |
+| 绘图位置 | 按相对值映射；超出可视范围时仅对绘图坐标 clamp | Tooltip 必须展示未 clamp 的真实值；视觉偏移不得改变象限 |
+
+**四象限定义**
+
+| 象限 | Accuracy 条件 | Time 条件 | 产品解释 |
+|---|---|---|---|
+| **Proficient** | `topic_accuracy ≥ section_accuracy` | `topic_average_time ≤ section_average_time` | 准确且高效；保持练习节奏 |
+| **Inefficient** | `topic_accuracy ≥ section_accuracy` | `topic_average_time > section_average_time` | 答案准确但耗时偏长；需要提升速度和解题路径 |
+| **Rushed** | `topic_accuracy < section_accuracy` | `topic_average_time ≤ section_average_time` | 速度快但准确率偏低；可能过快作答或检查不足 |
+| **Struggling** | `topic_accuracy < section_accuracy` | `topic_average_time > section_average_time` | 准确率偏低且耗时偏长；优先复习和 Targeted Practice |
+
+边界规则：Accuracy 等于 Section 平均时按“达到平均”处理；Time 等于 Section 平均时按“同速或更快”处理，因此 `accuracy_delta_pp=0` 且 `time_delta_pct=0` 归入 Proficient。
+
+- 每个 `report_id + section_id + primary_topic_id` 恰好一个点；Reading and Writing 与 Math 禁止跨 Section 比较。
+- 至少有 1 道已作答题才生成点；Tooltip 必须展示 Answered questions 以提示样本量。
+- Topic 点必须可 Tab Focus；Focus 与 Hover 内容一致，象限不能只用颜色表达。
+- Section 无已作答题时不计算基线，显示 `Not enough topic data yet.`。
+- 重复 `question_id`、缺 `section_id`、非法 response time、总量不守恒或跨 `report_id` 时，报告内部原因记为 `data_inconsistent`，并上报 `exam_scoring_result(error_type=data)`。
+
+##### SAT / ACT / AP 量尺分计算边界
+
+| 考试 | 生产计算规则 | 禁止的 Demo 简化 |
+|---|---|---|
+| SAT | R&W 与 Math 由服务端按 `exam_form_id`、题目参数、Module route 和 `scoring_policy_version` 计算 200–800；Total=两 Section 之和，范围 400–1600；Diagnostic 必须标记 Predicted/Estimate 并输出校准区间 | 不得使用 `Accuracy × 600 + 200`、固定 ±30 或 Correct/98 线性换算；Demo 固定值仅用于界面演示 |
+| ACT | Section 用版本化 raw-to-scale 表转 1–36；Enhanced Composite=`round((English+Math+Reading)÷3)`，Science 不进入 Composite；STEM=`round((Math+Science)÷2)`；ELA 缺任一所需分项时 unavailable | 不得使用 baseScore 与 accuracy 启发式；不得把 Writing 原始 2–12 分直接和 1–36 Section 简单平均 |
+| AP | MCQ raw=答对题数且答错/未答不倒扣；FRQ raw=rubric points；按考试配置归一化加权，AP Calculus BC 当前报告为 MCQ 50% + FRQ 50%；用版本化 cut-score 表转 1–5 | 不得把 Accuracy 直接映射 1–5，也不得永久写死某一年的 cut score；Diagnostic 缺 FRQ 时只能输出预测分和区间 |
+
+口径来源：[Web 备考包参考 PRD](https://pf6xrzskv9.feishu.cn/docx/BlLsdKlvRozzZ6x6HjNcWG7YnKb)、[College Board SAT scoring](https://satsuite.collegeboard.org/scores/what-scores-mean/how-scores-calculated)、[ACT Enhanced Composite](https://www.act.org/content/act/en/products-and-services/the-act-postsecondary-professionals/scores/multi-scores.html)、[College Board AP scoring](https://apstudents.collegeboard.org/help-center/how-are-ap-exams-scored)。
+
+#### 4.7.4 Question Review
+
+| 项目 | 说明 | 图示 |
+|---|---|---|
+| Section 与状态筛选 | SAT/ACT：Section: All + Answer: All/Correct/Incorrect/Skipped；AP 只显示 Answer 筛选。筛选后 Question Map 与详情同步。 | ![VIS-62 SAT Question Review](./images/VIS-62-question-review.png)<br>![VIS-89 ACT Question Review](./images/VIS-89-act-question-review.png)<br>![VIS-90 AP Question Review](./images/VIS-90-ap-question-review.png) |
+| Question Map | 题号显示 Current、Correct、Incorrect、Skipped、Marked；点击更新右侧详情，保持当前筛选。 |
+| 题目详情 | 展示题干、图片/Passage、全部结构化选项、用户答案、正确答案、Explanation、Time spent、Section/Module、Difficulty、Result。 |
+| Similar questions | Explanation 下方仅展示小标题 `Similar questions`、Topic 名称、`3 questions`、CTA `Start mini quiz`。不增加学习目标、预计用时或计划进度等额外信息。 |
+
+#### 4.7.5 Similar Questions Mini Quiz
+
+| 状态 | 交互与文案 | 图示 |
+|---|---|---|
+| Loading | 从右侧打开 Drawer；标题 `Mini quiz`；仅显示 `Loading questions…`。 | ![VIS-63 Mini quiz Loading](./images/VIS-63-mini-quiz-loading.png) |
+| Load error | `Questions unavailable` + 错误信息 + `Try again`；关闭后原报告位置不变。 |
+| Question | 固定 3 题；显示 `Question {n} of 3`、进度条、题目和选项/输入框；Drawer 内不展示来源、学习计划或额外解释卡。 | ![VIS-64 Mini quiz 题目](./images/VIS-64-mini-quiz-question.png) |
+| Feedback | 作答后显示 Correct/Incorrect、Explanation 和 Next；反馈态仍属于当前题。 | ![VIS-65 Mini quiz 反馈](./images/VIS-65-mini-quiz-feedback.png) |
+| Result 3/3 | `Flawless! 🏆`；`Perfect score! You've truly locked it in.` | ![VIS-66 Mini quiz 结果](./images/VIS-66-mini-quiz-result.png) |
+| Result 2/3 | `So close! ⭐`；`Almost perfect — a quick recap and you'll ace it.` | 同结果页布局 |
+| Result 1/3 | `Nice effort! 💪`；`Solid start — a quick review and you'll nail it.` | 同结果页布局 |
+| Result 0/3 | `Keep going! 🌱`；`Every attempt sharpens your understanding.` | 同结果页布局 |
+| Result CTA | 只有 `Review Quiz`；点击回到第 1 题 review 模式。不得出现 Create more quiz。 |
+
+#### 4.7.6 Targeted Practice
+
+| 项目 | 说明 | 图示 |
+|---|---|---|
+| 数据来源 | 基于当前报告的错题、正确率、Topic 和考试优先级生成；Mini quiz 的作答不计入这里。 |
+| 筛选 | SAT/ACT 支持 Section 和 Priority；AP 仅 Priority，不显示 Section。 | ![VIS-67 SAT Targeted Practice](./images/VIS-67-targeted-practice.png)<br>![VIS-91 ACT Targeted Practice](./images/VIS-91-act-targeted-practice.png)<br>![VIS-92 AP Targeted Practice](./images/VIS-92-ap-targeted-practice.png) |
+| 行内容 | Topic 名称、简短学习目标、Priority、missed/accuracy、Domain/Unit、动作按钮。 |
+| 动作状态 | 未开始显示 Practice；有未完成练习显示 Continue；完成后显示 Review。进度与 Topic Quiz 分开保存。 |
+| 权限 | 统一引用 M-05 与 M-07；本节不另行定义 Free/Pro 差异。 |
+
+#### 4.7.7 Retake
+
+| 来源 | 交互 | 图示 |
+|---|---|---|
+| Diagnostic | 点击 Retake 直接创建新的 Not started 状态，原结果保留在历史 attempt 中。 |
+| Full-Length | 点击 Retake 先弹确认框，明确会开始新 attempt；Cancel 保留当前报告，Confirm 进入 Not started。 | ![VIS-69 Full-Length Retake 确认](./images/VIS-69-retake-confirmation.png) |
+
+### 4.8 商业化与权限（唯一规则源）
+
+此节是 Free/Pro 差异的唯一规则源。课程免费开放的目的，是用完整且专业的学习体验建立长期信任与回访；商业化只发生在用户产生更强的个性化解题、诊断后训练、正式模考或深度分析意图时。入口提前展示 Pro 标识，避免点击后产生“突然被拦截”的感受。
+
+| ID | 功能/动作 | Free | Pro | 前置与触发时机 | 购买成功 | 取消/失败 | 入口标识 |
+|---|---|---|---|---|---|---|---|
+| M-01 | Custom Plan | 沿用主产品免费额度 | 沿用主产品权益 | 只有超出既有额度时按主产品规则触发；本期不新增门槛 | 恢复创建动作 | 保留已填表单 | 沿用主产品 |
+| M-02 | Study Guide / Flashcards / Topic Quiz | 完整免费 | 可用 | 不弹 Paywall | 不适用 | 不适用 | 无 |
+| M-03 | Ask Solvely | 不可用 | 可用 | 点击 Ask Solvely 时校验 | 打开原 Topic/题目上下文的对话面板 | 留在原学习位置，上下文不丢失 | Pro badge |
+| M-04 | Diagnostic Test | 免费开始/继续/重做 | 可用 | 不弹 Paywall | 不适用 | 不适用 | `Free` 标签，不是 Pro |
+| M-05 | Diagnostic Targeted Practice | 不可进入 | 可用 | 报告点击 Unlock practice / Practice / Continue / Review 时校验 | 恢复同一 Topic、同一 action | 留在同一报告与滚动位置 | 48px Pro + 单一标题 + CTA；无说明小字、灰锁底框或按钮内重复 Pro |
+| M-06 | Full-Length Practice Test | 不可开始或继续 | 可用 | 点击 Start/Continue、或直达模考 URL 时校验；校验通过前不创建/推进 attempt | 只恢复一次 pending Start/Continue 并进入保存位置 | 回到原课程卡；attempt 保持原状态 | 卡片标题旁 Pro badge；不得显示 Free；Start/Continue/Results CTA 内不重复 Pro |
+| M-07 | Full-Length Score Report | 任一 attempt 状态下都可预览模板化封面与完整 Section 结构，但每个报告 Section 独立锁定；Pro 权益门槛优先于 N/I/S 前置文案 | 完整可见；N/I/S 时展示对应前置状态，R 时展示真实报告 | Free 点击任一 Section CTA 时校验；CTA 按 4.7.1 状态表变化 | 刷新权益、解除全部 Section 锁，再按同一 attempt 状态 Start/Continue/等待评分/打开真实报告 | 保留锁定报告、当前 Section 与滚动位置 | 48px Pro + 单一标题 + CTA；无说明小字、考试/灰锁 icon 或按钮内重复 Pro |
+| M-08 | Scoring | 课程卡的 Scoring 状态可见；Full-Length 报告预览仍按 M-07 锁定 | 状态与只读评分中报告前置可见 | 评分期间不允许重复提交；Free 的 Unlock report 只处理权益，不伪造评分完成 | 购买成功后继续等待同一评分任务 | 超时按评分恢复逻辑 | 无新增状态标签 |
+| M-09 | Diagnostic Score / Section or Unit / Question Review / Similar Questions | 免费可见与可做 | 可用 | Diagnostic=Results ready 后直接展示 | 不适用 | 数据加载失败仅 Retry | 无 |
+| M-10 | 会员到期后的历史进度 | 免费内容和历史状态保留；受限动作重新校验 | 可继续 | 权益必须在每次受限动作执行前实时校验，不以进入页面时缓存为准 | 恢复原动作 | 不删除答案、进度或报告 | 按对应 M-03/05/06/07 |
+
+统一 Paywall 恢复协议：
+
+1. 触发前保存 `pending_action`、`course_id`、`attempt_id/topic_id`、`entry_source`、当前 URL 与滚动锚点。
+2. Paywall 打开不得提前修改 attempt、课程进度或 Quiz 进度。
+3. 购买成功刷新服务端 entitlement 后，仅幂等执行一次 `pending_action`，随后立即清除。
+4. Cancel、关闭、支付失败或权限刷新失败时回到原页面与原位置；展示可重试反馈，不跳首页。
+5. 前端路由守卫与服务端接口都必须校验 M-03/05/06/07；前端隐藏入口不能替代服务端鉴权。
+
+### 4.9 内容与数据完整性
+
+#### 4.9.1 课程目录
+
+| 分类 | 数量 | 当前可用 | 其他状态 |
+|---|---:|---|---|
+| SAT | 1 | SAT Prep 2026 | — |
+| ACT | 1 | ACT Prep 2026 | — |
+| AP | 43 | AP Calculus BC | 其余 Coming soon |
+| Abitur | 7 | 无 | Coming soon |
+| 合计 | 52 | 3 | 49 |
+
+#### 4.9.2 题目渲染契约
+
+```ts
+type Question = {
+  id: string
+  prompt: string
+  responseType: 'Multiple Choice' | 'Student-Produced Response' | 'Free Response'
+  options?: Array<{ label: string; content: string }>
+  correctAnswer: string | number
+  explanation: string
+  section?: string
+  module?: string
+  domain?: string
+  topicId: string
+}
+```
+
+- Multiple Choice 必须有至少 2 个结构化选项，UI 使用 `option.label` 原样渲染。
+- Student-Produced Response / Free Response 不渲染选项容器。
+- 导入数据需拒绝把 `A.`、`B.`、`F.` 等行内文本误拼进 prompt。
+- 当前 Demo 数据审计结果：4 套考试数据、670 份 Study Plan/Quiz 文档、10,945 道题、42,161 个选项均通过结构完整性校验；ACT 发现并正确渲染 F/G/H/J 各 340 个标签。
+- 数据 CI 必须运行 `npm run verify:data`；失败则阻断发布。
+
+#### 4.9.3 iOS 备考物料复用基线与契约
+
+截至 2026-09-09，iOS 物料文档 revision 1460 可作为 Web 内容迁移的输入索引，但不能成为生产运行时依赖。所有附件必须先进入受控内容仓库，转换为统一 manifest、完成版权和质量校验，再由版本化 API 发布。
+
+| 考试体系 | 课程/学科记录 | Topic | Topic Quiz | Practice Quiz | 题目合计 | 已盘点物料 |
+|---|---:|---:|---:|---:|---:|---|
+| SAT | 1 | 100 | 3,000 | 3,226 | 6,226 | 2 套 mock CSV；1 份 100 Topic 的 Study Guide/Flashcard 合并 CSV（每 Topic 20 条）；1 份含封面与 HTML 视频链接的 manifest |
+| ACT | 1 | 235 | 7,050 | 7,050 | 14,100 | 2 套 mock CSV；1 份 235 Topic 的 Study Guide/Flashcard 合并 CSV（每 Topic 20 条）；1 份视频 manifest |
+| AP | 43 | 1,192 | 35,760 | 35,760 | 71,520 | 42 份逐课程 mock CSV + 1 份 master workbook + 1 份语言音频 manifest；43 份 Study Guide/Flashcard CSV；43 份 Topic Quiz CSV；8 份按学科组组织的视频 manifest |
+| 德国高考 | 7 | 177 | 5,310 | 6,514 | 11,824 | 7 份逐学科 mock CSV；7 份 Study Guide/Flashcard CSV；1 份 Quiz master；1 份视频 manifest |
+| 合计 | 52 | 1,704 | 51,120 | 52,550 | 103,670 | 课程总数仅用于内部完整性校验，首页仍不展示“52 Total” |
+
+> AP 的 43 条课程记录包含 **AP Networking (Pilot)**。当前物料里只有 42 份逐课程 mock CSV，Networking Pilot 没有独立 full-length mock，因此不得因“课程存在”自动判定 `full_length_ready=true`。课程 `Ready / Coming soon` 与 `diagnostic_ready / full_length_ready` 必须分别配置。
+
+| 复用等级 | 内容 | Web 要求 |
+|---|---|---|
+| 可直接复用内容 | 考试纲要、Topic 树、课程元数据、题库、Study Guide、Flashcards、Video manifest、mock 数据及版本化算分/报告规则 | 通过 schema、版权、内容审核与 checksum 后导入；沿用稳定 `course_id/topic_id/question_id`，不得直接读取飞书附件 token |
+| 复用内容、重做体验 | Study Guide 排版、Flashcards 操作、Quiz/Mock 答题、视频播放器、Report、Paywall | 内容一致，但采用本 PRD 的 Web 响应式布局、键盘/无障碍、状态恢复、商业化和埋点；不得照搬 iOS 页面层级、手势或本地状态 |
+| 仅作内部校验 | AP questions/answers PDF、样例题与 master workbook | 默认不向用户展示；只有版权负责人标记 `publishable=true` 且完成脱敏/授权后才可进入生产 |
+| 不可复用实现 | iOS 组件、导航、客户端缓存、Paywall 判断、客户端算分常量、旧埋点实现 | Web 必须接统一服务端状态和版本化接口重新实现 |
+
+生产 manifest 至少包含：`source_document_id`、`source_revision`、`content_version`、`course_id`、`exam_family`、`subject_id`、`topic_id`、`asset_type`、`asset_uri`、`locale`、`checksum`、`review_status`、`publish_status`、`diagnostic_ready`、`full_length_ready`、`scoring_policy_version`、`license_status`、`updated_at`。
+
+导入与发布规则：
+
+1. 附件原件进入 staging；记录源文档 revision、文件 checksum 和导入批次，不在浏览器暴露飞书 token。
+2. 转换器按显式 schema 读取字段，不解析文件名推断题量。SAT 文件名中的 `3879`、ACT 文件名中的 `6600` 与最新汇总口径不一致时，以去重后的 manifest 行数和本节汇总为验收基线，并生成差异告警。
+3. 所有题目经过 `responseType/options/correctAnswer/topic_id` 校验；A/B/C/D、F/G/H/J 等标签原样保留，选项不得并入题干。
+4. Study Guide 与 Flashcards 共用合并 CSV 时，以资产类型映射到各自字段和 UI，不得把同一内容重复渲染两次或跨 Topic 串用。
+5. 视频/封面/音频链接发布前验证状态码、MIME、跨域、HTTPS、时长和可播放性；HTML 视频必须使用受限 iframe/sandbox 与 CSP。单个资源失效只降级对应工具，不得导致整门课程空白。
+6. Full-Length 仅在题目、Section/Module、计时、评分、报告、必要音频/Reference 全部就绪时设为 Ready；Diagnostic 可从已审核 Quiz 池按配置抽题，但必须独立通过题量、分布与算分 QA。
+7. 资产存在不等于课程可见或可进入；Course Catalog API 的 `publish_status` 决定 Coming soon/Ready，发布采用整批原子切换，失败回滚上一内容版本。
+8. Web 与 iOS 可共享内容 ID 和服务端进度，但各端 UI 状态不互相推导；跨端同步只接受服务端 `progress_version` 较新的记录。
+
+### 4.10 错误、空态与恢复
+
+| 场景 | 需求 |
+|---|---|
+| 首页课程加载失败 | 保留标题/Tab/搜索，展示 Retry；不把错误当成 0 门课程。 |
+| 上传失败 | 显示文件名、失败原因、Retry/Remove；其他已成功文件不丢失。 |
+| 不支持的文件 | 在上传前拦截并说明支持格式；超过 50 页说明只处理前 50 页。 |
+| Course/Topic 不存在 | 展示 Course unavailable，并提供 Back to courses；不进入空白页。 |
+| Topic 内容加载失败 | 单个工具区域 Retry，不清空其他已加载内容。 |
+| 答案保存失败 | 本地暂存并显示 Unsaved/Retry；恢复网络后自动重试。 |
+| 考试断网 | 本地队列保存答案和剩余时间；重连后同步；冲突以服务端较新 revision 为准。 |
+| 评分超时 | Scoring 状态轮询；超过 SLA 显示 Still scoring 和 Refresh/Contact support，不伪造分数。 |
+| Report 数据部分缺失 | 只保留服务端中间结果；前端继续显示 Scoring/Retry，不展示部分报告。所有必需 Module 和总量校验通过后才能 Results ready；Retry 复用原 attempt_id。 |
+| Mini quiz 加载失败 | Drawer 内显示 Questions unavailable + Try again，关闭后报告位置不变。 |
+| AP Reference PDF 加载失败 | 面板显示 Reference sheet unavailable + Retry/Close；不影响考试作答。 |
+| Paywall/购买失败 | 保留原上下文，显示失败原因与 Retry；关闭后回到触发位置。 |
+
+## 5. 埋点需求
+
+### 5.1 全局参数
+
+除特别说明外，以下参数由公共 SDK 自动补充：`user_id`、`anonymous_id`、`session_id`、`platform`、`app_version`、`locale`、`timezone`、`timestamp`、`page_path`、`referrer`、`experiment_ids`。
+
+考试/课程事件统一补充：
+
+- `exam_family`: `sat | act | ap | abitur | custom`
+- `course_id`: 标准化课程 ID；Custom Plan 为空
+- `plan_id`: Custom Plan ID；标准化课程为空
+- `membership`: `free | pro`
+- `assessment_type`: `diagnostic | full_length`（仅考试相关事件）
+- `attempt_id`: 一次考试 attempt 的稳定 ID（考试开始后必填）
+- `topic_id`: Topic 级事件必填
+
+当前未提供既有埋点协议，以下均按 **新增** 定义；上线前由数据团队检查是否有同义既有事件，若复用必须补充来源文档并更新本表。
+
+| 事件名 | 触发时机 | 事件状态 | 业务参数 | 验证方式 |
+|---|---|---|---|---|
+| `ep_home_view` | Exam Prep & Courses 首页首屏渲染完成 | 新增 | `home_state=empty|active`, `default_mode=custom_plan|prep_courses` | 两种首页状态各触发一次；Tab 切换不重复 |
+| `ep_home_mode_switch` | 用户切换 Custom Plan / Prep Courses | 新增 | `from_mode`, `to_mode`, `interaction=click|keyboard|drag` | 每次成功切换一次 |
+| `ep_plan_create_start` | 打开 Create a prep plan | 新增 | `entry_point=upload|sample|new_plan` | 三入口分别校验 |
+| `ep_plan_create_submit` | 点击 Create prep plan/Save changes | 新增 | `action=create|edit`, `focus`, `has_exam_date`, `file_count` | 校验失败不触发，成功请求发出时触发 |
+| `ep_plan_create_result` | 创建/编辑请求结束 | 新增 | `action`, `result=success|failure`, `error_code` | 成功与失败各一次 |
+| `ep_course_catalog_view` | 课程网格加载完成 | 新增 | `result_count`, `filter`, `query_present` | 搜索/筛选后再次触发，去抖 300ms |
+| `ep_course_search` | 用户提交或停输 500ms | 新增 | `query_length`, `filter`, `result_count` | 不上传原始搜索词，避免敏感信息 |
+| `ep_course_open` | 点击可用课程卡 | 新增 | `course_id`, `entry_point=first_entry|catalog|exam_library`, `course_state` | Coming soon 不触发 open |
+| `ep_course_coming_soon_click` | 用户尝试操作 Coming soon 卡 | 新增 | `course_id`, `exam_family` | 若卡片完全 disabled，可用曝光事件替代 |
+| `ep_course_view` | 课程首页渲染完成 | 新增 | `course_state=first_visit|in_progress`, `last_activity_type` | 每次进入一次 |
+| `ep_course_tab_switch` | Course Content / Performance & Insights 切换 | 新增 | `from_tab`, `to_tab` | 点击/键盘均触发一次 |
+| `ep_topic_tool_open` | 打开 Study Guide/Flashcards/Quiz | 新增 | `topic_id`, `tool`, `entry_point=topic_popover|report|resume` | 三种工具分别校验 |
+| `ep_topic_answer_submit` | Study Guide Quick Practice 或 Topic Quiz 提交 | 新增 | `topic_id`, `tool`, `question_id`, `response_type`, `is_correct`, `attempt_index` | 每次提交一次，不上报答案原文 |
+| `ep_ask_solvely_open` | Ask Solvely 点击 | 新增 | `topic_id`, `source_tool`, `access_result=opened|paywall` | Free/Pro 分别校验 |
+| `exam_assessment_card_view` | 测试卡进入视口 50% 且停留 1s | 新增 | `assessment_type`, `assessment_state`, `cta_label` | 同一页面状态仅一次 |
+| `exam_assessment_start` | 创建新考试 attempt 成功 | 新增 | `assessment_type`, `attempt_id`, `question_count`, `timed` | Paywall 展示不算 start |
+| `exam_assessment_resume` | 恢复已有 attempt | 新增 | `attempt_id`, `saved_question_index`, `answered_count` | 恢复成功后一次 |
+| `exam_question_answer` | 选择/输入答案并成功保存 | 新增 | `attempt_id`, `question_id`, `response_type`, `option_label`, `question_index`, `section`, `module` | F/G/H/J 原样上报；主观答案不上报原文 |
+| `exam_question_mark` | Mark for Review 状态变更 | 新增 | `attempt_id`, `question_id`, `marked=true|false` | 勾选/取消各一次 |
+| `exam_tool_toggle` | Highlight/Line Reader/Calculator/Reference/Dark mode 状态变更 | 新增 | `tool`, `enabled`, `section`, `question_id` | 仅状态实际改变时触发 |
+| `exam_issue_submit` | Report an issue 提交结果返回 | 新增 | `attempt_id`, `question_id`, `issue_type`, `result`, `error_code` | 不上传详情文本到分析平台 |
+| `exam_section_review_view` | 进入 Check Your Work | 新增 | `attempt_id`, `section`, `module`, `answered_count`, `marked_count` | 每次进入一次 |
+| `exam_break_view` | 进入 Break | 新增 | `attempt_id`, `after_section`, `duration_seconds` | SAT/AP 分别校验 |
+| `exam_assessment_submit` | 最终交卷成功 | 新增 | `attempt_id`, `answered_count`, `question_count`, `duration_seconds` | 服务端确认提交后一次，幂等 |
+| `exam_scoring_result` | 评分任务成功/失败 | 新增 | `attempt_id`, `result=success|failure`, `latency_ms`, `error_code` | 由服务端上报，和客户端去重 |
+| `exam_report_view` | 某来源报告首个有效模块渲染完成 | 新增 | `attempt_id`, `assessment_type`, `access=full|prerequisite|pro_locked`, `report_type=sat|act|ap` | 来源切换后重新触发 |
+| `exam_report_source_switch` | Diagnostic / Full-Length 切换 | 新增 | `from_source`, `to_source`, `target_state` | 每次成功切换一次 |
+| `exam_question_review_select` | 在 Question Map 选择题目 | 新增 | `attempt_id`, `question_id`, `answer_status`, `section`, `module` | 每次选择一次 |
+| `exam_mini_quiz_start` | Similar questions 的 3 题加载成功 | 新增 | `source_attempt_id`, `source_question_id`, `topic_id`, `quiz_session_id`, `question_count=3` | Loading/Retry 不重复，成功后一次 |
+| `exam_mini_quiz_complete` | 第 3 题提交并进入结果页 | 新增 | `quiz_session_id`, `correct_count`, `question_count=3`, `duration_seconds` | 幂等一次 |
+| `exam_targeted_practice_open` | 点击 Practice/Continue/Review | 新增 | `attempt_id`, `topic_id`, `action`, `entry_source`, `access_result=opened|paywall` | Free/Pro 分别校验 |
+| `pro_paywall_view` | Paywall 完整展示 | 新增 | `paywall_context=ask_solvely|full_test|full_report|diagnostic_targeted_practice`, `entry_point` | 每次展示一次 |
+| `pro_unlock_click` | 点击 Paywall 主 CTA | 新增 | `paywall_context`, `plan_id`, `display_price` | 不上报支付凭证 |
+| `pro_purchase_result` | 支付返回 | 新增 | `paywall_context`, `plan_id`, `result`, `error_code` | 支付成功服务端去重 |
+
+### 5.2 指标口径
+
+| 指标 | 公式 | 去重/归因 |
+|---|---|---|
+| Prep Course 打开率 | `ep_course_open` UV / `ep_course_catalog_view` UV | 同一用户同一天；按 `exam_family` 分层 |
+| Custom Plan 创建成功率 | `ep_plan_create_result(result=success)` / `ep_plan_create_submit` | 同一创建请求 ID |
+| Diagnostic 启动率 | `exam_assessment_start(diagnostic)` UV / `exam_assessment_card_view(diagnostic, not_started)` UV | 课程首次可见后 24h |
+| 考试完成率 | `exam_assessment_submit` distinct `attempt_id` / `exam_assessment_start` distinct `attempt_id` | 同一 attempt；Diagnostic/Full-Length 分开 |
+| 报告查看率 | `exam_report_view(access=full)` distinct `attempt_id` / `exam_scoring_result(success)` distinct `attempt_id` | 评分成功后 7 天 |
+| Mini quiz 完成率 | `exam_mini_quiz_complete` distinct `quiz_session_id` / `exam_mini_quiz_start` distinct `quiz_session_id` | 同一 quiz session |
+| Paywall CTR | `pro_unlock_click` / `pro_paywall_view` | 同一 paywall impression，按 context 分层 |
+| Paywall 购买转化 | `pro_purchase_result(success)` / `pro_paywall_view` | 7 天归因，按首次触点与最终触点双报 |
+| 题目数据错误率 | 渲染/校验失败 question 数 / 加载 question 数 | 按版本、exam_family；目标为 0 |
+| Course D7/D30 回访率 | 首次 `ep_course_open` 用户中，在第 7/30 天再次产生 `ep_course_view` 的 UV / 首次 `ep_course_open` UV | 以用户首次课程打开日建 cohort；D7、D30 分开计算，按 `exam_family` 分层 |
+| Course→Custom Plan 30 日转化 | 首次 `ep_course_open` 后 30 天内产生 `ep_plan_create_result(result=success)` 的 UV / 首次 `ep_course_open` UV | 以公共 `user_id` 关联；一个用户只计一次成功 |
+| Course→Ask Solvely 30 日意图率 | 首次 `ep_course_open` 后 30 天内产生 `ep_ask_solvely_open` 的 UV / 首次 `ep_course_open` UV | `access_result=opened|paywall` 均代表意图，另按结果分层 |
+| Course-assisted Pro 30 日转化 | 首次 `ep_course_open` 后 30 天内产生 `pro_purchase_result(result=success)` 的 UV / 首次 `ep_course_open` UV | 作为辅助转化观察，不替代 Paywall 直接归因；按首次 Course touch 建 cohort |
+
+Course→Writing 的跨产品转化复用 Writing Tools 已有埋点协议；在数据团队完成事件名和身份关联核对前，仅作为长期观察方向，不作为本需求上线门槛，也不在本 PRD 中虚构新事件。
+
+## 6. 实验、成功标准与发布
+
+### 6.1 实验计划
+
+本期是完整体验交付，不在同一版本内同时保留旧 Exam Predictor 与新 Exam Prep & Courses 做长期 A/B；采用 Feature Flag 灰度发布。若业务需要验证首页 Tab 默认值，可在主功能稳定后另立实验，不与核心交付混合。
+
+### 6.2 灰度与成功标准
+
+| 阶段 | 流量 | 前置条件 | 观察时长 | 放量条件 | 回滚条件 |
+|---|---:|---|---:|---|---|
+| Internal | 员工/测试账号 | 全量自动化 + 数据校验通过 | 2 天 | P0/P1 = 0；题目结构错误 = 0 | 任一 P0/P1 |
+| Canary | 5% | 支付、评分、进度迁移监控开启 | 3 天 | 页面错误率 < 0.5%；考试提交成功率 ≥ 99% | 提交成功率 < 98% 或支付异常 |
+| Partial | 25% | 5% 指标稳定 | 5 天 | 关键漏斗不低于旧入口 5%；负反馈无显著上升 | 任一关键漏斗下降 ≥ 10% |
+| Full | 100% | 25% 指标稳定 | 持续 | 正常运营 | 触发业务/技术告警 |
+
+核心成功标准：
+
+- 首页到“创建计划或打开课程”的合并启动率不低于旧入口基线。
+- 题目选项结构错误数为 0；ACT F/G/H/J 渲染与交互测试 100% 通过。
+- Full-Length 免费用户进入考试前 Paywall 命中率为 100%，不存在先答题后拦截。
+- Diagnostic Free 报告可见率为 100%，且只锁 Targeted Practice。
+- Mini quiz 固定 3 题，结果页 Create more quiz 出现次数为 0。
+
+## 7. 依赖与风险
+
+### 7.1 依赖
+
+| 依赖 | 所需能力 | 负责人 | 阻塞级别 |
+|---|---|---|---|
+| 账户/会员服务 | 返回实时 Free/Pro；购买成功后刷新权限 | Account/Monetization | P0 |
+| Course Catalog API | 52 门课程、可用状态、图标、stats、排序、搜索索引 | Content/Backend | P0 |
+| Custom Plan 服务 | 文件上传、处理状态、计划创建/编辑、Exam Library 数据 | Exam Predictor/Backend | P0 |
+| 学习进度服务 | Course/Topic/Tool/Flashcard/Quiz/Targeted Practice 分开保存 | Learning/Backend | P0 |
+| Exam Attempt 服务 | Create/Resume/Autosave/Submit/Timer/Revision | Assessment/Backend | P0 |
+| Scoring & Report | SAT/ACT/AP 分数模型、报告 Schema、评分 SLA | Assessment/Data | P0 |
+| AI Quiz 服务 | 根据 source question/topic 生成固定 3 题，含错误回退 | AI/Content | P1 |
+| Reference Sheet 配置 | AP exam slug 到 PDF 的白名单与版本 | Content/Legal | P1 |
+| Analytics | 事件协议、去重、服务端评分与购买事件 | Data | P1 |
+| Localization | 本 PRD 英文文案的多语言交付 | Localization | P1 |
+
+### 7.2 Demo 已发现的不一致 / 待确认
+
+| ID | 问题 | 当前 Demo | PRD 建议 | 决策方 |
+|---|---|---|---|---|
+| GAP-01 | SAT practice questions 数量口径 | 课程头部显示 3,879；内容清单统计为 3,807；课程卡显示 6,226（含 flashcards/其他练习） | 定义“practice questions”是否包含 flashcards/guide practice，并由 Catalog API 返回唯一值 | Product + Content + Data |
+| GAP-02 | ACT Break | 代码存在 15 分钟计时初值，但实际流程不进入 Break | 依据 2026 目标 ACT 官方结构确认是否添加；确认前按当前 Demo 的无 Break 实现 | Product + Content |
+| RESOLVED-03 | Demo 状态来源 | 已接入统一状态规范化器：非法双 active 状态自动修复、`resultState` 迁移后删除、Free Full-Length 直链由路由守卫拦截；控制器只生成可达组合 | 生产只接受服务端状态；控制器仅测试环境可见，服务端仍需按 4.3/4.8 校验 | Engineering |
+| GAP-04 | Scoring 时长 | Demo 固定约 2 秒自动切结果 | 生产监听评分任务状态，按 SLA 展示长等待与错误 | Backend + Frontend |
+| GAP-05 | AP Catalog 与 Reference | 目前只有 AP Calculus BC 可用，但它不在 Reference 白名单；截图展示的是可配置 AP 的嵌入能力 | 保持白名单驱动；未来开放 AP 课程时按 slug 配置，未配置绝不显示入口 | Content + Engineering |
+| GAP-06 | Custom Plan 数据 | Demo 以浏览器存储模拟创建和进度 | 上线前接入用户级服务端存储和跨端同步 | Backend |
+
+### 7.3 风险与缓解
+
+| 风险 | 影响 | 缓解 |
+|---|---|---|
+| 考试数据结构不一致 | 选项错位、答案错误、评分失败 | 导入 Schema 校验 + CI `verify:data` + 生产加载时保护 |
+| 会员状态延迟 | 已付费仍被拦截或免费越权 | 权限服务强一致刷新；关键接口服务端鉴权 |
+| 长考试断网/刷新 | 进度丢失 | 本地队列 + 服务端 revision + 恢复页 |
+| AP/ACT 规则变化 | 考试体验失真 | 考试结构配置化，按考试年度版本化 |
+| 大量课程卡影响性能 | 首屏慢、滚动卡顿 | 虚拟化/分页、图片懒加载、搜索索引，不降低字号和卡片可读性 |
+| 报告页面过长 | 用户找不到 Review/Practice | 报告目录/锚点可作为后续优化；本期保留清晰分段和来源切换 |
+
+## 8. 本地化文案
+
+### 8.1 首页与课程
+
+| Key | English | Context |
+|---|---|---|
+| `ep.nav` | Exam Prep & Courses | 侧边栏 |
+| `ep.hero.title` | Adaptive exam prep for your best score | 首页标题 |
+| `ep.hero.subtitle` | Create a personalized study plan, predict likely exam questions, or start a prep course. | 首页副标题 |
+| `ep.mode.custom` | Custom Plan | 首次进入 Tab |
+| `ep.mode.courses` | Prep Courses | 首次进入 Tab |
+| `ep.mode.cue` | SAT, ACT and AP Prep | Prep Courses 指引 |
+| `ep.upload.title` | Drag & drop exam materials here | 上传区 |
+| `ep.upload.cta` | Select files | 上传按钮 |
+| `ep.examples.title` | Exam prep plan examples | 示例标题 |
+| `ep.library.title` | Exam Library | 已有进度首页 |
+| `ep.plan.new` | New Prep Plan | 首页 CTA |
+| `ep.courses.title` | Standardized Test Prep Courses | 课程区标题 |
+| `ep.courses.search` | Search a ready-made course for the exam you are preparing for... | Search placeholder |
+| `ep.course.open` | Open course | 可用课程 |
+| `ep.course.continue` | Continue learning | 有进度课程 |
+| `ep.course.soon` | Coming soon | 未开放课程 |
+
+### 8.2 学习、考试与报告
+
+| Key | English | Context |
+|---|---|---|
+| `course.tab.content` | Course Content | 课程 Tab |
+| `course.tab.insights` | Performance & Insights | 课程 Tab |
+| `course.diagnostic.start` | Start Free Diagnostic | Diagnostic CTA |
+| `course.diagnostic.continue` | Continue Diagnostic | Diagnostic CTA |
+| `course.diagnostic.results` | View Free Results | Diagnostic CTA |
+| `course.full.start` | Start Practice Test | Full-Length CTA |
+| `course.full.continue` | Continue Practice Test | Full-Length CTA |
+| `course.full.report` | View Score Report | Pro 结果 CTA |
+| `course.full.unlock` | Unlock Score Report | Free 结果 CTA |
+| `exam.tool.highlight.tip` | Highlight and annotate text | Tooltip |
+| `exam.tool.eliminate.tip` | Cross out answer choices you think are wrong | Tooltip |
+| `exam.more.report` | Report an issue | More 菜单 |
+| `report.source.diagnostic` | Diagnostic Test | 报告来源 |
+| `report.source.full` | Full-Length Practice Test | 报告来源 |
+| `report.review.title` | Question Review | 报告区块 |
+| `report.similar.title` | Similar questions | Question Review |
+| `report.similar.count` | 3 questions | Question Review |
+| `report.similar.cta` | Start mini quiz | Question Review |
+| `report.targeted.title` | Targeted Practice | 报告区块 |
+| `report.unlock.full` | Unlock this report with Solvely Pro | Full-Length 锁定 |
+| `report.unlock.targeted` | Unlock targeted practice with Solvely Pro | Diagnostic 锁定 |
+| `mini.loading` | Loading questions… | Drawer loading |
+| `mini.error` | Questions unavailable | Drawer error |
+| `mini.retry` | Try again | Drawer error |
+| `mini.review` | Review Quiz | 结果 CTA |
+
+所有状态文案以 4.5.3、4.5.4、4.7.1、4.7.5 的完整英文为准；本地化不得擅自合并 `Free` 与 `Pro`、`Diagnostic` 与 `Full-Length` 的含义。
+
+## 9. 验收测试用例
+
+### 9.1 首页与课程
+
+| ID | 前置条件 | 操作 | 预期结果 |
+|---|---|---|---|
+| TC-001 | 新用户，无计划/课程进度 | 进入 Exam Prep & Courses | 显示首屏标题、副标题、Custom Plan 默认 Tab、上传区、3 张示例；无 Exam Library |
+| TC-002 | 同上 | 点击/键盘/拖动切换到 Prep Courses | 滑块切换；显示课程标题、搜索、筛选、三列卡片；状态可访问 |
+| TC-003 | 同上 | 上传不支持格式或超页数文件 | 格式错误被阻止；支持文件明确提示只处理前 50 页 |
+| TC-004 | 同上 | 创建计划 | 必填校验；成功后首页切到 active，计划出现在 Exam Library |
+| TC-005 | 用户已有课程进度 | 进入首页 | Exam Library 出现课程进度卡和最近活动；课程目录卡尺寸不变 |
+| TC-006 | 课程库 | 搜索 `ACT`，再筛选 AP | 组合条件正确；无结果时显示 Empty State 和 Clear search |
+| TC-007 | 课程库只剩 2 张结果 | 调整筛选 | 单卡宽度仍为三列宽度，不拉伸占满 |
+| TC-008 | Coming soon 课程 | 点击/键盘操作 | 不进入空课程；状态可感知；不触发 `ep_course_open` |
+| TC-009 | 新用户，无任何真实数据 | 仅打开课程后返回首页 | 首页仍为首次进入；不出现 Exam Library 或虚假进度 |
+| TC-010 | 新用户 | 创建一个计划后返回首页 | 自动切为已有进度布局；Exam Library 只出现真实计划 |
+| TC-011 | 新用户 | 首次开始一个 Topic 工具后返回首页 | 自动切为已有进度布局；Exam Library 只出现对应课程并可恢复准确 Topic/工具 |
+| TC-012 | 已有两个课程活动 | 进入首页 | Exam Library 分别展示两张固定三列宽度卡片；最近活动与完成度互不串用 |
+| TC-013 | query 请求 empty，但服务端已有活动 | 刷新首页 | 真实数据优先，展示 active，不出现“初始状态 + 进度”组合 |
+| TC-014 | Coming soon 课程被注入 activity | 刷新首页/课程库 | 忽略非法 activity、记录告警；课程仍 disabled 且不进入 Exam Library |
+
+### 9.2 课程、学习工具与商业化
+
+| ID | 前置条件 | 操作 | 预期结果 |
+|---|---|---|---|
+| TC-101 | 首次打开 SAT/ACT/AP 可用课程 | 进入课程 | First visit 仅与两个测试 Not started 同时出现；显示 Start your journey |
+| TC-102 | 打开任意 Topic 工具 | 返回课程 | 课程变为 In progress；首页 Exam Library 同步课程进度 |
+| TC-103 | SAT/ACT Lessons | 切 Section/Priority | Topic/分组正确过滤；不匹配分组不显示空壳 |
+| TC-104 | AP Lessons | 进入并筛选 | 无 Section 筛选；Topic/Unit 标题不重复 AP Calculus BC |
+| TC-105 | Topic 行 | Hover、键盘聚焦、移动到浮层 | 浮层稳定显示 Study Guide/Flashcards/Quiz，三入口可操作 |
+| TC-106 | Free 用户 | 使用 Study Guide/Flashcards/Quiz | 全部可用，不弹 Paywall |
+| TC-107 | Free 用户 | 点击 Ask Solvely | 入口前有 Pro badge；点击弹 Paywall；关闭后保留上下文 |
+| TC-108 | Pro 用户 | Ask Solvely 文本/语音/浮窗 | 文本可发送；语音状态可退出；浮窗可拖动缩放且不出视口 |
+| TC-109 | ACT 题目使用 F/G/H/J | 在 Topic Quiz/Targeted Practice 作答 | 显示 F/G/H/J；选中、反馈、键盘和埋点保持原标签 |
+| TC-110 | 无选项题 | 进入 Quiz | 只显示输入组件，不把答案或选项样式插入题干 |
+| TC-111 | 内容服务加载当前发布 manifest | 读取课程目录 | 返回 52 条内部课程记录（SAT 1、ACT 1、AP 43、Abitur 7）；首页不展示“52 Total” |
+| TC-112 | 同一物料已在 iOS 和 Web 发布 | 对比 `course_id/topic_id/question_id/content_version/checksum` | ID 与版本一致；Web 只重做呈现和交互，不产生重复内容记录 |
+| TC-113 | 附件文件名题量与 manifest 不一致 | 导入 SAT/ACT Quiz CSV | 不从文件名取数；按显式 schema 去重统计并产生差异告警，卡片读取发布 manifest 数字 |
+| TC-114 | AP Networking (Pilot) 无逐课程 mock | 打开课程/读取测试卡配置 | `full_length_ready=false`；不得展示可点击 Full-Length；课程 Coming soon 状态不被附件存在自动改写 |
+| TC-115 | Study Guide/Flashcards 来自同一合并 CSV | 分别打开两个工具并切换 Topic | 各工具只读自身字段；无重复渲染、无跨 Topic 串用、无缺失内容被错误标记完成 |
+| TC-116 | 视频/封面/音频 URL 过期或 MIME 错误 | 打开对应 Lesson | 对应工具显示 unavailable + Retry；其余课程内容可用；发布监控产生 asset_invalid 告警 |
+| TC-117 | AP questions/answers PDF 未授权发布 | 检查生产 API 与页面资源 | 不返回、不展示附件；只有 `license_status=approved` 且 `publishable=true` 后才可发布 |
+| TC-118 | 新内容批次部分校验失败 | 执行发布 | 整批不切流，线上继续读取上一 `content_version`；修复后可重试且不会生成重复记录 |
+
+### 9.3 测试卡与报告状态
+
+| ID | 前置条件 | 操作 | 预期结果 |
+|---|---|---|---|
+| TC-201 | Diagnostic Not started | 点击 Start | 免费进入 20 题 Untimed 测试；创建 attempt；课程变 In progress |
+| TC-202 | Diagnostic In progress | 返回再点击 Continue | 从已保存题恢复；答案、Marked 和用时不丢失 |
+| TC-203 | Diagnostic 交卷 | 等待评分 | 卡片和报告显示 Scoring；服务端完成后自动 Results ready |
+| TC-204 | Diagnostic Results + Free | 打开报告 | 分数与 Question Review 可见；只有 Targeted Practice 锁定 |
+| TC-205 | Diagnostic Results + Pro | 打开报告 | 分数、Review、Targeted Practice 全部可用 |
+| TC-206 | Full-Length Not started + Free | 点击课程卡 Start；再打开报告预览 | 卡片标题旁有 Pro badge、无 Free；CTA 内没有 Pro；点击立即 Paywall，不能进入题目。报告每个 Section 都显示 48px Pro icon、`Unlock the full-length test and score analysis with Solvely Pro` 与 `Unlock test & analysis`，无说明小字或考试前置 icon |
+| TC-207 | Full-Length N/I/S/R + Free | 逐状态打开并滚动完整 Performance & Insights | 四个 attempt 状态都可预览完整报告模板但不被记为真实成绩；每个 Section 均有独立锁定层；只保留 48px Pro icon、4.7.1 对应的单一标题与 CTA；无说明小字、考试/灰锁 icon 或按钮内重复 Pro |
+| TC-208 | Full-Length Results + Pro | 打开报告 | 按考试体系展示完整报告，无 Paywall |
+| TC-209 | 任一考试 Scoring | 打开报告 | 显示对应评分中精确文案；无重复提交按钮 |
+| TC-210 | 切 Diagnostic/Full-Length | 切换来源 | 状态、文案、分数和商业化门槛同时更新；页面回顶部 |
+| TC-220 | 任意合法状态 | 穷举 Diagnostic/Full-Length 组合 | 只允许 4.3.2 的 12 个组合；`I/I`、`I/S`、`S/I`、`S/S` 均被拒绝或规范化 |
+| TC-221 | Course=First visit，任一考试被注入 I/S/R | 刷新课程 | Course 自动规范化为 In progress，并同步 Exam Library |
+| TC-222 | Full-Length=R，URL 含独立 resultState | 刷新报告 | 迁移后删除独立字段；报告权限只按实时 entitlement 判断 |
+| TC-223 | Free 用户直达 Full-Length 模考 URL | 粘贴地址并打开 | 重定向课程并弹 M-06 Paywall；试题和 attempt 创建接口均未调用 |
+| TC-224 | Free Paywall 已打开 | Cancel / 支付失败 | 返回原课程/报告和滚动位置；状态与进度无变化，可重试 |
+| TC-225 | Free Paywall 已打开 | 支付成功 | 刷新 entitlement 后仅恢复一次 pending action；不重复创建 attempt |
+| TC-226 | Pro 用户有 Full-Length I/R，随后会员到期 | 继续考试/打开报告 | 历史进度保留；受限动作按 M-06/M-07 拦截，不重置成 N |
+| TC-227 | 任一考试 N/I/S | 打开对应报告 | 展示对应考试的预生成封面与 Section 结构；前景状态/权益文案准确；模板数据不写入 attempt/report、不进入真实成绩埋点且不可交互 |
+
+#### Score Report 与 Performance details 计算专项
+
+| ID | 前置条件 | 操作 | 预期结果 |
+|---|---|---|---|
+| TC-211 | SAT report 含 98 题：73 Correct、20 Incorrect、5 Unanswered；有效时间 7,920 秒 | 打开 Web Score Report | Correct=73/98、Incorrect=20、Unanswered=5；Accuracy=round(73÷93×100%)=78%，不是 73÷98；Time used=2h 12m；与同一 report_id 的 Question Review 一致 |
+| TC-212 | 总量不守恒或存在重复 question_id | 生成报告 | 内部原因 `data_inconsistent` 并上报 `exam_scoring_result(error_type=data)`；保持 Scoring/Retry；不展示部分指标、0 分或 Demo 固定值 |
+| TC-213 | 某 Section 含多个题量不同的 Topic | 计算 Section 基线 | 按题目加权计算总 correct÷总 answered、总有效时间÷总 answered；不能简单平均 Topic 百分比或平均时间 |
+| TC-214 | 四个 Topic 分别满足四种 accuracy/time 组合 | 加载矩阵 | 分别进入 Proficient、Inefficient、Rushed、Struggling；R&W 与 Math 使用各自 Section 基线 |
+| TC-215 | Topic accuracy=Section accuracy 且 Topic average time=Section average time | 检查点位 | delta 均为 0，归入 Proficient；Tooltip 展示真实值 |
+| TC-216 | 一个 Topic 只有 Unanswered；另一个缺 primary topic_id | 加载矩阵 | 均不生成误导性点；其他合法 Topic 正常显示；缺映射记录一致性告警 |
+| TC-217 | 含 Break、后台挂起、离线重放、重复 progress_version 和超时片段 | 计算时间 | 排除无效片段、按版本去重、按 Module 上限截断；Time used 与 Topic average time 采用各自定义 |
+| TC-218 | 键盘用户打开含重叠点的矩阵 | Tab/Shift+Tab/Escape | 每个 Topic 可聚焦；Focus 与 Hover Tooltip 一致，包含 Topic、Section、Accuracy、Average time、Answered、相对值和象限 |
+| TC-219 | SAT、ACT、AP 各准备相同 Accuracy 的完成 attempt | 生成报告 | SAT 用版本化 IRT/量尺分，ACT 用 form raw-to-scale 和 EMR Composite，AP 用 MCQ/FRQ 权重及 cut-score；不得因 Accuracy 相同得到同一线性换算结果 |
+
+### 9.4 模考
+
+| ID | 前置条件 | 操作 | 预期结果 |
+|---|---|---|---|
+| TC-301 | SAT Full-Length | 完成四个 Module | 27+27+22+22=98；倒计时和 Review 正确；R&W M2 后 10m Break |
+| TC-302 | ACT Full-Length | 完成四个 Section | 50+45+36+40=171；35+50+40+40=165m；按当前版本不出现 Break |
+| TC-303 | AP Full-Length | 完成 MCQ、Break、FRQ | 42/105m + 10m Break + 6/90m；总题数 48 |
+| TC-304 | 含引用题 | 切换到题目 | Passage 自动高亮对应内容并滚到可见位置；用户高亮仍保留 |
+| TC-305 | Passage | 切 Line Reader On/Off | 点击即切换；选中态品牌蓝；可移动；Tooltip 正确 |
+| TC-306 | 任意 Multiple Choice | 使用 cross-out 后再选择 | 激活图标黑色；选项可划掉/恢复；仍可选择答案 |
+| TC-307 | Math | Calculator Pop out/resize/close | 浮窗状态保持，计算输入不丢失；不遮挡无法恢复 |
+| TC-308 | SAT Math | 打开 Reference | 公式面板嵌入、可折叠/关闭；不离开考试 |
+| TC-309 | AP 白名单考试 | 打开 Reference | 内嵌对应 PDF；页数/标题正确；非白名单完全无入口 |
+| TC-310 | More | 打开 Report an issue 并提交 | 无外露 Report 按钮；弹窗字段正确；成功/失败反馈完整 |
+| TC-311 | 最后 Section Review | 点击 Submit Test | 单次幂等交卷；立即返回课程首页 Course Content；对应测试卡为 Scoring 且按钮 disabled；评分完成后自动变 Results ready，不经过独立结算页 |
+| TC-312 | 断网/刷新 | 作答、刷新、重连 | 恢复最新保存答案、Marked、Section 和计时；不重复提交 |
+
+### 9.5 Question Review、Mini Quiz 与 Targeted Practice
+
+| ID | 前置条件 | 操作 | 预期结果 |
+|---|---|---|---|
+| TC-401 | SAT/ACT 报告 | 切 Section/Answer 筛选 | Question Map 与详情同步；空结果有 Empty State |
+| TC-402 | AP 报告 | 进入 Question Review/Targeted Practice | 无 Section 筛选；显示 AP 专属分组 |
+| TC-403 | Question Review | 切题 | 题干、所有选项、答案、解释、用时和 Similar questions 均更新 |
+| TC-404 | 点击 Start mini quiz | 等待加载 | 右侧 Drawer 打开；固定 3 题；报告不跳页且保留位置 |
+| TC-405 | Mini quiz 加载失败 | 点击 Try again | 原 Drawer 内重试；不跳 Study Plan |
+| TC-406 | 完成 3 题 | 查看结果 | 0/1/2/3 分文案正确；唯一 CTA 为 Review Quiz；无 Create more quiz |
+| TC-407 | Review Quiz | 点击 | 从第 1 题进入 review 模式，显示此前答案和解释 |
+| TC-408 | Targeted Practice + Pro | 点击 Practice | 进入纯 Quiz 页面；无课程侧栏或额外理解成本信息 |
+| TC-409 | Diagnostic Targeted Practice + Free | 打开锁定区并点击 Unlock practice | 只显示 48px Pro 徽标、`Unlock targeted practice with Solvely Pro` 与 `Unlock practice`；无说明小字、灰锁底框或按钮内重复 Pro；点击后弹 Paywall，Question Review 仍保持免费可见 |
+| TC-410 | Full-Length Retake | 点击 Retake/Cancel/Confirm | 先确认；Cancel 保持报告；Confirm 创建新 attempt，旧报告进入历史 |
+
+## 10. 视觉证据索引
+
+本 PRD 共附 92 张实际 Demo 截图，覆盖：首页 2 种主布局、2 类控制器、3 个考试课程、课程学习工具、测试 4 状态、商业化弹窗、模考共用交互、SAT/ACT/AP 专属结构、报告前置/锁定/完整态、Question Review、3 题 Mini Quiz 与 Targeted Practice。所有截图均存放在 [`./images`](./images/)；需求表中的 VIS 编号为唯一引用。
+
+| 范围 | VIS 编号 | 覆盖内容 |
+|---|---|---|
+| 首页 | VIS-01–06、72–73、78 | 首次进入、Courses、创建计划、Exam Library、状态控制器、搜索/空态、侧栏折叠 |
+| 课程 | VIS-07–22、70、80–81 | SAT/ACT/AP 头部、Lessons、Topic 浮层、Diagnostic/Full-Length 全状态 |
+| 学习工具 | VIS-24–33、74–77 | Study Guide、Quick Practice、Flashcards、Quiz、Ask Solvely、非 ABCD 标签 |
+| 模考 | VIS-34–55、79 | 答题、划掉、Highlight、More、快捷键、Report、Navigator、Line Reader、Calculator、Reference、Review、Break、AP FRQ、Dark mode |
+| 商业化 | VIS-23、33、57–58、82 | Full-Length、Ask、Diagnostic Targeted Practice、Full Report 的门槛 |
+| 报告 | VIS-56–69、71、83–93 | SAT/ACT/AP Diagnostic/Full Report、报告前置、逐 Section 锁定、Question Review、Mini Quiz、Targeted Practice、Retake |
+
+## 11. Definition of Done
+
+- [ ] 4.3 中 12 个可达考试组合、4 个不可达组合、首页 4 个组合均有单元/集成测试；生产环境不存在 Demo 控制器或 query 参数越权。
+- [ ] SAT、ACT、AP 三套考试结构、题量、时间、分制和筛选差异全部通过 TC-301–309。
+- [ ] 全量题目数据通过 Schema 校验和 `npm run verify:data`；非 A/B/C/D 标签与无选项题通过 UI 自动化。
+- [ ] 4.8 的 M-01–M-10 逐项通过；支付成功幂等恢复 pending action，取消/失败不产生进度，会员到期不删除历史数据。
+- [ ] 报告的 prerequisite、locked、unlocked、Diagnostic Targeted Practice 锁定组合全部通过。
+- [ ] 92 张视觉基准对应页面完成 UI Review；所有可见文字 ≥ 12 px；主蓝、Hover、Selected 状态符合 Solvely Design System。
+- [ ] 埋点 QA 完成，核心指标可由事件唯一重建，无答案原文或问题详情泄露到分析平台。
+- [ ] 错误、空态、断网恢复、评分超时和购买失败路径均完成测试。
+- [ ] Accessibility：键盘、焦点环、Dialog 焦点锁、ARIA、色彩对比、reduced-motion 全部通过。
+- [ ] GAP-01 与 GAP-02 在开发锁版前由负责人完成决策并更新本文档。

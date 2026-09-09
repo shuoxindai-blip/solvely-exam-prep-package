@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import ExamPrepPackageView from './views/ExamPrepPackageView.vue'
 import MockExamView from './views/MockExamView.vue'
 import TopicToolView from './views/TopicToolView.vue'
+import { isFullLengthRouteAllowed } from './domain/prepState'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -17,6 +18,28 @@ const router = createRouter({
   scrollBehavior: (to) => to.hash === '#examCatalogTitle'
     ? { el: to.hash, top: window.innerWidth <= 820 ? 64 : 24, behavior: 'smooth' }
     : { top: 0 },
+})
+
+router.beforeEach((to) => {
+  if (to.name !== 'mock-exam' || isFullLengthRouteAllowed(to.query.access, to.query.mode)) return true
+
+  const exam = String(to.query.exam || '').toLowerCase()
+  const normalizedExam = exam === 'act' || exam === 'ap-calculus-bc' ? exam : 'sat'
+  return {
+    name: 'package',
+    query: {
+      access: 'free',
+      ...(normalizedExam === 'sat' ? {} : { exam: normalizedExam }),
+      courseState: 'not-started',
+      practiceState: 'not-started',
+      paywall: 'full-length',
+    },
+    hash: normalizedExam === 'ap-calculus-bc'
+      ? '#course-2'
+      : normalizedExam === 'act'
+        ? '#course-1'
+        : '#course-0',
+  }
 })
 
 router.afterEach((to) => {
