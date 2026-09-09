@@ -554,7 +554,7 @@ const practiceTestCard = computed(() => {
     630;
   if (practiceTestState.value === "not-started")
     return {
-      stateLabel: "Free",
+      stateLabel: "",
       description:
         `Take a realistic full-length ${isApPackage.value ? "AP Calculus BC" : isActPackage.value ? "ACT with Science" : "Digital SAT"} with official timing and section structure.`,
       metrics: [
@@ -3689,7 +3689,9 @@ onBeforeUnmount(() => {
                         alt="Pro score report"
                         title="The practice test is free. The score report requires Pro."
                       />
-                      <span :class="['mock-entry-state', practiceTestState]"
+                      <span
+                        v-if="practiceTestCard.stateLabel"
+                        :class="['mock-entry-state', practiceTestState]"
                         ><i />{{ practiceTestCard.stateLabel }}</span
                       >
                     </header>
