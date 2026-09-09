@@ -3,6 +3,7 @@ import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } 
 import { useRoute, useRouter } from 'vue-router'
 import HighlightablePassage from '../components/HighlightablePassage.vue'
 import MathReferenceSheet from '../components/MathReferenceSheet.vue'
+import PdfReferenceSheet from '../components/PdfReferenceSheet.vue'
 import ScientificCalculator from '../components/ScientificCalculator.vue'
 import { loadEpExam } from '../data/satData'
 import { buildSatDiagnosticExam, SAT_DIAGNOSTIC_QUESTIONS_PER_SECTION } from '../data/satDiagnostic'
@@ -10,6 +11,7 @@ import { loadActEpExam } from '../data/actData'
 import { buildActDiagnosticExam, ACT_DIAGNOSTIC_QUESTIONS_PER_SECTION } from '../data/actDiagnostic'
 import { loadApEpExam } from '../data/apData'
 import { AP_CALCULUS_BC_DIAGNOSTIC_QUESTION_COUNT, buildApDiagnosticExam } from '../data/apDiagnostic'
+import { getApReferenceSheet, isApExamSlug } from '../data/apReferenceSheets'
 import type { EpExam } from '../types/epV2'
 import { parseActPassage, type TextReference } from '../utils/actReference'
 
@@ -114,9 +116,12 @@ const apCalculusBcDiagnosticModules: ModuleDefinition[] = [
 
 const route = useRoute()
 const router = useRouter()
+const examSlug = computed(() => String(route.query.exam || '').trim().toLowerCase())
+const isAnyApExam = computed(() => isApExamSlug(examSlug.value))
+const apReferenceSheet = computed(() => getApReferenceSheet(examSlug.value))
 const isDiagnostic = computed(() => String(route.query.mode || '') === 'diagnostic')
-const isActExam = computed(() => String(route.query.exam || '').toLowerCase() === 'act')
-const isApExam = computed(() => String(route.query.exam || '').toLowerCase() === 'ap-calculus-bc')
+const isActExam = computed(() => examSlug.value === 'act')
+const isApExam = computed(() => examSlug.value === 'ap-calculus-bc')
 const examName = computed(() => isApExam.value ? 'AP Calculus BC' : isActExam.value ? 'ACT' : 'SAT')
 const packageHash = computed(() => isApExam.value ? '#course-2' : isActExam.value ? '#course-1' : '#course-0')
 const examQuery = computed(() => isApExam.value ? { exam: 'ap-calculus-bc' } : isActExam.value ? { exam: 'act' } : {})
@@ -280,6 +285,12 @@ const reportIssues = [
 ]
 
 const currentModule = computed(() => modules.value[moduleIndex.value])
+const showReferenceTool = computed(() => isAnyApExam.value
+  ? Boolean(apReferenceSheet.value)
+  : currentModule.value.section === 'math')
+watch(showReferenceTool, (visible) => {
+  if (!visible) referenceOpen.value = false
+})
 const currentSourceQuestion = computed(() => sourceQuestionFor(currentModule.value, currentNumber.value))
 const currentQuestion = computed<Question>(() => displayQuestion(currentSourceQuestion.value))
 const optionShortcutLabels = computed(() => currentQuestion.value.optionLabels.join(', ') || 'Listed choice')
@@ -659,6 +670,7 @@ function toggleCalculator() {
 }
 
 function toggleReference() {
+  if (!showReferenceTool.value) return
   referenceOpen.value = !referenceOpen.value
   if (referenceOpen.value) {
     calculatorOpen.value = false
@@ -1020,7 +1032,7 @@ onBeforeUnmount(() => {
         <button class="tool-button" :class="{ active: highlighterEnabled }" type="button" :aria-pressed="highlighterEnabled" :aria-label="highlighterEnabled ? 'Turn off highlight mode' : 'Turn on highlight mode'" @mouseenter="showToolTooltip($event, 'Highlight and annotate text', 'below')" @mouseleave="hideToolTooltip" @focus="showToolTooltip($event, 'Highlight and annotate text', 'below')" @blur="hideToolTooltip" @click="toggleHighlightMode"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 16 9.8-9.8a2 2 0 0 1 2.8 0l.2.2a2 2 0 0 1 0 2.8L8 19H5v-3Z" /><path d="M13.5 7.5 16.5 10.5M4 21h16" /></svg><span>Highlight</span></button>
         <button v-if="isActExam && usesPassageLayout" class="tool-button" :class="{ active: lineReaderEnabled }" type="button" :aria-pressed="lineReaderEnabled" :aria-label="lineReaderEnabled ? 'Turn off line reader' : 'Turn on line reader'" @mouseenter="showToolTooltip($event, 'Focus on one line of text at a time', 'below')" @mouseleave="hideToolTooltip" @focus="showToolTooltip($event, 'Focus on one line of text at a time', 'below')" @blur="hideToolTooltip" @click="toggleLineReader"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 10h16M4 14h16M4 18h16" /></svg><span>Line Reader</span></button>
         <button v-if="currentModule.section === 'math'" class="tool-button" :class="{ active: calculatorOpen }" type="button" :aria-pressed="calculatorOpen" @click="toggleCalculator"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="3" width="12" height="18" rx="2" /><path d="M8.5 6h7v3h-7zM9 13h.01M12 13h.01M15 13h.01M9 17h.01M12 17h.01M15 17h.01" /></svg><span>Calculator</span></button>
-        <button v-if="currentModule.section === 'math'" class="tool-button" :class="{ active: referenceOpen }" type="button" :aria-pressed="referenceOpen" @click="toggleReference"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h8l3 3v15H7zM15 3v4h4M10 11h5M10 15h5" /></svg><span>Reference</span></button>
+        <button v-if="showReferenceTool" class="tool-button" :class="{ active: referenceOpen }" type="button" :aria-pressed="referenceOpen" @click="toggleReference"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h8l3 3v15H7zM15 3v4h4M10 11h5M10 15h5" /></svg><span>Reference</span></button>
         <button class="tool-button" :class="{ active: moreOpen }" type="button" aria-haspopup="menu" :aria-expanded="moreOpen" @click="toggleMore"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.2" /><circle cx="12" cy="12" r="1.2" /><circle cx="19" cy="12" r="1.2" /></svg><span>More</span></button>
         <div v-if="moreOpen" class="exam-more-menu" role="menu" aria-label="More exam options">
           <button type="button" role="menuitem" @click="exitExam"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 5H5v14h5M14 8l4 4-4 4M8 12h10" /></svg><span>Save and Exit</span></button>
@@ -1091,7 +1103,16 @@ onBeforeUnmount(() => {
       <div v-if="navigatorOpen" class="navigator-card"><button class="navigator-close" type="button" aria-label="Close question navigator" @click="navigatorOpen = false">×</button><h2>{{ sectionLabel }}:<br />{{ currentModule.title }}</h2><div class="navigator-rule" /><div class="navigator-legend"><span><i class="unanswered-key" />Unanswered</span><span><i class="review-key" />For Review</span></div><div class="question-grid"><button v-for="number in currentModule.total" :key="number" type="button" :class="{ answered: answeredNumbers.has(number), current: currentNumber === number, review: review.has(keyFor(number)) }" @click="stage = 'exam'; goToQuestion(number)">{{ number }}</button></div></div>
       <div class="footer-actions"><button v-if="stage === 'review'" type="button" @click="previousQuestion">Back</button><button v-else type="button" :disabled="currentNumber <= 1" @click="previousQuestion">Previous</button><button type="button" @click="stage === 'review' ? advanceFromReview() : nextQuestion()">{{ primaryActionLabel }}</button></div>
     </footer>
-    <MathReferenceSheet v-if="referenceOpen && currentModule.section === 'math'" @close="referenceOpen = false" />
+    <PdfReferenceSheet
+      v-if="referenceOpen && apReferenceSheet"
+      :title="apReferenceSheet.title"
+      :src="apReferenceSheet.src"
+      @close="referenceOpen = false"
+    />
+    <MathReferenceSheet
+      v-else-if="referenceOpen && !isAnyApExam && currentModule.section === 'math'"
+      @close="referenceOpen = false"
+    />
 
     <div v-if="shortcutsOpen" class="exam-dialog-backdrop" role="presentation" @click.self="shortcutsOpen = false">
       <section class="shortcut-dialog" role="dialog" aria-modal="true" aria-labelledby="shortcut-dialog-title">

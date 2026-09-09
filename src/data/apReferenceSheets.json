@@ -1,0 +1,65 @@
+[
+  {
+    "slug": "ap-biology",
+    "title": "AP Biology",
+    "src": "/assets/ap-reference-sheets/ap-biology-equations-and-formulas-sheet.pdf",
+    "pages": 3,
+    "sha256": "3a5367862a734985472604b9745790f0e43fdf08a47536351749a7afe5c0fb67"
+  },
+  {
+    "slug": "ap-chemistry",
+    "title": "AP Chemistry",
+    "src": "/assets/ap-reference-sheets/ap-chemistry-equations-sheet.pdf",
+    "pages": 4,
+    "sha256": "df42f043ce778326d8ae02d74d590164892f943d5320730938df0ac871eab0bf"
+  },
+  {
+    "slug": "ap-computer-science-a",
+    "title": "AP Computer Science A",
+    "src": "/assets/ap-reference-sheets/ap-computer-science-a-java-quick-reference.pdf",
+    "pages": 3,
+    "sha256": "4d3c0d4d23cc87322f3a0c9aed959a3bd6b3580558f12acbb763595e0c6a45bd"
+  },
+  {
+    "slug": "ap-computer-science-principles",
+    "title": "AP Computer Science Principles",
+    "src": "/assets/ap-reference-sheets/ap-computer-science-principles-exam-reference-sheet.pdf",
+    "pages": 7,
+    "sha256": "11c4923d84e5298e94060ec6caecf704977c966544abbe510443c307373c808c"
+  },
+  {
+    "slug": "ap-physics-1-algebra-based",
+    "title": "AP Physics 1: Algebra-Based",
+    "src": "/assets/ap-reference-sheets/ap-physics-1-equations-sheet.pdf",
+    "pages": 3,
+    "sha256": "7aae04c8a3dcd2c6143674c90cb1ed21afe3c406f27389b291c6cb251506cc95"
+  },
+  {
+    "slug": "ap-physics-2-algebra-based",
+    "title": "AP Physics 2: Algebra-Based",
+    "src": "/assets/ap-reference-sheets/ap-physics-2-equations-sheet.pdf",
+    "pages": 5,
+    "sha256": "56911b78828bd251f2e276a2f0c35fdb7437dd98e1c528df7ff45c0e968ea37f"
+  },
+  {
+    "slug": "ap-physics-c-electricity-and-magnetism",
+    "title": "AP Physics C: Electricity and Magnetism",
+    "src": "/assets/ap-reference-sheets/ap-physics-c-electricity-and-magnetism-equations-sheet.pdf",
+    "pages": 5,
+    "sha256": "73e0401ba27a20be80569930b3f8a43ba949c700558a9e87f731eec9a2a12abf"
+  },
+  {
+    "slug": "ap-physics-c-mechanics",
+    "title": "AP Physics C: Mechanics",
+    "src": "/assets/ap-reference-sheets/ap-physics-c-mechanics-equations-sheet.pdf",
+    "pages": 4,
+    "sha256": "a0df8c8d1dbf6baa22ecbcf61aada7d2e4025cc34c68b5a28b4366fef0ec8853"
+  },
+  {
+    "slug": "ap-statistics",
+    "title": "AP Statistics",
+    "src": "/assets/ap-reference-sheets/ap-statistics-formula-tables-sheet.pdf",
+    "pages": 11,
+    "sha256": "87bf7b2ad426ac34a905432830f214f41ad40a2a9b64d3871d6fee519ccc3cac"
+  }
+]
