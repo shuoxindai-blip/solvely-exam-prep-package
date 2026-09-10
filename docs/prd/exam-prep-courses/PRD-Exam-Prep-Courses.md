@@ -1,9 +1,9 @@
 # Exam Prep & Courses 完整产品需求文档（PRD）
 
-> 文档版本：v1.10
-> 基准日期：2026-09-09  
+> 文档版本：v1.11
+> 基准日期：2026-09-10
 > 产品范围：Exam Prep 首页、Standardized Test Prep Courses、课程学习工具、SAT/ACT/AP 模考、成绩报告与商业化门槛  
-> Demo 基准：`v1.8 state-and-copy-aligned build`
+> Demo 基准：`ChatGPT Site · 2026-09-10 published build`
 > 文档状态：评审稿
 
 ## 1. 关键问题同步与变更记录
@@ -114,7 +114,7 @@
 
 | 类型 | 链接 | 说明 |
 |---|---|---|
-| 可交互 Demo | [solvely-exam-prep-package.vercel.app](https://solvely-exam-prep-package.vercel.app/) | 本 PRD 的视觉与交互基准 |
+| 可交互 Demo | [solvely-exam-prep-demo.shuoxin-dai.chatgpt.site](https://solvely-exam-prep-demo.shuoxin-dai.chatgpt.site/) | 本 PRD 的视觉与交互基准；拿到链接即可访问，页面通过 `noindex` 与 `robots.txt` 禁止搜索引擎收录 |
 | 当前生产页参考 | [solvely.ai/exam/home](https://solvely.ai/exam/home) | Exam Prep 原始入口与侧边栏语境 |
 | 仓库 | [GitHub Repository](https://github.com/shuoxindai-blip/solvely-exam-prep-package) | Demo 源码与内容数据 |
 | AP Reference 调研 | [Lazyweb evidence](https://www.lazyweb.com/agentic-search/88b5b117-7c74-4773-89bf-54da6fc8b025) | AP Reference Sheet 竞品与考试规则证据 |
@@ -169,7 +169,7 @@ Exam Prep & Courses
 | BR-008 | AP 页面不显示 Section 筛选；Topic 标题不重复课程名。 |
 | BR-009 | 所有题目选项必须使用结构化 `options` 渲染，不得并入题干。支持 A/B/C/D、F/G/H/J、其他标签及无选项 Student-Produced Response。 |
 | BR-010 | 课程目录展示 52 门课程：SAT 1、ACT 1、AP 43、Abitur 7；当前仅 SAT、ACT、AP Calculus BC 可进入，其余为 Coming soon。 |
-| BR-011 | 课程卡片固定三行：`• {topics} topics · video lessons`、`• {practiceQuestions} practice questions`、`• 1 full-length test • Score insights`；第一行不得重复 topics 数字。 |
+| BR-011 | 课程卡片固定三行：`• {topicCount} topics · video lessons`、`• {practiceQuestionCount} practice questions`、`• 1 full-length test • score insights`。Topic 与练习题数量读取当前课程真实配置并按语言环境格式化；第一行只展示一次 Topic 数量，不为 video lessons 重复数字；`score insights` 使用小写 `s`。未来测试数量不为 1 时需同步复数化为 `tests`。 |
 | BR-012 | 所有商业化差异只以 **4.8 商业化与权限** 为准；其他章节只引用规则编号，不重复定义 Free/Pro。 |
 | BR-013 | 报告未生成或被 Pro 锁定时可展示对应考试的预生成封面与报告模块结构；预览模板不可交互、不写入成绩也不计入真实报告埋点，真实成绩仍只在测试记录进入 Results ready（结果已生成）后生成。 |
 
@@ -215,7 +215,7 @@ Exam Prep & Courses
 
 | 项目 | 说明 | 图示 |
 |---|---|---|
-| 页面头部 | 标题：**Adaptive exam prep for your best score**。副标题：**Create a personalized study plan, predict likely exam questions, or start a prep course.** 文案保持单行展示；窄屏可自然换行。 | ![VIS-01 首次进入 Custom Plan](./images/VIS-01-home-first-entry-custom-plan.png) |
+| 页面头部 | 当用户没有成功创建过 Custom Plan，且没有开始过任何 Prep Course 学习资源或考试时，标题：**Adaptive Exam Prep, Tailored to You**；副标题：**Create your study plan, practice realistic exam questions, or start an interactive course.** 标题与副标题保持清晰但克制的层级：桌面端分别为 40px / 15px，标题行高 1.15；桌面端优先单行展示，窄屏可自然换行。 | ![VIS-01 首次进入 Custom Plan](./images/VIS-01-home-first-entry-custom-plan.png) |
 | 分段 Tab | `Custom Plan` / `Prep Courses`。Tab 视觉、键盘切换和滑块动画与课程内部状态切换器一致。首次进入默认 Custom Plan。Custom Plan 状态下，在 Prep Courses 旁展示 `SAT, ACT and AP Prep` 引导提示。 | ![VIS-02 首次进入 Prep Courses](./images/VIS-02-home-first-entry-prep-courses.png) |
 | Custom Plan 上传 | 拖拽或 Select files；支持 PDF、Word、PPT、TXT、JPG、JPEG、PNG、HEIC、WebP；每个文件只处理前 50 页。上传区宽度与下方三张示例卡组成的容器一致。 | ![VIS-01 上传入口](./images/VIS-01-home-first-entry-custom-plan.png) |
 | 示例计划 | 标题固定 `Exam prep plan examples`，字体、颜色与 `Standardized Test Prep Courses` 一致；展示三张真实感示例卡。点击后进入真实预测/计划体验。 | ![VIS-01 示例计划](./images/VIS-01-home-first-entry-custom-plan.png) |
@@ -225,7 +225,7 @@ Exam Prep & Courses
 
 | 项目 | 说明 | 图示 |
 |---|---|---|
-| 页面头部 | 标题、副标题与首次进入完全一致；右上角展示 `+ New Prep Plan`。不再显示首次进入 Tab。 | ![VIS-04 已有进度首页](./images/VIS-04-home-active-exam-library.png) |
+| 页面头部 | 当用户成功创建至少一个 Custom Plan，或实际开始任一 Prep Course 的 Study Guide、Flashcards、Quiz、Lesson、Diagnostic 或 Full-Length Test 后，标题切换为 **Stay on Track for Your Best Score**；副标题切换为 **Personalized exam prep, all the way to test day.** 与首次进入状态共用 40px / 15px 的桌面端标题层级及同一套响应式递减规则。右上角展示 `+ New Prep Plan`，不再显示首次进入 Tab。仅浏览、搜索、打开课程或取消弹窗不得触发此状态。 | ![VIS-04 已有进度首页](./images/VIS-04-home-active-exam-library.png) |
 | Exam Library | 同时展示用户创建的计划和已经学习的 Prep Course。课程卡显示 IN PROGRESS、完成度、最近资源类型和最近 Topic；计划卡显示 READY/IN PROGRESS 与考试日期。 | ![VIS-04 Exam Library](./images/VIS-04-home-active-exam-library.png) |
 | 继续学习 | 点击课程进度卡，进入上次学习的课程/Topic/工具；点击计划卡进入计划详情。Course 一旦有进度，就必须同步出现在 Exam Library。 | ![VIS-04 继续学习](./images/VIS-04-home-active-exam-library.png) |
 | 侧边栏 | 支持折叠/展开；折叠不改变主内容层级和三列卡片尺寸。 | ![VIS-78 侧边栏折叠](./images/VIS-78-home-sidebar-collapsed.png) |
@@ -237,6 +237,7 @@ Exam Prep & Courses
 | 标题与搜索 | 标题：`Standardized Test Prep Courses`；删除说明句和 Total 数量。搜索 Placeholder：`Search a ready-made course for the exam you are preparing for...`。 | ![VIS-02 课程库](./images/VIS-02-home-first-entry-prep-courses.png) |
 | 分类筛选 | All courses、SAT、ACT、AP、Abitur。搜索和筛选组合生效；结果按课程配置顺序展示。 | ![VIS-72 搜索与 Coming soon](./images/VIS-72-course-search-and-coming-soon.png) |
 | 卡片网格 | 桌面端一行固定三张；卡片尺寸和间距与首页 Demo 一致。只有两张结果时，仍保持三列中单卡宽度，不拉伸。 | ![VIS-04 三列课程](./images/VIS-04-home-active-exam-library.png) |
+| 卡片信息 | 固定为三行：`• {topicCount} topics · video lessons`、`• {practiceQuestionCount} practice questions`、`• 1 full-length test • score insights`。所有数量以课程当前发布配置为准；第一行不得把同一数量在 topics 和 video lessons 前各显示一次；`score insights` 的 `s` 保持小写。 | ![VIS-02 课程卡片](./images/VIS-02-home-first-entry-prep-courses.png) |
 | 卡片状态 | 可用课程 CTA 为 Open course/Continue learning；不可用课程 CTA 为 Coming soon 且 disabled。左上角不展示 Coming soon/Ready/In progress 状态标签，状态只在 CTA 或 Exam Library 体现。 | ![VIS-72 Coming soon](./images/VIS-72-course-search-and-coming-soon.png) |
 | 空结果 | 搜索无匹配课程时展示明确 Empty State、保留搜索框和分类筛选，并提供 Clear search。 | ![VIS-73 搜索无结果](./images/VIS-73-course-search-empty.png) |
 
@@ -943,8 +944,10 @@ Course→Writing 的跨产品转化复用 Writing Tools 已有埋点协议；在
 | Key | English | Context |
 |---|---|---|
 | `ep.nav` | Exam Prep & Courses | 侧边栏 |
-| `ep.hero.title` | Adaptive exam prep for your best score | 首页标题 |
-| `ep.hero.subtitle` | Create a personalized study plan, predict likely exam questions, or start a prep course. | 首页副标题 |
+| `ep.hero.first_entry.title` | Adaptive Exam Prep, Tailored to You | 没有 Custom Plan 且没有课程活动时的首页标题 |
+| `ep.hero.first_entry.subtitle` | Create your study plan, practice realistic exam questions, or start an interactive course. | 没有 Custom Plan 且没有课程活动时的首页副标题 |
+| `ep.hero.active.title` | Stay on Track for Your Best Score | 已成功创建计划或已开始课程后的首页标题 |
+| `ep.hero.active.subtitle` | Personalized exam prep, all the way to test day. | 已成功创建计划或已开始课程后的首页副标题 |
 | `ep.mode.custom` | Custom Plan | 首次进入 Tab |
 | `ep.mode.courses` | Prep Courses | 首次进入 Tab |
 | `ep.mode.cue` | SAT, ACT and AP Prep | Prep Courses 指引 |
@@ -958,6 +961,9 @@ Course→Writing 的跨产品转化复用 Writing Tools 已有埋点协议；在
 | `ep.course.open` | Open course | 可用课程 |
 | `ep.course.continue` | Continue learning | 有进度课程 |
 | `ep.course.soon` | Coming soon | 未开放课程 |
+| `ep.course.meta.topics` | • {topicCount} topics · video lessons | 课程卡第 1 行；不重复 video lesson 数量 |
+| `ep.course.meta.questions` | • {practiceQuestionCount} practice questions | 课程卡第 2 行 |
+| `ep.course.meta.test` | • 1 full-length test • score insights | 课程卡第 3 行；`score insights` 使用小写 `s` |
 
 ### 8.2 学习、考试与报告
 
@@ -1009,11 +1015,11 @@ Course→Writing 的跨产品转化复用 Writing Tools 已有埋点协议；在
 
 | ID | 前置条件 | 操作 | 预期结果 |
 |---|---|---|---|
-| TC-001 | 新用户，无计划/课程进度 | 进入 Exam Prep & Courses | 显示首屏标题、副标题、Custom Plan 默认 Tab、上传区、3 张示例；无 Exam Library |
+| TC-001 | 新用户，无计划/课程进度 | 进入 Exam Prep & Courses | 显示 `Adaptive Exam Prep, Tailored to You` 与 `Create your study plan, practice realistic exam questions, or start an interactive course.`；Custom Plan 为默认 Tab；显示上传区和 3 张示例；无 Exam Library |
 | TC-002 | 同上 | 点击/键盘/拖动切换到 Prep Courses | 滑块切换；显示课程标题、搜索、筛选、三列卡片；状态可访问 |
 | TC-003 | 同上 | 上传不支持格式或超页数文件 | 格式错误被阻止；支持文件明确提示只处理前 50 页 |
-| TC-004 | 同上 | 创建计划 | 必填校验；成功后首页切到 active，计划出现在 Exam Library |
-| TC-005 | 用户已有课程进度 | 进入首页 | Exam Library 出现课程进度卡和最近活动；课程目录卡尺寸不变 |
+| TC-004 | 同上 | 创建计划 | 必填校验；只有创建成功后首页才切到 active；标题变为 `Stay on Track for Your Best Score`，副标题变为 `Personalized exam prep, all the way to test day.`；计划出现在 Exam Library |
+| TC-005 | 用户已有课程进度 | 进入首页 | 显示 active 标题与副标题；Exam Library 出现课程进度卡和最近活动；课程目录卡尺寸不变 |
 | TC-006 | 课程库 | 搜索 `ACT`，再筛选 AP | 组合条件正确；无结果时显示 Empty State 和 Clear search |
 | TC-007 | 课程库只剩 2 张结果 | 调整筛选 | 单卡宽度仍为三列宽度，不拉伸占满 |
 | TC-008 | Coming soon 课程 | 点击/键盘操作 | 不进入空课程；状态可感知；不触发 `web_ep_course_open` |
@@ -1023,6 +1029,7 @@ Course→Writing 的跨产品转化复用 Writing Tools 已有埋点协议；在
 | TC-012 | 已有两个课程活动 | 进入首页 | Exam Library 分别展示两张固定三列宽度卡片；最近活动与完成度互不串用 |
 | TC-013 | query 请求 empty，但服务端已有活动 | 刷新首页 | 真实数据优先，展示 active，不出现“初始状态 + 进度”组合 |
 | TC-014 | Coming soon 课程被注入 activity | 刷新首页/课程库 | 忽略非法 activity、记录告警；课程仍 disabled 且不进入 Exam Library |
+| TC-015 | 任一课程卡有真实发布数据 | 检查三行信息 | 依次显示 `{topicCount} topics · video lessons`、`{practiceQuestionCount} practice questions`、`1 full-length test • score insights`；每行数量正确，首行不重复 Topic 数量，`score insights` 的 `s` 为小写 |
 
 ### 9.2 课程、学习工具与商业化
 
