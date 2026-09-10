@@ -3131,8 +3131,8 @@ onBeforeUnmount(() => {
                       <span class="generator-file generator-file-notes">
                         <b>Notes</b>
                       </span>
-                      <span class="generator-file generator-file-pdf">
-                        <b>PDF</b>
+                      <span class="generator-file generator-file-slides">
+                        <b>Lecture slides</b>
                       </span>
                       <span class="generator-file generator-file-exams">
                         <b>Past exams</b>
