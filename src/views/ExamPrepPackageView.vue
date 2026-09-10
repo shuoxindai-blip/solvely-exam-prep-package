@@ -48,7 +48,7 @@ type PredictionSample = {
 
 const EXAM_PREP_HOME_TITLE = "Adaptive exam prep for your best score";
 const EXAM_PREP_HOME_SUBTITLE =
-  "Create a personalized study plan, predict likely exam questions, or start a prep course.";
+  "Create a personalized study plan and predict likely exam questions, or start an interactive prep course.";
 type DiagnosticTestState = AssessmentState;
 type PracticeTestState = AssessmentState;
 type ReviewFilter = "ALL" | "INCORRECT" | "CORRECT" | "OMITTED";
