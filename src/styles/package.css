@@ -1130,10 +1130,8 @@
     .first-entry-courses-guide { min-height:34px; position:absolute; left:calc(100% + 14px); top:50%; display:inline-flex; align-items:center; padding:0 13px; border:1px solid #cfe4ff; border-radius:12px; background:#f3f8ff; color:#007aff; box-shadow:0 5px 14px rgba(28,99,176,.1); font-size:13px; font-weight:650; line-height:18px; white-space:nowrap; transform:translateY(-50%); }
     .first-entry-courses-guide::before { content:""; width:9px; height:9px; position:absolute; left:-6px; top:50%; border-bottom:1px solid #cfe4ff; border-left:1px solid #cfe4ff; background:#f3f8ff; transform:translateY(-50%) rotate(45deg); }
     .first-entry-upload { min-height:286px; display:grid; grid-template-columns:minmax(310px,.82fr) minmax(0,1.18fr); align-items:stretch; gap:22px; padding:22px; overflow:hidden; border:1px solid #dfe4eb; border-radius:24px; background:linear-gradient(135deg,#fff 0%,#fff 48%,#f4f9ff 100%); box-shadow:0 18px 42px rgba(27,36,50,.1); }
-    .first-entry-upload-copy { min-width:0; display:flex; flex-direction:column; align-items:flex-start; justify-content:center; padding:12px 8px 12px 16px; text-align:left; }
-    .first-entry-upload-icon { width:52px; height:44px; display:block; object-fit:contain; }
-    .first-entry-upload-icon.dark { display:none; }
-    .first-entry-upload h2 { max-width:370px; margin:12px 0 0; color:#181a1f; font-size:20px; font-weight:700; line-height:27px; letter-spacing:-.2px; }
+    .first-entry-upload-copy { min-width:0; display:flex; flex-direction:column; align-items:flex-start; justify-content:center; padding:20px 18px 20px 16px; text-align:left; }
+    .first-entry-upload h2 { max-width:370px; margin:0; color:#181a1f; font-size:20px; font-weight:700; line-height:27px; letter-spacing:-.2px; }
     .first-entry-upload p { margin:0; color:#626a77; font-size:14px; line-height:21px; }
     .first-entry-upload .first-entry-upload-formats { margin-top:12px; color:#89919e; font-size:12px; line-height:18px; }
     .first-entry-upload button { min-width:142px; height:40px; margin-top:18px; padding:0 30px; border:0; border-radius:999px; background:#007aff; color:#fff; font-size:16px; font-weight:650; line-height:24px; cursor:pointer; transition:background .16s ease,box-shadow .16s ease,transform .16s ease; }
@@ -1186,8 +1184,6 @@
     body.dark .first-entry-courses-guide { border-color:rgba(81,169,254,.35); background:#233348; color:#78baff; box-shadow:0 5px 14px rgba(0,0,0,.2); }
     body.dark .first-entry-courses-guide::before { border-color:rgba(81,169,254,.35); background:#233348; }
     body.dark .first-entry-upload { border-color:var(--line); background:linear-gradient(135deg,var(--surface) 0%,var(--surface) 48%,#1a2940 100%); box-shadow:0 18px 42px rgba(0,0,0,.28); }
-    body.dark .first-entry-upload-icon.light { display:none; }
-    body.dark .first-entry-upload-icon.dark { display:block; }
     body.dark .first-entry-upload h2 { color:var(--text); }
     body.dark .first-entry-upload p { color:var(--muted); }
     body.dark .first-entry-upload .first-entry-upload-formats { color:#93a0b4; }

@@ -3053,16 +3053,6 @@ onBeforeUnmount(() => {
                 @drop.prevent="handlePrepFileDrop"
               >
                 <div class="first-entry-upload-copy">
-                  <img
-                    class="first-entry-upload-icon light"
-                    src="/assets/ep-home/exam-upload-icon.webp"
-                    alt=""
-                  />
-                  <img
-                    class="first-entry-upload-icon dark"
-                    src="/assets/ep-home/exam-upload-icon-dark.webp"
-                    alt=""
-                  />
                   <h2>Turn your study materials into a personalized prep plan.</h2>
                   <p class="first-entry-upload-formats">PDF, Word, PPT, TXT, or images · Up to 50 pages</p>
                   <button type="button" @click="openPrepFilePicker">Upload materials</button>
