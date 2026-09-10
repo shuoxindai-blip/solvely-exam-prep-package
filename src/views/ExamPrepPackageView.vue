@@ -37,14 +37,6 @@ type ResultView = "full" | "score" | "review" | "improve";
 type ResultSource = "diagnostic" | "practice";
 type HomePreviewState = "empty" | "created";
 type FirstEntryTab = "create" | "courses";
-type PredictionSample = {
-  id: number;
-  school: string;
-  course: string;
-  image: string;
-  mockCount: number;
-  accuracy: number;
-};
 
 const FIRST_ENTRY_HOME_TITLE = "Adaptive Exam Prep, Tailored to You";
 const FIRST_ENTRY_HOME_SUBTITLE =
@@ -217,6 +209,10 @@ const showSeededPrediction = computed(() =>
   startedCourseFamilies.value.size === 0,
 );
 const firstEntryTab = ref<FirstEntryTab>("create");
+const firstEntryCreatePanel = ref<HTMLElement | null>(null);
+const firstEntryCoursesPanel = ref<HTMLElement | null>(null);
+let firstEntryScrollFrame: number | null = null;
+let firstEntryScrollLockTimer: number | null = null;
 const controllerHomeState = computed<HomePreviewState>(() =>
   showFirstEntryHome.value ? "empty" : "created",
 );
@@ -1206,34 +1202,6 @@ const courses: Course[] = [
   catalogCourse("abitur", "Abitur Physik", 25, 1503, "physics", "german abitur physics physik science"),
 ];
 
-// Source: Solvely production /exam/home sample_ep_config.json, captured 2026-09-08.
-const predictionSamples: PredictionSample[] = [
-  {
-    id: 80304,
-    school: "University of Pennsylvania",
-    course: "BIOL 1101: Introduction to Biology A",
-    image: "/assets/ep-home/exam-sample-1.webp",
-    mockCount: 2,
-    accuracy: 94,
-  },
-  {
-    id: 80299,
-    school: "University of California -LA",
-    course: "STATS 10: Introduction to Statistical Reasoning",
-    image: "/assets/ep-home/exam-sample-2.webp",
-    mockCount: 2,
-    accuracy: 94,
-  },
-  {
-    id: 80294,
-    school: "Santa Monica College",
-    course: "PSYCH 1: General Psychology",
-    image: "/assets/ep-home/exam-sample-3.webp",
-    mockCount: 2,
-    accuracy: 94,
-  },
-];
-
 const COURSE_ACTIVITY_STORAGE_KEY = "solvely:ep:course-activity";
 
 const filteredCourses = computed(() => {
@@ -1536,9 +1504,6 @@ function showNewPredictionDialog(title: string) {
 }
 function openNewPrediction() {
   showNewPredictionDialog("AP Biology Midterm");
-}
-function openSamplePrediction(sample: PredictionSample) {
-  showNewPredictionDialog(sample.course);
 }
 function openPrepFilePicker() {
   prepFileInput.value?.click();
@@ -2397,6 +2362,47 @@ watch([() => route.query.paywall, isProMember], syncDirectPaywallIntent);
 
 watch(sectionFilter, initializeSectionDisclosure);
 
+function syncFirstEntryTabFromScroll() {
+  firstEntryScrollFrame = null;
+  if (
+    !showFirstEntryHome.value ||
+    isCourseOpen.value ||
+    firstEntryScrollLockTimer !== null ||
+    !firstEntryCoursesPanel.value
+  ) return;
+
+  const activationLine = Math.min(260, window.innerHeight * 0.34);
+  firstEntryTab.value =
+    firstEntryCoursesPanel.value.getBoundingClientRect().top <= activationLine
+      ? "courses"
+      : "create";
+}
+
+function scheduleFirstEntryTabSync() {
+  if (firstEntryScrollFrame !== null) return;
+  firstEntryScrollFrame = window.requestAnimationFrame(syncFirstEntryTabFromScroll);
+}
+
+function scrollToFirstEntrySection(section: FirstEntryTab) {
+  firstEntryTab.value = section;
+  const target = section === "create"
+    ? firstEntryCreatePanel.value
+    : firstEntryCoursesPanel.value;
+  if (!target) return;
+
+  if (firstEntryScrollLockTimer !== null) {
+    window.clearTimeout(firstEntryScrollLockTimer);
+  }
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const stickyOffset = window.innerWidth <= 820 ? 156 : 88;
+  const top = window.scrollY + target.getBoundingClientRect().top - stickyOffset;
+  window.scrollTo({ top: Math.max(0, top), behavior: reduceMotion ? "auto" : "smooth" });
+  firstEntryScrollLockTimer = window.setTimeout(() => {
+    firstEntryScrollLockTimer = null;
+    scheduleFirstEntryTabSync();
+  }, reduceMotion ? 0 : 700);
+}
+
 function clampDemoControllerPosition(x: number, y: number) {
   const controller = demoController.value;
   if (!controller) return { x, y };
@@ -2528,6 +2534,7 @@ watch(examFamily, () => { void loadPackageData(); });
 onMounted(async () => {
   document.body.classList.add("package-route");
   window.addEventListener("resize", keepDemoControllerInViewport);
+  window.addEventListener("scroll", scheduleFirstEntryTabSync, { passive: true });
   syncTabFromRoute();
   try {
     const savedPredictions =
@@ -2611,6 +2618,8 @@ onMounted(async () => {
   syncDirectPaywallIntent();
   improvePracticeProgress.value = loadImprovePracticeProgress();
   await loadPackageData();
+  await nextTick();
+  scheduleFirstEntryTabSync();
 });
 
 onBeforeUnmount(() => {
@@ -2621,8 +2630,15 @@ onBeforeUnmount(() => {
   if (studyTopicPopoverReleaseTimer !== null) {
     window.clearTimeout(studyTopicPopoverReleaseTimer);
   }
+  if (firstEntryScrollFrame !== null) {
+    window.cancelAnimationFrame(firstEntryScrollFrame);
+  }
+  if (firstEntryScrollLockTimer !== null) {
+    window.clearTimeout(firstEntryScrollLockTimer);
+  }
   stopDemoControllerDrag();
   window.removeEventListener("resize", keepDemoControllerInViewport);
+  window.removeEventListener("scroll", scheduleFirstEntryTabSync);
   document.body.classList.remove("package-route", "dark");
 });
 </script>
@@ -2991,47 +3007,44 @@ onBeforeUnmount(() => {
         :class="['workspace', 'predictor-home-workspace', { 'is-first-entry': showFirstEntryHome }]"
       >
         <template v-if="showFirstEntryHome">
-          <section class="first-entry-hero" aria-labelledby="firstEntryTitle">
-            <header class="first-entry-heading">
-              <h1 id="firstEntryTitle">{{ FIRST_ENTRY_HOME_TITLE }}</h1>
-              <p>{{ FIRST_ENTRY_HOME_SUBTITLE }}</p>
-              <div class="first-entry-tabs-wrap">
-                <div class="first-entry-tabs" role="tablist" aria-label="Choose how to prepare">
-                  <button
-                    id="firstEntryCreateTab"
-                    class="first-entry-tab"
-                    type="button"
-                    role="tab"
-                    :aria-selected="firstEntryTab === 'create'"
-                    aria-controls="firstEntryCreatePanel"
-                    @click="firstEntryTab = 'create'"
-                  >
-                    Custom Plan
-                  </button>
-                  <button
-                    id="firstEntryCoursesTab"
-                    class="first-entry-tab"
-                    type="button"
-                    role="tab"
-                    :aria-selected="firstEntryTab === 'courses'"
-                    aria-controls="firstEntryCoursesPanel"
-                    @click="firstEntryTab = 'courses'"
-                  >
-                    Prep Courses
-                  </button>
-                </div>
-                <span
-                  v-if="firstEntryTab === 'create'"
-                  class="first-entry-courses-guide"
-                  role="note"
-                >SAT, ACT and AP Prep</span>
-              </div>
-            </header>
-            <div
+          <header class="first-entry-heading">
+            <h1 id="firstEntryTitle">{{ FIRST_ENTRY_HOME_TITLE }}</h1>
+            <p>{{ FIRST_ENTRY_HOME_SUBTITLE }}</p>
+          </header>
+          <div class="first-entry-tabs-wrap">
+            <div class="first-entry-tabs" role="navigation" aria-label="Choose how to prepare">
+              <button
+                id="firstEntryCreateTab"
+                class="first-entry-tab"
+                type="button"
+                :aria-current="firstEntryTab === 'create' ? 'page' : undefined"
+                aria-controls="firstEntryCreatePanel"
+                @click="scrollToFirstEntrySection('create')"
+              >
+                Custom Plan
+              </button>
+              <button
+                id="firstEntryCoursesTab"
+                class="first-entry-tab"
+                type="button"
+                :aria-current="firstEntryTab === 'courses' ? 'page' : undefined"
+                aria-controls="firstEntryCoursesPanel"
+                @click="scrollToFirstEntrySection('courses')"
+              >
+                Prep Courses
+              </button>
+            </div>
+            <span
               v-if="firstEntryTab === 'create'"
+              class="first-entry-courses-guide"
+              role="note"
+            >SAT, ACT and AP Prep</span>
+          </div>
+          <section class="first-entry-hero" aria-labelledby="firstEntryTitle">
+            <div
+              ref="firstEntryCreatePanel"
               id="firstEntryCreatePanel"
               class="first-entry-tab-panel"
-              role="tabpanel"
               aria-labelledby="firstEntryCreateTab"
             >
               <div
@@ -3039,20 +3052,55 @@ onBeforeUnmount(() => {
                 @dragover.prevent
                 @drop.prevent="handlePrepFileDrop"
               >
-                <img
-                  class="first-entry-upload-icon light"
-                  src="/assets/ep-home/exam-upload-icon.webp"
-                  alt=""
-                />
-                <img
-                  class="first-entry-upload-icon dark"
-                  src="/assets/ep-home/exam-upload-icon-dark.webp"
-                  alt=""
-                />
-                <h2>Drag &amp; drop exam materials here</h2>
-                <p>Supported types: PDF, Word, PPT, TXT, JPG, JPEG, PNG, HEIC, WebP</p>
-                <p>We can only process the first 50 pages of each file</p>
-                <button type="button" @click="openPrepFilePicker">Select files</button>
+                <div class="first-entry-upload-copy">
+                  <img
+                    class="first-entry-upload-icon light"
+                    src="/assets/ep-home/exam-upload-icon.webp"
+                    alt=""
+                  />
+                  <img
+                    class="first-entry-upload-icon dark"
+                    src="/assets/ep-home/exam-upload-icon-dark.webp"
+                    alt=""
+                  />
+                  <h2>Upload your study materials here for a personalized study plan and realistic mock exams.</h2>
+                  <p class="first-entry-upload-formats">PDF, Word, PPT, TXT, or images · Up to 50 pages</p>
+                  <button type="button" @click="openPrepFilePicker">Select files</button>
+                </div>
+                <div class="first-entry-upload-visual" aria-hidden="true">
+                  <span class="first-entry-generator-art">
+                    <span class="generator-materials">
+                      <span class="generator-file generator-file-notes">
+                        <b>Notes</b>
+                        <small>Course notes</small>
+                      </span>
+                      <span class="generator-file generator-file-pdf">
+                        <b>PDF</b>
+                        <small>Past exam</small>
+                      </span>
+                    </span>
+                    <span class="generator-flow" />
+                    <span class="generator-engine">
+                      <span class="generator-spark">✦</span>
+                      <strong>Solvely AI</strong>
+                      <small>Building your prep</small>
+                    </span>
+                    <span class="generator-flow" />
+                    <span class="generator-outcomes">
+                      <span class="generator-result-card plan">
+                        <small>STUDY PLAN</small>
+                        <strong>Personalized plan</strong>
+                        <span class="generator-plan-lines"><i /><i /><i /></span>
+                      </span>
+                      <span class="generator-result-card exam">
+                        <small>MOCK EXAM</small>
+                        <strong>Realistic questions</strong>
+                        <span class="generator-answer-line"><i /> A</span>
+                        <span class="generator-answer-line selected"><i /> B</span>
+                      </span>
+                    </span>
+                  </span>
+                </div>
                 <input
                   ref="prepFileInput"
                   class="sr-only"
@@ -3062,33 +3110,6 @@ onBeforeUnmount(() => {
                   @change="handlePrepFileSelection"
                 />
               </div>
-
-              <section class="prediction-samples" aria-labelledby="predictionSamplesTitle">
-                <h2 id="predictionSamplesTitle">Exam prep plan examples</h2>
-                <div class="prediction-sample-grid">
-                  <button
-                    v-for="sample in predictionSamples"
-                    :key="sample.id"
-                    class="prediction-sample-card"
-                    type="button"
-                    :aria-label="`Try ${sample.course}`"
-                    @click="openSamplePrediction(sample)"
-                  >
-                    <span class="prediction-sample-image">
-                      <img :src="sample.image" :alt="`${sample.course} exam preview`" />
-                      <span>Final Exam</span>
-                    </span>
-                    <span class="prediction-sample-body">
-                      <strong>{{ sample.course }}</strong>
-                      <small>{{ sample.school }}</small>
-                      <span class="prediction-sample-stats">
-                        <span>{{ sample.mockCount }} Mock Exams</span>
-                        <span>{{ sample.accuracy }}% Accuracy</span>
-                      </span>
-                    </span>
-                  </button>
-                </div>
-              </section>
             </div>
           </section>
         </template>
@@ -3423,10 +3444,9 @@ onBeforeUnmount(() => {
         </section>
 
         <section
-          v-if="!showFirstEntryHome || firstEntryTab === 'courses'"
+          ref="firstEntryCoursesPanel"
           id="firstEntryCoursesPanel"
           :class="['exam-catalog', { 'first-entry-courses-panel': showFirstEntryHome }]"
-          :role="showFirstEntryHome ? 'tabpanel' : undefined"
           :aria-labelledby="showFirstEntryHome ? 'firstEntryCoursesTab' : 'examCatalogTitle'"
         >
           <div class="predictor-library-heading exam-catalog-heading">
