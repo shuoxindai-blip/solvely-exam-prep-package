@@ -1127,16 +1127,17 @@
     .first-entry-tab:hover:not([aria-current="page"]) { color:#30343a; background:rgba(255,255,255,.58); }
     .first-entry-tab[aria-current="page"] { background:#007aff; color:#fff; font-weight:650; box-shadow:0 2px 7px rgba(0,122,255,.22); }
     .first-entry-tab:active { transform:scale(.98); }
-    .first-entry-courses-guide { min-height:34px; position:absolute; left:calc(100% + 14px); top:50%; display:inline-flex; align-items:center; padding:0 13px; border:1px solid #cfe4ff; border-radius:12px; background:#f3f8ff; color:#007aff; box-shadow:0 5px 14px rgba(28,99,176,.1); font-size:13px; font-weight:650; line-height:18px; white-space:nowrap; transform:translateY(-50%); }
-    .first-entry-courses-guide::before { content:""; width:9px; height:9px; position:absolute; left:-6px; top:50%; border-bottom:1px solid #cfe4ff; border-left:1px solid #cfe4ff; background:#f3f8ff; transform:translateY(-50%) rotate(45deg); }
-    .first-entry-upload { min-height:264px; display:grid; grid-template-columns:minmax(310px,.82fr) minmax(0,1.18fr); align-items:stretch; gap:22px; padding:22px; overflow:hidden; border:1.5px dashed rgba(0,122,255,.3); border-radius:24px; background:linear-gradient(135deg,#fff 0%,#fff 48%,#f4f9ff 100%); box-shadow:0 12px 32px rgba(27,36,50,.07); }
+    .first-entry-upload { min-height:264px; display:grid; grid-template-columns:minmax(310px,.82fr) minmax(0,1.18fr); align-items:stretch; gap:22px; padding:22px; overflow:hidden; border:1.5px dashed rgba(0,122,255,.3); border-radius:24px; outline:0; background:linear-gradient(135deg,#fff 0%,#fff 48%,#f4f9ff 100%); box-shadow:0 12px 32px rgba(27,36,50,.07); cursor:pointer; transition:border-color .18s ease,background .18s ease,box-shadow .18s ease,transform .18s ease; }
+    .first-entry-upload:hover { border-color:#007aff; background:linear-gradient(135deg,#f8fbff 0%,#f5f9ff 48%,#eaf4ff 100%); box-shadow:0 16px 38px rgba(0,122,255,.13); transform:translateY(-1px); }
+    .first-entry-upload:focus-visible { border-color:#007aff; box-shadow:0 0 0 4px rgba(0,122,255,.12),0 16px 38px rgba(0,122,255,.12); }
     .first-entry-upload-copy { min-width:0; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:18px 16px; text-align:center; }
     .first-entry-upload h2 { max-width:370px; margin:0; color:#181a1f; font-size:20px; font-weight:700; line-height:27px; letter-spacing:-.2px; }
     .first-entry-upload p { margin:0; color:#626a77; font-size:14px; line-height:21px; }
     .first-entry-upload .first-entry-upload-formats { display:grid; gap:1px; margin-top:12px; color:#89919e; font-size:12px; line-height:18px; }
-    .first-entry-upload button { min-width:142px; height:40px; margin-top:18px; padding:0 30px; border:0; border-radius:999px; background:#007aff; color:#fff; font-size:16px; font-weight:650; line-height:24px; cursor:pointer; transition:background .16s ease,box-shadow .16s ease,transform .16s ease; }
-    .first-entry-upload button:hover { background:#006fe8; box-shadow:0 7px 18px rgba(0,122,255,.22); transform:translateY(-1px); }
-    .first-entry-upload-visual { min-width:0; min-height:220px; display:flex; align-items:center; justify-content:center; overflow:hidden; padding:18px 14px; border:1px solid rgba(70,146,255,.14); border-radius:18px; background:radial-gradient(circle at 58% 50%,rgba(64,153,255,.2),rgba(226,239,255,.58) 52%,rgba(244,249,255,.92) 100%); }
+    .first-entry-upload-cta { min-width:142px; height:40px; display:inline-flex; align-items:center; justify-content:center; margin-top:18px; padding:0 30px; border-radius:999px; background:#007aff; color:#fff; font-size:16px; font-weight:650; line-height:24px; transition:background .16s ease,box-shadow .16s ease,transform .16s ease; }
+    .first-entry-upload:hover .first-entry-upload-cta,.first-entry-upload:focus-visible .first-entry-upload-cta { background:#006fe8; box-shadow:0 7px 18px rgba(0,122,255,.22); transform:translateY(-1px); }
+    .first-entry-upload-visual { min-width:0; min-height:220px; display:flex; align-items:center; justify-content:center; overflow:hidden; padding:18px 14px; border:1px solid rgba(70,146,255,.14); border-radius:18px; background:radial-gradient(circle at 58% 50%,rgba(64,153,255,.2),rgba(226,239,255,.58) 52%,rgba(244,249,255,.92) 100%); transition:border-color .18s ease,background .18s ease; }
+    .first-entry-upload:hover .first-entry-upload-visual,.first-entry-upload:focus-visible .first-entry-upload-visual { border-color:rgba(0,122,255,.27); background:radial-gradient(circle at 58% 50%,rgba(64,153,255,.27),rgba(218,235,255,.68) 52%,rgba(239,247,255,.96) 100%); }
     .first-entry-generator-art { width:max-content; display:flex; align-items:center; justify-content:center; gap:10px; transform:scale(.88); transform-origin:center; }
     .generator-materials { width:102px; height:128px; position:relative; flex:0 0 auto; }
     .generator-file { width:92px; min-height:44px; position:absolute; display:flex; align-items:center; justify-content:center; overflow:hidden; padding:8px 9px; border:1px solid rgba(72,109,155,.14); border-radius:10px; background:#fff; box-shadow:0 7px 16px rgba(26,65,116,.12); text-align:center; transform:rotate(-5deg); }
@@ -1180,13 +1181,13 @@
     body.dark .first-entry-tab { color:#aeb9ca; }
     body.dark .first-entry-tab:hover:not([aria-current="page"]) { background:rgba(255,255,255,.06); color:#fff; }
     body.dark .first-entry-tab[aria-current="page"] { background:#1687f8; color:#fff; }
-    body.dark .first-entry-courses-guide { border-color:rgba(81,169,254,.35); background:#233348; color:#78baff; box-shadow:0 5px 14px rgba(0,0,0,.2); }
-    body.dark .first-entry-courses-guide::before { border-color:rgba(81,169,254,.35); background:#233348; }
     body.dark .first-entry-upload { border-color:var(--line); background:linear-gradient(135deg,var(--surface) 0%,var(--surface) 48%,#1a2940 100%); box-shadow:0 18px 42px rgba(0,0,0,.28); }
+    body.dark .first-entry-upload:hover,body.dark .first-entry-upload:focus-visible { border-color:#51a9fe; background:linear-gradient(135deg,#182438 0%,#19283f 48%,#1d3350 100%); box-shadow:0 0 0 4px rgba(81,169,254,.1),0 16px 38px rgba(0,0,0,.3); }
     body.dark .first-entry-upload h2 { color:var(--text); }
     body.dark .first-entry-upload p { color:var(--muted); }
     body.dark .first-entry-upload .first-entry-upload-formats { color:#93a0b4; }
     body.dark .first-entry-upload-visual { border-color:rgba(81,169,254,.2); background:radial-gradient(circle at 58% 50%,rgba(44,126,224,.24),rgba(29,45,68,.78) 56%,rgba(23,31,44,.96) 100%); }
+    body.dark .first-entry-upload:hover .first-entry-upload-visual,body.dark .first-entry-upload:focus-visible .first-entry-upload-visual { border-color:rgba(81,169,254,.34); background:radial-gradient(circle at 58% 50%,rgba(44,126,224,.32),rgba(29,45,68,.82) 56%,rgba(23,31,44,.98) 100%); }
     body.dark .generator-file,body.dark .generator-result-card { border-color:rgba(81,169,254,.22); background:#202b3d; box-shadow:0 10px 22px rgba(0,0,0,.23); }
     body.dark .generator-file b { color:#d6dfec; }
     body.dark .generator-file-notes b { color:#bcaaff; }
@@ -2697,14 +2698,12 @@
       .first-entry-heading p { margin:14px 10px 0; font-size:14px; line-height:21px; }
       .first-entry-tabs-wrap { top:68px; display:flex; flex-direction:column; align-items:center; margin:20px auto 26px; }
       .first-entry-tab { min-width:100px; height:42px; padding-inline:14px; font-size:14px; }
-      .first-entry-courses-guide { position:relative; left:auto; top:auto; margin-top:10px; transform:none; }
-      .first-entry-courses-guide::before { display:none; }
       .first-entry-upload { min-height:0; grid-template-columns:1fr; gap:18px; padding:18px; border-radius:20px; }
       .first-entry-upload-copy { align-items:center; padding:8px 4px 2px; text-align:center; }
       .first-entry-upload h2 { font-size:20px; line-height:27px; }
       .first-entry-upload p { font-size:13px; line-height:20px; }
       .first-entry-upload .first-entry-upload-formats { font-size:12px; line-height:18px; }
-      .first-entry-upload button { width:100%; max-width:260px; margin-top:16px; }
+      .first-entry-upload-cta { width:100%; max-width:260px; margin-top:16px; }
       .first-entry-upload-visual { min-height:164px; padding:5px 0; border-radius:15px; }
       .first-entry-generator-art { transform:scale(.58); }
       .predictor-home-workspace.is-first-entry .exam-catalog-heading h2 { margin-bottom:0; font-size:24px; line-height:31px; letter-spacing:-.35px; }

@@ -3034,11 +3034,6 @@ onBeforeUnmount(() => {
                 Prep Courses
               </button>
             </div>
-            <span
-              v-if="firstEntryTab === 'create'"
-              class="first-entry-courses-guide"
-              role="note"
-            >SAT, ACT and AP Prep</span>
           </div>
           <section class="first-entry-hero" aria-labelledby="firstEntryTitle">
             <div
@@ -3049,6 +3044,12 @@ onBeforeUnmount(() => {
             >
               <div
                 class="first-entry-upload"
+                role="button"
+                tabindex="0"
+                aria-label="Upload study materials"
+                @click="openPrepFilePicker"
+                @keydown.enter.prevent="openPrepFilePicker"
+                @keydown.space.prevent="openPrepFilePicker"
                 @dragover.prevent
                 @drop.prevent="handlePrepFileDrop"
               >
@@ -3058,7 +3059,7 @@ onBeforeUnmount(() => {
                     <span>PDF, Word, PPT, TXT, or images</span>
                     <span>Up to 50 pages per file</span>
                   </p>
-                  <button type="button" @click="openPrepFilePicker">Upload materials</button>
+                  <span class="first-entry-upload-cta" aria-hidden="true">Upload materials</span>
                 </div>
                 <div class="first-entry-upload-visual" aria-hidden="true">
                   <span class="first-entry-generator-art">
@@ -3099,15 +3100,15 @@ onBeforeUnmount(() => {
                     </span>
                   </span>
                 </div>
-                <input
-                  ref="prepFileInput"
-                  class="sr-only"
-                  type="file"
-                  accept=".pdf,.doc,.docx,.ppt,.pptx,.txt,.jpg,.jpeg,.png,.heic,.webp"
-                  aria-label="Choose exam materials"
-                  @change="handlePrepFileSelection"
-                />
               </div>
+              <input
+                ref="prepFileInput"
+                class="sr-only"
+                type="file"
+                accept=".pdf,.doc,.docx,.ppt,.pptx,.txt,.jpg,.jpeg,.png,.heic,.webp"
+                aria-label="Choose exam materials"
+                @change="handlePrepFileSelection"
+              />
             </div>
           </section>
         </template>
