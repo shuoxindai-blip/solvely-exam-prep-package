@@ -3480,7 +3480,7 @@ onBeforeUnmount(() => {
                   • {{ course.questions }} practice questions
                 </span>
                 <span class="course-card-detail">
-                  • 1 full-length test • Score insights
+                  • 1 full-length test • score insights
                 </span>
                 <strong class="course-card-action">
                   {{ courseHomeAction(course) }}
