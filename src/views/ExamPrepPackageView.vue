@@ -3057,7 +3057,6 @@ onBeforeUnmount(() => {
                   <h2>Turn your study materials into a personalized prep plan</h2>
                   <p class="first-entry-upload-formats">
                     <span>PDF, Word, PPT, TXT, or images</span>
-                    <span>Up to 50 pages per file</span>
                   </p>
                   <span class="first-entry-upload-cta" aria-hidden="true">Upload materials</span>
                 </div>
