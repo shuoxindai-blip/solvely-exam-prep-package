@@ -320,6 +320,39 @@ const resultReport = computed(() =>
     ? diagnosticResultReport.value
     : practiceResultReport.value,
 );
+const abiturPerformanceLabel = computed(() => {
+  const score = resultReport.value?.totalScore ?? 0;
+  if (score >= 13) return "Sehr gut";
+  if (score >= 10) return "Gut";
+  if (score >= 7) return "Befriedigend";
+  if (score >= 5) return "Ausreichend";
+  if (score >= 1) return "Mangelhaft";
+  return "Ungenügend";
+});
+const abiturOverviewItems = computed(() => {
+  if (!isAbiturPackage.value || !resultReport.value) return [];
+  const recommendations: Record<string, string> = {
+    Analysis:
+      "Vertiefen Sie Funktionsuntersuchungen, Änderungsraten und Integralmodelle.",
+    "Analytische Geometrie/Lineare Algebra":
+      "Üben Sie mehrschrittige Vektor- und Ebenenaufgaben sowie geometrische Begründungen.",
+    Stochastik:
+      "Wiederholen Sie bedingte Wahrscheinlichkeiten, Verteilungen und die Interpretation von Ergebnissen.",
+  };
+  const rankedDomains = [...resultReport.value.domains].sort(
+    (left, right) => left.accuracy - right.accuracy,
+  );
+  const focusDomains = rankedDomains.filter((domain) => domain.accuracy < 90);
+  return (focusDomains.length ? focusDomains : rankedDomains.slice(0, 1))
+    .slice(0, 2)
+    .map((domain) => ({
+      name: domain.contentDomain,
+      accuracy: domain.accuracy,
+      recommendation:
+        recommendations[domain.contentDomain] ??
+        "Üben Sie die zentralen Aufgabentypen und begründen Sie jeden Rechenschritt vollständig.",
+    }));
+});
 const actScorePathways = computed(() => {
   if (!isActPackage.value || !resultReport.value) return [];
   const report = resultReport.value;
@@ -4099,7 +4132,70 @@ onBeforeUnmount(() => {
                     { 'results-locked-subsection': resultsLocked },
                   ]"
                 >
-                <section v-if="isApPackage" class="ap-score-report-card" aria-label="AP Calculus BC score summary">
+                <div
+                  v-if="isAbiturPackage"
+                  class="abitur-score-analysis-top"
+                >
+                  <section
+                    class="abitur-total-score-card"
+                    aria-label="Abitur Mathematik Gesamtpunktzahl"
+                  >
+                    <header>
+                      <span>Gesamtpunktzahl</span>
+                      <em>{{ abiturPerformanceLabel }}</em>
+                    </header>
+                    <strong
+                      >{{ resultReport.totalScore }}<small
+                        >/{{ resultReport.maximumScore }}</small
+                      ></strong
+                    >
+                    <div
+                      class="abitur-score-progress"
+                      role="progressbar"
+                      aria-label="Trefferquote"
+                      aria-valuemin="0"
+                      aria-valuemax="100"
+                      :aria-valuenow="resultReport.accuracy"
+                    >
+                      <i :style="{ width: `${resultReport.accuracy}%` }" />
+                    </div>
+                    <p>{{ resultReport.accuracy }}% Trefferquote</p>
+                  </section>
+
+                  <section
+                    class="abitur-overview-card"
+                    aria-labelledby="abiturOverviewTitle"
+                  >
+                    <header>
+                      <span id="abiturOverviewTitle">Abitur-Übersicht</span>
+                      <img
+                        class="abitur-overview-sparkles"
+                        src="/assets/report/abitur/overview-sparkles.svg"
+                        alt=""
+                      />
+                    </header>
+                    <p>
+                      Um beim nächsten Mal die volle Punktzahl (15/15) zu
+                      erreichen, sollten Sie sich auf folgende Bereiche
+                      konzentrieren:
+                    </p>
+                    <ul>
+                      <li
+                        v-for="item in abiturOverviewItems"
+                        :key="item.name"
+                      >
+                        <strong>{{ item.name }}: {{ item.accuracy }}%.</strong>
+                        {{ item.recommendation }}
+                      </li>
+                    </ul>
+                    <img
+                      class="abitur-overview-decoration"
+                      src="/assets/report/abitur/overview-decoration.svg"
+                      alt=""
+                    />
+                  </section>
+                </div>
+                <section v-else-if="isApPackage" class="ap-score-report-card" aria-label="AP Calculus BC score summary">
                   <header class="ap-score-report-cover">
                     <img src="/assets/report/ap/calculus-bc-header.png" alt="" />
                     <span>AP® Calculus BC</span>
@@ -4293,7 +4389,10 @@ onBeforeUnmount(() => {
                   </div>
                 </section>
 
-                <section :class="['report-ai-overview', { 'ap-report-overview': isApPackage }]">
+                <section
+                  v-if="!isAbiturPackage"
+                  :class="['report-ai-overview', { 'ap-report-overview': isApPackage }]"
+                >
                   <img
                     v-if="isApPackage"
                     class="ap-overview-decoration"

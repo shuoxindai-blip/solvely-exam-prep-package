@@ -2125,6 +2125,27 @@
     .score-report-view,.question-review-view,.topics-improve-view { display:grid; gap:16px; }
 
     .results-score-overview-group { display:grid; gap:16px; }
+    .abitur-score-analysis-top { display:grid; grid-template-columns:minmax(250px,.82fr) minmax(0,1.55fr); align-items:stretch; gap:16px; }
+    .abitur-total-score-card,.abitur-overview-card { border:1px solid var(--line); border-radius:18px; background:var(--surface); box-shadow:0 12px 34px rgba(37,58,86,.05); }
+    .abitur-total-score-card { min-height:238px; display:flex; flex-direction:column; padding:24px; }
+    .abitur-total-score-card > header { display:flex; align-items:center; justify-content:space-between; gap:14px; }
+    .abitur-total-score-card > header > span,.abitur-overview-card > header > span { color:#3595d6; font-size:12px; font-weight:760; letter-spacing:.03em; text-transform:uppercase; }
+    .abitur-total-score-card > header > em { flex:0 0 auto; padding:5px 8px; border-radius:6px; background:#ecf5ff; color:#087bf1; font-size:12px; font-style:normal; font-weight:720; }
+    .abitur-total-score-card > strong { display:flex; align-items:baseline; margin-top:22px; color:var(--text); font:680 52px/1 Poppins,Inter,sans-serif; letter-spacing:-.065em; }
+    .abitur-total-score-card > strong small { margin-left:6px; color:#989b9e; font-size:18px; font-weight:500; letter-spacing:0; }
+    .abitur-score-progress { height:7px; overflow:hidden; margin-top:auto; border-radius:999px; background:#d4d6dd; }
+    .abitur-score-progress i { height:100%; display:block; border-radius:inherit; background:#087bf1; }
+    .abitur-total-score-card > p { margin:7px 0 0; color:#989b9e; font-size:12px; text-align:right; }
+    .abitur-overview-card { position:relative; min-height:238px; overflow:hidden; padding:24px 28px; }
+    .abitur-overview-card > header { position:relative; z-index:1; display:flex; align-items:center; gap:5px; }
+    .abitur-overview-sparkles { width:13px; height:13px; }
+    .abitur-overview-card > p,.abitur-overview-card > ul { position:relative; z-index:1; max-width:720px; color:var(--text); font-size:13px; line-height:1.58; }
+    .abitur-overview-card > p { margin:10px 0 0; }
+    .abitur-overview-card > ul { display:grid; gap:7px; margin:12px 0 0; padding-left:21px; }
+    .abitur-overview-card li { padding-left:2px; }
+    .abitur-overview-card li strong { font-weight:720; }
+    .abitur-overview-decoration { position:absolute; right:8px; bottom:7px; width:80px; height:80px; pointer-events:none; }
+    body.dark .abitur-score-progress { background:#3d4652; }
     .score-report-card { overflow:hidden; border:1px solid var(--line); border-radius:20px; background:var(--surface); box-shadow:0 12px 34px rgba(37,58,86,.05); }
     .score-report-cover { min-height:82px; display:flex; align-items:center; justify-content:space-between; padding:0 24px; background:#3989b6 url('/assets/report/sat-score-cover.png') 50% 44%/520px auto no-repeat; color:#fff; }
     .score-report-cover span { font:500 17px/1.2 Poppins,Inter,sans-serif; }
@@ -2199,6 +2220,10 @@
     body.dark .report-ai-overview.ap-report-overview { background:linear-gradient(105deg,#1c2734,#182432); }
     body.dark .ap-report-overview p { color:#d6e3f2; }
     @media (max-width:700px) {
+      .abitur-score-analysis-top { grid-template-columns:minmax(0,1fr); }
+      .abitur-total-score-card,.abitur-overview-card { min-height:auto; }
+      .abitur-total-score-card { min-height:220px; padding:20px; }
+      .abitur-overview-card { padding:21px 22px; }
       .ap-score-report-cover { min-height:64px; }
       .ap-score-report-cover img { width:470px; }
       .ap-score-report-cover span { font-size:16px; }
