@@ -3054,7 +3054,10 @@ onBeforeUnmount(() => {
               >
                 <div class="first-entry-upload-copy">
                   <h2>Turn your study materials into a personalized prep plan.</h2>
-                  <p class="first-entry-upload-formats">PDF, Word, PPT, TXT, or images · Up to 50 pages</p>
+                  <p class="first-entry-upload-formats">
+                    <span>Supported types: PDF, Word, PPT, TXT, or images</span>
+                    <span>Up to 50 pages per file</span>
+                  </p>
                   <button type="button" @click="openPrepFilePicker">Upload materials</button>
                 </div>
                 <div class="first-entry-upload-visual" aria-hidden="true">
@@ -3062,20 +3065,21 @@ onBeforeUnmount(() => {
                     <span class="generator-materials">
                       <span class="generator-file generator-file-notes">
                         <b>Notes</b>
-                        <small>Course notes</small>
                       </span>
                       <span class="generator-file generator-file-pdf">
                         <b>PDF</b>
-                        <small>Reference file</small>
                       </span>
                       <span class="generator-file generator-file-exams">
                         <b>Past exams</b>
-                        <small>Previous tests</small>
                       </span>
                     </span>
                     <span class="generator-flow" />
                     <span class="generator-engine">
-                      <span class="generator-spark">✦</span>
+                      <img
+                        class="generator-engine-logo"
+                        src="/assets/solvely-ai-logo.jpeg"
+                        alt=""
+                      />
                       <strong>Solvely AI</strong>
                       <small>Building your prep</small>
                     </span>
