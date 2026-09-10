@@ -3053,9 +3053,9 @@ onBeforeUnmount(() => {
                 @drop.prevent="handlePrepFileDrop"
               >
                 <div class="first-entry-upload-copy">
-                  <h2>Turn your study materials into a personalized prep plan.</h2>
+                  <h2>Turn your study materials into a personalized prep plan</h2>
                   <p class="first-entry-upload-formats">
-                    <span>Supported types: PDF, Word, PPT, TXT, or images</span>
+                    <span>PDF, Word, PPT, TXT, or images</span>
                     <span>Up to 50 pages per file</span>
                   </p>
                   <button type="button" @click="openPrepFilePicker">Upload materials</button>
@@ -3081,7 +3081,7 @@ onBeforeUnmount(() => {
                         alt=""
                       />
                       <strong>Solvely AI</strong>
-                      <small>Building your prep</small>
+                      <small>Build your prep</small>
                     </span>
                     <span class="generator-flow" />
                     <span class="generator-outcomes">
