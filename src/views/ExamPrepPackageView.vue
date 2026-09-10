@@ -1261,6 +1261,13 @@ const courses: Course[] = [
   catalogCourse("abitur", "Abitur Mathematik", 31, 2929, "math", "german abitur mathematik mathematics math"),
   catalogCourse("abitur", "Abitur Physik", 25, 1503, "physics", "german abitur physics physik science"),
 ];
+const courseFamilyFilters = [
+  { value: "all", label: "All courses" },
+  { value: "sat", label: "SAT" },
+  { value: "act", label: "ACT" },
+  { value: "ap", label: "AP" },
+  { value: "abitur", label: "Abitur" },
+] as const;
 
 const COURSE_ACTIVITY_STORAGE_KEY = "solvely:ep:course-activity";
 
@@ -3520,23 +3527,34 @@ onBeforeUnmount(() => {
             </p>
           </div>
           <div class="exam-catalog-toolbar">
-            <label class="exam-search-wrap"
-              ><svg class="icon"><use href="#i-search" /></svg
-              ><input
+            <div
+              class="exam-family-filters"
+              role="group"
+              aria-label="Filter standardized test prep courses"
+            >
+              <button
+                v-for="filter in courseFamilyFilters"
+                :key="filter.value"
+                class="exam-family-filter-button"
+                type="button"
+                :aria-pressed="familyFilter === filter.value"
+                @click="familyFilter = filter.value"
+              >
+                {{ filter.label }}
+              </button>
+            </div>
+            <label class="exam-search-wrap">
+              <img
+                class="exam-search-icon"
+                src="/assets/course-filter/search.svg"
+                alt=""
+              />
+              <input
                 v-model="searchQuery"
                 aria-label="Search standardized test prep courses"
-                placeholder="Search a ready-made course for the exam you are preparing for..." /></label
-            ><label class="exam-filter-wrap"
-              ><span class="sr-only">Filter standardized test prep courses</span
-              ><select v-model="familyFilter" aria-label="Filter standardized test prep courses">
-                <option value="all">All courses</option>
-                <option value="sat">SAT</option>
-                <option value="act">ACT</option>
-                <option value="ap">AP</option>
-                <option value="abitur">Abitur</option>
-                </select
-              ><svg class="icon"><use href="#i-chevron" /></svg
-            ></label>
+                placeholder="Search SAT, ACT, AP, Abitur..."
+              />
+            </label>
           </div>
           <div class="course-grid" aria-label="Standardized test prep courses">
             <button
