@@ -46,9 +46,12 @@ type PredictionSample = {
   accuracy: number;
 };
 
-const EXAM_PREP_HOME_TITLE = "Adaptive exam prep for your best score";
-const EXAM_PREP_HOME_SUBTITLE =
-  "Create a personalized study plan and predict likely exam questions, or start an interactive prep course.";
+const FIRST_ENTRY_HOME_TITLE = "Adaptive Exam Prep, Built Around You";
+const FIRST_ENTRY_HOME_SUBTITLE =
+  "Create your study plan, practice high-yield exam questions, or start an interactive course.";
+const ACTIVE_HOME_TITLE = "Stay on Track for Your Best Score";
+const ACTIVE_HOME_SUBTITLE =
+  "Personalized exam prep, all the way to test day.";
 type DiagnosticTestState = AssessmentState;
 type PracticeTestState = AssessmentState;
 type ReviewFilter = "ALL" | "INCORRECT" | "CORRECT" | "OMITTED";
@@ -2990,8 +2993,8 @@ onBeforeUnmount(() => {
         <template v-if="showFirstEntryHome">
           <section class="first-entry-hero" aria-labelledby="firstEntryTitle">
             <header class="first-entry-heading">
-              <h1 id="firstEntryTitle">{{ EXAM_PREP_HOME_TITLE }}</h1>
-              <p>{{ EXAM_PREP_HOME_SUBTITLE }}</p>
+              <h1 id="firstEntryTitle">{{ FIRST_ENTRY_HOME_TITLE }}</h1>
+              <p>{{ FIRST_ENTRY_HOME_SUBTITLE }}</p>
               <div class="first-entry-tabs-wrap">
                 <div class="first-entry-tabs" role="tablist" aria-label="Choose how to prepare">
                   <button
@@ -3093,8 +3096,8 @@ onBeforeUnmount(() => {
         <template v-else>
           <section class="predictor-home-hero" aria-labelledby="predictorHomeTitle">
             <div class="predictor-home-copy">
-              <h1 id="predictorHomeTitle">{{ EXAM_PREP_HOME_TITLE }}</h1>
-              <p>{{ EXAM_PREP_HOME_SUBTITLE }}</p>
+              <h1 id="predictorHomeTitle">{{ ACTIVE_HOME_TITLE }}</h1>
+              <p>{{ ACTIVE_HOME_SUBTITLE }}</p>
             </div>
             <button
               class="new-prediction-button"
