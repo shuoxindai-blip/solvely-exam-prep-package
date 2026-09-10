@@ -3451,6 +3451,11 @@ onBeforeUnmount(() => {
         >
           <div class="predictor-library-heading exam-catalog-heading">
             <h2 id="examCatalogTitle">Standardized Test Prep Courses</h2>
+            <p>
+              Every course includes video lessons, study guides, flashcards,
+              quizzes, a full-length mock test with score analysis, and targeted
+              practice.
+            </p>
           </div>
           <div class="exam-catalog-toolbar">
             <label class="exam-search-wrap"
@@ -3485,30 +3490,18 @@ onBeforeUnmount(() => {
               :aria-label="`${courseHomeAction(course)}: ${course.title}`"
               @click="openCourseFromHome(course)"
             >
-              <span class="course-card-banner">
-                <span
-                  :class="['course-card-icon', { 'course-card-icon-exam': course.icon === 'exam' }]"
-                  aria-hidden="true"
-                >
-                  <span v-if="course.icon === 'exam'">{{ course.label }}</span>
-                  <svg v-else class="icon"><use :href="`#i-course-${course.icon}`" /></svg>
-                </span>
-                <strong>{{ course.title }}</strong>
+              <span
+                :class="['course-card-icon', { 'course-card-icon-exam': course.icon === 'exam' }]"
+                aria-hidden="true"
+              >
+                <span v-if="course.icon === 'exam'">{{ course.label }}</span>
+                <svg v-else class="icon"><use :href="`#i-course-${course.icon}`" /></svg>
               </span>
-              <span class="course-card-body">
+              <span class="course-card-copy">
+                <strong>{{ course.title }}</strong>
                 <span class="course-card-detail">
-                  • {{ course.topics }} topics · video lessons
+                  {{ course.videos }} video lessons · {{ course.questions }} questions
                 </span>
-                <span class="course-card-detail">
-                  • {{ course.questions }} practice questions
-                </span>
-                <span class="course-card-detail">
-                  • 1 full-length test • score insights
-                </span>
-                <strong class="course-card-action">
-                  {{ courseHomeAction(course) }}
-                  <svg v-if="isCourseAvailable(course)" class="icon" aria-hidden="true"><use href="#i-chevron" /></svg>
-                </strong>
               </span>
             </button>
           </div>
