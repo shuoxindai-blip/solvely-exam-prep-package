@@ -39,8 +39,6 @@ type HomePreviewState = "empty" | "created";
 type FirstEntryTab = "create" | "courses";
 
 const FIRST_ENTRY_HOME_TITLE = "Adaptive Exam Prep, Tailored to You";
-const FIRST_ENTRY_HOME_SUBTITLE =
-  "Create your study plan, practice realistic exam questions, or start an interactive course.";
 const ACTIVE_HOME_TITLE = "Stay on Track for Your Best Score";
 const ACTIVE_HOME_SUBTITLE =
   "Personalized exam prep, all the way to test day.";
@@ -3009,7 +3007,6 @@ onBeforeUnmount(() => {
         <template v-if="showFirstEntryHome">
           <header class="first-entry-heading">
             <h1 id="firstEntryTitle">{{ FIRST_ENTRY_HOME_TITLE }}</h1>
-            <p>{{ FIRST_ENTRY_HOME_SUBTITLE }}</p>
           </header>
           <div class="first-entry-tabs-wrap">
             <div class="first-entry-tabs" role="navigation" aria-label="Choose how to prepare">
@@ -3450,9 +3447,8 @@ onBeforeUnmount(() => {
           <div class="predictor-library-heading exam-catalog-heading">
             <h2 id="examCatalogTitle">Standardized Test Prep Courses</h2>
             <p>
-              Every course includes free diagnostics, video lessons, study guides,
-              flashcards &amp; quizzes. Pro adds a full-length mock test, score analysis
-              &amp; targeted practice.
+              Every course includes free diagnostics, score analysis &amp; study resources,
+              plus a full-length mock test &amp; targeted practice.
             </p>
           </div>
           <div class="exam-catalog-toolbar">
