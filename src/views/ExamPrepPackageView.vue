@@ -3063,9 +3063,9 @@ onBeforeUnmount(() => {
                     src="/assets/ep-home/exam-upload-icon-dark.webp"
                     alt=""
                   />
-                  <h2>Upload your study materials here for a personalized study plan and realistic mock exams.</h2>
+                  <h2>Turn your study materials into a personalized prep plan.</h2>
                   <p class="first-entry-upload-formats">PDF, Word, PPT, TXT, or images · Up to 50 pages</p>
-                  <button type="button" @click="openPrepFilePicker">Select files</button>
+                  <button type="button" @click="openPrepFilePicker">Upload materials</button>
                 </div>
                 <div class="first-entry-upload-visual" aria-hidden="true">
                   <span class="first-entry-generator-art">
@@ -3076,7 +3076,11 @@ onBeforeUnmount(() => {
                       </span>
                       <span class="generator-file generator-file-pdf">
                         <b>PDF</b>
-                        <small>Past exam</small>
+                        <small>Reference file</small>
+                      </span>
+                      <span class="generator-file generator-file-exams">
+                        <b>Past exams</b>
+                        <small>Previous tests</small>
                       </span>
                     </span>
                     <span class="generator-flow" />
