@@ -4371,7 +4371,7 @@ onBeforeUnmount(() => {
                 </div>
 
                 <section
-                  v-if="!isApPackage"
+                  v-if="!isApPackage && !isAbiturPackage"
                   :class="[
                     'knowledge-report',
                     { 'results-locked-subsection': resultsLocked },
