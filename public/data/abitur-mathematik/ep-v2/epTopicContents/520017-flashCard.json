@@ -1,0 +1,220 @@
+{
+  "epId": 500001,
+  "outlineId": 500002,
+  "topicGroupId": 510002,
+  "topicId": 520017,
+  "packageId": 5001,
+  "contentType": "flashCard",
+  "contentStatus": "READY",
+  "generationId": "",
+  "progress": {
+    "totalCount": 20,
+    "completedCount": 0,
+    "items": {}
+  },
+  "platform": "system",
+  "payload": {
+    "cards": [
+      {
+        "id": 53001600,
+        "topicId": 520017,
+        "type": "FLASH_CARD",
+        "info": "Wann sind zwei Geraden im Raum entweder parallel oder identisch?",
+        "backInfo": "Zwei Geraden sind parallel oder identisch, wenn ihre Richtungsvektoren kollinear (vielfache voneinander) sind.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001601,
+        "topicId": 520017,
+        "type": "FLASH_CARD",
+        "info": "Wie unterscheidet man bei kollinearen Richtungsvektoren zwischen 'echt parallel' und 'identisch'?",
+        "backInfo": "Man führt eine Punktprobe durch, indem man prüft, ob der Stützvektor der einen Geraden auf der anderen Geraden liegt.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001602,
+        "topicId": 520017,
+        "type": "FLASH_CARD",
+        "info": "Welche zwei Bedingungen müssen für windschiefe Geraden erfüllt sein?",
+        "backInfo": "Die Richtungsvektoren dürfen nicht kollinear sein und die Geraden dürfen keinen gemeinsamen Schnittpunkt besitzen.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001603,
+        "topicId": 520017,
+        "type": "FLASH_CARD",
+        "info": "Wie berechnet man den Schnittpunkt einer Geraden mit einer Ebene in Koordinatenform?",
+        "backInfo": "Man setzt die allgemeinen Zeilen der Geradengleichung für $x_1$, $x_2$ und $x_3$ in die Ebenengleichung ein und löst nach dem Parameter auf.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001604,
+        "topicId": 520017,
+        "type": "FLASH_CARD",
+        "info": "Was bedeutet eine falsche Aussage (z. B. $-6 = 6$) beim Schnittansatz Gerade-Ebene?",
+        "backInfo": "Eine falsche Aussage bedeutet, dass die Gerade echt parallel zur Ebene verläuft und keinen Schnittpunkt besitzt.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001605,
+        "topicId": 520017,
+        "type": "FLASH_CARD",
+        "info": "Welche Lage liegt vor, wenn das Einsetzen einer Geraden in eine Ebene $0 = 0$ ergibt?",
+        "backInfo": "Die Gerade liegt vollständig in der Ebene (sie ist identisch mit einer Teilmenge der Ebene).",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001606,
+        "topicId": 520017,
+        "type": "FLASH_CARD",
+        "info": "Woran erkennt man die Parallelität zweier Ebenen anhand ihrer Normalenvektoren?",
+        "backInfo": "Zwei Ebenen sind parallel oder identisch, wenn ihre Normalenvektoren kollinear zueinander sind.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001607,
+        "topicId": 520017,
+        "type": "FLASH_CARD",
+        "info": "Wie bestimmt man die Schnittgerade zweier Ebenen in Koordinatenform?",
+        "backInfo": "Man löst das LGS aus beiden Ebenengleichungen, indem man eine Variable als freien Parameter (z. B. $x_3 = t$) wählt.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001608,
+        "topicId": 520017,
+        "type": "FLASH_CARD",
+        "info": "Wann steht eine Gerade senkrecht auf einer Ebene?",
+        "backInfo": "Eine Gerade steht senkrecht auf einer Ebene, wenn ihr Richtungsvektor kollinear zum Normalenvektor der Ebene ist.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001609,
+        "topicId": 520017,
+        "type": "FLASH_CARD",
+        "info": "Was folgt, wenn das Skalarprodukt aus Geradenrichtungsvektor und Ebenennormalenvektor Null ist?",
+        "backInfo": "Die Gerade verläuft parallel zur Ebene (oder liegt in ihr), sie steht jedoch nicht orthogonal zur Ebene.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001610,
+        "topicId": 520017,
+        "type": "FLASH_CARD",
+        "info": "Zwei Geraden haben Richtungsvektoren $u$ und $v$. Was gilt für $u$ und $v$, wenn die Geraden windschief sind?",
+        "backInfo": "Die Richtungsvektoren $u$ und $v$ sind nicht kollinear, das heißt, es gibt kein Skalar $k$ mit $u = k \\cdot v$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001611,
+        "topicId": 520017,
+        "type": "FLASH_CARD",
+        "info": "Die Richtungsvektoren zweier Geraden sind kollinear. Welches Ergebnis der Punktprobe beweist echte Parallelität?",
+        "backInfo": "Die Punktprobe muss negativ ausfallen: Der Stützvektor der einen Geraden darf die Gleichung der anderen Geraden nicht erfüllen.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001612,
+        "topicId": 520017,
+        "type": "FLASH_CARD",
+        "info": "Wie unterscheidet sich das LGS-Ergebnis bei windschiefen Geraden von dem bei schneidenden Geraden?",
+        "backInfo": "Bei windschiefen Geraden ist das LGS unlösbar (Widerspruch), während schneidende Geraden eine eindeutige Lösung für die Parameter liefern.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001613,
+        "topicId": 520017,
+        "type": "FLASH_CARD",
+        "info": "Welchen ersten Schritt wählt man, um den Durchstoßpunkt einer Geraden durch eine Ebene effizient zu berechnen?",
+        "backInfo": "Man drückt die Koordinaten $x_1, x_2, x_3$ der Geraden durch ihren Parameter aus und substituiert diese in die Koordinatenform der Ebene.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001614,
+        "topicId": 520017,
+        "type": "FLASH_CARD",
+        "info": "Eine Gerade $g$ hat keinen Schnittpunkt mit Ebene $E$. Welches rechnerische Resultat liefert der Schnittansatz?",
+        "backInfo": "Der Schnittansatz führt auf eine falsche Aussage ohne Variable, wie zum Beispiel $-6 = 6$ oder $0 = 12$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001615,
+        "topicId": 520017,
+        "type": "FLASH_CARD",
+        "info": "Woran erkennt man beim Einsetzen der Geradenpunkte in die Ebenengleichung, dass unendlich viele Schnittpunkte existieren?",
+        "backInfo": "Es ergibt sich eine allgemeingültige Aussage (wahre Aussage) wie $0=0$, was bedeutet, dass jeder Punkt der Geraden in der Ebene liegt.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001616,
+        "topicId": 520017,
+        "type": "FLASH_CARD",
+        "info": "Zwei Ebenen haben kollineare Normalenvektoren. Wie stellt man fest, ob sie identisch sind?",
+        "backInfo": "Man prüft, ob ein Punkt der einen Ebene (z. B. aus der Parameterform) auch die Koordinatengleichung der anderen Ebene erfüllt.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001617,
+        "topicId": 520017,
+        "type": "FLASH_CARD",
+        "info": "Warum benötigt man beim Bestimmen einer Schnittgeraden zweier Ebenen einen frei wählbaren Parameter?",
+        "backInfo": "Da zwei Ebenengleichungen mit drei Unbekannten unterbestimmt sind, bleibt ein Freiheitsgrad, der die Richtung der Schnittgeraden definiert.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001618,
+        "topicId": 520017,
+        "type": "FLASH_CARD",
+        "info": "Wie prüft man die Orthogonalität einer Geraden zu einer Ebene, wenn die Ebene in Koordinatenform vorliegt?",
+        "backInfo": "Man prüft, ob der Richtungsvektor der Geraden ein Vielfaches (kollinear) des Normalenvektors der Ebene ist.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001619,
+        "topicId": 520017,
+        "type": "FLASH_CARD",
+        "info": "Fehlerdiagnose: 'Da $u \\cdot n = 0$, steht die Gerade senkrecht auf der Ebene.' Warum ist das falsch?",
+        "backInfo": "Das Skalarprodukt Null bedeutet, dass der Richtungsvektor $u$ senkrecht auf dem Normalenvektor $n$ steht, was Parallelität der Geraden zur Ebene impliziert.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      }
+    ]
+  }
+}

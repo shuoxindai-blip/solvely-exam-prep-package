@@ -24,7 +24,7 @@ router.beforeEach((to) => {
   if (to.name !== 'mock-exam' || isFullLengthRouteAllowed(to.query.access, to.query.mode)) return true
 
   const exam = String(to.query.exam || '').toLowerCase()
-  const normalizedExam = exam === 'act' || exam === 'ap-calculus-bc' ? exam : 'sat'
+  const normalizedExam = exam === 'act' || exam === 'ap-calculus-bc' || exam === 'abitur-mathematik' ? exam : 'sat'
   return {
     name: 'package',
     query: {
@@ -34,7 +34,9 @@ router.beforeEach((to) => {
       practiceState: 'not-started',
       paywall: 'full-length',
     },
-    hash: normalizedExam === 'ap-calculus-bc'
+    hash: normalizedExam === 'abitur-mathematik'
+      ? '#course-3'
+      : normalizedExam === 'ap-calculus-bc'
       ? '#course-2'
       : normalizedExam === 'act'
         ? '#course-1'
@@ -44,7 +46,7 @@ router.beforeEach((to) => {
 
 router.afterEach((to) => {
   const examQuery = String(to.query.exam || '').toLowerCase()
-  const exam = examQuery === 'ap-calculus-bc' ? 'AP Calculus BC' : examQuery === 'act' ? 'ACT' : 'SAT'
+  const exam = examQuery === 'abitur-mathematik' ? 'Abitur Mathematik' : examQuery === 'ap-calculus-bc' ? 'AP Calculus BC' : examQuery === 'act' ? 'ACT' : 'SAT'
   const labels: Record<string, string> = { 'mock-exam': `${exam} Practice Test`, 'study-guide': `${exam} Study Guide`, flashcards: `${exam} Flashcards`, quiz: `${exam} Quiz` }
   const label = to.name === 'mock-exam' && to.query.mode === 'diagnostic'
     ? `${exam} Diagnostic Test`

@@ -1,0 +1,220 @@
+{
+  "epId": 500001,
+  "outlineId": 500002,
+  "topicGroupId": 510003,
+  "topicId": 520028,
+  "packageId": 5001,
+  "contentType": "flashCard",
+  "contentStatus": "READY",
+  "generationId": "",
+  "progress": {
+    "totalCount": 20,
+    "completedCount": 0,
+    "items": {}
+  },
+  "platform": "system",
+  "payload": {
+    "cards": [
+      {
+        "id": 53002700,
+        "topicId": 520028,
+        "type": "FLASH_CARD",
+        "info": "Was charakterisiert ein Bernoulli-Experiment?",
+        "backInfo": "Ein Bernoulli-Experiment ist ein Zufallsversuch mit genau zwei möglichen Ergebnissen: Treffer (Wahrscheinlichkeit $p$) und Niete (Wahrscheinlichkeit $1-p$).",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002701,
+        "topicId": 520028,
+        "type": "FLASH_CARD",
+        "info": "Welche zwei Bedingungen müssen für eine n-stufige Bernoulli-Kette erfüllt sein?",
+        "backInfo": "Die $n$ Einzelversuche müssen stochastisch unabhängig sein und die Trefferwahrscheinlichkeit $p$ muss bei jedem Versuch konstant bleiben.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002702,
+        "topicId": 520028,
+        "type": "FLASH_CARD",
+        "info": "Wie lautet die Bernoulli-Formel zur Berechnung von $P(X = k)$?",
+        "backInfo": "Die Formel lautet $P(X = k) = \\binom{n}{k} \\cdot p^k \\cdot (1-p)^{n-k}$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002703,
+        "topicId": 520028,
+        "type": "FLASH_CARD",
+        "info": "Was gibt der Binomialkoeffizient $\\binom{n}{k}$ im Kontext eines Baumdiagramms an?",
+        "backInfo": "Er gibt die Anzahl der Pfade im Baumdiagramm an, die genau $k$ Treffer bei $n$ Versuchen enthalten.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002704,
+        "topicId": 520028,
+        "type": "FLASH_CARD",
+        "info": "Welcher stochastische Term entspricht der Formulierung 'höchstens $k$ Treffer'?",
+        "backInfo": "Dies entspricht der kumulierten Wahrscheinlichkeit $P(X \\le k)$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002705,
+        "topicId": 520028,
+        "type": "FLASH_CARD",
+        "info": "Wie berechnet man die Wahrscheinlichkeit für 'mindestens $k$ Treffer' über das Gegenereignis?",
+        "backInfo": "Die Wahrscheinlichkeit wird berechnet durch $P(X \\ge k) = 1 - P(X \\le k - 1)$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002706,
+        "topicId": 520028,
+        "type": "FLASH_CARD",
+        "info": "Wie wird 'weniger als $k$ Treffer' für eine kumulierte Berechnung umgeformt?",
+        "backInfo": "Da die Zufallsgröße diskret ist, gilt: $P(X < k) = P(X \\le k - 1)$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002707,
+        "topicId": 520028,
+        "type": "FLASH_CARD",
+        "info": "Wie berechnet man die Wahrscheinlichkeit für 'mehr als $k$ Treffer'?",
+        "backInfo": "Man nutzt das Gegenereignis: $P(X > k) = 1 - P(X \\le k)$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002708,
+        "topicId": 520028,
+        "type": "FLASH_CARD",
+        "info": "Wie lautet die Formel für die Intervallwahrscheinlichkeit $P(a \\le X \\le b)$?",
+        "backInfo": "Die Formel lautet $P(X \\le b) - P(X \\le a - 1)$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002709,
+        "topicId": 520028,
+        "type": "FLASH_CARD",
+        "info": "Warum ist 'Ziehen ohne Zurücklegen' aus kleinen Mengen keine Bernoulli-Kette?",
+        "backInfo": "Weil sich die Trefferwahrscheinlichkeit $p$ nach jedem Zug ändert und somit die Unabhängigkeit der Versuche nicht gegeben ist.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002710,
+        "topicId": 520028,
+        "type": "FLASH_CARD",
+        "info": "Ein Experiment hat die Ausgänge 'Rot', 'Blau' und 'Gelb'. Wie wird daraus ein Bernoulli-Experiment?",
+        "backInfo": "Man fasst die Ergebnisse in zwei komplementäre Gruppen zusammen, zum Beispiel 'Rot' (Treffer) und 'Nicht-Rot' (Niete).",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002711,
+        "topicId": 520028,
+        "type": "FLASH_CARD",
+        "info": "Warum darf man bei der Produktion von 10.000 Teilen die Entnahme von 20 Stück als Bernoulli-Kette modellieren?",
+        "backInfo": "Da die Grundgesamtheit sehr groß ist, ändert sich die Trefferwahrscheinlichkeit $p$ beim Ziehen ohne Zurücklegen nur vernachlässigbar gering.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002712,
+        "topicId": 520028,
+        "type": "FLASH_CARD",
+        "info": "Welche Bedeutung haben die Exponenten $k$ und $n-k$ in der Bernoulli-Formel?",
+        "backInfo": "$k$ ist die Anzahl der Treffer mit Wahrscheinlichkeit $p$, und $n-k$ ist die Anzahl der Misserfolge mit Wahrscheinlichkeit $1-p$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002713,
+        "topicId": 520028,
+        "type": "FLASH_CARD",
+        "info": "In einem Baumdiagramm haben alle Pfade mit $k$ Treffern dieselbe Wahrscheinlichkeit. Wie lautet diese?",
+        "backInfo": "Jeder dieser Pfade hat die Einzelwahrscheinlichkeit $p^k \\cdot (1-p)^{n-k}$. Der Binomialkoeffizient addiert diese identischen Pfade auf.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002714,
+        "topicId": 520028,
+        "type": "FLASH_CARD",
+        "info": "Ein GTR liefert für $P(X \\le 3)$ den Wert 0,7. Was bedeutet dies für die Werte $P(X=0)$ bis $P(X=3)$?",
+        "backInfo": "Es bedeutet, dass die Summe der Einzelwahrscheinlichkeiten $P(X=0) + P(X=1) + P(X=2) + P(X=3)$ genau 0,7 ergibt.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002715,
+        "topicId": 520028,
+        "type": "FLASH_CARD",
+        "info": "Diagnose: Ein Schüler berechnet 'mindestens 10 Treffer' mit $1 - P(X \\le 10)$. Erkläre den Fehler.",
+        "backInfo": "Der Fehler liegt im Gegenereignis. Bei 'mindestens 10' gehört die 10 zum Ereignis; abgezogen werden darf nur $P(X \\le 9)$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002716,
+        "topicId": 520028,
+        "type": "FLASH_CARD",
+        "info": "Übersetze den stochastischen Ausdruck $P(X \\le 7)$ in die Alltagssprache (ohne 'höchstens').",
+        "backInfo": "Dies bedeutet, dass die Anzahl der Treffer 'weniger als 8' oder 'maximal 7' beträgt.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002717,
+        "topicId": 520028,
+        "type": "FLASH_CARD",
+        "info": "Wie berechnet man die Wahrscheinlichkeit, dass mehr als 15 von 20 Schüssen treffen?",
+        "backInfo": "Man nutzt das Gegenereignis zur kumulierten Verteilung: $P(X > 15) = 1 - P(X \\le 15)$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002718,
+        "topicId": 520028,
+        "type": "FLASH_CARD",
+        "info": "Warum subtrahiert man bei $P(10 \\le X \\le 20)$ den Wert $P(X \\le 9)$ und nicht $P(X \\le 10)$?",
+        "backInfo": "Weil der Wert $X=10$ im Intervall enthalten sein soll. Würde man $P(X \\le 10)$ abziehen, fiele die 10 fälschlicherweise weg.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002719,
+        "topicId": 520028,
+        "type": "FLASH_CARD",
+        "info": "Wann ist die Binomialverteilung zur Modellierung eines 'Ziehen ohne Zurücklegen'-Experiments ungeeignet?",
+        "backInfo": "Wenn die Grundgesamtheit klein ist, da sich $p$ nach jedem Zug signifikant ändert und die Versuche somit nicht mehr unabhängig sind.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      }
+    ]
+  }
+}

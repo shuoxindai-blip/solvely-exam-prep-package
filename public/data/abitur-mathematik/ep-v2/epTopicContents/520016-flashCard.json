@@ -1,0 +1,220 @@
+{
+  "epId": 500001,
+  "outlineId": 500002,
+  "topicGroupId": 510002,
+  "topicId": 520016,
+  "packageId": 5001,
+  "contentType": "flashCard",
+  "contentStatus": "READY",
+  "generationId": "",
+  "progress": {
+    "totalCount": 20,
+    "completedCount": 0,
+    "items": {}
+  },
+  "platform": "system",
+  "payload": {
+    "cards": [
+      {
+        "id": 53001500,
+        "topicId": 520016,
+        "type": "FLASH_CARD",
+        "info": "Wie lautet die allgemeine Parameterform einer Ebene im Raum?",
+        "backInfo": "Die Parameterform lautet $E: \\vec{x} = \\vec{p} + r \\cdot \\vec{u} + s \\cdot \\vec{v}$, wobei $\\vec{p}$ der Stützvektor und $\\vec{u}, \\vec{v}$ nicht-kollineare Spannvektoren sind.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001501,
+        "topicId": 520016,
+        "type": "FLASH_CARD",
+        "info": "Wann sind zwei Vektoren kollinear und warum ist dies für Ebenen relevant?",
+        "backInfo": "Vektoren sind kollinear, wenn einer ein Vielfaches des anderen ist. Kollineare Spannvektoren können keine Ebene aufspannen, sondern beschreiben lediglich eine Gerade.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001502,
+        "topicId": 520016,
+        "type": "FLASH_CARD",
+        "info": "Wie berechnet man den Normalenvektor $\\vec{n}$ aus den Spannvektoren $\\vec{u}$ und $\\vec{v}$?",
+        "backInfo": "Der Normalenvektor $\\vec{n}$ wird durch das Kreuzprodukt (Vektorprodukt) der beiden Spannvektoren berechnet: $\\vec{n} = \\vec{u} \\times \\vec{v}$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001503,
+        "topicId": 520016,
+        "type": "FLASH_CARD",
+        "info": "Welche geometrische Bedeutung haben die Koeffizienten $a, b, c$ in der Koordinatenform $ax_1 + bx_2 + cx_3 = d$?",
+        "backInfo": "Die Koeffizienten $a, b$ und $c$ entsprechen direkt den Komponenten des Normalenvektors $\\vec{n} = \\begin{pmatrix} a \\\\ b \\\\ c \\end{pmatrix}$ der Ebene.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001504,
+        "topicId": 520016,
+        "type": "FLASH_CARD",
+        "info": "Wie wird die Normalenform einer Ebene mithilfe des Skalarprodukts dargestellt?",
+        "backInfo": "Die Normalenform lautet $E: (\\vec{x} - \\vec{p}) \\cdot \\vec{n} = 0$, wobei $\\vec{p}$ ein Punkt der Ebene und $\\vec{n}$ der Normalenvektor ist.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001505,
+        "topicId": 520016,
+        "type": "FLASH_CARD",
+        "info": "Wie bestimmt man den Wert $d$ beim Aufstellen der Koordinatenform?",
+        "backInfo": "Man setzt die Koordinaten eines beliebigen Punktes der Ebene für $x_1, x_2$ und $x_3$ in die linke Seite der Gleichung $ax_1 + bx_2 + cx_3 = d$ ein.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001506,
+        "topicId": 520016,
+        "type": "FLASH_CARD",
+        "info": "Wie führt man eine Punktprobe für eine Ebene durch?",
+        "backInfo": "Man setzt die Koordinaten des Punktes in die Ebenengleichung ein. Der Punkt liegt in der Ebene, wenn die Gleichung eine wahre Aussage ergibt.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001507,
+        "topicId": 520016,
+        "type": "FLASH_CARD",
+        "info": "Warum ist die Koordinatenform bei Schnittpunktberechnungen mit Geraden vorteilhaft?",
+        "backInfo": "Sie führt direkt zu einer linearen Gleichung in einer Variablen, was effizienter ist als das Lösen eines Gleichungssystems mit der Parameterform.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001508,
+        "topicId": 520016,
+        "type": "FLASH_CARD",
+        "info": "Was sind Spurpunkte einer Ebene und wie findet man sie?",
+        "backInfo": "Spurpunkte sind Schnittpunkte mit den Koordinatenachsen. Man findet sie, indem man in der Koordinatenform zwei der drei Koordinaten auf Null setzt.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001509,
+        "topicId": 520016,
+        "type": "FLASH_CARD",
+        "info": "Wie wandelt man eine Koordinatenform in eine Parameterform um?",
+        "backInfo": "Man bestimmt drei Punkte der Ebene (z. B. Spurpunkte) und nutzt einen als Stützvektor sowie die Differenzvektoren zu den anderen als Spannvektoren.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001510,
+        "topicId": 520016,
+        "type": "FLASH_CARD",
+        "info": "Welche Bedingung müssen die Vektoren $\\vec{u}$ und $\\vec{v}$ in der Parameterform erfüllen?",
+        "backInfo": "Die Spannvektoren $\\vec{u}$ und $\\vec{v}$ dürfen nicht kollinear sein, da sie sonst nur eine Gerade statt einer Ebene aufspannen würden.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001511,
+        "topicId": 520016,
+        "type": "FLASH_CARD",
+        "info": "Warum darf $\\vec{u} = k \\cdot \\vec{v}$ für Spannvektoren einer Ebene nicht gelten?",
+        "backInfo": "Dies würde bedeuten, dass die Vektoren kollinear sind. In diesem Fall gäbe es keine zweite unabhängige Richtung, um eine Fläche aufzuspannen.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001512,
+        "topicId": 520016,
+        "type": "FLASH_CARD",
+        "info": "Wie kann $\\vec{n}$ ohne Kreuzprodukt aus den Spannvektoren $\\vec{u}$ und $\\vec{v}$ bestimmt werden?",
+        "backInfo": "Durch ein lineares Gleichungssystem mit den Bedingungen $\\vec{n} \\cdot \\vec{u} = 0$ und $\\vec{n} \\cdot \\vec{v} = 0$, da $\\vec{n}$ orthogonal zu beiden sein muss.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001513,
+        "topicId": 520016,
+        "type": "FLASH_CARD",
+        "info": "Welchen Normalenvektor besitzt die Ebene $E: 3x_1 - 2x_2 + x_3 = 5$?",
+        "backInfo": "Der Normalenvektor lässt sich direkt aus den Koeffizienten ablesen: $\\vec{n} = \\begin{pmatrix} 3 \\\\ -2 \\\\ 1 \\end{pmatrix}$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001514,
+        "topicId": 520016,
+        "type": "FLASH_CARD",
+        "info": "Was bedeutet die Bedingung $(\\vec{x} - \\vec{p}) \\cdot \\vec{n} = 0$ geometrisch?",
+        "backInfo": "Jeder Verbindungsvektor zwischen einem Punkt $\\vec{x}$ der Ebene und dem Stützpunkt $\\vec{p}$ muss orthogonal zum Normalenvektor $\\vec{n}$ stehen.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001515,
+        "topicId": 520016,
+        "type": "FLASH_CARD",
+        "info": "Bestimme $d$ für $2x_1 + 4x_2 - x_3 = d$, wenn $P(1|2|3)$ in der Ebene liegt.",
+        "backInfo": "Durch Einsetzen erhält man $2(1) + 4(2) - 3 = d$, also $2 + 8 - 3 = 7$. Der Wert ist $d = 7$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001516,
+        "topicId": 520016,
+        "type": "FLASH_CARD",
+        "info": "Liegt $Q(1|1|1)$ in der Ebene $x_1 + x_2 + x_3 = 3$?",
+        "backInfo": "Ja, da die Punktprobe $1 + 1 + 1 = 3$ eine wahre Aussage ergibt, liegt der Punkt $Q$ in der Ebene.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001517,
+        "topicId": 520016,
+        "type": "FLASH_CARD",
+        "info": "Welche Form eignet sich besser für die Lagebeziehung Punkt-Ebene: Parameter- oder Koordinatenform?",
+        "backInfo": "Die Koordinatenform ist effizienter, da man lediglich die Koordinaten einsetzen muss, anstatt ein LGS mit zwei Parametern zu lösen.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001518,
+        "topicId": 520016,
+        "type": "FLASH_CARD",
+        "info": "Wie lautet der Spurpunkt $S_1$ der Ebene $2x_1 + 3x_2 + 4x_3 = 12$?",
+        "backInfo": "Setze $x_2=0$ und $x_3=0$: $2x_1 = 12 \\Rightarrow x_1 = 6$. Der Spurpunkt ist $S_1(6|0|0)$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001519,
+        "topicId": 520016,
+        "type": "FLASH_CARD",
+        "info": "Darf man in $(\\vec{x} - \\vec{p}) \\cdot \\vec{n} = 0$ den Vektor $\\vec{p}$ frei wählen?",
+        "backInfo": "Ja, als Stützvektor $\\vec{p}$ kann der Ortsvektor jedes beliebigen Punktes verwendet werden, der in der Ebene liegt.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      }
+    ]
+  }
+}

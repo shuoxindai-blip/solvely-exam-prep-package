@@ -1,0 +1,135 @@
+{
+  "epId": 500001,
+  "outlineId": 500002,
+  "topicGroupId": 510001,
+  "topicId": 520013,
+  "packageId": 5001,
+  "contentType": "studyGuide",
+  "contentStatus": "READY",
+  "generationId": "",
+  "progress": {
+    "totalCount": 0,
+    "completedCount": 0,
+    "items": {}
+  },
+  "platform": "system",
+  "payload": {
+    "content": {
+      "lesson_id": "ABITUR-MATHEMATIK-013",
+      "title": "Differentialgleichungen und Änderungsmodelle",
+      "overview": "Dieses Modul behandelt die mathematische Modellierung von Änderungsraten durch Differentialgleichungen (DGL). Im Fokus steht die Übersetzung von Sachzusammenhängen in mathematische Gleichungen sowie das Lösen von DGLs erster Ordnung, insbesondere für exponentielle und beschränkte Wachstumsprozesse.",
+      "learning_objectives": [
+        "Änderungsraten als Ableitungen in Differentialgleichungen formulieren.",
+        "Lineare Differentialgleichungen erster Ordnung erkennen und lösen.",
+        "Anfangsbedingungen zur Bestimmung spezifischer Lösungen anwenden.",
+        "Modelllösungen auf Plausibilität und Sachkontext prüfen."
+      ],
+      "sections": [
+        {
+          "title": "Grundlagen der Differentialgleichungen",
+          "content": "Eine Differentialgleichung (DGL) ist eine Gleichung, die eine Funktion f(t) und deren Ableitungen (z. B. f'(t)) enthält. In der Abitur-Analysis beschreiben DGLs meist Änderungsmodelle. Die zentrale Idee ist: Die momentane Änderungsrate einer Größe hängt von ihrem aktuellen Bestand ab. Man unterscheidet zwischen der allgemeinen Lösung (eine Funktionenschar mit einer Konstanten C) und der speziellen Lösung, die durch eine Anfangsbedingung (z. B. f(0) = y₀) eindeutig festgelegt wird."
+        },
+        {
+          "title": "Wichtige Wachstumsmodelle",
+          "content": "1. Exponentielles Wachstum: Die Änderungsrate ist proportional zum Bestand: f'(t) = k · f(t). Die Lösung lautet f(t) = f(0) · e^(k·t).\n2. Beschränktes Wachstum: Die Änderungsrate ist proportional zum Sättigungsdefizit (Schranke S minus Bestand): f'(t) = k · (S - f(t)). Die Lösung lautet f(t) = S - (S - f(0)) · e^(-k·t).\n3. Logistisches Wachstum: Die Änderungsrate hängt sowohl vom Bestand als auch vom verbleibenden Kapazitätsraum ab: f'(t) = k · f(t) · (S - f(t))."
+        },
+        {
+          "title": "Lösungsverfahren und Verifikation",
+          "content": "Um eine DGL zu lösen, nutzt man oft den Ansatz der Trennung der Variablen oder erkennt Standardtypen. Nach der Integration muss die Integrationskonstante C bestimmt werden. Zur Verifikation führt man eine Probe durch: Man leitet die gefundene Lösung ab und setzt sie sowie die Funktion selbst in die ursprüngliche DGL ein. Zudem sollte das Langzeitverhalten (Grenzwert für t gegen Unendlich) geprüft werden."
+        }
+      ],
+      "worked_examples": [
+        {
+          "question": "Ein Bakterienbestand wächst so, dass die Änderungsrate zu jedem Zeitpunkt 20 % des aktuellen Bestands beträgt. Zu Beginn (t=0) sind 500 Bakterien vorhanden. Stellen Sie die Differentialgleichung auf, lösen Sie diese und berechnen Sie den Bestand nach 10 Stunden.",
+          "solution": "1. DGL aufstellen: Die Änderungsrate f'(t) ist proportional zum Bestand f(t). Also f'(t) = 0,2 · f(t).\n2. Lösungstyp bestimmen: Es handelt sich um exponentielles Wachstum. Der allgemeine Ansatz ist f(t) = C · e^(0,2t).\n3. Anfangsbedingung nutzen: f(0) = 500. Einsetzen: 500 = C · e^(0,2 · 0) => 500 = C · 1 => C = 500.\n4. Spezielle Lösung: f(t) = 500 · e^(0,2t).\n5. Berechnung für t=10: f(10) = 500 · e^(0,2 · 10) = 500 · e^2 ≈ 500 · 7,389 = 3694,5. Nach 10 Stunden sind ca. 3695 Bakterien vorhanden."
+        }
+      ],
+      "common_mistakes": [
+        "Verwechslung von Bestand f(t) und Änderungsrate f'(t) beim Aufstellen der Gleichung.",
+        "Vergessen der Integrationskonstante C bei der allgemeinen Lösung.",
+        "Falsches Vorzeichen beim Wachstumsfaktor k (Wachstum vs. Zerfall).",
+        "Einheitenfehler bei der Interpretation der Zeitachse (z. B. Minuten vs. Stunden)."
+      ],
+      "exam_tips": [
+        "Achten Sie auf Signalwörter: 'Proportional zum Bestand' deutet auf f'(t)=k·f(t) hin; 'Proportional zum Sättigungsdefizit' auf beschränktes Wachstum.",
+        "Führen Sie immer eine Probe durch, indem Sie Ihre Lösung ableiten und in die DGL einsetzen.",
+        "Skizzieren Sie den Graphen grob, um das asymptotische Verhalten (Schranken) zu visualisieren."
+      ],
+      "recap": "Differentialgleichungen verknüpfen den Bestand einer Größe mit ihrer Änderung. Die Lösung einer DGL ist eine Funktion. Durch Anfangswerte wird aus einer Schar von Lösungen die exakt passende Modellfunktion ermittelt.",
+      "knowledge_claims": [
+        {
+          "claim_id": "claim_01",
+          "type": "definition",
+          "content": "Eine Differentialgleichung erster Ordnung ist eine Gleichung, die eine Beziehung zwischen einer Funktion f(t) und ihrer ersten Ableitung f'(t) herstellt."
+        },
+        {
+          "claim_id": "claim_02",
+          "type": "interpretation",
+          "content": "In Sachkontexten entspricht der Term f'(t) der momentanen Änderungsrate der betrachteten Größe zum Zeitpunkt t."
+        },
+        {
+          "claim_id": "claim_03",
+          "type": "rule",
+          "content": "Die allgemeine Lösung einer Differentialgleichung enthält eine Integrationskonstante C und beschreibt eine Kurvenschar."
+        },
+        {
+          "claim_id": "claim_04",
+          "type": "procedure",
+          "content": "Um eine spezielle Lösung zu finden, muss ein gegebener Anfangswert (Punkt auf dem Graphen) in die allgemeine Lösung eingesetzt werden, um C zu berechnen."
+        },
+        {
+          "claim_id": "claim_05",
+          "type": "formula",
+          "content": "Die Differentialgleichung f'(t) = k · f(t) beschreibt exponentielles Wachstum mit der Lösung f(t) = f(0) · e^(kt)."
+        },
+        {
+          "claim_id": "claim_06",
+          "type": "formula",
+          "content": "Die Differentialgleichung f'(t) = k · (S - f(t)) beschreibt beschränktes Wachstum gegen eine Sättigungsgrenze S."
+        },
+        {
+          "claim_id": "claim_07",
+          "type": "recognition",
+          "content": "Beim beschränkten Wachstum nähert sich der Funktionswert f(t) für t gegen Unendlich der Schranke S an, sofern k > 0."
+        },
+        {
+          "claim_id": "claim_08",
+          "type": "check",
+          "content": "Eine Lösung einer DGL kann verifiziert werden, indem man die Funktion ableitet und beide Terme (f und f') in die DGL einsetzt (Punktprobe für Funktionen)."
+        },
+        {
+          "claim_id": "claim_09",
+          "type": "mistake",
+          "content": "Ein häufiger Fehler ist die Annahme, dass die Lösung einer DGL eine Zahl sei; tatsächlich ist die Lösung immer eine Funktion oder eine Funktionsschar."
+        },
+        {
+          "claim_id": "claim_10",
+          "type": "application",
+          "content": "Ist k in f'(t) = k · f(t) negativ, handelt es sich um einen exponentiellen Zerfallsprozess."
+        },
+        {
+          "claim_id": "claim_11",
+          "type": "comparison",
+          "content": "Im Gegensatz zum linearen Wachstum (f'(t) = konstant) ist beim exponentiellen Wachstum die Änderung f'(t) direkt abhängig vom aktuellen Wert f(t)."
+        },
+        {
+          "claim_id": "claim_12",
+          "type": "interpretation",
+          "content": "Der Parameter k in der Gleichung f'(t) = k · f(t) wird als relative Wachstumsrate oder Proportionalitätsfaktor bezeichnet."
+        }
+      ],
+      "visual_requests": [],
+      "visual_assets": []
+    },
+    "items": [],
+    "videoLesson": {
+      "title": "Trenne Variablen und löse das Änderungsmodell explizit",
+      "coverUrl": "https://solve-now.s3.us-west-2.amazonaws.com/german-abitur/atomic-videos-v2/ABITUR-MATHEMATIK-013/cover.png",
+      "playbackUrl": "https://solve-now.s3.us-west-2.amazonaws.com/german-abitur/atomic-videos-v2/ABITUR-MATHEMATIK-013/lesson.html",
+      "durationSeconds": 480,
+      "description": "Feingranulares IQB-basiertes Topic `Differentialgleichungen und Änderungsmodelle`; abgegrenzt durch: Änderungszusammenhang als Differentialgleichung formulieren oder lösen. Im Quellkorpus: 30 Aufgaben, davon 1 offizielle Pool- oder Beispielaufgaben."
+    }
+  },
+  "lastViewedQuestionId": null,
+  "lastViewedAt": null
+}

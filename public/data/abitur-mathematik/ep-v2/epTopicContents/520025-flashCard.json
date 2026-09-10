@@ -1,0 +1,220 @@
+{
+  "epId": 500001,
+  "outlineId": 500002,
+  "topicGroupId": 510003,
+  "topicId": 520025,
+  "packageId": 5001,
+  "contentType": "flashCard",
+  "contentStatus": "READY",
+  "generationId": "",
+  "progress": {
+    "totalCount": 20,
+    "completedCount": 0,
+    "items": {}
+  },
+  "platform": "system",
+  "payload": {
+    "cards": [
+      {
+        "id": 53002400,
+        "topicId": 520025,
+        "type": "FLASH_CARD",
+        "info": "Was beschreibt die bedingte Wahrscheinlichkeit $P_A(B)$?",
+        "backInfo": "Sie beschreibt die Wahrscheinlichkeit für das Eintreten des Ereignisses $B$ unter der Voraussetzung, dass das Ereignis $A$ bereits eingetreten ist.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002401,
+        "topicId": 520025,
+        "type": "FLASH_CARD",
+        "info": "Wie lautet die mathematische Formel zur Berechnung der bedingten Wahrscheinlichkeit $P_A(B)$?",
+        "backInfo": "Die Formel lautet $P_A(B) = \\frac{P(A \\cap B)}{P(A)}$, wobei die Bedingung $P(A) > 0$ erfüllt sein muss.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002402,
+        "topicId": 520025,
+        "type": "FLASH_CARD",
+        "info": "Welche Werte stehen in den vier inneren Feldern einer Vierfeldertafel?",
+        "backInfo": "In den inneren Feldern stehen die Schnittwahrscheinlichkeiten der Ereignisse und ihrer Gegenereignisse, also $P(A \\cap B)$, $P(A \\cap \\bar{B})$, $P(\\bar{A} \\cap B)$ und $P(\\bar{A} \\cap \\bar{B})$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002403,
+        "topicId": 520025,
+        "type": "FLASH_CARD",
+        "info": "Welchen Wert muss die Summe der vier inneren Felder einer Vierfeldertafel ergeben?",
+        "backInfo": "Die Summe der vier inneren Felder (Schnittwahrscheinlichkeiten) muss immer genau 1 (bzw. 100 %) ergeben.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002404,
+        "topicId": 520025,
+        "type": "FLASH_CARD",
+        "info": "Mit welcher Gleichung prüft man rechnerisch, ob zwei Ereignisse $A$ und $B$ stochastisch unabhängig sind?",
+        "backInfo": "Die Ereignisse sind stochastisch unabhängig, wenn die Multiplikationsregel $P(A \\cap B) = P(A) \\cdot P(B)$ erfüllt ist.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002405,
+        "topicId": 520025,
+        "type": "FLASH_CARD",
+        "info": "Was bedeutet die Bedingung $P_A(B) = P(B)$ für das Verhältnis der Ereignisse $A$ und $B$?",
+        "backInfo": "Es bedeutet, dass das Eintreten von $A$ keinen Einfluss auf die Wahrscheinlichkeit von $B$ hat; die Ereignisse sind somit stochastisch unabhängig.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002406,
+        "topicId": 520025,
+        "type": "FLASH_CARD",
+        "info": "Warum sind disjunkte Ereignisse mit $P > 0$ niemals stochastisch unabhängig?",
+        "backInfo": "Weil bei disjunkten Ereignissen $P(A \\cap B) = 0$ gilt, was bei $P(A), P(B) > 0$ ungleich dem Produkt $P(A) \\cdot P(B)$ ist.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002407,
+        "topicId": 520025,
+        "type": "FLASH_CARD",
+        "info": "Wie berechnet man fehlende Randwerte in einer Vierfeldertafel?",
+        "backInfo": "Man nutzt die Eigenschaft, dass die Summe der jeweiligen Zeilen- oder Spaltenwerte den entsprechenden Randwert (Marginalwahrscheinlichkeit) ergibt.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002408,
+        "topicId": 520025,
+        "type": "FLASH_CARD",
+        "info": "Wo findet man bedingte Wahrscheinlichkeiten im Vergleich zwischen Baumdiagramm und Vierfeldertafel?",
+        "backInfo": "Im Baumdiagramm stehen sie an den Pfaden der zweiten Stufe, während die Vierfeldertafel in den Feldern nur Schnittwahrscheinlichkeiten zeigt.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002409,
+        "topicId": 520025,
+        "type": "FLASH_CARD",
+        "info": "Wie lässt sich $P(A \\cap B)$ mithilfe der Pfadmultiplikationsregel und einer Bedingung ausdrücken?",
+        "backInfo": "Die Schnittwahrscheinlichkeit kann durch Umstellen der Formel als $P(A \\cap B) = P(A) \\cdot P_A(B)$ berechnet werden.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002410,
+        "topicId": 520025,
+        "type": "FLASH_CARD",
+        "info": "Welche Teilmenge bildet die neue Grundgesamtheit bei der Betrachtung von $P_A(B)$?",
+        "backInfo": "Die neue Grundgesamtheit wird ausschließlich durch das Ereignis $A$ gebildet, da dies die Voraussetzung für die Betrachtung von $B$ ist.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002411,
+        "topicId": 520025,
+        "type": "FLASH_CARD",
+        "info": "Welcher Wert steht im Nenner der Formel für $P_A(B)$ und warum?",
+        "backInfo": "Im Nenner steht $P(A)$, da die Wahrscheinlichkeit auf das Eintreten der Bedingung $A$ normiert werden muss.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002412,
+        "topicId": 520025,
+        "type": "FLASH_CARD",
+        "info": "Wie unterscheiden sich die inneren Felder einer Vierfeldertafel von den Randfeldern?",
+        "backInfo": "Die inneren Felder enthalten Schnittwahrscheinlichkeiten (z. B. $P(A \\cap B)$), während die Randfelder die Marginalwahrscheinlichkeiten der Einzelereignisse (z. B. $P(A)$) angeben.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002413,
+        "topicId": 520025,
+        "type": "FLASH_CARD",
+        "info": "Was lässt sich über die Summe der beiden Randfelder $P(A)$ und $P(\\bar{A})$ sagen?",
+        "backInfo": "Die Summe der Randfelder eines Merkmals (Ereignis und Gegenereignis) muss in der Vierfeldertafel immer 1 ergeben.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002414,
+        "topicId": 520025,
+        "type": "FLASH_CARD",
+        "info": "Prüfe auf Unabhängigkeit: $P(A)=0,4$, $P(B)=0,5$, $P(A \\cap B)=0,2$. Sind $A$ und $B$ unabhängig?",
+        "backInfo": "Ja, da $P(A) \\cdot P(B) = 0,4 \\cdot 0,5 = 0,2$ gilt, was exakt dem Wert von $P(A \\cap B)$ entspricht.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002415,
+        "topicId": 520025,
+        "type": "FLASH_CARD",
+        "info": "Wie ändert sich $P_A(B)$ im Vergleich zu $P(B)$, wenn $A$ und $B$ stochastisch unabhängig sind?",
+        "backInfo": "Gar nicht. Bei Unabhängigkeit gilt $P_A(B) = P(B)$, da das Eintreten von $A$ keinen Einfluss auf die Wahrscheinlichkeit von $B$ hat.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002416,
+        "topicId": 520025,
+        "type": "FLASH_CARD",
+        "info": "Warum führt die Eigenschaft 'disjunkt' bei Ereignissen mit $P>0$ zwingend zu stochastischer Abhängigkeit?",
+        "backInfo": "Weil das Wissen, dass $A$ eingetreten ist, die Wahrscheinlichkeit für $B$ sofort auf 0 senkt ($P_A(B)=0$), was eine starke Beeinflussung darstellt.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002417,
+        "topicId": 520025,
+        "type": "FLASH_CARD",
+        "info": "Gegeben sind $P(A \\cap B) = 0,1$ und $P(A) = 0,3$. Wie berechnet man $P(A \\cap \\bar{B})$?",
+        "backInfo": "Durch Subtraktion des Schnittwertes vom Randwert: $P(A \\cap \\bar{B}) = P(A) - P(A \\cap B) = 0,3 - 0,1 = 0,2$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002418,
+        "topicId": 520025,
+        "type": "FLASH_CARD",
+        "info": "Welche Information einer Vierfeldertafel entspricht dem Produkt der ersten beiden Pfadabschnitte eines Baumdiagramms?",
+        "backInfo": "Das Produkt entspricht der Schnittwahrscheinlichkeit $P(A \\cap B)$, welche direkt in einem der vier inneren Felder der Vierfeldertafel steht.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002419,
+        "topicId": 520025,
+        "type": "FLASH_CARD",
+        "info": "Wie berechnet man $P(A \\cap B)$, wenn nur $P(B)$ und $P_B(A)$ bekannt sind?",
+        "backInfo": "Man nutzt die umgestellte Formel der bedingten Wahrscheinlichkeit: $P(A \\cap B) = P(B) \\cdot P_B(A)$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      }
+    ]
+  }
+}

@@ -1,0 +1,159 @@
+{
+  "epId": 500001,
+  "outlineId": 500002,
+  "topicGroupId": 510001,
+  "topicId": 520008,
+  "packageId": 5001,
+  "contentType": "studyGuide",
+  "contentStatus": "READY",
+  "generationId": "",
+  "progress": {
+    "totalCount": 2,
+    "completedCount": 0,
+    "items": {}
+  },
+  "platform": "system",
+  "payload": {
+    "content": {
+      "lesson_id": "ABITUR-MATHEMATIK-008",
+      "title": "Optimierung unter Nebenbedingungen",
+      "overview": "In der Analysis befasst sich die Optimierung mit der Suche nach dem absolut größten oder kleinsten Wert einer Größe unter Berücksichtigung einschränkender Rahmenbedingungen. Der Prozess umfasst die Modellierung einer Zielfunktion, die Elimination einer Variablen durch eine Nebenbedingung und die Überprüfung der Lösung im Sachkontext.",
+      "learning_objectives": [
+        "Zielfunktionen aus geometrischen oder ökonomischen Sachverhalten aufstellen.",
+        "Nebenbedingungen identifizieren und zur Reduktion der Variablen nutzen.",
+        "Extremstellen rechnerisch bestimmen und mithilfe der zweiten Ableitung oder des Vorzeichenwechsels prüfen.",
+        "Ergebnisse im Hinblick auf den Definitionsbereich und die Plausibilität validieren."
+      ],
+      "sections": [
+        {
+          "title": "Der Modellierungsprozess",
+          "content": "Die Lösung einer Optimierungsaufgabe folgt einem festen Schema: 1. **Zielgröße festlegen**: Was soll maximal oder minimal werden? (z. B. Fläche A, Volumen V). 2. **Zielfunktion aufstellen**: Die Formel für die Zielgröße enthält meist zwei Variablen (z. B. A = x * y). 3. **Nebenbedingung formulieren**: Eine gegebene Einschränkung (z. B. eine feste Zaunlänge oder ein Punkt auf einem Graphen) stellt eine Beziehung zwischen den Variablen her. 4. **Zielfunktion in einer Variablen**: Die Nebenbedingung wird nach einer Variablen aufgelöst und in die Zielfunktion eingesetzt. Es entsteht die Zielfunktion f(x)."
+        },
+        {
+          "title": "Extremwertberechnung und Randwerte",
+          "content": "Nachdem die Zielfunktion f(x) aufgestellt wurde, sucht man die Extremstellen durch die notwendige Bedingung f'(x) = 0. Die Art des Extremums (Maximum oder Minimum) wird über die hinreichende Bedingung (f''(x) < 0 für Maximum, f''(x) > 0 für Minimum) nachgewiesen. Besonders im Abitur ist die Beachtung des **Definitionsbereichs** entscheidend: Oft liegen die globalen Extrema an den Rändern des Definitionsbereichs (Randwertbetrachtung), falls die Funktion dort größere/kleinere Werte annimmt als an der lokalen Extremstelle."
+        },
+        {
+          "title": "Validierung im Sachkontext",
+          "content": "Ein mathematisches Ergebnis muss stets auf den Sachkontext zurückgeführt werden. Dies beinhaltet: Prüfung der Einheiten, Abgleich mit dem Definitionsbereich (sind negative Längen möglich?) und eine Plausibilitätsprüfung (ist ein Flächeninhalt von 0 sinnvoll?)."
+        }
+      ],
+      "worked_examples": [
+        {
+          "question": "Ein rechteckiges Gehege soll an einer geraden Stallwand errichtet werden. Für die drei übrigen Seiten stehen 40 m Zaun zur Verfügung. Bestimmen Sie die Maße des Geheges, für die der Flächeninhalt maximal wird.",
+          "solution": "1. Zielgröße: Fläche A = x * y (x: Tiefe, y: Länge parallel zur Wand).\n2. Nebenbedingung: Der Zaun begrenzt drei Seiten: 2x + y = 40.\n3. Zielfunktion in einer Variablen: y = 40 - 2x. Einsetzen in A: A(x) = x * (40 - 2x) = 40x - 2x².\n4. Ableitungen: A'(x) = 40 - 4x; A''(x) = -4.\n5. Extremstelle: A'(x) = 0 => 40 - 4x = 0 => x = 10.\n6. Nachweis: A''(10) = -4 < 0, also Maximum.\n7. Maße: x = 10 m, y = 40 - 2(10) = 20 m.\n8. Ergebnis: Die maximale Fläche beträgt A(10) = 200 m² bei einer Tiefe von 10 m und einer Breite von 20 m."
+        }
+      ],
+      "common_mistakes": [
+        "Vergessen der Nebenbedingung: Es wird versucht, eine Funktion mit zwei Variablen abzuleiten.",
+        "Ignorieren des Definitionsbereichs: Mathematisch korrekte Werte können im Sachkontext unmöglich sein (z. B. negative Radien).",
+        "Fehlende Randwertbetrachtung: Das globale Maximum könnte am Rand des Intervalls liegen, nicht bei der Nullstelle der Ableitung."
+      ],
+      "exam_tips": [
+        "Skizze zeichnen: Markieren Sie Variablen und feste Größen sofort in einer Zeichnung.",
+        "Einheiten prüfen: Geben Sie das Endergebnis immer mit der im Kontext geforderten Einheit an.",
+        "Operatoren beachten: 'Bestimmen Sie' verlangt einen nachvollziehbaren Rechenweg; 'Beurteilen Sie' verlangt eine argumentative Abwägung."
+      ],
+      "recap": "Optimierung erfordert die Transformation einer mehrvariablen Problemstellung in eine einvariable Zielfunktion mittels Nebenbedingungen. Die Lösung wird durch Differenzialrechnung ermittelt und muss gegen Randwerte und Sachlogik geprüft werden.",
+      "knowledge_claims": [
+        {
+          "claim_id": "claim_01",
+          "type": "definition",
+          "content": "Die Zielfunktion beschreibt die zu optimierende Größe in Abhängigkeit von den Systemvariablen."
+        },
+        {
+          "claim_id": "claim_02",
+          "type": "rule",
+          "content": "Die Nebenbedingung dient dazu, eine Variable der Zielfunktion durch eine andere zu ersetzen, um eine Funktion in nur einer Variablen zu erhalten."
+        },
+        {
+          "claim_id": "claim_03",
+          "type": "procedure",
+          "content": "Zur Bestimmung lokaler Extrema wird die erste Ableitung der Zielfunktion gleich null gesetzt (notwendige Bedingung)."
+        },
+        {
+          "claim_id": "claim_04",
+          "type": "check",
+          "content": "Die hinreichende Bedingung für ein lokales Maximum an der Stelle x_0 ist f'(x_0) = 0 und f''(x_0) < 0."
+        },
+        {
+          "claim_id": "claim_05",
+          "type": "interpretation",
+          "content": "Im Sachkontext muss der Definitionsbereich der Zielfunktion eingeschränkt werden, da Größen wie Längen oder Zeitintervalle oft nicht negativ sein können."
+        },
+        {
+          "claim_id": "claim_06",
+          "type": "mistake",
+          "content": "Ein häufiger Fehler ist das Vernachlässigen der Randwertprüfung, da das absolute Extremum an den Grenzen des Definitionsbereichs liegen kann."
+        },
+        {
+          "claim_id": "claim_07",
+          "type": "application",
+          "content": "Bei geometrischen Optimierungen (z. B. Dosen) ist oft das Volumen die Zielfunktion und die Oberfläche die Nebenbedingung (oder umgekehrt)."
+        },
+        {
+          "claim_id": "claim_08",
+          "type": "recognition",
+          "content": "Wenn zwei Graphen den maximalen vertikalen Abstand suchen, lautet die Zielfunktion d(x) = |f(x) - g(x)|."
+        },
+        {
+          "claim_id": "claim_09",
+          "type": "procedure",
+          "content": "Nach dem Finden des x-Wertes muss oft der zugehörige y-Wert über die Nebenbedingung berechnet werden, um die vollständigen Maße anzugeben."
+        },
+        {
+          "claim_id": "claim_10",
+          "type": "check",
+          "content": "Eine Plausibilitätsprüfung beinhaltet den Abgleich des Ergebnisses mit der Skizze oder den gegebenen physikalischen Grenzen."
+        },
+        {
+          "claim_id": "claim_11",
+          "type": "formula",
+          "content": "Für ein Rechteck mit Umfang U und Seiten x, y gilt die Nebenbedingung U = 2x + 2y."
+        },
+        {
+          "claim_id": "claim_12",
+          "type": "comparison",
+          "content": "Ein lokales Extremum ist ein Hoch- oder Tiefpunkt in einer Umgebung, während das globale Extremum der absolut höchste/niedrigste Wert im gesamten Definitionsbereich ist."
+        }
+      ],
+      "visual_requests": [],
+      "visual_assets": []
+    },
+    "items": [
+      {
+        "id": 55000700,
+        "sourceQuestionId": "MAT-FFF2339F1F-05",
+        "topicId": 520008,
+        "type": "STUDENT_PRODUCED_RESPONSE",
+        "stem": "Die Abbildung 1 zeigt einen Teil des Längs-\nschnitts einer Wasserrutschbahn, die aus ei-\nnem Startbogen, einem Mittelabschnitt und ei-\nnem Auslaufbogen zusammengesetzt ist. Eine \nLängeneinheit im Koordinatensystem ent-\nspricht einem Meter in der Wirklichkeit. Die \nx-Achse beschreibt die Horizontale. \nDie Rutschbahn weist in ihrem Längsschnitt \nweder eine Sprungstelle noch einen Knick auf. \nDer Auslaufbogen geht in seinem Endpunkt, \nder im Modell durch den Punkt C dargestellt \nwird, ohne Knick in die Horizontale über. Abb. 1\nDer Startbogen kann im Modell mithilfe eines Kreises beschrieben werden. Er wird \ndurch mehrere Streben gleicher Länge gestützt; diese gehen alle vom selben \nPunkt aus, der im Modell auf der y-Achse liegt. Eine der Streben stößt direkt am \nÜbergang zwischen Startbogen und Mittelabschnitt senkrecht auf die Rutschbahn. \nErmitteln Sie rechnerisch die Länge des Startbogens. \n5 \n Die Rutschbahn soll verändert werden, unter anderem die Neigung des geradlinigen \nMittelabschnitts. In der Planung dieser Veränderung wird der Punkt A beibehalten, \nder Punkt B soll um einen Wert d mit ] [d 0;8∈ in negative x-Richtung verschoben \nwerden; die y-Koordinate von B wird beibehalten.",
+        "options": {},
+        "correctAnswer": "Die Lotgerade zu AB durch A schließt mit der y-Achse einen Winkel der gleichen \nGröße ein wie AB mit der x-Achse. \nGleichung der Lotgerade: 462\n33yx= + \nRadius des Kreises: ( )\n22 46\n3r 4 18= +− \nφ\n360 2π r 4, 7° ⋅ ⋅≈ , d. h. der Startbogen ist etwa 4,7 m lang. \n5 \n f −\n−− − = −6 18 12\n12 d 4 8 d \n812 1 12\n8d 2 82 d 3 d−−− = −⋅ ⇔ =",
+        "explanation": "Die Lotgerade zu AB durch A schließt mit der y-Achse einen Winkel der gleichen \nGröße ein wie AB mit der x-Achse. \nGleichung der Lotgerade: 462\n33yx= + \nRadius des Kreises: ( )\n22 46\n3r 4 18= +− \nφ\n360 2π r 4, 7° ⋅ ⋅≈ , d. h. der Startbogen ist etwa 4,7 m lang. \n5 \n f −\n−− − = −6 18 12\n12 d 4 8 d \n812 1 12\n8d 2 82 d 3 d−−− = −⋅ ⇔ =",
+        "userAnswer": null,
+        "isCorrect": -1
+      },
+      {
+        "id": 55000701,
+        "sourceQuestionId": "MAT-FFF2339F1F-06",
+        "topicId": 520008,
+        "type": "STUDENT_PRODUCED_RESPONSE",
+        "stem": "Die Abbildung 1 zeigt einen Teil des Längs-\nschnitts einer Wasserrutschbahn, die aus ei-\nnem Startbogen, einem Mittelabschnitt und ei-\nnem Auslaufbogen zusammengesetzt ist. Eine \nLängeneinheit im Koordinatensystem ent-\nspricht einem Meter in der Wirklichkeit. Die \nx-Achse beschreibt die Horizontale. \nDie Rutschbahn weist in ihrem Längsschnitt \nweder eine Sprungstelle noch einen Knick auf. \nDer Auslaufbogen geht in seinem Endpunkt, \nder im Modell durch den Punkt C dargestellt \nwird, ohne Knick in die Horizontale über. Abb. 1\nZeigen Sie, dass die Neigung des neuen Mittelabschnitts gegenüber der Horizon-\ntalen durch den Term −− 12\n8d beschrieben wird. Bestimmen Sie denjenigen Wert \nvon d, für den die Neigung halb so groß ist, wie wenn B doppelt so weit in negative \nx-Richtung verschoben wird.",
+        "options": {},
+        "correctAnswer": "3 \n c Der Graph von h enthält Punkte, in denen die Tangente an den Graphen parallel \nzur x-Achse verläuft. Weisen Sie nach, dass diese Punkte alle den gleichen Ab-\nstand haben. \n4 \n 35 \n2 Erwartungshorizont \nDer Erwartungshorizont stellt für jede Teilaufgabe eine mögliche Lösung dar. Nicht dargestellte \nkorrekte Lösungen sind als gleichwertig zu akzeptieren. \n BE \n1 a Die Gleichung hat die Form y mx c= + . Es gilt 6 18 3\n12 4 2m −\n−= = − . A liegt genau dann \nauf der Gerade, wenn 3\n218 4 c= −⋅+ , d. h. c 24= , gilt. \n3\n2tan φ = − liefert ≈− °φ 56 . \n3 \n b 228 12 m m\n1, 4 s s10+ ≈ 2 \n c ( ) ( ) ( ) ( )2f x ax bx c f 12 6 f 20 0 f 20 0 ′= + +∧ =∧ =∧ = liefert 3\n32a = , 15\n4b = − und \n75\n2c = . \n3 \n d \n \n2 \n e Die Lotgerade zu AB durch A schließt mit der y-Achse einen Winkel der gleichen \nGröße ein wie AB mit der x-Achse. \nGleichung der Lotgerade: 462\n33yx= + \nRadius des Kreises: ( )\n22 46\n3r 4 18= +− \nφ\n360 2π r 4, 7° ⋅ ⋅≈ , d. h. der Startbogen ist etwa 4,7 m lang. \n5 \n f −\n−− − = −6 18 12\n12 d 4 8 d \n812 1 12\n8d 2 82 d 3 d−−− = −⋅ ⇔ = \n3",
+        "explanation": "3 \n c Der Graph von h enthält Punkte, in denen die Tangente an den Graphen parallel \nzur x-Achse verläuft. Weisen Sie nach, dass diese Punkte alle den gleichen Ab-\nstand haben. \n4 \n 35 \n2 Erwartungshorizont \nDer Erwartungshorizont stellt für jede Teilaufgabe eine mögliche Lösung dar. Nicht dargestellte \nkorrekte Lösungen sind als gleichwertig zu akzeptieren. \n BE \n1 a Die Gleichung hat die Form y mx c= + . Es gilt 6 18 3\n12 4 2m −\n−= = − . A liegt genau dann \nauf der Gerade, wenn 3\n218 4 c= −⋅+ , d. h. c 24= , gilt. \n3\n2tan φ = − liefert ≈− °φ 56 . \n3 \n b 228 12 m m\n1, 4 s s10+ ≈ 2 \n c ( ) ( ) ( ) ( )2f x ax bx c f 12 6 f 20 0 f 20 0 ′= + +∧ =∧ =∧ = liefert 3\n32a = , 15\n4b = − und \n75\n2c = . \n3 \n d \n \n2 \n e Die Lotgerade zu AB durch A schließt mit der y-Achse einen Winkel der gleichen \nGröße ein wie AB mit der x-Achse. \nGleichung der Lotgerade: 462\n33yx= + \nRadius des Kreises: ( )\n22 46\n3r 4 18= +− \nφ\n360 2π r 4, 7° ⋅ ⋅≈ , d. h. der Startbogen ist etwa 4,7 m lang. \n5 \n f −\n−− − = −6 18 12\n12 d 4 8 d \n812 1 12\n8d 2 82 d 3 d−−− = −⋅ ⇔ = \n3",
+        "userAnswer": null,
+        "isCorrect": -1
+      }
+    ],
+    "videoLesson": {
+      "title": "Bestimme Extremwerte unter Nebenbedingungen sicher",
+      "coverUrl": "https://solve-now.s3.us-west-2.amazonaws.com/german-abitur/atomic-videos-v2/ABITUR-MATHEMATIK-008/cover.png",
+      "playbackUrl": "https://solve-now.s3.us-west-2.amazonaws.com/german-abitur/atomic-videos-v2/ABITUR-MATHEMATIK-008/lesson.html",
+      "durationSeconds": 480,
+      "description": "Feingranulares IQB-basiertes Topic `Optimierung unter Nebenbedingungen`; abgegrenzt durch: Zielfunktion modellieren und Extremum im Sachkontext prüfen. Im Quellkorpus: 32 Aufgaben, davon 28 offizielle Pool- oder Beispielaufgaben."
+    }
+  },
+  "lastViewedQuestionId": null,
+  "lastViewedAt": null
+}

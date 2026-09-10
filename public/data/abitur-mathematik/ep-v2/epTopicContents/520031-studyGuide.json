@@ -1,0 +1,134 @@
+{
+  "epId": 500001,
+  "outlineId": 500002,
+  "topicGroupId": 510003,
+  "topicId": 520031,
+  "packageId": 5001,
+  "contentType": "studyGuide",
+  "contentStatus": "READY",
+  "generationId": "",
+  "progress": {
+    "totalCount": 0,
+    "completedCount": 0,
+    "items": {}
+  },
+  "platform": "system",
+  "payload": {
+    "content": {
+      "lesson_id": "ABITUR-MATHEMATIK-031",
+      "title": "Hypothesentests, Fehler und Entscheidungen",
+      "overview": "Dieser Leitfaden behandelt die Grundlagen des statistischen Testens von Hypothesen bei binomialverteilten Zufallsgrößen. Im Fokus stehen die Konstruktion von einseitigen Tests, die Bestimmung von Ablehnungsbereichen unter Einhaltung des Signifikanzniveaus sowie die Interpretation von Fehlentscheidungen (Fehler 1. und 2. Art).",
+      "learning_objectives": [
+        "Nullhypothese (H₀) und Alternativhypothese (H₁) sachgerecht formulieren.",
+        "Den Ablehnungsbereich für einseitige Binomialtests bestimmen.",
+        "Den Fehler 1. Art und den Fehler 2. Art im Sachkontext definieren und berechnen.",
+        "Den Einfluss des Signifikanzniveaus auf die Entscheidungsregel erläutern."
+      ],
+      "sections": [
+        {
+          "title": "Grundlagen des Hypothesentests",
+          "content": "Ein Hypothesentest dient dazu, eine Vermutung über einen unbekannten Parameter p einer Grundgesamtheit anhand einer Stichprobe vom Umfang n zu prüfen. Die Nullhypothese (H₀) ist die Hypothese, die man kontrolliert verwerfen möchte. Die Alternativhypothese (H₁) stellt die Gegenposition dar. Man unterscheidet zwischen rechtsseitigen Tests (H₀: p ≤ p₀) und linksseitigen Tests (H₀: p ≥ p₀). Die Entscheidung basiert auf einer Testgröße X (Anzahl der Treffer), die unter H₀ als binomialverteilt angenommen wird."
+        },
+        {
+          "title": "Ablehnungsbereich und Signifikanzniveau",
+          "content": "Das Signifikanzniveau α gibt die maximal zulässige Wahrscheinlichkeit an, H₀ fälschlicherweise abzulehnen (Fehler 1. Art). Der Ablehnungsbereich K besteht aus den Werten der Testgröße X, die so unwahrscheinlich unter H₀ sind, dass sie zur Ablehnung von H₀ führen. Für einen rechtsseitigen Test gilt: K = {k, k+1, ..., n}. Man sucht das kleinste k, für das gilt: P(X ≥ k) ≤ α. Für einen linksseitigen Test gilt: K = {0, 1, ..., k}. Man sucht das größte k, für das gilt: P(X ≤ k) ≤ α."
+        },
+        {
+          "title": "Fehlerarten und ihre Bedeutung",
+          "content": "Beim Testen können zwei Fehlentscheidungen auftreten: 1. Fehler 1. Art (α-Fehler): H₀ wird abgelehnt, obwohl sie wahr ist. Die Wahrscheinlichkeit hierfür ist durch das Signifikanzniveau begrenzt. 2. Fehler 2. Art (β-Fehler): H₀ wird beibehalten, obwohl sie falsch ist (also H₁ wahr ist). Die Wahrscheinlichkeit für den Fehler 2. Art hängt vom tatsächlichen Wert p aus der Alternativhypothese ab und kann nur berechnet werden, wenn ein konkreter Wert für p unter H₁ angenommen wird."
+        }
+      ],
+      "worked_examples": [
+        {
+          "question": "Ein Pharmahersteller behauptet, dass höchstens 10 % der Patienten Nebenwirkungen zeigen (p ≤ 0,1). Ein Verbraucherschutzverein vermutet eine höhere Quote und testet 100 Patienten. Bestimmen Sie den Ablehnungsbereich für H₀ auf einem Signifikanzniveau von α = 5 % und interpretieren Sie den Fehler 1. Art im Sachzusammenhang.",
+          "solution": "1. Hypothesen: H₀: p ≤ 0,1 gegen H₁: p > 0,1 (rechtsseitiger Test). 2. Modell: X ist die Anzahl der Patienten mit Nebenwirkungen; unter H₀ gilt X ~ B(100; 0,1). 3. Ansatz: Suche kleinstes k mit P(X ≥ k) ≤ 0,05. Dies entspricht 1 - P(X ≤ k-1) ≤ 0,05 bzw. P(X ≤ k-1) ≥ 0,95. 4. Tabellenwerk/Rechner: P(X ≤ 14) ≈ 0,927; P(X ≤ 15) ≈ 0,960. Somit ist k-1 = 15, also k = 16. 5. Ablehnungsbereich: K = {16, 17, ..., 100}. 6. Interpretation Fehler 1. Art: Man geht fälschlicherweise davon aus, dass mehr als 10 % Nebenwirkungen auftreten, obwohl die Behauptung des Herstellers (p ≤ 0,1) eigentlich korrekt ist. Dies könnte zu unnötigen Warnungen führen."
+        }
+      ],
+      "common_mistakes": [
+        "Verwechslung von H₀ und H₁: H₀ enthält im Abitur meist das Gleichheitszeichen (≤, ≥ oder =).",
+        "Falsche Richtung des Ablehnungsbereichs: Bei 'p > p₀' liegt der Ablehnungsbereich rechts (große Werte), bei 'p < p₀' links (kleine Werte).",
+        "Fehler 2. Art als konstant ansehen: Die Wahrscheinlichkeit für den Fehler 2. Art sinkt, wenn der wahre Wert p sich weiter vom H₀-Wert entfernt."
+      ],
+      "exam_tips": [
+        "Achten Sie auf Signalwörter: 'höchstens' deutet oft auf H₀: p ≤ p₀ hin, 'mindestens' auf H₀: p ≥ p₀.",
+        "Prüfen Sie bei der Berechnung von P(X ≥ k) immer die Gegenwahrscheinlichkeit 1 - P(X ≤ k-1).",
+        "Skizzieren Sie bei Unsicherheit die Binomialverteilung, um zu sehen, ob die 'Ausreißer' am linken oder rechten Rand liegen."
+      ],
+      "recap": "Ein Hypothesentest entscheidet über die Ablehnung der Nullhypothese. Der Ablehnungsbereich wird so gewählt, dass die Wahrscheinlichkeit für den Fehler 1. Art das Signifikanzniveau α nicht überschreitet. Ein Fehler 2. Art tritt auf, wenn H₀ trotz Gültigkeit von H₁ nicht verworfen wird.",
+      "knowledge_claims": [
+        {
+          "claim_id": "claim_01",
+          "type": "definition",
+          "content": "Die Nullhypothese H₀ ist die Annahme, die im Test auf signifikante Gegenbeweise geprüft wird und nur bei hinreichender Evidenz verworfen wird."
+        },
+        {
+          "claim_id": "claim_02",
+          "type": "rule",
+          "content": "Bei einem rechtsseitigen Test lautet die Alternativhypothese H₁: p > p₀, und der Ablehnungsbereich liegt bei großen Werten der Testgröße."
+        },
+        {
+          "claim_id": "claim_03",
+          "type": "rule",
+          "content": "Bei einem linksseitigen Test lautet die Alternativhypothese H₁: p < p₀, und der Ablehnungsbereich liegt bei kleinen Werten der Testgröße."
+        },
+        {
+          "claim_id": "claim_04",
+          "type": "definition",
+          "content": "Das Signifikanzniveau α ist die vorgegebene Obergrenze für die Wahrscheinlichkeit, einen Fehler 1. Art zu begehen."
+        },
+        {
+          "claim_id": "claim_05",
+          "type": "definition",
+          "content": "Ein Fehler 1. Art liegt vor, wenn die Nullhypothese H₀ abgelehnt wird, obwohl sie in der Realität wahr ist."
+        },
+        {
+          "claim_id": "claim_06",
+          "type": "definition",
+          "content": "Ein Fehler 2. Art liegt vor, wenn die Nullhypothese H₀ beibehalten wird, obwohl sie in der Realität falsch ist."
+        },
+        {
+          "claim_id": "claim_07",
+          "type": "procedure",
+          "content": "Zur Bestimmung des Ablehnungsbereichs eines rechtsseitigen Tests sucht man das kleinste k, für das P(X ≥ k) ≤ α gilt."
+        },
+        {
+          "claim_id": "claim_08",
+          "type": "procedure",
+          "content": "Zur Bestimmung des Ablehnungsbereichs eines linksseitigen Tests sucht man das größte k, für das P(X ≤ k) ≤ α gilt."
+        },
+        {
+          "claim_id": "claim_09",
+          "type": "interpretation",
+          "content": "Das Ergebnis 'H₀ wird nicht abgelehnt' ist kein Beweis für die Richtigkeit von H₀, sondern bedeutet lediglich, dass die Daten nicht ausreichen, um H₀ zu verwerfen."
+        },
+        {
+          "claim_id": "claim_10",
+          "type": "comparison",
+          "content": "Wird das Signifikanzniveau α verkleinert, verkleinert sich der Ablehnungsbereich, wodurch der Fehler 1. Art seltener, der Fehler 2. Art jedoch wahrscheinlicher wird."
+        },
+        {
+          "claim_id": "claim_11",
+          "type": "formula",
+          "content": "Die Wahrscheinlichkeit für den Fehler 2. Art berechnet man als P(X ∈ Nicht-Ablehnungsbereich) unter der Bedingung, dass ein spezifischer Parameter p aus H₁ gilt."
+        },
+        {
+          "claim_id": "claim_12",
+          "type": "check",
+          "content": "Bei der Berechnung von P(X ≥ k) mit kumulierten Tabellen muss die Identität P(X ≥ k) = 1 - P(X ≤ k-1) verwendet werden."
+        }
+      ],
+      "visual_requests": [],
+      "visual_assets": []
+    },
+    "items": [],
+    "videoLesson": {
+      "title": "Entscheide im Test und deute Fehlerrisiken",
+      "coverUrl": "https://solve-now.s3.us-west-2.amazonaws.com/german-abitur/atomic-videos-v2/ABITUR-MATHEMATIK-031/cover.png",
+      "playbackUrl": "https://solve-now.s3.us-west-2.amazonaws.com/german-abitur/atomic-videos-v2/ABITUR-MATHEMATIK-031/lesson.html",
+      "durationSeconds": 480,
+      "description": "Feingranulares IQB-basiertes Topic `Hypothesentests, Fehler und Entscheidungen`; abgegrenzt durch: Nullhypothese, Ablehnungsbereich und Fehlerrisiken bestimmen. Im Quellkorpus: 30 Aufgaben, davon 1 offizielle Pool- oder Beispielaufgaben."
+    }
+  },
+  "lastViewedQuestionId": null,
+  "lastViewedAt": null
+}

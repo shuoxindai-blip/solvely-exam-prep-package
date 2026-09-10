@@ -1,0 +1,220 @@
+{
+  "epId": 500001,
+  "outlineId": 500002,
+  "topicGroupId": 510003,
+  "topicId": 520027,
+  "packageId": 5001,
+  "contentType": "flashCard",
+  "contentStatus": "READY",
+  "generationId": "",
+  "progress": {
+    "totalCount": 20,
+    "completedCount": 0,
+    "items": {}
+  },
+  "platform": "system",
+  "payload": {
+    "cards": [
+      {
+        "id": 53002600,
+        "topicId": 520027,
+        "type": "FLASH_CARD",
+        "info": "Wie wird der Erwartungswert $E(X)$ einer diskreten Zufallsgröße mathematisch berechnet?",
+        "backInfo": "Er ist die Summe der Produkte aus jedem Wert $x_i$ und seiner Wahrscheinlichkeit $P(X=x_i)$, also $E(X) = \\sum (x_i \\cdot P(X=x_i))$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002601,
+        "topicId": 520027,
+        "type": "FLASH_CARD",
+        "info": "Was gibt der Erwartungswert bezüglich der Durchführung eines Zufallsexperiments an?",
+        "backInfo": "Er entspricht dem langfristigen Mittelwert der Ergebnisse bei einer sehr großen Anzahl von Durchführungen.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002602,
+        "topicId": 520027,
+        "type": "FLASH_CARD",
+        "info": "Wie lautet die formale Definition der Varianz $Var(X)$?",
+        "backInfo": "Die Varianz ist die mittlere quadratische Abweichung: $Var(X) = \\sum ((x_i - \\mu)^2 \\cdot P(X=x_i))$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002603,
+        "topicId": 520027,
+        "type": "FLASH_CARD",
+        "info": "In welcher mathematischen Beziehung steht die Standardabweichung $\\sigma$ zur Varianz?",
+        "backInfo": "Die Standardabweichung $\\sigma$ ist die positive Quadratwurzel aus der Varianz $Var(X)$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002604,
+        "topicId": 520027,
+        "type": "FLASH_CARD",
+        "info": "Wie lautet die Kurzformel für den Erwartungswert einer Binomialverteilung $X \\sim B(n; p)$?",
+        "backInfo": "Der Erwartungswert berechnet sich einfach durch das Produkt $E(X) = n \\cdot p$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002605,
+        "topicId": 520027,
+        "type": "FLASH_CARD",
+        "info": "Mit welcher Formel berechnet man die Standardabweichung $\\sigma$ bei einer Binomialverteilung?",
+        "backInfo": "Die Formel lautet $\\sigma = \\sqrt{n \\cdot p \\cdot (1 - p)}$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002606,
+        "topicId": 520027,
+        "type": "FLASH_CARD",
+        "info": "Warum kann die Varianz einer Zufallsgröße niemals einen negativen Wert annehmen?",
+        "backInfo": "Da die Varianz auf quadrierten Differenzen basiert, muss das Ergebnis immer $\\ge 0$ sein.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002607,
+        "topicId": 520027,
+        "type": "FLASH_CARD",
+        "info": "Welche unterschiedlichen Aspekte einer Verteilung beschreiben Erwartungswert und Standardabweichung?",
+        "backInfo": "Der Erwartungswert beschreibt die Lage (Zentrum), während die Standardabweichung die Streuung (Breite) angibt.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002608,
+        "topicId": 520027,
+        "type": "FLASH_CARD",
+        "info": "Wann wird ein Spiel in der Stochastik als 'fair' bezeichnet?",
+        "backInfo": "Ein Spiel ist fair, wenn der Erwartungswert des Gewinns abzüglich des Einsatzes genau Null ergibt.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002609,
+        "topicId": 520027,
+        "type": "FLASH_CARD",
+        "info": "Welcher Schritt muss zwingend vor der Berechnung der Varianz durchgeführt werden?",
+        "backInfo": "Zur Berechnung der Varianz muss zwingend zuerst der Erwartungswert $\\mu$ bestimmt werden.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002610,
+        "topicId": 520027,
+        "type": "FLASH_CARD",
+        "info": "Ein Glücksrad hat Sektoren mit Werten $x_i$. Wie gewichtet man diese für den Erwartungswert?",
+        "backInfo": "Jeder Wert $x_i$ wird mit seiner jeweiligen Eintrittswahrscheinlichkeit $P(X = x_i)$ multipliziert, bevor die Produkte summiert werden.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002611,
+        "topicId": 520027,
+        "type": "FLASH_CARD",
+        "info": "Warum ist der Erwartungswert kein 'garantiertes' Ergebnis für eine einzelne Durchführung?",
+        "backInfo": "Er ist ein theoretischer Durchschnittswert, der sich erst bei einer sehr großen Anzahl von Wiederholungen stabilisiert.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002612,
+        "topicId": 520027,
+        "type": "FLASH_CARD",
+        "info": "Welche Einheit besitzt die Varianz $Var(X)$, wenn die Zufallsgröße $X$ in Euro gemessen wird?",
+        "backInfo": "Die Varianz besitzt die Einheit Euro-Quadrat (€²), da die Abweichungen vom Mittelwert quadriert werden.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002613,
+        "topicId": 520027,
+        "type": "FLASH_CARD",
+        "info": "Warum nutzt man oft die Standardabweichung $\\sigma$ statt der Varianz zur Ergebnisinterpretation?",
+        "backInfo": "Die Standardabweichung hat dieselbe Einheit wie die Zufallsgröße selbst, was den Vergleich mit dem Erwartungswert erleichtert.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002614,
+        "topicId": 520027,
+        "type": "FLASH_CARD",
+        "info": "Berechne $E(X)$ für eine Binomialverteilung mit $n = 100$ und $p = 0,2$.",
+        "backInfo": "$E(X) = n \\cdot p = 100 \\cdot 0,2 = 20$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002615,
+        "topicId": 520027,
+        "type": "FLASH_CARD",
+        "info": "Wie ändert sich $\\sigma$ einer Binomialverteilung, wenn die Trefferwahrscheinlichkeit $p$ gegen 0 oder 1 geht?",
+        "backInfo": "Die Standardabweichung $\\sigma$ sinkt gegen 0, da der Term $p \\cdot (1 - p)$ in der Formel $\\sqrt{n \\cdot p \\cdot (1 - p)}$ kleiner wird.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002616,
+        "topicId": 520027,
+        "type": "FLASH_CARD",
+        "info": "Diagnose: Ein Schüler berechnet eine Varianz von $-2,5$. Welcher Rechenfehler muss vorliegen?",
+        "backInfo": "Es muss ein Vorzeichenfehler oder ein Fehler beim Quadrieren vorliegen, da eine Varianz mathematisch niemals negativ sein kann.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002617,
+        "topicId": 520027,
+        "type": "FLASH_CARD",
+        "info": "Zwei Verteilungen haben denselben Erwartungswert, aber unterschiedliche Standardabweichungen. Was bedeutet das grafisch?",
+        "backInfo": "Beide Zentren liegen an derselben Stelle, aber die Verteilung mit der größeren Standardabweichung ist breiter gestreut.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002618,
+        "topicId": 520027,
+        "type": "FLASH_CARD",
+        "info": "Ein Spiel kostet 5 € Einsatz. Wie hoch muss der erwartete Bruttogewinn sein, damit es fair ist?",
+        "backInfo": "Der erwartete Bruttogewinn muss genau 5 € betragen, damit der Netto-Erwartungswert (Gewinn minus Einsatz) Null ist.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002619,
+        "topicId": 520027,
+        "type": "FLASH_CARD",
+        "info": "Was signalisiert eine sehr kleine Standardabweichung in der industriellen Qualitätssicherung?",
+        "backInfo": "Sie deutet auf eine hohe Prozessstabilität und eine geringe Fehlerquote hin, da die Werte kaum vom Sollwert abweichen.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      }
+    ]
+  }
+}

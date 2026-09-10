@@ -1,0 +1,159 @@
+{
+  "epId": 500001,
+  "outlineId": 500002,
+  "topicGroupId": 510002,
+  "topicId": 520018,
+  "packageId": 5001,
+  "contentType": "studyGuide",
+  "contentStatus": "READY",
+  "generationId": "",
+  "progress": {
+    "totalCount": 2,
+    "completedCount": 0,
+    "items": {}
+  },
+  "platform": "system",
+  "payload": {
+    "content": {
+      "lesson_id": "ABITUR-MATHEMATIK-018",
+      "title": "Winkel, Abstände und Orthogonalität",
+      "overview": "Dieses Modul behandelt die metrischen Eigenschaften im dreidimensionalen Raum. Im Fokus stehen die Berechnung von Winkeln zwischen Vektoren, Geraden und Ebenen, die Bestimmung von Abständen sowie der Nachweis von Orthogonalität mittels des Skalarprodukts.",
+      "learning_objectives": [
+        "Das Skalarprodukt zur Prüfung der Orthogonalität anwenden.",
+        "Schnittwinkel zwischen Geraden, Ebenen sowie Geraden und Ebenen berechnen.",
+        "Abstände zwischen Punkten, Geraden und Ebenen bestimmen.",
+        "Geometrische Problemstellungen in Sachzusammenhängen modellieren und lösen."
+      ],
+      "sections": [
+        {
+          "title": "Orthogonalität und Skalarprodukt",
+          "content": "Zwei Vektoren $\\vec{a}$ und $\\vec{b}$ stehen genau dann senkrecht (orthogonal) zueinander, wenn ihr Skalarprodukt null ergibt: $\\vec{a} \\cdot \\vec{b} = a_1b_1 + a_2b_2 + a_3b_3 = 0$. In der analytischen Geometrie wird dies genutzt, um die Lage von Geraden (Richtungsvektoren) oder Ebenen (Normalenvektoren) zu prüfen. Ein Vektor steht senkrecht auf einer Ebene, wenn er parallel zum Normalenvektor $\\vec{n}$ der Ebene verläuft."
+        },
+        {
+          "title": "Winkelberechnungen",
+          "content": "Die Berechnung von Winkeln basiert auf der Formel $\\cos(\\alpha) = \\frac{|\\vec{u} \\cdot \\vec{v}|}{|\\vec{u}| \\cdot |\\vec{v}|}$. \n1. **Zwischen zwei Geraden:** Verwendung der Richtungsvektoren $\\vec{u}$ und $\\vec{v}$. \n2. **Zwischen zwei Ebenen:** Verwendung der Normalenvektoren $\\vec{n}_1$ und $\\vec{n}_2$. \n3. **Zwischen Gerade und Ebene:** Hier wird der Sinus verwendet: $\\sin(\\alpha) = \\frac{|\\vec{u} \\cdot \\vec{n}|}{|\\vec{u}| \\cdot |\\vec{n}|}$, wobei $\\vec{u}$ der Richtungsvektor der Geraden und $\\vec{n}$ der Normalenvektor der Ebene ist."
+        },
+        {
+          "title": "Abstandsberechnungen",
+          "content": "Der Abstand eines Punktes $P$ zu einer Ebene $E$ in Koordinatenform $ax_1 + bx_2 + cx_3 = d$ lässt sich effizient mit der Hessischen Normalform (HNF) berechnen: $d(P, E) = \\frac{|ap_1 + bp_2 + cp_3 - d|}{\\sqrt{a^2 + b^2 + c^2}}$. Der Abstand eines Punktes zu einer Geraden wird oft über ein Lotfußpunktverfahren oder die Minimierung des Abstandsquadrats bestimmt, wobei der Differenzvektor zwischen Punkt und Gerade senkrecht auf dem Richtungsvektor der Geraden stehen muss."
+        }
+      ],
+      "worked_examples": [
+        {
+          "question": "Gegeben ist eine Ebene $E: 2x_1 - 2x_2 + x_3 = 9$ und ein Punkt $A(1|5|2)$. Prüfen Sie, ob der Vektor $\\vec{v} = \\begin{pmatrix} 4 \\\\ -4 \\\\ 2 \\end{pmatrix}$ orthogonal zur Ebene steht und berechnen Sie den Abstand des Punktes $A$ von der Ebene $E$.",
+          "solution": "1. Orthogonalität: Der Normalenvektor der Ebene ist $\\vec{n} = \\begin{pmatrix} 2 \\\\ -2 \\\\ 1 \\end{pmatrix}$. Da $\\vec{v} = 2 \\cdot \\vec{n}$, ist $\\vec{v}$ parallel zum Normalenvektor und steht somit senkrecht auf der Ebene.\n2. Abstand: Anwendung der HNF: $d(A, E) = \\frac{|2(1) - 2(5) + 1(2) - 9|}{\\sqrt{2^2 + (-2)^2 + 1^2}} = \\frac{|2 - 10 + 2 - 9|}{\\sqrt{9}} = \\frac{|-15|}{3} = 5$. Der Abstand beträgt 5 Längeneinheiten."
+        }
+      ],
+      "common_mistakes": [
+        "Verwechslung von Sinus und Kosinus bei der Winkelberechnung zwischen Gerade und Ebene.",
+        "Vergessen der Betragsstriche im Zähler der Winkelformel, was zu stumpfen statt spitzen Schnittwinkeln führen kann.",
+        "Nutzung des Richtungsvektors statt des Normalenvektors bei Abständen zur Ebene."
+      ],
+      "exam_tips": [
+        "Prüfen Sie bei Orthogonalitätsaufgaben immer zuerst, ob das Skalarprodukt null ist.",
+        "Skizzieren Sie bei komplexen Abstandsaufgaben (z.B. Punkt-Gerade) die Situation, um den rechten Winkel für den Ansatz zu identifizieren.",
+        "Achten Sie auf die Aufgabenstellung: 'Schnittwinkel' verlangt meist den spitzen Winkel ($0 \\le \\alpha \\le 90^\\circ$)."
+      ],
+      "recap": "Die Metrik nutzt das Skalarprodukt als zentrales Werkzeug. Orthogonalität bedeutet ein Skalarprodukt von Null. Winkel werden über das Verhältnis von Skalarprodukt zu den Beträgen der Vektoren definiert, wobei bei Gerade-Ebene-Kombinationen der Sinus tritt. Abstände werden systematisch über die HNF oder Lotverfahren ermittelt.",
+      "knowledge_claims": [
+        {
+          "claim_id": "claim_01",
+          "type": "rule",
+          "content": "Zwei Vektoren sind genau dann orthogonal zueinander, wenn ihr Skalarprodukt den Wert 0 ergibt."
+        },
+        {
+          "claim_id": "claim_02",
+          "type": "formula",
+          "content": "Der Winkel $\\alpha$ zwischen zwei Vektoren $\\vec{u}$ und $\\vec{v}$ wird berechnet durch $\\cos(\\alpha) = \\frac{|\\vec{u} \\cdot \\vec{v}|}{|\\vec{u}| \\cdot |\\vec{v}|}$."
+        },
+        {
+          "claim_id": "claim_03",
+          "type": "interpretation",
+          "content": "Beim Schnittwinkel zwischen einer Geraden und einer Ebene wird in der Formel der Sinus statt des Kosinus verwendet."
+        },
+        {
+          "claim_id": "claim_04",
+          "type": "procedure",
+          "content": "Um den Abstand eines Punktes zu einer Ebene zu berechnen, setzt man die Punktkoordinaten in die Hessische Normalform der Ebene ein."
+        },
+        {
+          "claim_id": "claim_05",
+          "type": "definition",
+          "content": "Der Normalenvektor einer Ebene steht senkrecht auf allen Spannvektoren der Ebene und somit auf der Ebene selbst."
+        },
+        {
+          "claim_id": "claim_06",
+          "type": "check",
+          "content": "Ein negatives Ergebnis im Zähler der Winkelformel wird durch Betragsstriche korrigiert, um den spitzen Schnittwinkel zu erhalten."
+        },
+        {
+          "claim_id": "claim_07",
+          "type": "application",
+          "content": "Der Abstand zwischen zwei parallelen Ebenen kann berechnet werden, indem der Abstand eines beliebigen Punktes der einen Ebene zur anderen Ebene bestimmt wird."
+        },
+        {
+          "claim_id": "claim_08",
+          "type": "mistake",
+          "content": "Ein häufiger Fehler ist die Verwendung von Stützvektoren anstelle von Richtungsvektoren bei der Winkelberechnung zwischen Geraden."
+        },
+        {
+          "claim_id": "claim_09",
+          "type": "procedure",
+          "content": "Der Lotfußpunkt $F$ einer Punkt-Gerade-Projektion ist derjenige Punkt auf der Geraden, für den der Vektor $\\vec{PF}$ orthogonal zum Richtungsvektor der Geraden ist."
+        },
+        {
+          "claim_id": "claim_10",
+          "type": "recognition",
+          "content": "Steht eine Gerade senkrecht auf einer Ebene, so ist ihr Richtungsvektor kollinear (parallel) zum Normalenvektor der Ebene."
+        },
+        {
+          "claim_id": "claim_11",
+          "type": "formula",
+          "content": "Die Länge (Betrag) eines Vektors $\\vec{a}$ ist definiert als $\\sqrt{a_1^2 + a_2^2 + a_3^2}$."
+        },
+        {
+          "claim_id": "claim_12",
+          "type": "interpretation",
+          "content": "Ein Winkel von $90^\\circ$ zwischen zwei Ebenen bedeutet, dass ihre Normalenvektoren orthogonal sind."
+        }
+      ],
+      "visual_requests": [],
+      "visual_assets": []
+    },
+    "items": [
+      {
+        "id": 55001700,
+        "sourceQuestionId": "MAT-5F13D0AD71-01",
+        "topicId": 520018,
+        "type": "STUDENT_PRODUCED_RESPONSE",
+        "stem": "Zeigen Sie, dass jedes dieser Dreiecke bei B einen rechten Winkel hat. 2",
+        "options": {},
+        "correctAnswer": "Der Erwartungshorizont stellt für jede Teilaufgabe dar, in welchem Umfang und in welcher \nForm eine Lösung erwartet wird; nicht alle Lösungen sind dazu vollständig ausgeführt. Nicht \ndargestellte korrekte Lösungen sind als gleichwertig zu akzeptieren. \n BE \na \nt\n2 2t\nBA BC 0 0 4t 4t 0\n4t\n  \n  = =−=    −  \n   \n \n2 \n \n1 verwendete Abkürzungen: AG/LA (A1) - Analytische Geometrie/Lineare Algebra (Alternative A1), \nAG/LA (A2) - Analytische Geometrie/Lineare Algebra (Alternative A2)",
+        "explanation": "Der Erwartungshorizont stellt für jede Teilaufgabe dar, in welchem Umfang und in welcher \nForm eine Lösung erwartet wird; nicht alle Lösungen sind dazu vollständig ausgeführt. Nicht \ndargestellte korrekte Lösungen sind als gleichwertig zu akzeptieren. \n BE \na \nt\n2 2t\nBA BC 0 0 4t 4t 0\n4t\n  \n  = =−=    −  \n   \n \n2 \n \n1 verwendete Abkürzungen: AG/LA (A1) - Analytische Geometrie/Lineare Algebra (Alternative A1), \nAG/LA (A2) - Analytische Geometrie/Lineare Algebra (Alternative A2)",
+        "userAnswer": null,
+        "isCorrect": -1
+      },
+      {
+        "id": 55001701,
+        "sourceQuestionId": "MAT-5F13D0AD71-02",
+        "topicId": 520018,
+        "type": "STUDENT_PRODUCED_RESPONSE",
+        "stem": "Bestimmen Sie alle Werte von t, für die im jeweiligen Dreieck tABC zwei Innenwinkel \ngleich groß sind. \n3",
+        "options": {},
+        "correctAnswer": "Der Erwartungshorizont stellt für jede Teilaufgabe dar, in welchem Umfang und in welcher \nForm eine Lösung erwartet wird; nicht alle Lösungen sind dazu vollständig ausgeführt. Nicht \ndargestellte korrekte Lösungen sind als gleichwertig zu akzeptieren. \n BE \na \nt\n2 2t\nBA BC 0 0 4t 4t 0\n4t\n  \n  = =−=    −  \n   \n \n2 \n \n1 verwendete Abkürzungen: AG/LA (A1) - Analytische Geometrie/Lineare Algebra (Alternative A1), \nAG/LA (A2) - Analytische Geometrie/Lineare Algebra (Alternative A2)",
+        "explanation": "Der Erwartungshorizont stellt für jede Teilaufgabe dar, in welchem Umfang und in welcher \nForm eine Lösung erwartet wird; nicht alle Lösungen sind dazu vollständig ausgeführt. Nicht \ndargestellte korrekte Lösungen sind als gleichwertig zu akzeptieren. \n BE \na \nt\n2 2t\nBA BC 0 0 4t 4t 0\n4t\n  \n  = =−=    −  \n   \n \n2 \n \n1 verwendete Abkürzungen: AG/LA (A1) - Analytische Geometrie/Lineare Algebra (Alternative A1), \nAG/LA (A2) - Analytische Geometrie/Lineare Algebra (Alternative A2)",
+        "userAnswer": null,
+        "isCorrect": -1
+      }
+    ],
+    "videoLesson": {
+      "title": "Berechne Winkel, Abstände und Orthogonalität sicher",
+      "coverUrl": "https://solve-now.s3.us-west-2.amazonaws.com/german-abitur/atomic-videos-v2/ABITUR-MATHEMATIK-018/cover.png",
+      "playbackUrl": "https://solve-now.s3.us-west-2.amazonaws.com/german-abitur/atomic-videos-v2/ABITUR-MATHEMATIK-018/lesson.html",
+      "durationSeconds": 480,
+      "description": "Feingranulares IQB-basiertes Topic `Winkel, Abstände und Orthogonalität`; abgegrenzt durch: Skalarprodukt und Abstandsformeln anwenden. Im Quellkorpus: 77 Aufgaben, davon 77 offizielle Pool- oder Beispielaufgaben."
+    }
+  },
+  "lastViewedQuestionId": null,
+  "lastViewedAt": null
+}

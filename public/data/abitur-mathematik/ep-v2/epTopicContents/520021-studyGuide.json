@@ -1,0 +1,159 @@
+{
+  "epId": 500001,
+  "outlineId": 500002,
+  "topicGroupId": 510002,
+  "topicId": 520021,
+  "packageId": 5001,
+  "contentType": "studyGuide",
+  "contentStatus": "READY",
+  "generationId": "",
+  "progress": {
+    "totalCount": 2,
+    "completedCount": 0,
+    "items": {}
+  },
+  "platform": "system",
+  "payload": {
+    "content": {
+      "lesson_id": "ABITUR-MATHEMATIK-021",
+      "title": "Lineare Gleichungssysteme und Parameterfälle",
+      "overview": "Dieses Modul behandelt das systematische Lösen von linearen Gleichungssystemen (LGS) sowie die Analyse von Lösungsmengen in Abhängigkeit von Parametern. Im Fokus stehen das Gauß-Verfahren, die Interpretation von Widersprüchen und Identitäten sowie die Fallunterscheidung bei variablen Koeffizienten.",
+      "learning_objectives": [
+        "Lösungsmengen von LGS mit dem Gauß-Verfahren bestimmen.",
+        "Die drei Lösungsfälle (genau eine, keine, unendlich viele Lösungen) identifizieren.",
+        "Parameterabhängige LGS analysieren und kritische Parameterwerte bestimmen.",
+        "Lösungsmengen unter zusätzlichen Bedingungen (z. B. Ganzzahligkeit) einschränken."
+      ],
+      "sections": [
+        {
+          "title": "Grundlagen und Gauß-Verfahren",
+          "content": "Ein lineares Gleichungssystem besteht aus mehreren linearen Gleichungen mit mehreren Unbekannten. Das Standardverfahren zur Lösung ist der Gauß-Algorithmus. Ziel ist es, das System durch elementare Zeilenumformungen (Vertauschen, Multiplizieren, Addieren von Zeilen) in Stufenform zu bringen. In der Stufenform lässt sich die Lösungsmenge durch Rückwärtssubstitution bestimmen. Ein LGS kann genau eine Lösung (eindeutig bestimmt), keine Lösung (Widerspruch in einer Zeile) oder unendlich viele Lösungen (eine oder mehrere freie Variablen) besitzen."
+        },
+        {
+          "title": "Parameterfälle und Fallunterscheidung",
+          "content": "Enthält ein LGS einen Parameter $a \\in \\mathbb{R}$, hängen die Koeffizienten oder die rechten Seiten der Gleichungen von diesem Wert ab. Bei der Umformung in Stufenform entstehen Terme wie $(a-k) \\cdot x_n = b(a)$. Hier muss eine Fallunterscheidung durchgeführt werden: 1. Der Koeffizient vor der Variablen ist ungleich Null: Das System ist meist eindeutig lösbar. 2. Der Koeffizient ist Null: Es entsteht entweder eine wahre Aussage (unendlich viele Lösungen) oder ein Widerspruch (keine Lösung). Besonders in Abituraufgaben ist zu prüfen, für welche $a$ der Rang der Koeffizientenmatrix sinkt."
+        },
+        {
+          "title": "Interpretation der Lösungsmenge",
+          "content": "Die Lösungsmenge $L$ wird formal korrekt angegeben. Bei unendlich vielen Lösungen wird eine Variable als freier Parameter (z. B. $s \\in \\mathbb{R}$) gewählt. Oft verlangen Aufgaben eine Interpretation im Sachkontext (z. B. Mischungsverhältnisse) oder eine Einschränkung auf Teilmengen (z. B. nur positive, ganzzahlige Lösungen). Hierbei müssen Ungleichungen aufgestellt werden, um den zulässigen Bereich für den freien Parameter $s$ einzugrenzen."
+        }
+      ],
+      "worked_examples": [
+        {
+          "question": "Gegeben ist das LGS:\nI: x + y + z = 6\nII: 2x + 4y + 2z = 16\nIII: x + y + (a² - 3)z = a + 3\nBestimmen Sie, für welche Werte von a das System keine, genau eine oder unendlich viele Lösungen besitzt.",
+          "solution": "1. Schritt: Stufenform erzeugen.\nII - 2*I ergibt: 2y = 4 => y = 2.\nIII - I ergibt: (a² - 4)z = a - 3.\n\n2. Schritt: Analyse der letzten Gleichung (a² - 4)z = a - 3.\nFall A: a² - 4 ≠ 0, also a ≠ 2 und a ≠ -2.\nDer Koeffizient vor z ist ungleich Null. Es gibt genau eine Lösung für z, daraus folgt eine eindeutige Lösung für das gesamte LGS.\n\nFall B: a = 2.\nDie Gleichung lautet: (2² - 4)z = 2 - 3 => 0 = -1. Dies ist ein Widerspruch. Das LGS hat keine Lösung.\n\nFall C: a = -2.\nDie Gleichung lautet: ((-2)² - 4)z = -2 - 3 => 0 = -5. Dies ist ebenfalls ein Widerspruch. Das LGS hat keine Lösung.\n\nZusammenfassung: Für a ∉ {2; -2} genau eine Lösung; für a = 2 oder a = -2 keine Lösung. (Hinweis: In diesem speziellen Beispiel gibt es keinen Wert für unendlich viele Lösungen, da der Zähler a-3 für a=±2 nicht Null wird)."
+        }
+      ],
+      "common_mistakes": [
+        "Division durch Null: Bei Umformungen wird durch einen Term mit Parametern dividiert, ohne den Fall auszuschließen, dass dieser Term Null ist.",
+        "Unvollständige Lösungsmenge: Bei unendlich vielen Lösungen wird vergessen, den Definitionsbereich des freien Parameters (z. B. $s \\in \\mathbb{R}$) anzugeben.",
+        "Zeilenverwechslung: Fehler beim Übertrag der Koeffizienten in die Matrixschreibweise."
+      ],
+      "exam_tips": [
+        "Prüfen Sie bei Parameteraufgaben immer zuerst die Werte, die den Koeffizienten der Stufenform zu Null machen.",
+        "Nutzen Sie bei Sachaufgaben die Plausibilitätsprüfung: Negative Anteile oder Mengen sind oft physikalisch unmöglich und grenzen den Parameter ein.",
+        "Schreiben Sie das LGS in Matrixform auf, um Rechenfehler durch mitschleifende Variablennamen zu minimieren."
+      ],
+      "recap": "Ein LGS wird mit dem Gauß-Verfahren gelöst. Die Anzahl der Lösungen hängt vom Rang der Matrix ab. Bei Parametern entscheiden die Nullstellen der Koeffiziententerme über die Fallunterscheidung zwischen eindeutiger Lösung, Widerspruch oder Parameterabhängigkeit.",
+      "knowledge_claims": [
+        {
+          "claim_id": "claim_01",
+          "type": "procedure",
+          "content": "Das Gauß-Verfahren transformiert ein LGS durch Zeilenoperationen in eine Stufenform, um die Variablen durch Rücksubstitution zu bestimmen."
+        },
+        {
+          "claim_id": "claim_02",
+          "type": "recognition",
+          "content": "Ein Widerspruch der Form '0 = c' (mit c ≠ 0) in einer Zeile der Stufenform bedeutet, dass das LGS keine Lösung besitzt."
+        },
+        {
+          "claim_id": "claim_03",
+          "type": "recognition",
+          "content": "Eine Nullzeile der Form '0 = 0' deutet bei weniger Gleichungen als Unbekannten auf unendlich viele Lösungen hin."
+        },
+        {
+          "claim_id": "claim_04",
+          "type": "rule",
+          "content": "Bei unendlich vielen Lösungen wird mindestens eine Variable als freier Parameter (z. B. s oder t) definiert, um die Lösungsmenge allgemein anzugeben."
+        },
+        {
+          "claim_id": "claim_05",
+          "type": "interpretation",
+          "content": "In Sachzusammenhängen müssen Lösungen oft zusätzliche Bedingungen erfüllen, wie z. B. x ≥ 0, was den Wertebereich freier Parameter einschränkt."
+        },
+        {
+          "claim_id": "claim_06",
+          "type": "procedure",
+          "content": "Bei Parameterfällen muss vor einer Division durch einen parameterhaltigen Term geprüft werden, für welche Parameterwerte dieser Term Null wird."
+        },
+        {
+          "claim_id": "claim_07",
+          "type": "comparison",
+          "content": "Ein LGS hat genau eine Lösung, wenn die Stufenform eine quadratische Struktur ohne Nullzeilen aufweist und jeder Variable ein fester Wert zugeordnet werden kann."
+        },
+        {
+          "claim_id": "claim_08",
+          "type": "mistake",
+          "content": "Ein häufiger Fehler ist die Annahme, dass eine Nullzeile immer unendlich viele Lösungen bedeutet, ohne den Rest des Systems auf Widersprüche zu prüfen."
+        },
+        {
+          "claim_id": "claim_09",
+          "type": "application",
+          "content": "Um die Lösung mit dem größten Wert einer Variablen in einer unendlichen Lösungsmenge zu finden, stellt man diese Variable in Abhängigkeit vom freien Parameter dar und maximiert unter Nebenbedingungen."
+        },
+        {
+          "claim_id": "claim_10",
+          "type": "definition",
+          "content": "Ein homogenes LGS (alle rechten Seiten sind Null) besitzt immer mindestens die triviale Lösung (alle Variablen gleich Null)."
+        },
+        {
+          "claim_id": "claim_11",
+          "type": "check",
+          "content": "Die Probe durch Einsetzen der gefundenen Werte in alle ursprünglichen Gleichungen verifiziert die Korrektheit der Lösung."
+        },
+        {
+          "claim_id": "claim_12",
+          "type": "rule",
+          "content": "Wenn ein LGS mehr Unbekannte als Gleichungen hat und kein Widerspruch vorliegt, existieren in der Regel unendlich viele Lösungen."
+        }
+      ],
+      "visual_requests": [],
+      "visual_assets": []
+    },
+    "items": [
+      {
+        "id": 55002000,
+        "sourceQuestionId": "MAT-41FBB4A611-02",
+        "topicId": 520021,
+        "type": "STUDENT_PRODUCED_RESPONSE",
+        "stem": "Das lineare Gleichungssystem hat die Lösungsmenge ( ){ }−+ − ∈1 2 s|2 3 s|s |s I R . \nZeigen Sie, dass die folgende Aussage wahr ist: \nDer Anteil von Fruchtsaft zF am neuen Fruchtsaft ist mindestens doppelt so \ngroß wie der Anteil von Fruchtsaft xF . \n3 \n 5 \n \n1 verwendete Abkürzungen: AG/LA - Analytische Geometrie/Lineare Algebra, AG/LA (A1) - Analytische Geomet-\nrie/Lineare Algebra (Alternative A1), AG/LA (A2) - Analytische Geometrie/Lineare Algebra (Alternative A2)",
+        "options": {},
+        "correctAnswer": "Es gilt: ( )≤ ⇔ ⋅−+ ≤ ⇔ ≤ 2\n32x z 2 1 2s s s \nWegen ≥⇒− ≥ ⇒≤ 2\n3y 02 3 s 0s folgt die Behauptung. \n3",
+        "explanation": "Es gilt: ( )≤ ⇔ ⋅−+ ≤ ⇔ ≤ 2\n32x z 2 1 2s s s \nWegen ≥⇒− ≥ ⇒≤ 2\n3y 02 3 s 0s folgt die Behauptung. \n3",
+        "userAnswer": null,
+        "isCorrect": -1
+      },
+      {
+        "id": 55002001,
+        "sourceQuestionId": "MAT-4313D51536-01",
+        "topicId": 520021,
+        "type": "STUDENT_PRODUCED_RESPONSE",
+        "stem": "Es gilt ( )\n−\n\n\n= \n\n3\nc21 1\n60c\n1\n20\n00\nM 00\n00\n. Bestimmen Sie den Wert von a. 2 \n \n \n \n \n1 verwendete Abkürzungen: AG/LA - Analytische Geometrie/Lineare Algebra, AG/LA (A1) - Analytische Geomet-\nrie/Lineare Algebra (Alternative A1), AG/LA (A2) - Analytische Geometrie/Lineare Algebra (Alternative A2)",
+        "options": {},
+        "correctAnswer": "2 \nb Es gilt ( )\n−\n\n\n= \n\n1\n20c31 1\n20c\n1\n20c\n00\nM0 0\n00\n. Beschreiben Sie in Abhängigkeit von c mit >c0 , \nwas sich daraus hinsichtlich der Entwicklung der Population mit fortschreitender Zeit \nschließen lässt. Gehen Sie dabei auch auf die Größe der Population ein. \n3 \n 5 \n2 Erwartungshorizont \nDer Erwartungshorizont stellt für jede Teilaufgabe eine mögliche Lösung dar. Nicht darge-\nstellte korrekte Lösungen sind als gleichwertig zu akzeptieren. \n BE \na 11 1\nc a 60c a 60⋅= ⇔= 2 \nb Im Abstand von jeweils drei Monaten ändert sich jede der Anzahlen der Eier, Larven \nund fertig entwickelten Käfer mit dem Faktor 20c . Dabei nehmen die Anzahlen für \n1\n20c < mit der Zeit ab und für 1\n20c > mit der Zeit zu, für 1\n20c = wiederholen sie sich \nregelmäßig. \n3 \n 5",
+        "explanation": "2 \nb Es gilt ( )\n−\n\n\n= \n\n1\n20c31 1\n20c\n1\n20c\n00\nM0 0\n00\n. Beschreiben Sie in Abhängigkeit von c mit >c0 , \nwas sich daraus hinsichtlich der Entwicklung der Population mit fortschreitender Zeit \nschließen lässt. Gehen Sie dabei auch auf die Größe der Population ein. \n3 \n 5 \n2 Erwartungshorizont \nDer Erwartungshorizont stellt für jede Teilaufgabe eine mögliche Lösung dar. Nicht darge-\nstellte korrekte Lösungen sind als gleichwertig zu akzeptieren. \n BE \na 11 1\nc a 60c a 60⋅= ⇔= 2 \nb Im Abstand von jeweils drei Monaten ändert sich jede der Anzahlen der Eier, Larven \nund fertig entwickelten Käfer mit dem Faktor 20c . Dabei nehmen die Anzahlen für \n1\n20c < mit der Zeit ab und für 1\n20c > mit der Zeit zu, für 1\n20c = wiederholen sie sich \nregelmäßig. \n3 \n 5",
+        "userAnswer": null,
+        "isCorrect": -1
+      }
+    ],
+    "videoLesson": {
+      "title": "Unterscheide Parameterfälle linearer Gleichungssysteme und Lösungsmenge bestimmen",
+      "coverUrl": "https://solve-now.s3.us-west-2.amazonaws.com/german-abitur/atomic-videos-v2/ABITUR-MATHEMATIK-021/cover.png",
+      "playbackUrl": "https://solve-now.s3.us-west-2.amazonaws.com/german-abitur/atomic-videos-v2/ABITUR-MATHEMATIK-021/lesson.html",
+      "durationSeconds": 480,
+      "description": "Feingranulares IQB-basiertes Topic `Lineare Gleichungssysteme und Parameterfälle`; abgegrenzt durch: Lösungsmengen bestimmen und Parameterfälle unterscheiden. Im Quellkorpus: 119 Aufgaben, davon 119 offizielle Pool- oder Beispielaufgaben."
+    }
+  },
+  "lastViewedQuestionId": null,
+  "lastViewedAt": null
+}

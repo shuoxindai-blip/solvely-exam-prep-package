@@ -1,0 +1,159 @@
+{
+  "epId": 500001,
+  "outlineId": 500002,
+  "topicGroupId": 510002,
+  "topicId": 520017,
+  "packageId": 5001,
+  "contentType": "studyGuide",
+  "contentStatus": "READY",
+  "generationId": "",
+  "progress": {
+    "totalCount": 2,
+    "completedCount": 0,
+    "items": {}
+  },
+  "platform": "system",
+  "payload": {
+    "content": {
+      "lesson_id": "ABITUR-MATHEMATIK-017",
+      "title": "Schnitt und Lagebeziehungen von Geraden und Ebenen",
+      "overview": "Dieses Modul behandelt die systematische Untersuchung der gegenseitigen Lage von Geraden und Ebenen im dreidimensionalen Raum. Im Fokus steht die rechnerische Bestimmung von Schnittpunkten, Schnittgeraden sowie der Nachweis von Parallelität, Identität und Windschiefe unter Verwendung von Vektorgleichungen und linearen Gleichungssystemen (LGS).",
+      "learning_objectives": [
+        "Lagebeziehungen zwischen zwei Geraden (identisch, parallel, schneidend, windschief) bestimmen.",
+        "Lagebeziehungen zwischen einer Geraden und einer Ebene analysieren.",
+        "Lagebeziehungen zwischen zwei Ebenen (identisch, parallel, Schnittgerade) ermitteln.",
+        "Lineare Gleichungssysteme zur Lösung geometrischer Schnittprobleme anwenden."
+      ],
+      "sections": [
+        {
+          "title": "Lagebeziehung Gerade-Gerade",
+          "content": "Um die Lage zweier Geraden g: x = a + r·u und h: x = b + s·v zu bestimmen, prüft man zuerst die Kollinearität der Richtungsvektoren u und v. Sind sie kollinear (u = k·v), sind die Geraden parallel oder identisch (Punktprobe zur Unterscheidung). Sind sie nicht kollinear, setzt man die Geradengleichungen gleich. Führt das LGS zu einer eindeutigen Lösung, schneiden sich die Geraden in einem Punkt. Ist das LGS unlösbar, sind die Geraden windschief."
+        },
+        {
+          "title": "Lagebeziehung Gerade-Ebene",
+          "content": "Bei einer Geraden g und einer Ebene E (in Koordinatenform ax₁ + bx₂ + cx₃ = d) setzt man die Zeilen der Geradengleichung für x₁, x₂ und x₃ in die Ebenengleichung ein. Es entsteht eine Gleichung für den Parameter der Geraden. 1. Eine Lösung: Die Gerade schneidet die Ebene in einem Punkt. 2. Keine Lösung: Die Gerade verläuft echt parallel zur Ebene. 3. Wahre Aussage (z.B. 0=0): Die Gerade liegt in der Ebene (identisch)."
+        },
+        {
+          "title": "Lagebeziehung Ebene-Ebene",
+          "content": "Zwei Ebenen E₁ und E₂ werden primär über ihre Normalenvektoren n₁ und n₂ verglichen. Sind n₁ und n₂ kollinear, sind die Ebenen parallel (echt parallel oder identisch). Sind sie nicht kollinear, schneiden sich die Ebenen in einer Schnittgeraden. Diese findet man durch Lösen des LGS der beiden Koordinatengleichungen, wobei eine Variable als Parameter (z.B. x₃ = t) gewählt wird."
+        }
+      ],
+      "worked_examples": [
+        {
+          "question": "Untersuchen Sie die Lagebeziehung der Geraden g: x = (1, 2, 0) + r·(2, 1, -1) zur Ebene E: 2x₁ - 4x₂ + 0x₃ = 6.",
+          "solution": "1. Einsetzen der Geradenpunkte x₁=1+2r, x₂=2+r, x₃=0-r in E: 2(1+2r) - 4(2+r) = 6. \n2. Vereinfachen: 2 + 4r - 8 - 4r = 6 => -6 = 6. \n3. Interpretation: Die Gleichung ist ein Widerspruch (-6 ≠ 6). \n4. Ergebnis: Die Gerade g verläuft echt parallel zur Ebene E. \n5. Check: Der Normalenvektor n=(2, -4, 0) der Ebene und der Richtungsvektor u=(2, 1, -1) der Geraden sind orthogonal, da n·u = 2·2 + (-4)·1 + 0·(-1) = 0. Dies bestätigt die Parallelität."
+        }
+      ],
+      "common_mistakes": [
+        "Windschief vs. Parallel: Oft wird vergessen, bei nicht-kollinearen Richtungsvektoren das LGS zu prüfen; windschiefe Geraden haben keinen Schnittpunkt, sind aber nicht parallel.",
+        "Punktprobe vergessen: Bei kollinearen Richtungsvektoren beweist nur die Punktprobe, ob die Objekte identisch oder echt parallel sind.",
+        "Normalenvektor-Fehlschluss: Wenn der Richtungsvektor einer Geraden orthogonal zum Normalenvektor einer Ebene ist, ist die Gerade parallel zur Ebene (nicht orthogonal!)."
+      ],
+      "exam_tips": [
+        "Nutzen Sie bei Ebenen in Parameterform den Wechsel in die Koordinatenform, um Schnittpunkte mit Geraden schneller zu berechnen.",
+        "Achten Sie auf den Operator: 'Zeigen Sie' verlangt eine Herleitung, 'Entscheiden Sie' eine begründete Wahl.",
+        "Prüfen Sie Ergebnisse durch Einsetzen des gefundenen Schnittpunkts in beide Ausgangsgleichungen."
+      ],
+      "recap": "Die Lagebeziehung wird durch den Vergleich von Richtungs- bzw. Normalenvektoren und das Lösen von LGS bestimmt. Zentrale Kriterien sind Kollinearität für Parallelität und die Lösbarkeit des Schnittansatzes für Schnittpunkte oder Schnittgeraden.",
+      "knowledge_claims": [
+        {
+          "claim_id": "claim_01",
+          "type": "rule",
+          "content": "Zwei Geraden sind parallel oder identisch, wenn ihre Richtungsvektoren kollinear sind."
+        },
+        {
+          "claim_id": "claim_02",
+          "type": "procedure",
+          "content": "Zur Unterscheidung zwischen 'echt parallel' und 'identisch' bei Geraden führt man eine Punktprobe mit dem Stützvektor der einen Geraden in der anderen Geradengleichung durch."
+        },
+        {
+          "claim_id": "claim_03",
+          "type": "definition",
+          "content": "Zwei Geraden heißen windschief, wenn ihre Richtungsvektoren nicht kollinear sind und sie keinen gemeinsamen Schnittpunkt besitzen."
+        },
+        {
+          "claim_id": "claim_04",
+          "type": "procedure",
+          "content": "Den Schnittpunkt einer Geraden mit einer Ebene in Koordinatenform berechnet man durch Einsetzen der allgemeinen Geradenpunkte in die Ebenengleichung."
+        },
+        {
+          "claim_id": "claim_05",
+          "type": "interpretation",
+          "content": "Ergibt das Einsetzen einer Geraden in eine Ebenengleichung eine falsche Aussage (z. B. 5 = 0), so verläuft die Gerade echt parallel zur Ebene."
+        },
+        {
+          "claim_id": "claim_06",
+          "type": "interpretation",
+          "content": "Ergibt das Einsetzen einer Geraden in eine Ebenengleichung eine wahre Aussage (z. B. 0 = 0), so liegt die Gerade vollständig in der Ebene."
+        },
+        {
+          "claim_id": "claim_07",
+          "type": "rule",
+          "content": "Zwei Ebenen sind parallel oder identisch, wenn ihre Normalenvektoren kollinear sind."
+        },
+        {
+          "claim_id": "claim_08",
+          "type": "procedure",
+          "content": "Die Schnittgerade zweier Ebenen in Koordinatenform bestimmt man durch Lösen des aus den beiden Ebenengleichungen bestehenden LGS, meist unter Verwendung eines frei wählbaren Parameters."
+        },
+        {
+          "claim_id": "claim_09",
+          "type": "check",
+          "content": "Eine Gerade steht senkrecht auf einer Ebene, wenn ihr Richtungsvektor kollinear zum Normalenvektor der Ebene ist."
+        },
+        {
+          "claim_id": "claim_10",
+          "type": "mistake",
+          "content": "Ein Skalarprodukt von Null zwischen dem Richtungsvektor einer Geraden und dem Normalenvektor einer Ebene bedeutet Parallelität der Geraden zur Ebene, nicht Orthogonalität."
+        },
+        {
+          "claim_id": "claim_11",
+          "type": "application",
+          "content": "Um zu prüfen, ob ein Punkt der Schnittpunkt zweier Geraden ist, muss er die Gleichungen beider Geraden für spezifische Parameterwerte erfüllen."
+        },
+        {
+          "claim_id": "claim_12",
+          "type": "comparison",
+          "content": "Im Gegensatz zu Geraden im R² können Geraden im R³ nicht nur schneidend, parallel oder identisch sein, sondern zusätzlich windschief."
+        }
+      ],
+      "visual_requests": [],
+      "visual_assets": []
+    },
+    "items": [
+      {
+        "id": 55001600,
+        "sourceQuestionId": "MAT-4786FDF58F-06",
+        "topicId": 520017,
+        "type": "STUDENT_PRODUCED_RESPONSE",
+        "stem": "Die Gerade durch B und G schneidet die xy-Ebene im Punkt S. Bestimmen Sie das \nVerhältnis, in dem B die Strecke SG teilt.",
+        "options": {},
+        "correctAnswer": "SB 3 1\n93 2BG −= =",
+        "explanation": "SB 3 1\n93 2BG −= =",
+        "userAnswer": null,
+        "isCorrect": -1
+      },
+      {
+        "id": 55001601,
+        "sourceQuestionId": "MAT-49EBE6F0D9-01",
+        "topicId": 520017,
+        "type": "STUDENT_PRODUCED_RESPONSE",
+        "stem": "Gegeben sind die Punkte ( )A 5|5| 3−− und ( )B 1|1| 1−− . Geben Sie die Koordinaten \ndes Mittelpunkts der Strecke AB an und bestimmen Sie eine Gleichung derjenigen \nMittelsenkrechte von AB , die parallel zur 13xx -Ebene verläuft. \n5",
+        "options": {},
+        "correctAnswer": "Der Erwartungshorizont stellt für jede Teilaufgabe eine mögliche Lösung dar. Nicht dargestellte \nkorrekte Lösungen sind als gleichwertig zu akzeptieren. \n BE \nMittelpunkt: ( )3|3| 2−− \nDie gesuchte Gleichung hat die Form \n3a\nx3 λ0\n2b\n−  \n  = +⋅    −  \n\n mit λ IR∈ . \na 4a\nA B 00 4 00\nb 2b\n  \n  = ⇔− =      \n \n liefert a1= − und b2= als geeignete Werte von a und b. \n5 \n \n1 verwendete Abkürzungen: AG/LA - Analytische Geometrie/Lineare Algebra, AG/LA (A1) - Analytische Geomet-\nrie/Lineare Algebra (Alternative A1), AG/LA (A2) - Analytische Geometrie/Lineare Algebra (Alternative A2)",
+        "explanation": "Der Erwartungshorizont stellt für jede Teilaufgabe eine mögliche Lösung dar. Nicht dargestellte \nkorrekte Lösungen sind als gleichwertig zu akzeptieren. \n BE \nMittelpunkt: ( )3|3| 2−− \nDie gesuchte Gleichung hat die Form \n3a\nx3 λ0\n2b\n−  \n  = +⋅    −  \n\n mit λ IR∈ . \na 4a\nA B 00 4 00\nb 2b\n  \n  = ⇔− =      \n \n liefert a1= − und b2= als geeignete Werte von a und b. \n5 \n \n1 verwendete Abkürzungen: AG/LA - Analytische Geometrie/Lineare Algebra, AG/LA (A1) - Analytische Geomet-\nrie/Lineare Algebra (Alternative A1), AG/LA (A2) - Analytische Geometrie/Lineare Algebra (Alternative A2)",
+        "userAnswer": null,
+        "isCorrect": -1
+      }
+    ],
+    "videoLesson": {
+      "title": "Bestimme Schnittpunkt und Lage zwischen Gerade und Ebene",
+      "coverUrl": "https://solve-now.s3.us-west-2.amazonaws.com/german-abitur/atomic-videos-v2/ABITUR-MATHEMATIK-017/cover.png",
+      "playbackUrl": "https://solve-now.s3.us-west-2.amazonaws.com/german-abitur/atomic-videos-v2/ABITUR-MATHEMATIK-017/lesson.html",
+      "durationSeconds": 480,
+      "description": "Feingranulares IQB-basiertes Topic `Schnitt und Lagebeziehungen von Geraden und Ebenen`; abgegrenzt durch: parallel, identisch, windschief oder schneidend entscheiden. Im Quellkorpus: 128 Aufgaben, davon 128 offizielle Pool- oder Beispielaufgaben."
+    }
+  },
+  "lastViewedQuestionId": null,
+  "lastViewedAt": null
+}

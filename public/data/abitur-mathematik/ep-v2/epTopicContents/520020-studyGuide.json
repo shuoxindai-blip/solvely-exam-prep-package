@@ -1,0 +1,134 @@
+{
+  "epId": 500001,
+  "outlineId": 500002,
+  "topicGroupId": 510002,
+  "topicId": 520020,
+  "packageId": 5001,
+  "contentType": "studyGuide",
+  "contentStatus": "READY",
+  "generationId": "",
+  "progress": {
+    "totalCount": 0,
+    "completedCount": 0,
+    "items": {}
+  },
+  "platform": "system",
+  "payload": {
+    "content": {
+      "lesson_id": "ABITUR-MATHEMATIK-020",
+      "title": "Spiegelung, Projektion und geometrische Bewegung",
+      "overview": "Dieses Modul behandelt die Abbildung von Punkten und Objekten im dreidimensionalen Raum. Im Fokus stehen die Punkt- und Ebenenspiegelung, die Zentral- und Parallelprojektion (Schattenwurf) sowie die Modellierung von Bewegungsabläufen mittels Vektorgeometrie.",
+      "learning_objectives": [
+        "Punkte an Ebenen und anderen Punkten spiegeln",
+        "Projektionen (Schattenwurf) von Lichtquellen auf Ebenen berechnen",
+        "Symmetrieeigenschaften von Körpern mithilfe von Abbildungen begründen",
+        "Geometrische Bewegungen und Grenzpositionen analytisch bestimmen"
+      ],
+      "sections": [
+        {
+          "title": "Spiegelungen im Raum",
+          "content": "Eine Spiegelung ist eine Kongruenzabbildung. Bei der Spiegelung eines Punktes P an einer Ebene E (Spiegelebene) wird das Lot von P auf E gefällt. Der Lotfußpunkt F ist der Mittelpunkt der Strecke PP'. Rechnerisch bestimmt man F als Schnittpunkt der Lotgeraden (Stützvektor P, Richtungsvektor Normalenvektor von E) mit der Ebene E. Der Bildpunkt P' ergibt sich durch: OP' = OP + 2 * PF. Bei einer Punktspiegelung an einem Zentrum Z gilt analog: OP' = OZ + ZP = 2 * OZ - OP."
+        },
+        {
+          "title": "Projektionen und Schattenwurf",
+          "content": "Man unterscheidet zwischen Parallelprojektion (z. B. Sonnenlicht, Richtungsvektor v ist konstant) und Zentralprojektion (z. B. Punktlichtquelle L). Um den Schattenpunkt S eines Punktes P auf einer Ebene E zu finden, stellt man eine Gerade g auf. Bei Sonnenlicht: g: x = OP + r * v. Bei einer Punktlichtquelle: g: x = OL + r * LP. Der Schnittpunkt dieser Geraden mit der Projektionsebene E liefert den Schattenpunkt S. Liegt der berechnete Parameter r außerhalb des physikalisch sinnvollen Bereichs (z. B. r < 1 bei Zentralprojektion), erreicht das Licht das Objekt nicht oder der Schatten fällt in die falsche Richtung."
+        },
+        {
+          "title": "Geometrische Bewegung und Symmetrie",
+          "content": "Bewegungen werden oft durch zeitabhängige Geradengleichungen x(t) = A + t * v modelliert. Besondere Positionen (z. B. 'Schattenkante erreicht Wand') werden durch Gleichsetzen von Koordinatenkomponenten mit den Ebenengleichungen der Begrenzungsflächen ermittelt. Ein Körper besitzt eine Symmetrieebene, wenn jeder Punkt des Körpers bei Spiegelung an dieser Ebene wieder auf einen Punkt des Körpers abgebildet wird. Dies ist oft der Fall, wenn die Ebene senkrecht auf einer Kante steht und diese halbiert."
+        }
+      ],
+      "worked_examples": [
+        {
+          "question": "Ein Lichtstrahl geht von der Punktlichtquelle L(0|0|10) aus. Ein Stab hat seine Spitze im Punkt P(2|2|6). Berechnen Sie den Schattenpunkt S der Stabspitze auf der xy-Ebene (z=0).",
+          "solution": "1. Lichtgerade g aufstellen: Stützvektor ist L, Richtungsvektor ist LP = P - L = (2|2|-4). Also g: x = (0|0|10) + r * (2|2|-4).\n2. Schnitt mit xy-Ebene (z=0): Die z-Koordinate der Geradengleichung nullsetzen: 10 + r * (-4) = 0 => -4r = -10 => r = 2,5.\n3. Schattenpunkt berechnen: OS = (0|0|10) + 2,5 * (2|2|-4) = (5|5|0). Der Schattenpunkt ist S(5|5|0).\n4. Plausibilitätscheck: Da r > 1, liegt P zwischen L und S, was für einen Schattenwurf physikalisch korrekt ist."
+        }
+      ],
+      "common_mistakes": [
+        "Verwechslung von Parallel- und Zentralprojektion: Bei Sonnenlicht ist der Richtungsvektor für alle Punkte gleich, bei Lampen variiert er je nach Punktposition.",
+        "Falscher Parameterbereich: Ein Schattenpunkt existiert nur, wenn das Objekt zwischen Lichtquelle und Ebene liegt (r > 1 bei g: x = L + r * LP).",
+        "Normalenvektor-Fehler: Bei der Spiegelung muss der Richtungsvektor der Lotgeraden dem Normalenvektor der Ebene entsprechen, nicht einem Spannvektor."
+      ],
+      "exam_tips": [
+        "Prüfen Sie bei Schattenaufgaben immer, ob der Schattenpunkt innerhalb der Begrenzungen der Wand/Ebene liegt (z. B. 0 < x < Breite).",
+        "Nutzen Sie Symmetrieargumente: Wenn eine Ebene eine Figur halbiert und orthogonal auf der Verbindungsstrecke gegenüberliegender Punkte steht, ist sie eine Symmetrieebene.",
+        "Skizzieren Sie die Situation kurz zweidimensional, um die Lage von Lichtquelle, Objekt und Schatten zu visualisieren."
+      ],
+      "recap": "Abbildungen im Raum nutzen Geraden-Ebenen-Schnitte. Spiegelungen erfordern das Lotfußpunktverfahren, während Projektionen den Strahlengang von Lichtquellen simulieren. Bewegungen werden über Parametergleichungen analysiert, wobei Grenzfälle oft durch das Erreichen spezifischer Koordinatenwerte definiert sind.",
+      "knowledge_claims": [
+        {
+          "claim_id": "claim_01",
+          "type": "procedure",
+          "content": "Zur Spiegelung eines Punktes P an einer Ebene E bestimmt man zuerst den Lotfußpunkt F als Schnittpunkt der Lotgeraden durch P mit E."
+        },
+        {
+          "claim_id": "claim_02",
+          "type": "formula",
+          "content": "Der Bildpunkt P' einer Punktspiegelung von P am Zentrum Z berechnet sich über den Ortsvektor OP' = 2 * OZ - OP."
+        },
+        {
+          "claim_id": "claim_03",
+          "type": "definition",
+          "content": "Bei einer Parallelprojektion (z. B. Sonnenlicht) verlaufen alle Lichtstrahlen in dieselbe Richtung, repräsentiert durch einen konstanten Richtungsvektor v."
+        },
+        {
+          "claim_id": "claim_04",
+          "type": "definition",
+          "content": "Bei einer Zentralprojektion (z. B. Punktlichtquelle L) verlaufen die Lichtstrahlen durch die Lichtquelle L und den abzubildenden Punkt P."
+        },
+        {
+          "claim_id": "claim_05",
+          "type": "interpretation",
+          "content": "Ein Schattenpunkt S eines Punktes P existiert bei einer Lichtquelle L nur dann physikalisch sinnvoll, wenn P auf der Strecke LS liegt (Parameter r > 1 in x = L + r * LP)."
+        },
+        {
+          "claim_id": "claim_06",
+          "type": "recognition",
+          "content": "Eine Ebene ist eine Symmetrieebene eines Körpers, wenn die Spiegelung aller Eckpunkte des Körpers an dieser Ebene wieder Eckpunkte des Körpers ergibt."
+        },
+        {
+          "claim_id": "claim_07",
+          "type": "rule",
+          "content": "Der Richtungsvektor der Lotgeraden bei einer Ebenenspiegelung entspricht dem Normalenvektor der Spiegelebene."
+        },
+        {
+          "claim_id": "claim_08",
+          "type": "application",
+          "content": "Um zu prüfen, ob ein Schatten auf eine begrenzte Wand fällt, müssen die Koordinaten des Schattenpunkts innerhalb der Intervalle der Wandbegrenzung liegen."
+        },
+        {
+          "claim_id": "claim_09",
+          "type": "procedure",
+          "content": "Die Schattenkante eines Objekts bei Parallelprojektion wird durch die Projektion derjenigen Kanten bestimmt, die parallel zur Lichtrichtung verlaufen oder diese begrenzen."
+        },
+        {
+          "claim_id": "claim_10",
+          "type": "check",
+          "content": "Ein Punkt P liegt genau dann in der xy-Ebene, wenn seine z-Koordinate den Wert 0 besitzt."
+        },
+        {
+          "claim_id": "claim_11",
+          "type": "mistake",
+          "content": "Ein häufiger Fehler ist die Annahme, dass der Schattenpunkt S einfach die Projektion von P senkrecht auf die Ebene ist; dies gilt nur, wenn das Licht senkrecht einfällt."
+        },
+        {
+          "claim_id": "claim_12",
+          "type": "interpretation",
+          "content": "Wenn ein Lichtstrahl parallel zu einer Ebene verläuft, entsteht auf dieser Ebene kein Schattenpunkt (die Lichtgerade und die Ebene haben keinen Schnittpunkt)."
+        }
+      ],
+      "visual_requests": [],
+      "visual_assets": []
+    },
+    "items": [],
+    "videoLesson": {
+      "title": "Finde Normalenlot, Projektionsfuß und Spiegelpunkt",
+      "coverUrl": "https://solve-now.s3.us-west-2.amazonaws.com/german-abitur/atomic-videos-v2/ABITUR-MATHEMATIK-020/cover.png",
+      "playbackUrl": "https://solve-now.s3.us-west-2.amazonaws.com/german-abitur/atomic-videos-v2/ABITUR-MATHEMATIK-020/lesson.html",
+      "durationSeconds": 480,
+      "description": "Feingranulares IQB-basiertes Topic `Spiegelung, Projektion und geometrische Bewegung`; abgegrenzt durch: Punkte oder Objekte abbilden und Bewegungen modellieren. Im Quellkorpus: 30 Aufgaben, davon 18 offizielle Pool- oder Beispielaufgaben."
+    }
+  },
+  "lastViewedQuestionId": null,
+  "lastViewedAt": null
+}

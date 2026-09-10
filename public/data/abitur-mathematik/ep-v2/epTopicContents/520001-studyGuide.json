@@ -1,0 +1,160 @@
+{
+  "epId": 500001,
+  "outlineId": 500002,
+  "topicGroupId": 510001,
+  "topicId": 520001,
+  "packageId": 5001,
+  "contentType": "studyGuide",
+  "contentStatus": "READY",
+  "generationId": "",
+  "progress": {
+    "totalCount": 2,
+    "completedCount": 0,
+    "items": {}
+  },
+  "platform": "system",
+  "payload": {
+    "content": {
+      "lesson_id": "ABITUR-MATHEMATIK-001",
+      "title": "Definitionsbereich, Wertebereich und Nullstellen",
+      "overview": "Dieses Modul behandelt die grundlegenden Eigenschaften von Funktionen im Abitur-Kontext: Die Menge der zulässigen Eingabewerte (Definitionsbereich), die Menge der möglichen Ausgabewerte (Wertebereich) sowie die Stellen, an denen der Funktionsgraph die Abszisse schneidet (Nullstellen).",
+      "learning_objectives": [
+        "Bestimmung des maximalen Definitionsbereichs unter Berücksichtigung mathematischer Restriktionen.",
+        "Ermittlung des Wertebereichs durch Analyse von Funktionsverlauf und Grenzwerten.",
+        "Berechnung von Nullstellen durch Lösen von Funktionsgleichungen f(x) = 0.",
+        "Anwendung von Lösungsverfahren wie Ausklammern, Substitution und Logarithmieren."
+      ],
+      "sections": [
+        {
+          "title": "Der Definitionsbereich (D)",
+          "content": "Der Definitionsbereich umfasst alle reellen Zahlen x, für die der Funktionsterm definiert ist. In Abituraufgaben müssen oft Einschränkungen beachtet werden: 1. Nenner dürfen nicht null sein (Brüche). 2. Radikanden (Werte unter der Wurzel) müssen bei geraden Wurzelexponenten größer oder gleich null sein. 3. Argumente von Logarithmen müssen strikt positiv (> 0) sein. Bei Sachkontexten wird der Definitionsbereich zudem durch die Realität begrenzt (z. B. Zeit t ≥ 0)."
+        },
+        {
+          "title": "Der Wertebereich (W)",
+          "content": "Der Wertebereich (oder die Wertemenge) enthält alle Funktionswerte y, die die Funktion tatsächlich annimmt. Zur Bestimmung betrachtet man oft die Extrema der Funktion sowie das Verhalten im Unendlichen (Grenzwerte). Bei einer nach unten geöffneten Parabel mit Scheitelpunkt S(2|5) ist der Wertebereich beispielsweise W = {y ∈ ℝ | y ≤ 5}."
+        },
+        {
+          "title": "Nullstellen berechnen",
+          "content": "Nullstellen sind die x-Werte, für die f(x) = 0 gilt. Grafisch sind dies die Schnitt- oder Berührpunkte mit der x-Achse. Wichtige Techniken: \n- Lineare/Quadratische Gleichungen: Umstellen oder p-q-Formel.\n- Höhere Polynome: Ausklammern von x (wenn kein absolutes Glied vorhanden) oder Substitution (bei x⁴ und x²).\n- Exponentialfunktionen: Da e^x immer positiv ist, liefert ein Produkt wie (x-2)·e^x nur dann eine Nullstelle, wenn der Faktor (x-2) null wird."
+        }
+      ],
+      "worked_examples": [
+        {
+          "question": "Gegeben ist die Funktion f mit f(x) = ln(x² - 4). Bestimmen Sie den maximalen Definitionsbereich D und alle Nullstellen der Funktion.",
+          "solution": "1. Definitionsbereich: Das Argument des Logarithmus muss positiv sein: x² - 4 > 0. Dies ist erfüllt für x² > 4, also |x| > 2. Somit ist D = ℝ \\ [-2; 2] bzw. (-∞; -2) ∪ (2; ∞).\n2. Nullstellen: Setze f(x) = 0 => ln(x² - 4) = 0. Wende die e-Funktion auf beide Seiten an: x² - 4 = e⁰ = 1. Addiere 4: x² = 5. Daraus folgen die Nullstellen x₁ = √5 und x₂ = -√5. \n3. Prüfung: Da √5 ≈ 2,236 > 2, liegen beide Werte im Definitionsbereich."
+        }
+      ],
+      "common_mistakes": [
+        "Verwechseln von Definitionsbereich (x-Werte) und Wertebereich (y-Werte).",
+        "Vergessen der Betragsstriche beim Ziehen der Wurzel in Ungleichungen (z. B. x² > 4 führt zu |x| > 2, nicht nur x > 2).",
+        "Annahme, dass e^x Nullstellen haben kann (e^x ist für alle reellen x stets > 0).",
+        "Ignorieren von Definitionslücken bei der Angabe von Nullstellen."
+      ],
+      "exam_tips": [
+        "Prüfen Sie bei Logarithmusfunktionen immer zuerst den Definitionsbereich, bevor Sie Nullstellen berechnen.",
+        "Nutzen Sie bei Produkten den Satz vom Nullprodukt: Ein Produkt ist null, wenn mindestens einer der Faktoren null ist.",
+        "Skizzieren Sie bei der Bestimmung des Wertebereichs kurz den Verlauf (Grenzwerte und Extrema), um Fehler zu vermeiden."
+      ],
+      "recap": "Der Definitionsbereich legt fest, was 'erlaubt' ist, der Wertebereich, was 'herauskommt', und Nullstellen markieren die Basislinie des Graphen. Die korrekte Bestimmung erfordert das Lösen von Gleichungen und Ungleichungen unter Beachtung mathematischer Domänenregeln.",
+      "knowledge_claims": [
+        {
+          "claim_id": "claim_01",
+          "type": "definition",
+          "content": "Der Definitionsbereich D einer Funktion umfasst alle x-Werte, für die der Funktionsterm mathematisch definiert ist."
+        },
+        {
+          "claim_id": "claim_02",
+          "type": "rule",
+          "content": "Bei gebrochen-rationalen Funktionen müssen alle x-Werte aus dem Definitionsbereich ausgeschlossen werden, die den Nenner zu null machen."
+        },
+        {
+          "claim_id": "claim_03",
+          "type": "rule",
+          "content": "Der Radikand einer Quadratwurzel muss im Bereich der reellen Zahlen stets größer oder gleich null sein."
+        },
+        {
+          "claim_id": "claim_04",
+          "type": "rule",
+          "content": "Das Argument einer Logarithmusfunktion muss strikt größer als null sein (x > 0)."
+        },
+        {
+          "claim_id": "claim_05",
+          "type": "definition",
+          "content": "Der Wertebereich W einer Funktion ist die Menge aller Funktionswerte f(x), die durch Einsetzen aller x aus D erzeugt werden."
+        },
+        {
+          "claim_id": "claim_06",
+          "type": "procedure",
+          "content": "Zur Bestimmung von Nullstellen wird der Funktionsterm gleich null gesetzt (f(x) = 0) und nach x aufgelöst."
+        },
+        {
+          "claim_id": "claim_07",
+          "type": "interpretation",
+          "content": "Grafisch entsprechen die Nullstellen den Schnitt- oder Berührpunkten des Funktionsgraphen mit der x-Achse."
+        },
+        {
+          "claim_id": "claim_08",
+          "type": "rule",
+          "content": "Nach dem Satz vom Nullprodukt ist ein Produkt genau dann null, wenn mindestens einer der Faktoren null ist."
+        },
+        {
+          "claim_id": "claim_09",
+          "type": "recognition",
+          "content": "Die natürliche Exponentialfunktion f(x) = e^x besitzt im Reellen keine Nullstellen, da ihre Werte stets positiv sind."
+        },
+        {
+          "claim_id": "claim_10",
+          "type": "check",
+          "content": "Berechnete Nullstellen müssen immer gegen den Definitionsbereich geprüft werden; Werte außerhalb von D sind keine gültigen Lösungen."
+        },
+        {
+          "claim_id": "claim_11",
+          "type": "application",
+          "content": "In Sachkontexten (z. B. Wachstumsprozessen) wird der Definitionsbereich oft durch physikalische Grenzen wie t ≥ 0 eingeschränkt."
+        },
+        {
+          "claim_id": "claim_12",
+          "type": "comparison",
+          "content": "Während Nullstellen einzelne Punkte auf der x-Achse sind, beschreibt der Wertebereich oft ein zusammenhängendes Intervall auf der y-Achse."
+        }
+      ],
+      "visual_requests": [],
+      "visual_assets": []
+    },
+    "items": [
+      {
+        "id": 55000000,
+        "sourceQuestionId": "MAT-2750D3F2AF-06",
+        "topicId": 520001,
+        "type": "STUDENT_PRODUCED_RESPONSE",
+        "stem": "Zwei Radfahrer starten gleichzeitig nebeneinander auf einer geradlinigen Bahn aus \neiner Ruheposition. Radfahrer A beschleunigt 10 Sekunden lang und fährt danach \nmit konstanter Geschwindigkeit weiter. Radfahrer B beschleunigt 12 Sekunden lang \nund fährt dann mit konstanter Geschwindigkeit weiter. \nAbbildung 2 stellt die \nGeschwindigkeitsverläufe \nder beiden Radfahrer in \nden ersten 15 Sekunden \nnach dem Start dar. Dabei \nwird der Geschwindigkeits-\nverlauf von Radfahrer A in \nden ersten 10 Sekunden \nnach dem Start durch die \nFunktion f aus Aufgabe 1 \nbeschrieben. Der Ge-\nschwindigkeitsverlauf von \nRadfahrer B wird in den \nersten 12 Sekunden nach \ndem Start durch die in \nIR \ndefinierte Funktion h mit ( ) = ⋅ − ⋅ +⋅ 4 321 11\n576 18 2hx x x x beschrieben. Dabei ist x die \nseit dem Start vergangene Zeit in Sekunden und ( )fx bzw. ( )hx die Geschwindig-\nkeit in Meter pro Sekunde.\nBerechnen Sie die Geschwindigkeit von Radfahrer A drei Sekunden nach dem \nStart sowie den Zeitpunkt, zu dem er eine Geschwindigkeit von 8 Meter pro Se-\nkunde erreicht.",
+        "options": {},
+        "correctAnswer": "3 \n Nach dem Start gibt es genau einen Zeitpunkt, zu dem die Geschwindigkeiten beider \nRadfahrer gleich groß sind. Im Modell wird dieser Zeitpunkt mit sx bezeichnet. \n \n c Bestimmen Sie rechnerisch sx . 2 \n d Im Folgenden ist ein Lösungsweg für eine Aufgabe im gegebenen Sachzusam-\nmenhang dargestellt. Geben Sie die Bedeutung von ( )dx für << s0xx im Sach-\nzusammenhang an und interpretieren Sie das Ergebnis 0,37. \n( ) ( ) ( )= −dx fx hx \n( )′ =dx 0 hat für << s0xx nur die Lösung ≈1x 3, 64 . \n( )′′ ≈− <1d x 0,13 0 \n( ) ≈1d x 0,37 \n4 \n e Es gibt genau einen Zeitpunkt in den ersten 10 Sekunden nach dem Start, zu dem \neiner der beiden Radfahrer den anderen überholt. Berechnen Sie, um wieviel Pro-\nzent die Geschwindigkeit des schnelleren Radfahrers die Geschwindigkeit des \nlangsameren Radfahrers zum Zeitpunkt des Überholens übersteigt. \n4 \n 35 \n2 Erwartungshorizont \nDer Erwartungshorizont stellt für jede Teilaufgabe eine mögliche Lösung dar. Nicht dargestellte \nkorrekte Lösungen sind als gleichwertig zu akzeptieren. \n BE \n1 a ( )′ = ⇔ =∨=f x 0 x 0 x 10 \nNur bei 0 und 10 können Extrempunkte vorliegen. \n( )′′ =f 10 0 , ( )′′′ = ≠6\n25f 10 0 \nSomit besitzt der Graph von f keine weiteren Extrempunkte. \n3 \n b Gleichung von t: = − 5\n8y mx \n−= − − ⇔ = 531\n48 21m m \nNachweis: ( )′ = 3\n2f5 ; ( ) =⋅−35\n28f5 5 \n4 \n c Die Gleichung ( ) = −35\n28fx x hat die drei Lösungen −= 25 5 22\na 3x , =bx5 und \n+= 25 5 22\nc 3x . \nInhalt der Fläche: ( )( )−− =∫\nc\na\nx\n3 5 770\n2 8 81\nx\nx f x dx 22 \n5",
+        "explanation": "3 \n Nach dem Start gibt es genau einen Zeitpunkt, zu dem die Geschwindigkeiten beider \nRadfahrer gleich groß sind. Im Modell wird dieser Zeitpunkt mit sx bezeichnet. \n \n c Bestimmen Sie rechnerisch sx . 2 \n d Im Folgenden ist ein Lösungsweg für eine Aufgabe im gegebenen Sachzusam-\nmenhang dargestellt. Geben Sie die Bedeutung von ( )dx für << s0xx im Sach-\nzusammenhang an und interpretieren Sie das Ergebnis 0,37. \n( ) ( ) ( )= −dx fx hx \n( )′ =dx 0 hat für << s0xx nur die Lösung ≈1x 3, 64 . \n( )′′ ≈− <1d x 0,13 0 \n( ) ≈1d x 0,37 \n4 \n e Es gibt genau einen Zeitpunkt in den ersten 10 Sekunden nach dem Start, zu dem \neiner der beiden Radfahrer den anderen überholt. Berechnen Sie, um wieviel Pro-\nzent die Geschwindigkeit des schnelleren Radfahrers die Geschwindigkeit des \nlangsameren Radfahrers zum Zeitpunkt des Überholens übersteigt. \n4 \n 35 \n2 Erwartungshorizont \nDer Erwartungshorizont stellt für jede Teilaufgabe eine mögliche Lösung dar. Nicht dargestellte \nkorrekte Lösungen sind als gleichwertig zu akzeptieren. \n BE \n1 a ( )′ = ⇔ =∨=f x 0 x 0 x 10 \nNur bei 0 und 10 können Extrempunkte vorliegen. \n( )′′ =f 10 0 , ( )′′′ = ≠6\n25f 10 0 \nSomit besitzt der Graph von f keine weiteren Extrempunkte. \n3 \n b Gleichung von t: = − 5\n8y mx \n−= − − ⇔ = 531\n48 21m m \nNachweis: ( )′ = 3\n2f5 ; ( ) =⋅−35\n28f5 5 \n4 \n c Die Gleichung ( ) = −35\n28fx x hat die drei Lösungen −= 25 5 22\na 3x , =bx5 und \n+= 25 5 22\nc 3x . \nInhalt der Fläche: ( )( )−− =∫\nc\na\nx\n3 5 770\n2 8 81\nx\nx f x dx 22 \n5",
+        "userAnswer": null,
+        "isCorrect": -1
+      },
+      {
+        "id": 55000001,
+        "sourceQuestionId": "MAT-2750D3F2AF-07",
+        "topicId": 520001,
+        "type": "STUDENT_PRODUCED_RESPONSE",
+        "stem": "Zwei Radfahrer starten gleichzeitig nebeneinander auf einer geradlinigen Bahn aus \neiner Ruheposition. Radfahrer A beschleunigt 10 Sekunden lang und fährt danach \nmit konstanter Geschwindigkeit weiter. Radfahrer B beschleunigt 12 Sekunden lang \nund fährt dann mit konstanter Geschwindigkeit weiter. \nAbbildung 2 stellt die \nGeschwindigkeitsverläufe \nder beiden Radfahrer in \nden ersten 15 Sekunden \nnach dem Start dar. Dabei \nwird der Geschwindigkeits-\nverlauf von Radfahrer A in \nden ersten 10 Sekunden \nnach dem Start durch die \nFunktion f aus Aufgabe 1 \nbeschrieben. Der Ge-\nschwindigkeitsverlauf von \nRadfahrer B wird in den \nersten 12 Sekunden nach \ndem Start durch die in \nIR \ndefinierte Funktion h mit ( ) = ⋅ − ⋅ +⋅ 4 321 11\n576 18 2hx x x x beschrieben. Dabei ist x die \nseit dem Start vergangene Zeit in Sekunden und ( )fx bzw. ( )hx die Geschwindig-\nkeit in Meter pro Sekunde.\nErmitteln Sie die konstante Geschwindigkeit, mit der sich Radfahrer B ab dem \nZeitpunkt 12 Sekunden nach dem Start bewegt. \nZeigen Sie durch Rechnung, dass der zum Radfahrer B gehörende Graph in Ab-\nbildung 2 an der Stelle 12 keinen Knick aufweist. \n3 \nAbb. 2",
+        "options": {},
+        "correctAnswer": "3 \n Nach dem Start gibt es genau einen Zeitpunkt, zu dem die Geschwindigkeiten beider \nRadfahrer gleich groß sind. Im Modell wird dieser Zeitpunkt mit sx bezeichnet. \n \n c Bestimmen Sie rechnerisch sx . 2 \n d Im Folgenden ist ein Lösungsweg für eine Aufgabe im gegebenen Sachzusam-\nmenhang dargestellt. Geben Sie die Bedeutung von ( )dx für << s0xx im Sach-\nzusammenhang an und interpretieren Sie das Ergebnis 0,37. \n( ) ( ) ( )= −dx fx hx \n( )′ =dx 0 hat für << s0xx nur die Lösung ≈1x 3, 64 . \n( )′′ ≈− <1d x 0,13 0 \n( ) ≈1d x 0,37 \n4 \n e Es gibt genau einen Zeitpunkt in den ersten 10 Sekunden nach dem Start, zu dem \neiner der beiden Radfahrer den anderen überholt. Berechnen Sie, um wieviel Pro-\nzent die Geschwindigkeit des schnelleren Radfahrers die Geschwindigkeit des \nlangsameren Radfahrers zum Zeitpunkt des Überholens übersteigt. \n4 \n 35 \n2 Erwartungshorizont \nDer Erwartungshorizont stellt für jede Teilaufgabe eine mögliche Lösung dar. Nicht dargestellte \nkorrekte Lösungen sind als gleichwertig zu akzeptieren. \n BE \n1 a ( )′ = ⇔ =∨=f x 0 x 0 x 10 \nNur bei 0 und 10 können Extrempunkte vorliegen. \n( )′′ =f 10 0 , ( )′′′ = ≠6\n25f 10 0 \nSomit besitzt der Graph von f keine weiteren Extrempunkte. \n3 \n b Gleichung von t: = − 5\n8y mx \n−= − − ⇔ = 531\n48 21m m \nNachweis: ( )′ = 3\n2f5 ; ( ) =⋅−35\n28f5 5 \n4 \n c Die Gleichung ( ) = −35\n28fx x hat die drei Lösungen −= 25 5 22\na 3x , =bx5 und \n+= 25 5 22\nc 3x . \nInhalt der Fläche: ( )( )−− =∫\nc\na\nx\n3 5 770\n2 8 81\nx\nx f x dx 22 \n5",
+        "explanation": "3 \n Nach dem Start gibt es genau einen Zeitpunkt, zu dem die Geschwindigkeiten beider \nRadfahrer gleich groß sind. Im Modell wird dieser Zeitpunkt mit sx bezeichnet. \n \n c Bestimmen Sie rechnerisch sx . 2 \n d Im Folgenden ist ein Lösungsweg für eine Aufgabe im gegebenen Sachzusam-\nmenhang dargestellt. Geben Sie die Bedeutung von ( )dx für << s0xx im Sach-\nzusammenhang an und interpretieren Sie das Ergebnis 0,37. \n( ) ( ) ( )= −dx fx hx \n( )′ =dx 0 hat für << s0xx nur die Lösung ≈1x 3, 64 . \n( )′′ ≈− <1d x 0,13 0 \n( ) ≈1d x 0,37 \n4 \n e Es gibt genau einen Zeitpunkt in den ersten 10 Sekunden nach dem Start, zu dem \neiner der beiden Radfahrer den anderen überholt. Berechnen Sie, um wieviel Pro-\nzent die Geschwindigkeit des schnelleren Radfahrers die Geschwindigkeit des \nlangsameren Radfahrers zum Zeitpunkt des Überholens übersteigt. \n4 \n 35 \n2 Erwartungshorizont \nDer Erwartungshorizont stellt für jede Teilaufgabe eine mögliche Lösung dar. Nicht dargestellte \nkorrekte Lösungen sind als gleichwertig zu akzeptieren. \n BE \n1 a ( )′ = ⇔ =∨=f x 0 x 0 x 10 \nNur bei 0 und 10 können Extrempunkte vorliegen. \n( )′′ =f 10 0 , ( )′′′ = ≠6\n25f 10 0 \nSomit besitzt der Graph von f keine weiteren Extrempunkte. \n3 \n b Gleichung von t: = − 5\n8y mx \n−= − − ⇔ = 531\n48 21m m \nNachweis: ( )′ = 3\n2f5 ; ( ) =⋅−35\n28f5 5 \n4 \n c Die Gleichung ( ) = −35\n28fx x hat die drei Lösungen −= 25 5 22\na 3x , =bx5 und \n+= 25 5 22\nc 3x . \nInhalt der Fläche: ( )( )−− =∫\nc\na\nx\n3 5 770\n2 8 81\nx\nx f x dx 22 \n5",
+        "userAnswer": null,
+        "isCorrect": -1
+      }
+    ],
+    "videoLesson": {
+      "title": "Bestimme Definitionsbereich, Wertebereich und Nullstellen sicher",
+      "coverUrl": "https://solve-now.s3.us-west-2.amazonaws.com/german-abitur/atomic-videos-v2/ABITUR-MATHEMATIK-001/cover.png",
+      "playbackUrl": "https://solve-now.s3.us-west-2.amazonaws.com/german-abitur/atomic-videos-v2/ABITUR-MATHEMATIK-001/lesson.html",
+      "durationSeconds": 480,
+      "description": "Feingranulares IQB-basiertes Topic `Definitionsbereich, Wertebereich und Nullstellen`; abgegrenzt durch: Definitions- und Wertebereiche sowie Nullstellen bestimmen. Im Quellkorpus: 343 Aufgaben, davon 339 offizielle Pool- oder Beispielaufgaben."
+    }
+  },
+  "lastViewedQuestionId": null,
+  "lastViewedAt": null
+}

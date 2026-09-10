@@ -1,0 +1,135 @@
+{
+  "epId": 500001,
+  "outlineId": 500002,
+  "topicGroupId": 510003,
+  "topicId": 520030,
+  "packageId": 5001,
+  "contentType": "studyGuide",
+  "contentStatus": "READY",
+  "generationId": "",
+  "progress": {
+    "totalCount": 0,
+    "completedCount": 0,
+    "items": {}
+  },
+  "platform": "system",
+  "payload": {
+    "content": {
+      "lesson_id": "ABITUR-MATHEMATIK-030",
+      "title": "Parameterschätzung und Konfidenzintervalle",
+      "overview": "Dieses Modul behandelt die Schätzung unbekannter Anteilsparameter p einer Grundgesamtheit basierend auf Stichproben. Im Fokus steht die Konstruktion und Interpretation von Konfidenzintervallen (Vertrauensintervallen) unter Verwendung der Normalverteilung als Approximation der Binomialverteilung.",
+      "learning_objectives": [
+        "Den Punktschätzwert für einen Anteilsparameter berechnen.",
+        "Approximative Konfidenzintervalle für verschiedene Sicherheitswahrscheinlichkeiten bestimmen.",
+        "Die Bedeutung des Konfidenzintervalls im Sachzusammenhang korrekt erläutern.",
+        "Den Einfluss von Stichprobenumfang und Sicherheitsniveau auf die Intervallbreite analysieren."
+      ],
+      "sections": [
+        {
+          "title": "Punktschätzung und Stichprobenanteil",
+          "content": "Wenn der wahre Anteil p einer Eigenschaft in einer Grundgesamtheit unbekannt ist, nutzt man eine Stichprobe vom Umfang n. Die Anzahl der Treffer X in dieser Stichprobe führt zum relativen Anteil h = X/n. Dieser Wert h dient als Punktschätzer für p. Da h jedoch vom Zufall abhängt, liefert er allein keine Information über die Genauigkeit der Schätzung. Hierfür wird ein Intervall benötigt, das den wahren Wert mit einer vorgegebenen Wahrscheinlichkeit (Sicherheitsniveau) überdeckt."
+        },
+        {
+          "title": "Konstruktion des Konfidenzintervalls",
+          "content": "Für große Stichprobenumfänge (Laplace-Bedingung: n * h * (1-h) > 9) kann die Verteilung des Stichprobenanteils durch eine Normalverteilung approximiert werden. Ein Konfidenzintervall zum Sicherheitsniveau (1 - α) berechnet sich nach der Formel: [h - c * σ_h; h + c * σ_h]. Dabei ist σ_h = sqrt(h * (1 - h) / n) der Standardfehler des Anteils. Der Quantilswert c (auch z-Wert genannt) hängt vom Sicherheitsniveau ab: Für 90 % ist c ≈ 1,64, für 95 % ist c ≈ 1,96 und für 99 % ist c ≈ 2,58."
+        },
+        {
+          "title": "Interpretation im Sachzusammenhang",
+          "content": "Ein 95 %-Konfidenzintervall bedeutet: Würde man das Zufallsexperiment (die Stichprobenziehung) sehr oft wiederholen und jedes Mal ein Intervall berechnen, so würden ca. 95 % dieser Intervalle den wahren Parameter p enthalten. Es ist falsch zu sagen, dass p mit 95 % Wahrscheinlichkeit in einem *spezifisch berechneten* Intervall liegt, da p ein fester (wenn auch unbekannter) Wert ist und keine Zufallsvariable."
+        }
+      ],
+      "worked_examples": [
+        {
+          "question": "In einer Umfrage unter 400 zufällig ausgewählten Haushalten geben 128 an, regelmäßig Bio-Produkte zu kaufen. Berechnen Sie ein 95 %-Konfidenzintervall für den Anteil aller Haushalte, die Bio-Produkte kaufen, und interpretieren Sie das Ergebnis.",
+          "solution": "1. Gegebene Größen: n = 400, X = 128. 2. Stichprobenanteil berechnen: h = 128 / 400 = 0,32. 3. Standardfehler berechnen: σ_h = sqrt(0,32 * (1 - 0,32) / 400) = sqrt(0,32 * 0,68 / 400) = sqrt(0,000544) ≈ 0,0233. 4. Sicherheitsniveau 95 % wählen: c = 1,96. 5. Intervallgrenzen bestimmen: 0,32 - 1,96 * 0,0233 ≈ 0,2743; 0,32 + 1,96 * 0,0233 ≈ 0,3657. Das Konfidenzintervall lautet ca. [27,4 %; 36,6 %]. Interpretation: Man kann mit einer Sicherheit von 95 % davon ausgehen, dass der wahre Anteil der Bio-Käufer in der Grundgesamtheit zwischen 27,4 % und 36,6 % liegt."
+        }
+      ],
+      "common_mistakes": [
+        "Verwechslung von Sicherheitswahrscheinlichkeit und Trefferwahrscheinlichkeit.",
+        "Nutzung der Formel ohne Prüfung der Laplace-Bedingung (n * p * (1-p) > 9).",
+        "Falsche Interpretation: 'Der Wert p liegt mit 95 % Wahrscheinlichkeit im Intervall' (p ist fest, das Intervall ist zufällig).",
+        "Vergessen der Wurzel beim Berechnen des Standardfehlers."
+      ],
+      "exam_tips": [
+        "Merken Sie sich die gängigen z-Werte: 1,64 (90 %), 1,96 (95 %), 2,58 (99 %).",
+        "Achten Sie auf den Operator: 'Bestimmen' erfordert den Rechenweg, 'Interpretieren' den Bezug zum Sachkontext.",
+        "Die Breite des Intervalls halbiert sich, wenn der Stichprobenumfang n vervierfacht wird (wegen der Wurzel im Nenner)."
+      ],
+      "recap": "Die Parameterschätzung nutzt Stichprobenanteile h, um auf den wahren Anteil p zu schließen. Das Konfidenzintervall gibt einen Bereich an, der p mit einer gewählten Sicherheit überdeckt, wobei die Breite von n, h und dem Sicherheitsniveau abhängt.",
+      "knowledge_claims": [
+        {
+          "claim_id": "claim_01",
+          "type": "definition",
+          "content": "Der Stichprobenanteil h = X/n dient als Punktschätzer für den unbekannten Anteilsparameter p einer Grundgesamtheit."
+        },
+        {
+          "claim_id": "claim_02",
+          "type": "formula",
+          "content": "Die Standardabweichung des Stichprobenanteils (Standardfehler) wird berechnet durch σ_h = sqrt(h * (1 - h) / n)."
+        },
+        {
+          "claim_id": "claim_03",
+          "type": "rule",
+          "content": "Ein approximatives Konfidenzintervall hat die Form [h - c * σ_h; h + c * σ_h], wobei c der z-Wert zum Sicherheitsniveau ist."
+        },
+        {
+          "claim_id": "claim_04",
+          "type": "recognition",
+          "content": "Für ein Sicherheitsniveau von 95 % wird in der Regel der z-Wert c ≈ 1,96 verwendet."
+        },
+        {
+          "claim_id": "claim_05",
+          "type": "recognition",
+          "content": "Für ein Sicherheitsniveau von 99 % wird in der Regel der z-Wert c ≈ 2,58 verwendet."
+        },
+        {
+          "claim_id": "claim_06",
+          "type": "check",
+          "content": "Die Laplace-Bedingung n * h * (1 - h) > 9 muss erfüllt sein, damit die Normalverteilung als Approximation zulässig ist."
+        },
+        {
+          "claim_id": "claim_07",
+          "type": "interpretation",
+          "content": "Die Sicherheitswahrscheinlichkeit gibt an, mit welcher relativen Häufigkeit die berechneten Intervalle bei wiederholter Stichprobenziehung den wahren Wert p einschließen."
+        },
+        {
+          "claim_id": "claim_08",
+          "type": "comparison",
+          "content": "Bei gleichbleibendem Stichprobenumfang führt ein höheres Sicherheitsniveau zu einem breiteren Konfidenzintervall."
+        },
+        {
+          "claim_id": "claim_09",
+          "type": "comparison",
+          "content": "Bei gleichbleibendem Sicherheitsniveau führt ein größerer Stichprobenumfang n zu einem schmaleren Konfidenzintervall."
+        },
+        {
+          "claim_id": "claim_10",
+          "type": "mistake",
+          "content": "Es ist fachlich inkorrekt zu behaupten, der feste Parameter p bewege sich mit einer Wahrscheinlichkeit in ein bereits berechnetes Intervall hinein."
+        },
+        {
+          "claim_id": "claim_11",
+          "type": "procedure",
+          "content": "Zur Bestimmung des notwendigen Stichprobenumfangs n für eine maximale Intervallbreite wird oft der 'Worst-Case' h = 0,5 angenommen."
+        },
+        {
+          "claim_id": "claim_12",
+          "type": "application",
+          "content": "Die Breite eines Konfidenzintervalls ist proportional zu 1/sqrt(n)."
+        }
+      ],
+      "visual_requests": [],
+      "visual_assets": []
+    },
+    "items": [],
+    "videoLesson": {
+      "title": "Berechne sicheres t Intervall für Mittelwert",
+      "coverUrl": "https://solve-now.s3.us-west-2.amazonaws.com/german-abitur/atomic-videos-v2/ABITUR-MATHEMATIK-030/cover.png",
+      "playbackUrl": "https://solve-now.s3.us-west-2.amazonaws.com/german-abitur/atomic-videos-v2/ABITUR-MATHEMATIK-030/lesson.html",
+      "durationSeconds": 480,
+      "description": "Feingranulares IQB-basiertes Topic `Parameterschätzung und Konfidenzintervalle`; abgegrenzt durch: Anteilsparameter aus Stichproben schätzen. Im Quellkorpus: 30 Aufgaben, davon 2 offizielle Pool- oder Beispielaufgaben."
+    }
+  },
+  "lastViewedQuestionId": null,
+  "lastViewedAt": null
+}

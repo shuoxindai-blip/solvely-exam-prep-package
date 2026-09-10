@@ -1,0 +1,160 @@
+{
+  "epId": 500001,
+  "outlineId": 500002,
+  "topicGroupId": 510001,
+  "topicId": 520004,
+  "packageId": 5001,
+  "contentType": "studyGuide",
+  "contentStatus": "READY",
+  "generationId": "",
+  "progress": {
+    "totalCount": 2,
+    "completedCount": 0,
+    "items": {}
+  },
+  "platform": "system",
+  "payload": {
+    "content": {
+      "lesson_id": "ABITUR-MATHEMATIK-004",
+      "title": "Parameterfunktionen und Funktionsscharen",
+      "overview": "Eine Funktionsschar ist eine Menge von Funktionen, deren Funktionsgleichung neben der Variablen x mindestens einen Parameter (z. B. a, k oder t) enthält. Jedes Element der Schar verhält sich wie eine gewöhnliche Funktion, jedoch hängen charakteristische Punkte wie Nullstellen, Extrema oder Wendepunkte oft vom Parameter ab. Ziel ist es, diese Abhängigkeiten zu bestimmen, zu deuten und geometrische Eigenschaften der Graphenschar zu analysieren.",
+      "learning_objectives": [
+        "Definition und Notation von Funktionsscharen verstehen",
+        "Abhängigkeit von Nullstellen und Extrempunkten vom Parameter berechnen",
+        "Ortskurven für besondere Punkte der Schar herleiten",
+        "Gemeinsame Punkte aller Schargraphen identifizieren",
+        "Einfluss des Parameters auf den Graphenverlauf interpretieren"
+      ],
+      "sections": [
+        {
+          "title": "Grundlagen und Notation",
+          "content": "Eine Funktionsschar f_a(x) ordnet jedem Parameterwert 'a' aus einer Definitionsmenge eine eindeutige Funktion zu. In der Analysis werden Parameter wie Konstanten behandelt: Beim Ableiten nach x fällt ein additiver Parameter weg, während ein multiplikativer Parameter als Faktor erhalten bleibt. Wichtig ist die Unterscheidung: x ist die Stelle auf der horizontalen Achse, während 'a' die Gestalt oder Lage des Graphen verändert."
+        },
+        {
+          "title": "Kurvendiskussion mit Parametern",
+          "content": "Die Untersuchung erfolgt analog zu Einzelfunktionen, jedoch sind die Ergebnisse Terme in Abhängigkeit von 'a'. \n1. Nullstellen: f_a(x) = 0 nach x auflösen. Hierbei muss oft geprüft werden, für welche 'a' Lösungen existieren (Diskriminante).\n2. Extrempunkte: f_a'(x) = 0 liefert die x-Koordinaten. Die Art des Extremums (Hoch- oder Tiefpunkt) kann sich je nach Vorzeichen von 'a' ändern.\n3. Ortskurven: Um die Kurve zu finden, auf der alle Extrempunkte einer Schar liegen, löst man die x-Koordinate des Punktes nach 'a' auf und setzt diesen Ausdruck in die y-Koordinate ein."
+        },
+        {
+          "title": "Besondere Eigenschaften: Gemeinsame Punkte",
+          "content": "Viele Scharen besitzen Punkte, durch die alle Graphen unabhängig vom Parameter verlaufen. Um diese zu finden, setzt man zwei Funktionen mit unterschiedlichen Parametern gleich: f_a(x) = f_b(x). Alternativ sucht man Stellen x, an denen der Term, der den Parameter enthält, null wird, sodass der Parameter keinen Einfluss mehr auf den Funktionswert hat."
+        }
+      ],
+      "worked_examples": [
+        {
+          "question": "Gegeben ist die Funktionsschar f_a(x) = x^2 - 2ax mit a > 0. Bestimmen Sie die Koordinaten des Tiefpunkts in Abhängigkeit von a und leiten Sie die Gleichung der Ortskurve aller Tiefpunkte her.",
+          "solution": "1. Ableitungen bilden: f_a'(x) = 2x - 2a und f_a''(x) = 2.\n2. Notwendige Bedingung f_a'(x) = 0: 2x - 2a = 0 führt zu x = a.\n3. Hinreichende Bedingung: f_a''(a) = 2 > 0, also liegt ein Tiefpunkt vor.\n4. y-Koordinate berechnen: f_a(a) = a^2 - 2a(a) = a^2 - 2a^2 = -a^2. Der Tiefpunkt ist T_a(a | -a^2).\n5. Ortskurve: Es gilt x = a. Dies in y = -a^2 einsetzen ergibt y = -x^2. Die Ortskurve ist die Parabel g(x) = -x^2."
+        }
+      ],
+      "common_mistakes": [
+        "Behandlung des Parameters als Variable beim Ableiten (falsches Differenzieren).",
+        "Vergessen von Fallunterscheidungen (z. B. Division durch a ist nur für a ≠ 0 erlaubt).",
+        "Interpretation von a als x-Wert in der Zeichnung."
+      ],
+      "exam_tips": [
+        "Prüfen Sie immer den Definitionsbereich des Parameters (z. B. a > 0), da dies die Existenz von Nullstellen oder die Art von Extrema beeinflussen kann.",
+        "Nutzen Sie bei der Suche nach gemeinsamen Punkten den Ansatz f_a(x) = f_b(x) und klammern Sie den Parameter aus.",
+        "Skizzieren Sie für zwei konkrete Werte von a (z. B. a=1 und a=2) den Graphen, um ein Gefühl für die Schar zu bekommen."
+      ],
+      "recap": "Funktionsscharen erweitern die Analysis um eine dynamische Komponente. Der Parameter steuert die Eigenschaften der Graphen; Berechnungen führen zu parameterabhängigen Termen, die die geometrische Struktur der gesamten Schar beschreiben.",
+      "knowledge_claims": [
+        {
+          "claim_id": "claim_01",
+          "type": "definition",
+          "content": "Eine Funktionsschar ist eine Menge von Funktionen, bei denen die Funktionsvorschrift neben der Variablen x mindestens einen Parameter enthält."
+        },
+        {
+          "claim_id": "claim_02",
+          "type": "rule",
+          "content": "Beim Ableiten einer Parameterfunktion wird der Parameter wie eine Konstante behandelt."
+        },
+        {
+          "claim_id": "claim_03",
+          "type": "procedure",
+          "content": "Um gemeinsame Punkte einer Schar zu finden, setzt man f_a(x) = f_b(x) für a ≠ b und löst nach x auf."
+        },
+        {
+          "claim_id": "claim_04",
+          "type": "procedure",
+          "content": "Die Ortskurve einer Punktmenge (z. B. Extrema) wird bestimmt, indem man die x-Gleichung nach dem Parameter auflöst und in die y-Gleichung einsetzt."
+        },
+        {
+          "claim_id": "claim_05",
+          "type": "interpretation",
+          "content": "Ein Parameter in der Form f(x) + a bewirkt eine vertikale Verschiebung aller Graphen der Schar."
+        },
+        {
+          "claim_id": "claim_06",
+          "type": "interpretation",
+          "content": "Ein Parameter in der Form f(a * x) bewirkt eine Streckung oder Stauchung des Graphen in x-Richtung."
+        },
+        {
+          "claim_id": "claim_07",
+          "type": "check",
+          "content": "Bei der Division durch Terme, die den Parameter enthalten, muss eine Fallunterscheidung für den Wert Null durchgeführt werden."
+        },
+        {
+          "claim_id": "claim_08",
+          "type": "recognition",
+          "content": "Die Anzahl der Nullstellen einer Schar kann vom Wert des Parameters abhängen (z. B. bei quadratischen Termen über die Diskriminante)."
+        },
+        {
+          "claim_id": "claim_09",
+          "type": "comparison",
+          "content": "Ein Vorzeichenwechsel des Parameters kann einen Hochpunkt in einen Tiefpunkt umwandeln, wenn er die zweite Ableitung beeinflusst."
+        },
+        {
+          "claim_id": "claim_10",
+          "type": "application",
+          "content": "In Sachzusammenhängen repräsentiert der Parameter oft eine veränderbare Rahmenbedingung wie eine Wachstumsrate oder Startkapital."
+        },
+        {
+          "claim_id": "claim_11",
+          "type": "mistake",
+          "content": "Es ist ein Fehler, den Parameter a als Variable x zu behandeln, wenn nach der Steigung (Ableitung) gefragt ist."
+        },
+        {
+          "claim_id": "claim_12",
+          "type": "rule",
+          "content": "Wenn f_a(x) unabhängig von a denselben Wert y liefert, liegt an dieser Stelle x ein gemeinsamer Punkt aller Scharglieder vor."
+        }
+      ],
+      "visual_requests": [],
+      "visual_assets": []
+    },
+    "items": [
+      {
+        "id": 55000300,
+        "sourceQuestionId": "MAT-4AFF78FD88-05",
+        "topicId": 520004,
+        "type": "STUDENT_PRODUCED_RESPONSE",
+        "stem": "Gegeben ist die Schar der in \nIR definierten \nFunktionen \n3211\na 44f : x x ax ax+ + +\n mit\nBetrachtet werden für jeden Wert \nu0 die Tangente \nut an \n0G im Punkt \n( )( )u0P u| f u\n sowie der Punkt \n( )uQ u | 0 . Die Tangente \nut schneidet die x-Achse in \neinem Punkt, der mit \nuT bezeichnet wird. Begründen Sie mithilfe von geeigneten \nEintragungen in Abbildung 1, dass \n( )\n( )\n0\n0\nfu\nuu fu\nTQ = für jeden Wert \nu0 gilt.",
+        "options": {},
+        "correctAnswer": "3 \n2 Erwartungshorizont \nDer Erwartungshorizont stellt für jede Teilaufgabe eine mögliche Lösung dar. Nicht dargestellte \nkorrekte Lösungen sind als gleichwertig zu akzeptieren. \n BE \n1 a \n311\n4 4 4a a 1 a+ + + = −  = − \n( ) 23\na 4f x x 2ax a = + +\n; \n( ) 3\na 2f x x 2a =+ ; \n( ) 3\na 2fx = \n( )3\n4\nf 1 0− =\n; \n( )3\n4\nf 1 0−  \n5 \n b \n( ) ( ) ( )3 3 21 1 1 1\n01 4 4 4 4f x f x x x x x x x 1 0 x 1 x 0=  + = + + +   + =  = −  = \n( )af 1 0−=\n; \n( ) 1\na 4f0 = \nKoordinaten der Punkte: \n( )1| 0− , \n( )1\n40| \n4 \n c Verschiebung um 1 in negative x-Richtung und um \n1\n4 in negative y-Richtung 2 \n d Für jeden Wert \nu0 gilt \n( )0f u 0  \nsowie \n( )0f u 0  und damit \n( ) ( )uu 0\nu u u u\nPQ fu\n0 T Q T Q\nfu ==\n, woraus \n( )\n( )\n0\n0\nfu\nuu fuTQ =\n folgt. \n4 \n e Steigung der Tangente an den Graphen von \n0f in A: \n( ) 3\n0 2f1 = \nGleichung der Normale an den Graphen von \n0f in A: \n2\n3y x n= − + \n3 2 17\n4 3 12 nn= − +  =\n; y-Koordinate: \n17\n12 \n5 \n2 a Anzahl: \n60\n6 10= \nZeitpunkt: 1,5 Sekunden nach Beobachtungsbeginn \n3 \n b \n( ) ( ) ( ) ( )\n9 9 32 3 33 3 9 3 5π\n4 3 4 3 4 3 8 55\nh x dx sin x x sin π 9 sin π 5 −= −  + = −  + +  − =\n \nIm Zeitraum von fünf bis neun Sekunden nach Beobachtungsbeginn treten etwa \n3,35 Liter Wasser an der Düse aus. \n4",
+        "explanation": "3 \n2 Erwartungshorizont \nDer Erwartungshorizont stellt für jede Teilaufgabe eine mögliche Lösung dar. Nicht dargestellte \nkorrekte Lösungen sind als gleichwertig zu akzeptieren. \n BE \n1 a \n311\n4 4 4a a 1 a+ + + = −  = − \n( ) 23\na 4f x x 2ax a = + +\n; \n( ) 3\na 2f x x 2a =+ ; \n( ) 3\na 2fx = \n( )3\n4\nf 1 0− =\n; \n( )3\n4\nf 1 0−  \n5 \n b \n( ) ( ) ( )3 3 21 1 1 1\n01 4 4 4 4f x f x x x x x x x 1 0 x 1 x 0=  + = + + +   + =  = −  = \n( )af 1 0−=\n; \n( ) 1\na 4f0 = \nKoordinaten der Punkte: \n( )1| 0− , \n( )1\n40| \n4 \n c Verschiebung um 1 in negative x-Richtung und um \n1\n4 in negative y-Richtung 2 \n d Für jeden Wert \nu0 gilt \n( )0f u 0  \nsowie \n( )0f u 0  und damit \n( ) ( )uu 0\nu u u u\nPQ fu\n0 T Q T Q\nfu ==\n, woraus \n( )\n( )\n0\n0\nfu\nuu fuTQ =\n folgt. \n4 \n e Steigung der Tangente an den Graphen von \n0f in A: \n( ) 3\n0 2f1 = \nGleichung der Normale an den Graphen von \n0f in A: \n2\n3y x n= − + \n3 2 17\n4 3 12 nn= − +  =\n; y-Koordinate: \n17\n12 \n5 \n2 a Anzahl: \n60\n6 10= \nZeitpunkt: 1,5 Sekunden nach Beobachtungsbeginn \n3 \n b \n( ) ( ) ( ) ( )\n9 9 32 3 33 3 9 3 5π\n4 3 4 3 4 3 8 55\nh x dx sin x x sin π 9 sin π 5 −= −  + = −  + +  − =\n \nIm Zeitraum von fünf bis neun Sekunden nach Beobachtungsbeginn treten etwa \n3,35 Liter Wasser an der Düse aus. \n4",
+        "userAnswer": null,
+        "isCorrect": -1
+      },
+      {
+        "id": 55000301,
+        "sourceQuestionId": "MAT-4AFF78FD88-06",
+        "topicId": 520004,
+        "type": "STUDENT_PRODUCED_RESPONSE",
+        "stem": "Gegeben ist die Schar der in \nIR definierten \nFunktionen \n3211\na 44f : x x ax ax+ + +\n mit\nEs gibt Kreise, deren Mittelpunkte auf der y-Achse liegen und die den Graphen der \nersten Ableitungsfunktion von \n0f in genau zwei Punkten berühren. Der Punkt \n( )3\n4A 1|\n ist ein Berührpunkt eines solchen Kreises. Bestimmen Sie rechnerisch die \ny-Koordinate des Mittelpunktes dieses Kreises.",
+        "options": {},
+        "correctAnswer": "3 \n2 Erwartungshorizont \nDer Erwartungshorizont stellt für jede Teilaufgabe eine mögliche Lösung dar. Nicht dargestellte \nkorrekte Lösungen sind als gleichwertig zu akzeptieren. \n BE \n1 a \n311\n4 4 4a a 1 a+ + + = −  = − \n( ) 23\na 4f x x 2ax a = + +\n; \n( ) 3\na 2f x x 2a =+ ; \n( ) 3\na 2fx = \n( )3\n4\nf 1 0− =\n; \n( )3\n4\nf 1 0−  \n5 \n b \n( ) ( ) ( )3 3 21 1 1 1\n01 4 4 4 4f x f x x x x x x x 1 0 x 1 x 0=  + = + + +   + =  = −  = \n( )af 1 0−=\n; \n( ) 1\na 4f0 = \nKoordinaten der Punkte: \n( )1| 0− , \n( )1\n40| \n4 \n c Verschiebung um 1 in negative x-Richtung und um \n1\n4 in negative y-Richtung 2 \n d Für jeden Wert \nu0 gilt \n( )0f u 0  \nsowie \n( )0f u 0  und damit \n( ) ( )uu 0\nu u u u\nPQ fu\n0 T Q T Q\nfu ==\n, woraus \n( )\n( )\n0\n0\nfu\nuu fuTQ =\n folgt. \n4 \n e Steigung der Tangente an den Graphen von \n0f in A: \n( ) 3\n0 2f1 = \nGleichung der Normale an den Graphen von \n0f in A: \n2\n3y x n= − + \n3 2 17\n4 3 12 nn= − +  =\n; y-Koordinate: \n17\n12 \n5 \n2 a Anzahl: \n60\n6 10= \nZeitpunkt: 1,5 Sekunden nach Beobachtungsbeginn \n3 \n b \n( ) ( ) ( ) ( )\n9 9 32 3 33 3 9 3 5π\n4 3 4 3 4 3 8 55\nh x dx sin x x sin π 9 sin π 5 −= −  + = −  + +  − =\n \nIm Zeitraum von fünf bis neun Sekunden nach Beobachtungsbeginn treten etwa \n3,35 Liter Wasser an der Düse aus. \n4",
+        "explanation": "3 \n2 Erwartungshorizont \nDer Erwartungshorizont stellt für jede Teilaufgabe eine mögliche Lösung dar. Nicht dargestellte \nkorrekte Lösungen sind als gleichwertig zu akzeptieren. \n BE \n1 a \n311\n4 4 4a a 1 a+ + + = −  = − \n( ) 23\na 4f x x 2ax a = + +\n; \n( ) 3\na 2f x x 2a =+ ; \n( ) 3\na 2fx = \n( )3\n4\nf 1 0− =\n; \n( )3\n4\nf 1 0−  \n5 \n b \n( ) ( ) ( )3 3 21 1 1 1\n01 4 4 4 4f x f x x x x x x x 1 0 x 1 x 0=  + = + + +   + =  = −  = \n( )af 1 0−=\n; \n( ) 1\na 4f0 = \nKoordinaten der Punkte: \n( )1| 0− , \n( )1\n40| \n4 \n c Verschiebung um 1 in negative x-Richtung und um \n1\n4 in negative y-Richtung 2 \n d Für jeden Wert \nu0 gilt \n( )0f u 0  \nsowie \n( )0f u 0  und damit \n( ) ( )uu 0\nu u u u\nPQ fu\n0 T Q T Q\nfu ==\n, woraus \n( )\n( )\n0\n0\nfu\nuu fuTQ =\n folgt. \n4 \n e Steigung der Tangente an den Graphen von \n0f in A: \n( ) 3\n0 2f1 = \nGleichung der Normale an den Graphen von \n0f in A: \n2\n3y x n= − + \n3 2 17\n4 3 12 nn= − +  =\n; y-Koordinate: \n17\n12 \n5 \n2 a Anzahl: \n60\n6 10= \nZeitpunkt: 1,5 Sekunden nach Beobachtungsbeginn \n3 \n b \n( ) ( ) ( ) ( )\n9 9 32 3 33 3 9 3 5π\n4 3 4 3 4 3 8 55\nh x dx sin x x sin π 9 sin π 5 −= −  + = −  + +  − =\n \nIm Zeitraum von fünf bis neun Sekunden nach Beobachtungsbeginn treten etwa \n3,35 Liter Wasser an der Düse aus. \n4",
+        "userAnswer": null,
+        "isCorrect": -1
+      }
+    ],
+    "videoLesson": {
+      "title": "Parameter bestimmen, Punkt und Steigung erfüllen",
+      "coverUrl": "https://solve-now.s3.us-west-2.amazonaws.com/german-abitur/atomic-videos-v2/ABITUR-MATHEMATIK-004/cover.png",
+      "playbackUrl": "https://solve-now.s3.us-west-2.amazonaws.com/german-abitur/atomic-videos-v2/ABITUR-MATHEMATIK-004/lesson.html",
+      "durationSeconds": 480,
+      "description": "Feingranulares IQB-basiertes Topic `Parameterfunktionen und Funktionsscharen`; abgegrenzt durch: Abhängigkeiten von Parametern bestimmen und deuten. Im Quellkorpus: 113 Aufgaben, davon 113 offizielle Pool- oder Beispielaufgaben."
+    }
+  },
+  "lastViewedQuestionId": null,
+  "lastViewedAt": null
+}

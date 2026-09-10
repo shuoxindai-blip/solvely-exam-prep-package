@@ -1,0 +1,159 @@
+{
+  "epId": 500001,
+  "outlineId": 500002,
+  "topicGroupId": 510003,
+  "topicId": 520024,
+  "packageId": 5001,
+  "contentType": "studyGuide",
+  "contentStatus": "READY",
+  "generationId": "",
+  "progress": {
+    "totalCount": 2,
+    "completedCount": 0,
+    "items": {}
+  },
+  "platform": "system",
+  "payload": {
+    "content": {
+      "lesson_id": "ABITUR-MATHEMATIK-024",
+      "title": "Wahrscheinlichkeitsregeln, Baumdiagramme und Ereignisse",
+      "overview": "Dieses Modul behandelt die Grundlagen mehrstufiger Zufallsexperimente. Im Fokus stehen die Modellierung durch Baumdiagramme, die Anwendung der Pfadregeln sowie die Berechnung von Wahrscheinlichkeiten verknüpfter Ereignisse (Schnitt- und Vereinigungsmenge).",
+      "learning_objectives": [
+        "Mehrstufige Zufallsexperimente strukturiert in Baumdiagrammen darstellen.",
+        "Die erste und zweite Pfadregel zur Berechnung von Pfad- und Ereigniswahrscheinlichkeiten anwenden.",
+        "Ereignisse mithilfe von Mengenoperationen (Gegenereignis, Schnitt, Vereinigung) beschreiben und berechnen.",
+        "Wahrscheinlichkeitsterme im Sachzusammenhang interpretieren."
+      ],
+      "sections": [
+        {
+          "title": "Grundlagen der Ereignisalgebra",
+          "content": "Ein Ereignis E ist eine Teilmenge der Ergebnismenge Ω eines Zufallsexperiments. Wichtige Verknüpfungen sind: 1. Das Gegenereignis (nicht E): P(not E) = 1 - P(E). 2. Die Schnittmenge (A und B): P(A ∩ B) beschreibt das gleichzeitige Eintreten beider Ereignisse. 3. Die Vereinigungsmenge (A oder B): P(A ∪ B) = P(A) + P(B) - P(A ∩ B). Letztere Formel (Additionssatz) verhindert, dass die Schnittmenge doppelt gezählt wird."
+        },
+        {
+          "title": "Baumdiagramme und Pfadregeln",
+          "content": "Mehrstufige Prozesse werden grafisch als Baum visualisiert. Jeder Pfad von der Wurzel zu einem Blatt repräsentiert ein Ergebnis des Gesamtexperiments. 1. Pfadmultiplikationsregel (1. Pfadregel): Die Wahrscheinlichkeit eines Ergebnisses ist gleich dem Produkt der Wahrscheinlichkeiten entlang des zugehörigen Pfades. 2. Pfadadditionsregel (2. Pfadregel): Die Wahrscheinlichkeit eines Ereignisses ist die Summe der Wahrscheinlichkeiten aller Pfade, die zu diesem Ereignis gehören."
+        },
+        {
+          "title": "Interpretation von Termen",
+          "content": "In Abituraufgaben wird oft verlangt, Terme wie '1 - P(kein Treffer)' zu interpretieren. Dieser Term entspricht dem Ereignis 'mindestens ein Treffer'. Ein Term der Form P(A) * P(B|A) beschreibt die Wahrscheinlichkeit des Pfades, in dem erst A und dann B eintritt."
+        }
+      ],
+      "worked_examples": [
+        {
+          "question": "In einer Urne befinden sich 3 rote und 7 blaue Kugeln. Es werden nacheinander zwei Kugeln ohne Zurücklegen gezogen. Berechnen Sie die Wahrscheinlichkeit, dass mindestens eine rote Kugel gezogen wird, und geben Sie den Rechenweg an.",
+          "solution": "1. Modellwahl: Mehrstufiges Zufallsexperiment ohne Zurücklegen. 2. Ereignis definieren: E = 'Mindestens eine rote Kugel'. Das Gegenereignis ist E_quer = 'Keine rote Kugel' (also zwei blaue Kugeln). 3. Berechnung des Gegenereignisses: P(blau, blau) = (7/10) * (6/9) = 42/90 = 7/15. 4. Anwendung der Komplementärregel: P(E) = 1 - P(E_quer) = 1 - 7/15 = 8/15. Plausibilitätscheck: Da rote Kugeln vorhanden sind, muss die Wahrscheinlichkeit größer als 0 sein. 8/15 ≈ 0,53 ist ein realistischer Wert."
+        }
+      ],
+      "common_mistakes": [
+        "Vergessen des Abziehens der Schnittmenge beim Additionssatz P(A ∪ B).",
+        "Verwechslung von 'Ziehen mit Zurücklegen' (konstante Wahrscheinlichkeiten) und 'Ziehen ohne Zurücklegen' (sich ändernde Wahrscheinlichkeiten).",
+        "Fehlerhafte Interpretation von 'mindestens' und 'höchstens' (Einschluss der Grenzwerte)."
+      ],
+      "exam_tips": [
+        "Nutzen Sie bei 'mindestens 1'-Aufgaben fast immer das Gegenereignis 'keins', um Rechenzeit zu sparen.",
+        "Prüfen Sie bei Baumdiagrammen, ob die Summe der Wahrscheinlichkeiten aller von einem Knoten ausgehenden Zweige exakt 1 ergibt.",
+        "Achten Sie auf die Formulierung 'mit Zurücklegen' vs. 'ohne Zurücklegen', da dies die Pfadwahrscheinlichkeiten massiv beeinflusst."
+      ],
+      "recap": "Die Wahrscheinlichkeitsrechnung basiert auf der korrekten Verknüpfung von Pfaden (Multiplikation) und Ereignissen (Addition). Das Baumdiagramm dient dabei als zentrales Werkzeug zur Strukturierung komplexer Abläufe.",
+      "knowledge_claims": [
+        {
+          "claim_id": "claim_01",
+          "type": "rule",
+          "content": "Die Wahrscheinlichkeit eines Pfades in einem Baumdiagramm wird durch das Produkt der Wahrscheinlichkeiten entlang dieses Pfades berechnet (1. Pfadregel)."
+        },
+        {
+          "claim_id": "claim_02",
+          "type": "rule",
+          "content": "Die Wahrscheinlichkeit eines Ereignisses ist die Summe der Wahrscheinlichkeiten aller Pfade, die dieses Ereignis erfüllen (2. Pfadregel)."
+        },
+        {
+          "claim_id": "claim_03",
+          "type": "formula",
+          "content": "Für das Gegenereignis E_quer gilt immer die Beziehung P(E) = 1 - P(E_quer)."
+        },
+        {
+          "claim_id": "claim_04",
+          "type": "formula",
+          "content": "Der allgemeine Additionssatz für zwei Ereignisse A und B lautet: P(A ∪ B) = P(A) + P(B) - P(A ∩ B)."
+        },
+        {
+          "claim_id": "claim_05",
+          "type": "interpretation",
+          "content": "Der Ausdruck 'mindestens ein Treffer' bei n Versuchen entspricht mathematisch dem Komplement des Ereignisses 'null Treffer'."
+        },
+        {
+          "claim_id": "claim_06",
+          "type": "definition",
+          "content": "Zwei Ereignisse heißen disjunkt (unvereinbar), wenn ihre Schnittmenge leer ist, also P(A ∩ B) = 0."
+        },
+        {
+          "claim_id": "claim_07",
+          "type": "procedure",
+          "content": "Beim Ziehen ohne Zurücklegen verringert sich bei jedem Schritt sowohl die Anzahl der günstigen Ergebnisse als auch die Gesamtzahl im Nenner der Wahrscheinlichkeit."
+        },
+        {
+          "claim_id": "claim_08",
+          "type": "check",
+          "content": "Die Summe der Wahrscheinlichkeiten aller möglichen Ergebnisse (Blätter des Baumdiagramms) muss stets genau 1 ergeben."
+        },
+        {
+          "claim_id": "claim_09",
+          "type": "interpretation",
+          "content": "In einem Baumdiagramm stellen die Wahrscheinlichkeiten ab der zweiten Stufe bedingte Wahrscheinlichkeiten dar."
+        },
+        {
+          "claim_id": "claim_10",
+          "type": "mistake",
+          "content": "Ein häufiger Fehler ist die Annahme gleichbleibender Wahrscheinlichkeiten bei Experimenten, bei denen Objekte entnommen und nicht ersetzt werden."
+        },
+        {
+          "claim_id": "claim_11",
+          "type": "recognition",
+          "content": "Das Symbol ∩ steht für die logische UND-Verknüpfung (Schnittmenge), während ∪ für die logische ODER-Verknüpfung (Vereinigungsmenge) steht."
+        },
+        {
+          "claim_id": "claim_12",
+          "type": "application",
+          "content": "Bei der Modellierung von Stichproben aus sehr großen Grundgesamtheiten kann 'Ziehen ohne Zurücklegen' oft näherungsweise als 'Ziehen mit Zurücklegen' berechnet werden."
+        }
+      ],
+      "visual_requests": [],
+      "visual_assets": []
+    },
+    "items": [
+      {
+        "id": 55002300,
+        "sourceQuestionId": "MAT-1582542F08-03",
+        "topicId": 520024,
+        "type": "STUDENT_PRODUCED_RESPONSE",
+        "stem": "Beurteilen Sie die folgende Aussage: \nWird eine Stichprobe von Bildschirmen um einen zufällig ausgewählten Bildschirm \nergänzt, so ist die Wahrscheinlichkeit dafür, dass alle Geräte fehlerfrei sind, nach \nder Ergänzung geringer als vorher.",
+        "options": {},
+        "correctAnswer": "Die Aussage ist richtig. \nBegründung: n1 n0,8 0,8+ < \n3 \nd ( )\n1\n25251 x 0,1 x 1 0,1− ≥ ⇔ ≤− , wobei \n1\n251 0,1 8,8 %−≈ 4",
+        "explanation": "Die Aussage ist richtig. \nBegründung: n1 n0,8 0,8+ < \n3 \nd ( )\n1\n25251 x 0,1 x 1 0,1− ≥ ⇔ ≤− , wobei \n1\n251 0,1 8,8 %−≈ 4",
+        "userAnswer": null,
+        "isCorrect": -1
+      },
+      {
+        "id": 55002301,
+        "sourceQuestionId": "MAT-1582542F08-04",
+        "topicId": 520024,
+        "type": "STUDENT_PRODUCED_RESPONSE",
+        "stem": "Der Herstellungsprozess soll verbessert werden. Damit soll erreicht werden, dass die \nWahrscheinlichkeit dafür, dass unter 25 zufällig ausgewählten Bildschirmen keiner \nfehlerhaft ist, mindestens 10 % beträgt. Ermitteln Sie, wie groß der Anteil fehlerhafter \nGeräte nach der Verbesserung höchstens sein darf.",
+        "options": {},
+        "correctAnswer": "2 \nFehler der Bildschirme treten am häufigsten in Form eines defekten Displays sowie in \nForm eines defekten Netzteils auf. Für einen zufällig ausgewählten Bildschirm beträgt \ndie Wahrscheinlichkeit dafür, dass \n♦ das Display defekt ist, 10,7 %, \n♦ weder das Display noch das Netzteil defekt ist, 87,3 %, \n♦ das Netzteil defekt ist, 3,0 %. \n \ne Stellen Sie den Sachverhalt in einer vollständig ausgefüllten Vierfeldertafel dar. 3 \nf Berechnen Sie die Wahrscheinlichkeit dafür, dass ein zufällig ausgewählter Bild-\nschirm mit defektem Display ein defektes Netzteil besitzt. \n2 \ng Jeder Bildschirm wird vor der Auslieferung abschließend geprüft. Von vierzig ab-\nschließend geprüften Bildschirmen, unter denen sechs fehlerhaft sind, werden zehn \nzufällig ausgewählt. Beurteilen Sie, ob die Anzahl fehlerhafter Bildschirme unter den \nausgewählten binomialverteilt ist. \n2 \n 20 \n2 Erwartungshorizont \nDer Erwartungshorizont stellt für jede Teilaufgabe dar, in welchem Umfang und in welcher \nForm eine Lösung erwartet wird; nicht alle Lösungen sind dazu vollständig ausgeführt. Nicht \ndargestellte korrekte Lösungen sind als gleichwertig zu akzeptieren. \n BE \na X: Anzahl der fehlerhaften Bildschirme \n( )50\n0,2P X 8 30,7 %≤≈ \n( )200\n0,2P 30 X 50 90,8%<< ≈ \n4 \nb 250 0,2 50⋅= , der Erwartungswert für die Anzahl fehlerhafter Geräte unter den Bild-\nschirmen ist also ganzzahlig. Damit ist die gesuchte Anzahl 50. \n2 \nc Die Aussage ist richtig. \nBegründung: n1 n0,8 0,8+ < \n3 \nd ( )\n1\n25251 x 0,1 x 1 0,1− ≥ ⇔ ≤− , wobei \n1\n251 0,1 8,8 %−≈ 4 \ne D: „Das Display ist defekt.“ \nN: „Das Netzteil ist defekt.“ \n D D \nN 1,0 % 2,0 % 3,0 % \nN 9,7 % 87,3 % 97,0 % \n 10,7 % 89,3 % 100 % \n \n3 \nf 0,01\n0,107 9,3 %≈ 2",
+        "explanation": "2 \nFehler der Bildschirme treten am häufigsten in Form eines defekten Displays sowie in \nForm eines defekten Netzteils auf. Für einen zufällig ausgewählten Bildschirm beträgt \ndie Wahrscheinlichkeit dafür, dass \n♦ das Display defekt ist, 10,7 %, \n♦ weder das Display noch das Netzteil defekt ist, 87,3 %, \n♦ das Netzteil defekt ist, 3,0 %. \n \ne Stellen Sie den Sachverhalt in einer vollständig ausgefüllten Vierfeldertafel dar. 3 \nf Berechnen Sie die Wahrscheinlichkeit dafür, dass ein zufällig ausgewählter Bild-\nschirm mit defektem Display ein defektes Netzteil besitzt. \n2 \ng Jeder Bildschirm wird vor der Auslieferung abschließend geprüft. Von vierzig ab-\nschließend geprüften Bildschirmen, unter denen sechs fehlerhaft sind, werden zehn \nzufällig ausgewählt. Beurteilen Sie, ob die Anzahl fehlerhafter Bildschirme unter den \nausgewählten binomialverteilt ist. \n2 \n 20 \n2 Erwartungshorizont \nDer Erwartungshorizont stellt für jede Teilaufgabe dar, in welchem Umfang und in welcher \nForm eine Lösung erwartet wird; nicht alle Lösungen sind dazu vollständig ausgeführt. Nicht \ndargestellte korrekte Lösungen sind als gleichwertig zu akzeptieren. \n BE \na X: Anzahl der fehlerhaften Bildschirme \n( )50\n0,2P X 8 30,7 %≤≈ \n( )200\n0,2P 30 X 50 90,8%<< ≈ \n4 \nb 250 0,2 50⋅= , der Erwartungswert für die Anzahl fehlerhafter Geräte unter den Bild-\nschirmen ist also ganzzahlig. Damit ist die gesuchte Anzahl 50. \n2 \nc Die Aussage ist richtig. \nBegründung: n1 n0,8 0,8+ < \n3 \nd ( )\n1\n25251 x 0,1 x 1 0,1− ≥ ⇔ ≤− , wobei \n1\n251 0,1 8,8 %−≈ 4 \ne D: „Das Display ist defekt.“ \nN: „Das Netzteil ist defekt.“ \n D D \nN 1,0 % 2,0 % 3,0 % \nN 9,7 % 87,3 % 97,0 % \n 10,7 % 89,3 % 100 % \n \n3 \nf 0,01\n0,107 9,3 %≈ 2",
+        "userAnswer": null,
+        "isCorrect": -1
+      }
+    ],
+    "videoLesson": {
+      "title": "Markiere Ereignispfade im Baum und berechne Wahrscheinlichkeiten",
+      "coverUrl": "https://solve-now.s3.us-west-2.amazonaws.com/german-abitur/atomic-videos-v2/ABITUR-MATHEMATIK-024/cover.png",
+      "playbackUrl": "https://solve-now.s3.us-west-2.amazonaws.com/german-abitur/atomic-videos-v2/ABITUR-MATHEMATIK-024/lesson.html",
+      "durationSeconds": 480,
+      "description": "Feingranulares IQB-basiertes Topic `Wahrscheinlichkeitsregeln, Baumdiagramm und Ereignisse`; abgegrenzt durch: mehrstufige Zufallsexperimente und Ereignisverknüpfungen berechnen. Im Quellkorpus: 458 Aufgaben, davon 453 offizielle Pool- oder Beispielaufgaben."
+    }
+  },
+  "lastViewedQuestionId": null,
+  "lastViewedAt": null
+}

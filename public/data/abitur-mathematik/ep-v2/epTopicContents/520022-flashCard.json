@@ -1,0 +1,220 @@
+{
+  "epId": 500001,
+  "outlineId": 500002,
+  "topicGroupId": 510002,
+  "topicId": 520022,
+  "packageId": 5001,
+  "contentType": "flashCard",
+  "contentStatus": "READY",
+  "generationId": "",
+  "progress": {
+    "totalCount": 20,
+    "completedCount": 0,
+    "items": {}
+  },
+  "platform": "system",
+  "payload": {
+    "cards": [
+      {
+        "id": 53002100,
+        "topicId": 520022,
+        "type": "FLASH_CARD",
+        "info": "Was beschreibt eine Übergangsmatrix $M$ in einem dynamischen System?",
+        "backInfo": "Sie beschreibt die Anteile oder Wahrscheinlichkeiten für den Wechsel zwischen verschiedenen Systemzuständen in diskreten Zeitschritten.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002101,
+        "topicId": 520022,
+        "type": "FLASH_CARD",
+        "info": "Welche Eigenschaft muss die Spaltensumme einer stochastischen Übergangsmatrix erfüllen?",
+        "backInfo": "Die Summe der Einträge jeder einzelnen Spalte muss genau 1 ergeben, da die Gesamtheit des Systems erhalten bleibt.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002102,
+        "topicId": 520022,
+        "type": "FLASH_CARD",
+        "info": "Wie berechnet man den Zustandsvektor $v_{n+1}$ aus dem vorherigen Vektor $v_n$?",
+        "backInfo": "Der Folgezustand berechnet sich durch die Matrix-Vektor-Multiplikation: $v_{n+1} = M \\cdot v_n$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002103,
+        "topicId": 520022,
+        "type": "FLASH_CARD",
+        "info": "Mit welcher Formel bestimmt man den Zustand $v_k$ nach genau $k$ Zeitschritten?",
+        "backInfo": "Der Zustand nach $k$ Schritten wird durch die Gleichung $v_k = M^k \\cdot v_0$ ermittelt.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002104,
+        "topicId": 520022,
+        "type": "FLASH_CARD",
+        "info": "Was bedeutet der Eintrag $m_{ij}$ in der Matrix-Potenz $M^k$?",
+        "backInfo": "Er gibt die Wahrscheinlichkeit an, nach genau $k$ Zeitschritten vom Zustand $j$ in den Zustand $i$ zu gelangen.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002105,
+        "topicId": 520022,
+        "type": "FLASH_CARD",
+        "info": "Wie ist ein stationärer Zustand (Fixvektor) mathematisch definiert?",
+        "backInfo": "Ein stationärer Zustand ist ein Vektor $x$, für den gilt: $M \\cdot x = x$. Der Zustand ändert sich nicht mehr.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002106,
+        "topicId": 520022,
+        "type": "FLASH_CARD",
+        "info": "Welches Gleichungssystem löst man zur Bestimmung eines Fixvektors?",
+        "backInfo": "Man löst das homogene System $(M - I) \\cdot x = 0$ unter Berücksichtigung der Summenbedingung (z. B. $x_1 + x_2 = 1$).",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002107,
+        "topicId": 520022,
+        "type": "FLASH_CARD",
+        "info": "Welcher formale Fehler wird oft bei der Multiplikation von Matrix und Vektor gemacht?",
+        "backInfo": "Die falsche Reihenfolge; im Standardmodell muss die Übergangsmatrix links vom Spaltenvektor stehen ($M \\cdot v$).",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002108,
+        "topicId": 520022,
+        "type": "FLASH_CARD",
+        "info": "Woran erkennt man ein zyklisches Verhalten in einem Übergangsprozess?",
+        "backInfo": "Die Zustandsvektoren kehren periodisch wieder, ohne gegen einen festen Grenzvektor zu konvergieren.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002109,
+        "topicId": 520022,
+        "type": "FLASH_CARD",
+        "info": "Was unterscheidet einen Grenzvektor von einem beliebigen Fixvektor?",
+        "backInfo": "Ein Grenzvektor beschreibt den spezifischen Zustand, dem sich das System für $n \\to \\infty$ tatsächlich annähert.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002110,
+        "topicId": 520022,
+        "type": "FLASH_CARD",
+        "info": "Welche Form muss eine Übergangsmatrix $M$ besitzen, um einen Prozess zwischen $n$ Zuständen abzubilden?",
+        "backInfo": "Die Matrix $M$ muss quadratisch sein, also eine $n \\times n$-Matrix, wobei jede Zeile und Spalte einem der $n$ Zustände entspricht.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002111,
+        "topicId": 520022,
+        "type": "FLASH_CARD",
+        "info": "Warum darf die Spaltensumme einer stochastischen Matrix nicht größer als 1 sein?",
+        "backInfo": "Weil die Spaltensumme die Gesamtheit des Systems (100%) repräsentiert; eine Summe $> 1$ würde eine unmögliche Vermehrung der Gesamtmenge bedeuten.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002112,
+        "topicId": 520022,
+        "type": "FLASH_CARD",
+        "info": "Gegeben ist $v_1$ und $M$. Wie prüft man, ob $v_1$ der direkte Nachfolgezustand von $v_0$ ist?",
+        "backInfo": "Man verifiziert, ob die Matrix-Vektor-Multiplikation $M \\cdot v_0$ exakt den Vektor $v_1$ ergibt.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002113,
+        "topicId": 520022,
+        "type": "FLASH_CARD",
+        "info": "Wie berechnet man den Zustand $v_6$, wenn nur $v_3$ und die Matrix $M$ bekannt sind?",
+        "backInfo": "Man berechnet $v_6 = M^3 \\cdot v_3$, da von Schritt 3 bis Schritt 6 genau drei Zeitschritte vergehen.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002114,
+        "topicId": 520022,
+        "type": "FLASH_CARD",
+        "info": "In welcher Matrix findet man die Übergangsraten für einen Zeitraum von genau zwei Intervallen?",
+        "backInfo": "Diese Raten befinden sich in der quadrierten Übergangsmatrix $M^2$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002115,
+        "topicId": 520022,
+        "type": "FLASH_CARD",
+        "info": "Ein System ist im Zustand $x$. Was passiert bei Anwendung von $M$, wenn $x$ ein Fixvektor ist?",
+        "backInfo": "Es passiert keine Änderung; der resultierende Vektor ist identisch mit $x$, da $M \\cdot x = x$ gilt.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002116,
+        "topicId": 520022,
+        "type": "FLASH_CARD",
+        "info": "Warum reicht das Lösen von $(M - I) \\cdot x = 0$ allein oft nicht zur Fixvektorbestimmung aus?",
+        "backInfo": "Das System ist unterbestimmt; man benötigt die zusätzliche Normierungsbedingung (z. B. Summe der Komponenten = Gesamtpopulation), um eine eindeutige Lösung zu erhalten.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002117,
+        "topicId": 520022,
+        "type": "FLASH_CARD",
+        "info": "Wie führt man eine Probe durch, um ein berechnetes Langzeitgleichgewicht $x$ zu validieren?",
+        "backInfo": "Man multipliziert die Übergangsmatrix $M$ mit dem Vektor $x$. Ergibt $M \\cdot x$ wieder $x$, ist das Gleichgewicht korrekt berechnet.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002118,
+        "topicId": 520022,
+        "type": "FLASH_CARD",
+        "info": "Welche Konsequenz hat das Vertauschen von Zeilen und Spalten beim Aufstellen einer Übergangsmatrix?",
+        "backInfo": "Die stochastische Eigenschaft (Spaltensumme = 1) geht verloren und die Matrix-Vektor-Multiplikation liefert falsche Zustandsänderungen.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002119,
+        "topicId": 520022,
+        "type": "FLASH_CARD",
+        "info": "Wie lässt sich ein vergangener Zustand $v_{n-1}$ aus dem aktuellen Zustand $v_n$ rekonstruieren?",
+        "backInfo": "Sofern $M$ invertierbar ist, berechnet man den vorherigen Zustand durch Multiplikation mit der Inversen: $v_{n-1} = M^{-1} \\cdot v_n$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      }
+    ]
+  }
+}

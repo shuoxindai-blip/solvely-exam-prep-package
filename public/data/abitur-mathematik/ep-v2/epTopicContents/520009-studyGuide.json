@@ -1,0 +1,135 @@
+{
+  "epId": 500001,
+  "outlineId": 500002,
+  "topicGroupId": 510001,
+  "topicId": 520009,
+  "packageId": 5001,
+  "contentType": "studyGuide",
+  "contentStatus": "READY",
+  "generationId": "",
+  "progress": {
+    "totalCount": 0,
+    "completedCount": 0,
+    "items": {}
+  },
+  "platform": "system",
+  "payload": {
+    "content": {
+      "lesson_id": "ABITUR-MATHEMATIK-009",
+      "title": "Stammfunktionen und Integrationsregeln",
+      "overview": "Dieses Modul behandelt die Bestimmung von Stammfunktionen als Umkehrung des Differenzierens. Im Fokus stehen die grundlegenden Integrationsregeln für Potenz-, Exponential- und trigonometrische Funktionen sowie die Bestimmung spezifischer Stammfunktionen unter Berücksichtigung von Anfangsbedingungen (Punktproben).",
+      "learning_objectives": [
+        "Den Begriff der Stammfunktion definieren und den Zusammenhang zur Ableitung erläutern.",
+        "Grundlegende Integrationsregeln (Potenzregel, Faktorregel, Summenregel) sicher anwenden.",
+        "Die Integrationskonstante C korrekt interpretieren und berechnen.",
+        "Spezifische Stammfunktionen durch gegebene Punkte oder Bedingungen bestimmen."
+      ],
+      "sections": [
+        {
+          "title": "Definition und die Integrationskonstante",
+          "content": "Eine Funktion F heißt Stammfunktion einer Funktion f auf einem Intervall I, wenn für alle x aus I gilt: F'(x) = f(x). Da die Ableitung einer Konstanten C null ist, besitzt jede integrierbare Funktion unendlich viele Stammfunktionen der Form F(x) + C. In der Abiturprüfung ist es entscheidend, bei der allgemeinen Suche nach Stammfunktionen das '+ C' (C ∈ ℝ) nicht zu vergessen, sofern keine spezifische Bedingung vorliegt."
+        },
+        {
+          "title": "Wichtige Integrationsregeln",
+          "content": "1. Potenzregel: Für f(x) = x^n (n ≠ -1) ist F(x) = (1/(n+1)) * x^(n+1). \n2. Faktorregel: Ein konstanter Faktor k bleibt beim Integrieren erhalten: ∫ k * f(x) dx = k * F(x). \n3. Summenregel: Funktionen werden gliedweise integriert: ∫ (f(x) + g(x)) dx = F(x) + G(x). \n4. Besondere Funktionen: Für f(x) = e^x ist F(x) = e^x. Für f(x) = sin(x) ist F(x) = -cos(x) und für f(x) = cos(x) ist F(x) = sin(x)."
+        },
+        {
+          "title": "Bestimmung einer speziellen Stammfunktion",
+          "content": "Um aus der Schar der Stammfunktionen eine spezifische Funktion auszuwählen, wird eine Anfangsbedingung benötigt (z. B. ein Punkt P(x₀|y₀), durch den der Graph verlaufen soll). Man setzt den x-Wert in den allgemeinen Term F(x) + C ein und löst die Gleichung F(x₀) + C = y₀ nach C auf. Dieser Prozess wird oft als 'Punktprobe' oder 'Anfangswertproblem' bezeichnet."
+        }
+      ],
+      "worked_examples": [
+        {
+          "question": "Gegeben ist die Funktion f mit f(x) = 3x² - 4x + 5. Bestimmen Sie diejenige Stammfunktion F von f, deren Graph durch den Punkt P(2|12) verläuft.",
+          "solution": "1. Allgemeine Stammfunktion bilden: Unter Anwendung der Potenz-, Faktor- und Summenregel ergibt sich F(x) = (3/3)x³ - (4/2)x² + 5x + C, also F(x) = x³ - 2x² + 5x + C.\n2. Punktprobe durchführen: Setze P(2|12) in F(x) ein: 12 = 2³ - 2(2)² + 5(2) + C.\n3. Berechnen: 12 = 8 - 8 + 10 + C => 12 = 10 + C => C = 2.\n4. Ergebnis formulieren: Die gesuchte Stammfunktion lautet F(x) = x³ - 2x² + 5x + 2.\n5. Plausibilitätsprüfung: Ableiten von F(x) ergibt 3x² - 4x + 5, was f(x) entspricht. F(2) = 8 - 8 + 10 + 2 = 12 (korrekt)."
+        }
+      ],
+      "common_mistakes": [
+        "Vergessen der Integrationskonstante C bei unbestimmten Integralen oder allgemeinen Stammfunktionen.",
+        "Vorzeichenfehler bei trigonometrischen Funktionen (Ableitung von sin ist cos, aber Integral von sin ist -cos).",
+        "Anwendung der Potenzregel auf x⁻¹ (hier ist die Stammfunktion ln|x|, nicht x⁰/0).",
+        "Fehlerhafte Verrechnung von Faktoren bei verketteten Funktionen (lineare Substitution)."
+      ],
+      "exam_tips": [
+        "Nutzen Sie die Probe: Leiten Sie Ihre gefundene Stammfunktion F immer kurz im Kopf ab, um zu prüfen, ob f herauskommt.",
+        "Achten Sie auf Operatoren: 'Bestimmen Sie eine Stammfunktion' erlaubt C=0; 'Bestimmen Sie alle Stammfunktionen' erfordert das '+ C'.",
+        "Bei Graphen-Aufgaben: Ein lokales Extremum von F entspricht einer Nullstelle von f."
+      ],
+      "recap": "Stammfunktionen bilden das Fundament der Integralrechnung. Sie werden durch Umkehrung der Ableitungsregeln bestimmt. Eine spezifische Stammfunktion ist durch die Bestimmung der Konstante C mittels einer Punktprobe eindeutig definiert.",
+      "knowledge_claims": [
+        {
+          "claim_id": "claim_01",
+          "type": "definition",
+          "content": "Eine Funktion F ist eine Stammfunktion von f, wenn für alle x im Definitionsbereich F'(x) = f(x) gilt."
+        },
+        {
+          "claim_id": "claim_02",
+          "type": "rule",
+          "content": "Die allgemeine Stammfunktion einer Funktion f enthält immer eine additive Integrationskonstante C ∈ ℝ."
+        },
+        {
+          "claim_id": "claim_03",
+          "type": "formula",
+          "content": "Die Stammfunktion der Potenzfunktion f(x) = x^n für n ≠ -1 lautet F(x) = (1/(n+1)) * x^(n+1) + C."
+        },
+        {
+          "claim_id": "claim_04",
+          "type": "rule",
+          "content": "Die Summenregel besagt, dass eine Summe von Funktionen gliedweise integriert werden darf."
+        },
+        {
+          "claim_id": "claim_05",
+          "type": "rule",
+          "content": "Die Faktorregel besagt, dass konstante Faktoren beim Bilden der Stammfunktion unverändert erhalten bleiben."
+        },
+        {
+          "claim_id": "claim_06",
+          "type": "procedure",
+          "content": "Zur Bestimmung von C bei einer gegebenen Bedingung P(x|y) setzt man den x-Wert in F(x)+C ein und löst die Gleichung F(x)+C = y."
+        },
+        {
+          "claim_id": "claim_07",
+          "type": "mistake",
+          "content": "Ein häufiger Fehler ist die Annahme, das Integral von sin(x) sei cos(x); korrekt ist -cos(x) + C."
+        },
+        {
+          "claim_id": "claim_08",
+          "type": "check",
+          "content": "Die Korrektheit einer Stammfunktion kann jederzeit durch Ableiten (F'(x) = f(x)) überprüft werden."
+        },
+        {
+          "claim_id": "claim_09",
+          "type": "interpretation",
+          "content": "Geometrisch gesehen sind die Graphen aller Stammfunktionen einer Funktion f parallel in y-Richtung verschoben."
+        },
+        {
+          "claim_id": "claim_10",
+          "type": "recognition",
+          "content": "An Stellen, an denen f(x) eine Nullstelle mit Vorzeichenwechsel hat, besitzt der Graph der Stammfunktion F ein lokales Extremum."
+        },
+        {
+          "claim_id": "claim_11",
+          "type": "application",
+          "content": "Für die natürliche Exponentialfunktion f(x) = e^x ist die einfachste Stammfunktion F(x) = e^x."
+        },
+        {
+          "claim_id": "claim_12",
+          "type": "comparison",
+          "content": "Während das Differenzieren einer Funktion eindeutig ist, führt das Integrieren zu einer unendlichen Schar von Funktionen."
+        }
+      ],
+      "visual_requests": [],
+      "visual_assets": []
+    },
+    "items": [],
+    "videoLesson": {
+      "title": "Bestimme termweise eine Stammfunktion mit Integrationsregeln",
+      "coverUrl": "https://solve-now.s3.us-west-2.amazonaws.com/german-abitur/atomic-videos-v2/ABITUR-MATHEMATIK-009/cover.png",
+      "playbackUrl": "https://solve-now.s3.us-west-2.amazonaws.com/german-abitur/atomic-videos-v2/ABITUR-MATHEMATIK-009/lesson.html",
+      "durationSeconds": 480,
+      "description": "Feingranulares IQB-basiertes Topic `Stammfunktionen und Integrationsregeln`; abgegrenzt durch: Stammfunktionen bestimmen und Anfangsbedingungen nutzen. Im Quellkorpus: 30 Aufgaben, davon 15 offizielle Pool- oder Beispielaufgaben."
+    }
+  },
+  "lastViewedQuestionId": null,
+  "lastViewedAt": null
+}

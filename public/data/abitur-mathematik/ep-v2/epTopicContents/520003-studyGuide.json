@@ -1,0 +1,159 @@
+{
+  "epId": 500001,
+  "outlineId": 500002,
+  "topicGroupId": 510001,
+  "topicId": 520003,
+  "packageId": 5001,
+  "contentType": "studyGuide",
+  "contentStatus": "READY",
+  "generationId": "",
+  "progress": {
+    "totalCount": 2,
+    "completedCount": 0,
+    "items": {}
+  },
+  "platform": "system",
+  "payload": {
+    "content": {
+      "lesson_id": "ABITUR-MATHEMATIK-003",
+      "title": "Graphtransformationen und Funktionsverknüpfungen",
+      "overview": "Dieses Modul behandelt die systematische Veränderung von Funktionsgraphen durch geometrische Operationen sowie die Bildung neuer Funktionen durch Verkettung und Umkehrung. Im Abitur ist die Fähigkeit entscheidend, Transformationsterme zu identifizieren und deren Auswirkungen auf Eigenschaften wie Extrempunkte oder Integrale zu bewerten.",
+      "learning_objectives": [
+        "Verschiebungen, Streckungen und Spiegelungen anhand von Funktionstermen identifizieren.",
+        "Die Auswirkungen von Transformationen auf charakteristische Punkte und Steigungen analysieren.",
+        "Verkettungen von Funktionen bilden und deren Ableitungen bestimmen.",
+        "Die Symmetrieeigenschaften von Umkehrfunktionen an der Winkelhalbierenden nutzen."
+      ],
+      "sections": [
+        {
+          "title": "Geometrische Transformationen",
+          "content": "Transformationen verändern die Lage oder Form eines Graphen. Sei f(x) die Ausgangsfunktion. Eine Verschiebung in y-Richtung erfolgt durch g(x) = f(x) + d (d > 0: nach oben). Eine Verschiebung in x-Richtung erfolgt durch g(x) = f(x - c) (c > 0: nach rechts). Streckungen werden durch Faktoren realisiert: g(x) = a * f(x) streckt in y-Richtung (Faktor |a| > 1), während g(x) = f(b * x) in x-Richtung streckt (Faktor 1/|b|). Eine Spiegelung an der x-Achse entspricht g(x) = -f(x), an der y-Achse g(x) = f(-x)."
+        },
+        {
+          "title": "Verkettung und Umkehrung",
+          "content": "Die Verkettung (Komposition) zweier Funktionen f und g wird als (f ∘ g)(x) = f(g(x)) geschrieben. Hierbei dient der Wertebereich von g als Definitionsbereich für f. Die Umkehrfunktion f⁻¹ existiert nur für streng monotone Funktionen. Grafisch entsteht der Graph von f⁻¹ durch Spiegelung des Graphen von f an der ersten Winkelhalbierenden (y = x). Dabei vertauschen sich Definitions- und Wertebereich sowie die Koordinaten aller Punkte (x|y) zu (y|x)."
+        },
+        {
+          "title": "Auswirkungen auf Ableitungen",
+          "content": "Transformationen beeinflussen die Ableitung. Bei einer Verschiebung in y-Richtung bleibt die Ableitung gleich: g(x) = f(x) + d => g'(x) = f'(x). Bei einer Verschiebung in x-Richtung verschiebt sich auch die Ableitung: g(x) = f(x - c) => g'(x) = f'(x - c). Bei Streckungen gilt die Kettenregel: g(x) = f(b * x) => g'(x) = b * f'(b * x). Dies ist besonders wichtig beim Vergleich von Steigungen an transformierten Stellen."
+        }
+      ],
+      "worked_examples": [
+        {
+          "question": "Gegeben ist f(x) = e^x. Der Graph von g entsteht durch Spiegelung von f an der y-Achse und anschließende Verschiebung um 2 Einheiten nach unten. Geben Sie den Funktionsterm von g an und bestimmen Sie die Gleichung der Tangente an g an der Stelle x = 0.",
+          "solution": "1. Transformation: Spiegelung an der y-Achse bedeutet f(-x), also e^(-x). 2. Transformation: Verschiebung um 2 nach unten bedeutet Subtraktion von 2. Somit: g(x) = e^(-x) - 2. 3. Ableitung: g'(x) = -e^(-x). 4. Tangente bei x=0: Punkt bestimmen: g(0) = e^0 - 2 = 1 - 2 = -1. Steigung bestimmen: g'(0) = -e^0 = -1. Tangentengleichung y = mx + b: -1 = -1 * 0 + b => b = -1. Ergebnis: y = -x - 1."
+        }
+      ],
+      "common_mistakes": [
+        "Verwechslung der Richtung bei x-Verschiebung: f(x + 2) verschiebt nach LINKS, nicht nach rechts.",
+        "Streckungsfaktor in x-Richtung: Bei f(2x) wird der Graph um den Faktor 0,5 gestaucht, nicht um 2 gestreckt.",
+        "Umkehrfunktion: Annahme, dass f⁻¹(x) = 1/f(x) sei. Das ist der Kehrwert, nicht die Umkehrfunktion."
+      ],
+      "exam_tips": [
+        "Prüfen Sie bei Aufgaben zur Flächenberechnung zwischen f und f⁻¹, ob Sie die Symmetrie zur Geraden y = x nutzen können (Integral verdoppeln).",
+        "Achten Sie bei 'Beurteilen'-Aufgaben darauf, ob eine Transformation die Steigung verändert (Verschiebungen in y-Richtung tun dies nie).",
+        "Skizzieren Sie bei Unklarheiten kurz die Transformationen von Standardfunktionen (x², e^x, sin(x))."
+      ],
+      "recap": "Graphtransformationen folgen festen Regeln: Additionen bewirken Verschiebungen, Multiplikationen bewirken Streckungen. Die Verkettung erfordert die Kettenregel, während die Umkehrung eine Spiegelung an y=x darstellt.",
+      "knowledge_claims": [
+        {
+          "claim_id": "claim_01",
+          "type": "rule",
+          "content": "Eine Transformation der Form g(x) = f(x - c) verschiebt den Graphen für c > 0 um c Einheiten nach rechts."
+        },
+        {
+          "claim_id": "claim_02",
+          "type": "rule",
+          "content": "Eine Transformation der Form g(x) = f(x) + d verschiebt den Graphen für d > 0 um d Einheiten nach oben."
+        },
+        {
+          "claim_id": "claim_03",
+          "type": "interpretation",
+          "content": "Der Faktor a in g(x) = a * f(x) bewirkt eine Streckung in y-Richtung; ist a negativ, erfolgt zusätzlich eine Spiegelung an der x-Achse."
+        },
+        {
+          "claim_id": "claim_04",
+          "type": "interpretation",
+          "content": "Der Faktor b in g(x) = f(b * x) bewirkt eine Streckung in x-Richtung mit dem Faktor 1/|b|."
+        },
+        {
+          "claim_id": "claim_05",
+          "type": "definition",
+          "content": "Die Umkehrfunktion f⁻¹ einer Funktion f vertauscht die Rollen von Definitions- und Wertebereich."
+        },
+        {
+          "claim_id": "claim_06",
+          "type": "recognition",
+          "content": "Grafisch entspricht die Bildung der Umkehrfunktion einer Spiegelung des Graphen an der ersten Winkelhalbierenden (y = x)."
+        },
+        {
+          "claim_id": "claim_07",
+          "type": "procedure",
+          "content": "Bei der Verkettung f(g(x)) wird der Funktionsterm von g(x) an jeder Stelle x in den Term von f(x) eingesetzt."
+        },
+        {
+          "claim_id": "claim_08",
+          "type": "check",
+          "content": "Eine reine Verschiebung in y-Richtung ändert die erste Ableitung der Funktion an keiner Stelle x."
+        },
+        {
+          "claim_id": "claim_09",
+          "type": "mistake",
+          "content": "Ein häufiger Fehler ist die Annahme, dass f(x+c) nach rechts verschiebt; tatsächlich wandert der Graph bei positivem c nach links."
+        },
+        {
+          "claim_id": "claim_10",
+          "type": "application",
+          "content": "Wenn g(x) = f(x) + d, dann gilt für die Extremstellen: Die x-Koordinaten der Extrempunkte bleiben identisch, nur die y-Werte ändern sich."
+        },
+        {
+          "claim_id": "claim_11",
+          "type": "rule",
+          "content": "Die Spiegelung an der y-Achse wird durch den Term g(x) = f(-x) dargestellt."
+        },
+        {
+          "claim_id": "claim_12",
+          "type": "interpretation",
+          "content": "Besitzen f und g an einer Stelle x dieselbe Steigung, so kann g nicht durch eine Streckung in y-Richtung (außer Faktor 1) aus f hervorgegangen sein."
+        }
+      ],
+      "visual_requests": [],
+      "visual_assets": []
+    },
+    "items": [
+      {
+        "id": 55000200,
+        "sourceQuestionId": "MAT-A009DB785D-12",
+        "topicId": 520003,
+        "type": "STUDENT_PRODUCED_RESPONSE",
+        "stem": "Die Abbildung zeigt schematisch einen Längsschnitt eines Schiffs, dessen Deck hori-\nzontal liegt. \n \nBei Verwendung eines Koordinatensystems, dessen Ursprung an der Bugspitze liegt \nund dessen x-Achse entlang der Decklinie verläuft, beschreibt die in IR definierte \nFunktion 2 0,2xk : x 0,3x e −−⋅ für 0 x 20≤≤ modellhaft die abgebildete Kiellinie. \nDabei entspricht eine Längeneinheit einem Meter in der Wirklichkeit.\nBeschreiben Sie, wie man unter Verwendung von Streckenzügen zwischen Punk-\nten auf dem Graphen von k einen beliebig genauen Wert für die Länge der Kiellinie \nerhalten kann.",
+        "options": {},
+        "correctAnswer": "3 \nLänge der in Teilaufgabe g verwendeten Streckenzüge. Begründen Sie diese Aus-\nsage. \n 50 \n2 Erwartungshorizont \nDer Erwartungshorizont stellt für jede Teilaufgabe dar, in welchem Umfang und in welcher \nForm eine Lösung erwartet wird; nicht alle Lösungen sind dazu vollständig ausgeführt. Nicht \ndargestellte korrekte Lösungen sind als gleichwertig zu akzeptieren. \n BE \n1 a ( ) 1\na 2f 1 a ln 2=⇔= 2 \n b ( ) 2\na afx 0 x0x′ =⇔=∨= , ( )af0 0′′ > , ( )2\na af0′′ < \nDamit: Tiefpunkt: ( )0|0 , Hochpunkt: ( )22\n24\na ea| \nDer Hochpunkt liegt für jeden Wert von a im ersten Quadranten, da 2\na 0> und \n22\n4\nea 0> gilt. Er bewegt sich mit zunehmendem Wert von a in negative x-Richtung \nund in negative y-Richtung. \n7 \n c \nWegen \n2\n2\n0\ne 0= und ( )\n22\na\n2 22\n4\ne ea= liegen für jeden Wert von a Tiefpunkt und Hochpunkt \nvon aG auf dem gegebenen Graphen. \n2 \n d Der Flächeninhalt des Dreiecks lässt sich in Abhängigkeit von b durch eine Funkti-\non A mit ( ) ( )1\n0,22Ab bf b= ⋅ beschreiben. Die Funktion A nimmt für b 15= ihren \ngrößten Wert an; der größte Wert ist 3\n3375\n2e . \n5 \n e ( )0,2f x0 ≥ , p IR +∈ \nDamit ergibt sich für den Flächeninhalt: ( ) ( )\np\n5\np\n2\n0,2\n0\nf x dx 250 5 p 10p 50 e −= −⋅ + + ⋅∫ \nDa 2p 10p 50 0+ +> und \np\n5e0− > für alle p IR +∈ , gilt ( )\np\n0,2\n0\nf x dx 250<∫ . \n4 \n2 a Der Graph von k geht aus dem Graphen von 2f durch eine Stauchung mit dem \nFaktor 0,3 in y-Richtung und eine Spiegelung an der x-Achse hervor. \n2 \n b Der tiefste Punkt der Kiellinie hat die x-Koordinate 10. \n( ) ( )k 20 k 10 1 ,86−≈ , d. h. die Höhendifferenz beträgt etwa 1,86 m. \n4 \n c Der Abbildung ist zu entnehmen, dass der gesuchte Punkt zwischen Bugspitze und \ntiefstem Punkt liegt. \nFür 0 x 10<< gilt: ( )k x 0 x 10 5 2′′ =⇔= − \n( )tan α k 10 5 2′= − , d. h. α 34, 7≈− ° \nDie Größe des Neigungswinkels beträgt etwa 34,7°. \n4",
+        "explanation": "3 \nLänge der in Teilaufgabe g verwendeten Streckenzüge. Begründen Sie diese Aus-\nsage. \n 50 \n2 Erwartungshorizont \nDer Erwartungshorizont stellt für jede Teilaufgabe dar, in welchem Umfang und in welcher \nForm eine Lösung erwartet wird; nicht alle Lösungen sind dazu vollständig ausgeführt. Nicht \ndargestellte korrekte Lösungen sind als gleichwertig zu akzeptieren. \n BE \n1 a ( ) 1\na 2f 1 a ln 2=⇔= 2 \n b ( ) 2\na afx 0 x0x′ =⇔=∨= , ( )af0 0′′ > , ( )2\na af0′′ < \nDamit: Tiefpunkt: ( )0|0 , Hochpunkt: ( )22\n24\na ea| \nDer Hochpunkt liegt für jeden Wert von a im ersten Quadranten, da 2\na 0> und \n22\n4\nea 0> gilt. Er bewegt sich mit zunehmendem Wert von a in negative x-Richtung \nund in negative y-Richtung. \n7 \n c \nWegen \n2\n2\n0\ne 0= und ( )\n22\na\n2 22\n4\ne ea= liegen für jeden Wert von a Tiefpunkt und Hochpunkt \nvon aG auf dem gegebenen Graphen. \n2 \n d Der Flächeninhalt des Dreiecks lässt sich in Abhängigkeit von b durch eine Funkti-\non A mit ( ) ( )1\n0,22Ab bf b= ⋅ beschreiben. Die Funktion A nimmt für b 15= ihren \ngrößten Wert an; der größte Wert ist 3\n3375\n2e . \n5 \n e ( )0,2f x0 ≥ , p IR +∈ \nDamit ergibt sich für den Flächeninhalt: ( ) ( )\np\n5\np\n2\n0,2\n0\nf x dx 250 5 p 10p 50 e −= −⋅ + + ⋅∫ \nDa 2p 10p 50 0+ +> und \np\n5e0− > für alle p IR +∈ , gilt ( )\np\n0,2\n0\nf x dx 250<∫ . \n4 \n2 a Der Graph von k geht aus dem Graphen von 2f durch eine Stauchung mit dem \nFaktor 0,3 in y-Richtung und eine Spiegelung an der x-Achse hervor. \n2 \n b Der tiefste Punkt der Kiellinie hat die x-Koordinate 10. \n( ) ( )k 20 k 10 1 ,86−≈ , d. h. die Höhendifferenz beträgt etwa 1,86 m. \n4 \n c Der Abbildung ist zu entnehmen, dass der gesuchte Punkt zwischen Bugspitze und \ntiefstem Punkt liegt. \nFür 0 x 10<< gilt: ( )k x 0 x 10 5 2′′ =⇔= − \n( )tan α k 10 5 2′= − , d. h. α 34, 7≈− ° \nDie Größe des Neigungswinkels beträgt etwa 34,7°. \n4",
+        "userAnswer": null,
+        "isCorrect": -1
+      },
+      {
+        "id": 55000201,
+        "sourceQuestionId": "MAT-A9EC4917DE-10",
+        "topicId": 520003,
+        "type": "STUDENT_PRODUCED_RESPONSE",
+        "stem": "Für jeden Wert von a IR∈ ist eine in IR definierte Funktion \n( )\n2x\naw :x 4 x x 1 e a −⋅ −− ⋅ + gegeben. Unabhängig von a sind 0 und 3 die einzi-\ngen Extremstellen von aw . Die Funktion 4w ist die in der Aufgabe 2 betrachtete \nFunktion w, die obige Abbildung zeigt also den Graphen von 4w .\nBestimmen Sie denjenigen Wert von a, für den der Mittelpunkt der Strecke zwi-\nschen den beiden Extrempunkten des Graphen von aw auf der x-Achse liegt.",
+        "options": {},
+        "correctAnswer": "3 \n2 Erwartungshorizont \nDer Erwartungshorizont stellt für jede Teilaufgabe eine mögliche Lösung dar. Nicht dargestellte \nkorrekte Lösungen sind als gleichwertig zu akzeptieren. \n BE \n1 a ( ) = ⇔ − −=2rx 0 x x 1 0 liefert = −+11\n1 24x1 und = ++11\n2 24x1 . \nExtremstelle: ( )⋅+ =11\n1222 xx \n3 \n b Bestimmt man die y-Koordinate des Hochpunkts des Graphen von r und subtra-\nhiert diese von 4, so erhält man den beschriebenen Abstand. \n2 \n c Für die x-Koordinate des Schnittpunkts gilt ( ) =sx 4 und damit ( )′ =sx 4 . \n=tanφ4 liefert ≈°φ 76 . \n4 \n d ( )′ = −+r x 2x 1 , ( ) ( )′′ = =r0 1 s0 \nGleichung der Tangente: = +y x1 \n4 \n e \n( ) ( )( ) − =+ − −= − ∫\n2 2x32 211 7\n32 300\ns x r x dx e x x x e \n4 \n2 a Im betrachteten Zeitraum fließen etwa 39m Was-\nser an der Messstelle vorbei. \n3 \n b Die y-Koordinate des Wendepunkts, dessen x-Koordinate größer als 3 ist, ist etwa \n4,7. Damit beträgt die momentane Durchflussrate zum betrachteten Zeitpunkt \netwa \n3m\ns4,7 . \n3 \n c Für den angegebenen Zeitraum beschreibt die Tangente die zeitliche Entwicklung \nder momentanen Durchflussrate mit einer relativen Abweichung von weniger \nals 5 %. \n3 \n3 a Eine Veränderung des Werts von a bewirkt eine Verschiebung des Graphen von \naw in y-Richtung. \n1 \n b ( ) ( )( ) ( )\n−⋅ + =⋅ −+ 311\naa22 w 0 w 3 2a 4 20e \n−−−+ =⇔=− 332a 4 20e 0 a 2 10e \n4 \n c ( ) 3\n4w 3 4 20e −= + \naw hat für 3a 20e −<− und für a4= genau eine Nullstelle. \n4 \n 35",
+        "explanation": "3 \n2 Erwartungshorizont \nDer Erwartungshorizont stellt für jede Teilaufgabe eine mögliche Lösung dar. Nicht dargestellte \nkorrekte Lösungen sind als gleichwertig zu akzeptieren. \n BE \n1 a ( ) = ⇔ − −=2rx 0 x x 1 0 liefert = −+11\n1 24x1 und = ++11\n2 24x1 . \nExtremstelle: ( )⋅+ =11\n1222 xx \n3 \n b Bestimmt man die y-Koordinate des Hochpunkts des Graphen von r und subtra-\nhiert diese von 4, so erhält man den beschriebenen Abstand. \n2 \n c Für die x-Koordinate des Schnittpunkts gilt ( ) =sx 4 und damit ( )′ =sx 4 . \n=tanφ4 liefert ≈°φ 76 . \n4 \n d ( )′ = −+r x 2x 1 , ( ) ( )′′ = =r0 1 s0 \nGleichung der Tangente: = +y x1 \n4 \n e \n( ) ( )( ) − =+ − −= − ∫\n2 2x32 211 7\n32 300\ns x r x dx e x x x e \n4 \n2 a Im betrachteten Zeitraum fließen etwa 39m Was-\nser an der Messstelle vorbei. \n3 \n b Die y-Koordinate des Wendepunkts, dessen x-Koordinate größer als 3 ist, ist etwa \n4,7. Damit beträgt die momentane Durchflussrate zum betrachteten Zeitpunkt \netwa \n3m\ns4,7 . \n3 \n c Für den angegebenen Zeitraum beschreibt die Tangente die zeitliche Entwicklung \nder momentanen Durchflussrate mit einer relativen Abweichung von weniger \nals 5 %. \n3 \n3 a Eine Veränderung des Werts von a bewirkt eine Verschiebung des Graphen von \naw in y-Richtung. \n1 \n b ( ) ( )( ) ( )\n−⋅ + =⋅ −+ 311\naa22 w 0 w 3 2a 4 20e \n−−−+ =⇔=− 332a 4 20e 0 a 2 10e \n4 \n c ( ) 3\n4w 3 4 20e −= + \naw hat für 3a 20e −<− und für a4= genau eine Nullstelle. \n4 \n 35",
+        "userAnswer": null,
+        "isCorrect": -1
+      }
+    ],
+    "videoLesson": {
+      "title": "Beschreibe Graphtransformationen und prüfe Schlüsselstellen",
+      "coverUrl": "https://solve-now.s3.us-west-2.amazonaws.com/german-abitur/atomic-videos-v2/ABITUR-MATHEMATIK-003/cover.png",
+      "playbackUrl": "https://solve-now.s3.us-west-2.amazonaws.com/german-abitur/atomic-videos-v2/ABITUR-MATHEMATIK-003/lesson.html",
+      "durationSeconds": 480,
+      "description": "Feingranulares IQB-basiertes Topic `Graphtransformationen und Funktionsverknüpfungen`; abgegrenzt durch: Verschiebung, Streckung, Spiegelung, Verkettung und Umkehrung deuten. Im Quellkorpus: 54 Aufgaben, davon 54 offizielle Pool- oder Beispielaufgaben."
+    }
+  },
+  "lastViewedQuestionId": null,
+  "lastViewedAt": null
+}

@@ -122,8 +122,11 @@ button:focus-visible,
 }
 
 .student-response-field label { color: #313131; font-size: 15px; font-weight: 700; }
-.student-response-field input { height: 52px; padding: 0 15px; border: 2px solid #777; border-radius: 7px; color: #151515; background: #fff; font-size: 20px; }
-.student-response-field input:focus { border-color: var(--solvely-brand); outline: 3px solid rgba(var(--solvely-brand-rgb), .16); }
+.student-response-field input,
+.student-response-field textarea { padding: 13px 15px; border: 2px solid #777; border-radius: 7px; color: #151515; background: #fff; font: inherit; font-size: 18px; resize: vertical; }
+.student-response-field input { height: 52px; padding-block: 0; }
+.student-response-field input:focus,
+.student-response-field textarea:focus { border-color: var(--solvely-brand); outline: 3px solid rgba(var(--solvely-brand-rgb), .16); }
 .student-response-field small { color: #666; font-size: 12px; }
 
 .timer-wrap {
@@ -2334,7 +2337,8 @@ body.mock-exam-route.mock-exam-dark {
 .exam-app.dark-mode .elimination-mode-button.active { border-color: #0b0b0b; background: #0b0b0b; color: #fff; }
 
 .exam-app.dark-mode .choice-card,
-.exam-app.dark-mode .student-response-field input {
+.exam-app.dark-mode .student-response-field input,
+.exam-app.dark-mode .student-response-field textarea {
   border-color: var(--exam-muted-foreground);
   background: var(--exam-background);
   color: var(--exam-foreground);

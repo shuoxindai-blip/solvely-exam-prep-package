@@ -1,0 +1,220 @@
+{
+  "epId": 500001,
+  "outlineId": 500002,
+  "topicGroupId": 510002,
+  "topicId": 520015,
+  "packageId": 5001,
+  "contentType": "flashCard",
+  "contentStatus": "READY",
+  "generationId": "",
+  "progress": {
+    "totalCount": 20,
+    "completedCount": 0,
+    "items": {}
+  },
+  "platform": "system",
+  "payload": {
+    "cards": [
+      {
+        "id": 53001400,
+        "topicId": 520015,
+        "type": "FLASH_CARD",
+        "info": "Wie lautet die allgemeine Formel für die Parameterform einer Geraden im Raum?",
+        "backInfo": "Die Formel lautet $g: \\vec{x} = \\vec{a} + r \\cdot \\vec{v}$, wobei $\\vec{a}$ der Stützvektor und $\\vec{v}$ der Richtungsvektor ist.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001401,
+        "topicId": 520015,
+        "type": "FLASH_CARD",
+        "info": "Welche Bedingung muss für den Richtungsvektor $\\vec{v}$ einer Geraden zwingend gelten?",
+        "backInfo": "Der Richtungsvektor darf nicht der Nullvektor sein ($\\vec{v} \\neq \\vec{0}$), da sonst keine Gerade definiert wird.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001402,
+        "topicId": 520015,
+        "type": "FLASH_CARD",
+        "info": "Wie berechnet man den Richtungsvektor für eine Gerade durch die Punkte A und B?",
+        "backInfo": "Man berechnet den Verbindungsvektor durch die Differenz der Ortsvektoren: $\\vec{v} = \\vec{AB} = \\vec{OB} - \\vec{OA}$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001403,
+        "topicId": 520015,
+        "type": "FLASH_CARD",
+        "info": "Was ist der erste rechnerische Schritt bei der Durchführung einer Punktprobe?",
+        "backInfo": "Man setzt den Ortsvektor des zu prüfenden Punktes für $\\vec{x}$ in die Geradengleichung ein, um ein LGS aufzustellen.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001404,
+        "topicId": 520015,
+        "type": "FLASH_CARD",
+        "info": "Wann gilt ein Punkt laut Punktprobe als Element einer Geraden?",
+        "backInfo": "Wenn alle drei Koordinatengleichungen des linearen Gleichungssystems denselben Wert für den Parameter $r$ liefern.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001405,
+        "topicId": 520015,
+        "type": "FLASH_CARD",
+        "info": "Genügt es für die Punktprobe, wenn zwei von drei Koordinatengleichungen denselben Parameterwert liefern?",
+        "backInfo": "Nein. Alle drei Gleichungen müssen konsistent sein; bei einem Widerspruch in nur einer Zeile liegt der Punkt nicht auf der Geraden.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001406,
+        "topicId": 520015,
+        "type": "FLASH_CARD",
+        "info": "Welche Punkte einer Geraden eignen sich als Stützvektor für deren Parametergleichung?",
+        "backInfo": "Jeder beliebige Punkt, der auf der Geraden liegt, kann als Stützpunkt (Stützvektor) verwendet werden.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001407,
+        "topicId": 520015,
+        "type": "FLASH_CARD",
+        "info": "Darf ein Richtungsvektor skaliert werden, ohne die Gerade zu verändern?",
+        "backInfo": "Ja, er kann mit jedem Skalar $k \\neq 0$ multipliziert werden, da dies nur die Länge, nicht aber die Richtung ändert.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001408,
+        "topicId": 520015,
+        "type": "FLASH_CARD",
+        "info": "Was bedeutet ein Widerspruch wie $0 = 5$ während der Punktprobe?",
+        "backInfo": "Ein solcher Widerspruch zeigt, dass der untersuchte Punkt definitiv nicht auf der Geraden liegt.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001409,
+        "topicId": 520015,
+        "type": "FLASH_CARD",
+        "info": "Welcher Punkt der Geraden wird durch den Parameterwert $r = 0$ beschrieben?",
+        "backInfo": "Bei $r = 0$ entspricht der Ortsvektor $\\vec{x}$ genau dem gewählten Stützvektor $\\vec{a}$ der Geraden.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001410,
+        "topicId": 520015,
+        "type": "FLASH_CARD",
+        "info": "Welche geometrische Rolle übernimmt der Vektor $\\vec{a}$ in der Gleichung $\\vec{x} = \\vec{a} + r \\cdot \\vec{v}$?",
+        "backInfo": "Der Vektor $\\vec{a}$ dient als Stützvektor (Aufpunkt) und verankert die Gerade an einem festen Punkt im Raum.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001411,
+        "topicId": 520015,
+        "type": "FLASH_CARD",
+        "info": "Warum führt ein Nullvektor als Richtungsvektor in der Parameterform zu einem mathematischen Problem?",
+        "backInfo": "Da jede Multiplikation mit $r$ den Nullvektor ergibt, würde die Gleichung nur einen einzelnen Punkt statt einer Geraden beschreiben.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001412,
+        "topicId": 520015,
+        "type": "FLASH_CARD",
+        "info": "Wie lautet die Geradengleichung durch $A$ und $B$, wenn $B$ als Stützpunkt gewählt wird?",
+        "backInfo": "Die Gleichung lautet $g: \\vec{x} = \\vec{OB} + r \\cdot (\\vec{OA} - \\vec{OB})$ oder $g: \\vec{x} = \\vec{OB} + r \\cdot \\vec{BA}$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001413,
+        "topicId": 520015,
+        "type": "FLASH_CARD",
+        "info": "Was lässt sich über die Lage eines Punktes sagen, wenn der Parameter $r = 1$ ist?",
+        "backInfo": "Der Punkt entspricht der Summe aus Stützvektor und Richtungsvektor; er liegt genau eine Richtungsvektorlänge vom Stützpunkt entfernt.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001414,
+        "topicId": 520015,
+        "type": "FLASH_CARD",
+        "info": "Wie viele Gleichungen enthält das LGS bei einer Punktprobe im dreidimensionalen Raum?",
+        "backInfo": "Das LGS enthält drei Gleichungen, da für jede Koordinate ($x_1, x_2, x_3$) eine separate Zeile aufgestellt wird.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001415,
+        "topicId": 520015,
+        "type": "FLASH_CARD",
+        "info": "Welches Ergebnis der Punktprobe beweist, dass ein Punkt $P$ nicht auf der Geraden liegt?",
+        "backInfo": "Wenn die Berechnung von $r$ für die verschiedenen Koordinatenzeilen zu unterschiedlichen Werten führt (z. B. $r=2$ und $r=5$).",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001416,
+        "topicId": 520015,
+        "type": "FLASH_CARD",
+        "info": "Diagnose: Ein Schüler prüft nur die $x_1$- und $x_2$-Zeile bei der Punktprobe. Warum ist das riskant?",
+        "backInfo": "Der Punkt könnte in der $x_3$-Koordinate von der Geraden abweichen; ohne Prüfung aller Zeilen ist keine sichere Aussage möglich.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001417,
+        "topicId": 520015,
+        "type": "FLASH_CARD",
+        "info": "Darf man den Stützvektor einer Geraden durch Multiplikation mit einem Skalar vereinfachen?",
+        "backInfo": "Nein. Im Gegensatz zum Richtungsvektor darf der Stützvektor nicht skaliert werden, da er sonst meist nicht mehr auf der Geraden liegt.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001418,
+        "topicId": 520015,
+        "type": "FLASH_CARD",
+        "info": "Können zwei Geraden mit unterschiedlichen Richtungsvektoren identisch sein?",
+        "backInfo": "Ja, sofern die Richtungsvektoren kollinear (Vielfache voneinander) sind und beide Geraden dieselbe Punktmenge beschreiben.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001419,
+        "topicId": 520015,
+        "type": "FLASH_CARD",
+        "info": "Wie vereinfacht man den Richtungsvektor $\\vec{v} = (4|8|12)$ für eine übersichtlichere Geradengleichung?",
+        "backInfo": "Man kann den Vektor durch 4 dividieren und stattdessen den kollinearen Richtungsvektor $\\vec{v'} = (1|2|3)$ verwenden.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      }
+    ]
+  }
+}

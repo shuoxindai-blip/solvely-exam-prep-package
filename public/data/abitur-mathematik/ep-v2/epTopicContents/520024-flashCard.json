@@ -1,0 +1,220 @@
+{
+  "epId": 500001,
+  "outlineId": 500002,
+  "topicGroupId": 510003,
+  "topicId": 520024,
+  "packageId": 5001,
+  "contentType": "flashCard",
+  "contentStatus": "READY",
+  "generationId": "",
+  "progress": {
+    "totalCount": 20,
+    "completedCount": 0,
+    "items": {}
+  },
+  "platform": "system",
+  "payload": {
+    "cards": [
+      {
+        "id": 53002300,
+        "topicId": 520024,
+        "type": "FLASH_CARD",
+        "info": "Wie berechnet man die Wahrscheinlichkeit eines einzelnen Pfades in einem Baumdiagramm?",
+        "backInfo": "Nach der 1. Pfadregel multipliziert man die Wahrscheinlichkeiten entlang des Pfades von der Wurzel bis zum Blatt.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002301,
+        "topicId": 520024,
+        "type": "FLASH_CARD",
+        "info": "Wie bestimmt man die Wahrscheinlichkeit eines Ereignisses, das mehrere Pfade umfasst?",
+        "backInfo": "Nach der 2. Pfadregel addiert man die Wahrscheinlichkeiten aller Pfade, die zu diesem Ereignis gehören.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002302,
+        "topicId": 520024,
+        "type": "FLASH_CARD",
+        "info": "Wie lautet die Formel zur Berechnung der Wahrscheinlichkeit eines Gegenereignisses $E_{quer}$?",
+        "backInfo": "Die Wahrscheinlichkeit berechnet sich durch $P(E) = 1 - P(E_{quer})$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002303,
+        "topicId": 520024,
+        "type": "FLASH_CARD",
+        "info": "Wie lautet der allgemeine Additionssatz f1r die Wahrscheinlichkeit $P(A \\cup B)$?",
+        "backInfo": "Die Formel lautet $P(A \\cup B) = P(A) + P(B) - P(A \\cap B)$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002304,
+        "topicId": 520024,
+        "type": "FLASH_CARD",
+        "info": "Welches Gegenereignis nutzt man zur Berechnung von 'mindestens ein Treffer'?",
+        "backInfo": "Man nutzt das Komplement1rereignis 'null Treffer' (kein Treffer) und rechnet $1 - P(\\text{kein Treffer})$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002305,
+        "topicId": 520024,
+        "type": "FLASH_CARD",
+        "info": "Welchen Wert muss die Summe aller Pfadwahrscheinlichkeiten eines Baumdiagramms ergeben?",
+        "backInfo": "Die Summe der Wahrscheinlichkeiten aller m1glichen Ergebnisse (Bl1tter des Baums) muss stets genau 1 ergeben.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002306,
+        "topicId": 520024,
+        "type": "FLASH_CARD",
+        "info": "Was stellen die Wahrscheinlichkeiten ab der zweiten Stufe eines Baumdiagramms dar?",
+        "backInfo": "Sie stellen bedingte Wahrscheinlichkeiten dar, da sie vom Eintreten des vorherigen Ereignisses abh1ngen.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002307,
+        "topicId": 520024,
+        "type": "FLASH_CARD",
+        "info": "Was bedeuten die Symbole $\\cap$ und $\\cup$ in der Ereignisalgebra?",
+        "backInfo": "Das Symbol $\\cap$ steht f1r die Schnittmenge (UND), $\\cup$ steht f1r die Vereinigungsmenge (ODER).",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002308,
+        "topicId": 520024,
+        "type": "FLASH_CARD",
+        "info": "Wie ver1ndern sich Wahrscheinlichkeiten beim 'Ziehen ohne Zur1cklegen'?",
+        "backInfo": "Sowohl die Anzahl der g1nstigen Ergebnisse als auch die Gesamtzahl im Nenner verringern sich bei jedem Schritt.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002309,
+        "topicId": 520024,
+        "type": "FLASH_CARD",
+        "info": "Welcher Fehler tritt oft bei Experimenten ohne Zur1cklegen auf?",
+        "backInfo": "Die f1lschliche Annahme gleichbleibender Wahrscheinlichkeiten, obwohl sich die Zusammensetzung der Grundgesamtheit 1ndert.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002310,
+        "topicId": 520024,
+        "type": "FLASH_CARD",
+        "info": "Warum multipliziert man Wahrscheinlichkeiten entlang eines Pfades im Baumdiagramm?",
+        "backInfo": "Um die Wahrscheinlichkeit für das gleichzeitige Eintreten der aufeinanderfolgenden Teilergebnisse (Schnittmenge der Stufen) zu berechnen.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002311,
+        "topicId": 520024,
+        "type": "FLASH_CARD",
+        "info": "Wann darf die 2. Pfadregel (Addition) auf Pfade eines Baumdiagramms angewendet werden?",
+        "backInfo": "Wenn die Pfade verschiedene, sich gegenseitig ausschließende Ergebnisse darstellen, die zusammen das gesuchte Ereignis bilden.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002312,
+        "topicId": 520024,
+        "type": "FLASH_CARD",
+        "info": "Berechne $P(E)$, wenn das Gegenereignis $E_{quer}$ mit einer Wahrscheinlichkeit von $0,35$ eintritt.",
+        "backInfo": "Die Wahrscheinlichkeit beträgt $P(E) = 1 - 0,35 = 0,65$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002313,
+        "topicId": 520024,
+        "type": "FLASH_CARD",
+        "info": "Warum subtrahiert man im Additionssatz $P(A \\cap B)$ von der Summe $P(A) + P(B)$?",
+        "backInfo": "Um zu verhindern, dass die Schnittmenge, die in beiden Einzelwahrscheinlichkeiten enthalten ist, doppelt gezählt wird.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002314,
+        "topicId": 520024,
+        "type": "FLASH_CARD",
+        "info": "Interpretiere den Term $1 - P(X=0)$ im Kontext einer Trefferfolge.",
+        "backInfo": "Der Term berechnet die Wahrscheinlichkeit für das Ereignis, dass mindestens ein Treffer erzielt wird.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002315,
+        "topicId": 520024,
+        "type": "FLASH_CARD",
+        "info": "Was gilt für den Additionssatz, wenn zwei Ereignisse $A$ und $B$ disjunkt sind?",
+        "backInfo": "Da $P(A \\cap B) = 0$ ist, vereinfacht sich die Formel zu $P(A \\cup B) = P(A) + P(B)$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002316,
+        "topicId": 520024,
+        "type": "FLASH_CARD",
+        "info": "Wie lautet der zweite Faktor beim Ziehen ohne Zurücklegen aus einer Urne mit $r$ roten und $b$ blauen Kugeln für 'rot, dann rot'?",
+        "backInfo": "Der zweite Faktor ist $\\frac{r-1}{r+b-1}$, da eine rote Kugel und eine Gesamtkugel weniger vorhanden sind.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002317,
+        "topicId": 520024,
+        "type": "FLASH_CARD",
+        "info": "Wie kann man die Vollständigkeit eines gezeichneten Baumdiagramms mathematisch verifizieren?",
+        "backInfo": "Man addiert die Wahrscheinlichkeiten aller Endknoten; ergibt die Summe nicht exakt 1, ist das Diagramm fehlerhaft oder unvollständig.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002318,
+        "topicId": 520024,
+        "type": "FLASH_CARD",
+        "info": "Welche Bedeutung hat die Beschriftung eines Astes, der von Ereignis $A$ zu Ereignis $B$ führt?",
+        "backInfo": "Sie gibt die bedingte Wahrscheinlichkeit $P(B|A)$ an, also die Wahrscheinlichkeit für $B$ unter der Bedingung, dass $A$ bereits eingetreten ist.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002319,
+        "topicId": 520024,
+        "type": "FLASH_CARD",
+        "info": "Diagnose: Ein Schüler rechnet bei '3-mal Ziehen ohne Zurücklegen' immer mit $p=0,4$. Welcher Fehler liegt vor?",
+        "backInfo": "Er ignoriert die Abhängigkeit der Stufen; beim Ziehen ohne Zurücklegen müssen sich die Wahrscheinlichkeiten nach jeder Entnahme ändern.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      }
+    ]
+  }
+}

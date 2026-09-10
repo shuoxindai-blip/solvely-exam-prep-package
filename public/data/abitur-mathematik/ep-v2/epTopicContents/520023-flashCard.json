@@ -1,0 +1,220 @@
+{
+  "epId": 500001,
+  "outlineId": 500002,
+  "topicGroupId": 510003,
+  "topicId": 520023,
+  "packageId": 5001,
+  "contentType": "flashCard",
+  "contentStatus": "READY",
+  "generationId": "",
+  "progress": {
+    "totalCount": 20,
+    "completedCount": 0,
+    "items": {}
+  },
+  "platform": "system",
+  "payload": {
+    "cards": [
+      {
+        "id": 53002200,
+        "topicId": 520023,
+        "type": "FLASH_CARD",
+        "info": "Was gibt die Fakultät $n!$ in der Kombinatorik an?",
+        "backInfo": "Die Fakultät $n!$ gibt die Anzahl der Möglichkeiten an, $n$ unterscheidbare Objekte in einer Reihe anzuordnen (Permutation).",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002201,
+        "topicId": 520023,
+        "type": "FLASH_CARD",
+        "info": "Wie berechnet man die Auswahl von $k$ aus $n$ Objekten mit Reihenfolge ohne Zurücklegen?",
+        "backInfo": "Die Anzahl der Möglichkeiten für diese geordnete Stichprobe wird mit der Formel $\\frac{n!}{(n-k)!}$ berechnet.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002202,
+        "topicId": 520023,
+        "type": "FLASH_CARD",
+        "info": "Welches Modell beschreibt der Binomialkoeffizient $\\binom{n}{k}$?",
+        "backInfo": "Er berechnet die Anzahl der Möglichkeiten, $k$ Objekte aus $n$ Objekten ohne Beachtung der Reihenfolge und ohne Zurücklegen auszuwählen.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002203,
+        "topicId": 520023,
+        "type": "FLASH_CARD",
+        "info": "Wie lautet das allgemeine Zählprinzip für $n$ hintereinander ausgeführte Schritte?",
+        "backInfo": "Die Gesamtzahl der Möglichkeiten ist das Produkt der Möglichkeiten der einzelnen Teilschritte: $k_1 \\cdot k_2 \\cdot ... \\cdot k_n$ (Multiplikationsregel).",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002204,
+        "topicId": 520023,
+        "type": "FLASH_CARD",
+        "info": "Wann darf der Binomialkoeffizient $\\binom{n}{k}$ in einer Aufgabe nicht allein stehen?",
+        "backInfo": "Wenn die Reihenfolge der Auswahl relevant ist, zum Beispiel bei der Vergabe verschiedener Ämter oder einer zeitlichen Abfolge.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002205,
+        "topicId": 520023,
+        "type": "FLASH_CARD",
+        "info": "Wie berechnet man Permutationen, wenn einige der $n$ Objekte identisch sind?",
+        "backInfo": "Die Gesamtfakultät $n!$ wird durch das Produkt der Fakultäten der Anzahlen der jeweils identischen Objekte dividiert.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002206,
+        "topicId": 520023,
+        "type": "FLASH_CARD",
+        "info": "Welche Bedingung gilt für die unteren Indizes bei der Zerlegung in Teilmengen?",
+        "backInfo": "Die Summe der unteren Indizes der verwendeten Binomialkoeffizienten muss der Gesamtzahl der insgesamt gezogenen Objekte entsprechen.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002207,
+        "topicId": 520023,
+        "type": "FLASH_CARD",
+        "info": "Welchem kombinatorischen Modell entspricht das Ziehen von Kugeln 'mit einem Griff'?",
+        "backInfo": "Es entspricht mathematisch dem Ziehen ohne Zurücklegen und ohne Beachtung der Reihenfolge (Binomialkoeffizient).",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002208,
+        "topicId": 520023,
+        "type": "FLASH_CARD",
+        "info": "Wodurch unterscheiden sich Variation und Kombination mathematisch?",
+        "backInfo": "Die Variation (mit Reihenfolge) ist um den Faktor $k!$ größer als die Kombination (ohne Reihenfolge).",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002209,
+        "topicId": 520023,
+        "type": "FLASH_CARD",
+        "info": "Wann werden die Möglichkeiten einzelner Fälle in der Kombinatorik addiert?",
+        "backInfo": "Wenn ein Ereignis durch mehrere disjunkte, also sich gegenseitig ausschließende Fälle beschrieben wird (Fallunterscheidung).",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002210,
+        "topicId": 520023,
+        "type": "FLASH_CARD",
+        "info": "Wie viele Möglichkeiten gibt es, 5 verschiedene Bücher nebeneinander in ein Regal zu stellen?",
+        "backInfo": "Es gibt $5! = 120$ Möglichkeiten, da es sich um eine Permutation von 5 unterscheidbaren Objekten handelt.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002211,
+        "topicId": 520023,
+        "type": "FLASH_CARD",
+        "info": "Ein Rennen hat 10 Teilnehmer. Wie viele Möglichkeiten gibt es für die Belegung der Plätze 1, 2 und 3?",
+        "backInfo": "Es gibt $\\frac{10!}{(10-3)!} = 10 \\cdot 9 \\cdot 8 = 720$ Möglichkeiten (geordnete Stichprobe ohne Zurücklegen).",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002212,
+        "topicId": 520023,
+        "type": "FLASH_CARD",
+        "info": "Warum wird beim Lotto '6 aus 49' der Binomialkoeffizient zur Berechnung der Kombinationen genutzt?",
+        "backInfo": "Weil die Reihenfolge der gezogenen Zahlen egal ist und jede Zahl nur einmal vorkommen kann (ohne Zurücklegen).",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002213,
+        "topicId": 520023,
+        "type": "FLASH_CARD",
+        "info": "Ein Menü besteht aus 3 Vorspeisen, 4 Hauptgerichten und 2 Desserts. Wie viele Kombinationen sind möglich?",
+        "backInfo": "Nach der Multiplikationsregel gibt es $3 \\cdot 4 \\cdot 2 = 24$ verschiedene Möglichkeiten für ein vollständiges Menü.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002214,
+        "topicId": 520023,
+        "type": "FLASH_CARD",
+        "info": "Was bedeutet der Faktor $\\binom{10}{3}$ im Kontext der Platzierung von 3 defekten Geräten in einer Lieferung von 10?",
+        "backInfo": "Er beschreibt die Anzahl der Möglichkeiten, die 3 (identischen) defekten Geräte auf die 10 verfügbaren Plätze in der Lieferung zu verteilen.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002215,
+        "topicId": 520023,
+        "type": "FLASH_CARD",
+        "info": "Fehlerdiagnose: Warum ist $\\binom{20}{2}$ falsch für die Wahl eines Klassensprechers und seines Vertreters?",
+        "backInfo": "Da die Ämter unterschiedlich sind, spielt die Reihenfolge eine Rolle. Richtig wäre $20 \\cdot 19$ oder $\\frac{20!}{(20-2)!}$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002216,
+        "topicId": 520023,
+        "type": "FLASH_CARD",
+        "info": "Wie berechnet man die Anordnungen des Wortes 'ANNA'?",
+        "backInfo": "Da 'A' und 'N' jeweils doppelt vorkommen, rechnet man $\\frac{4!}{2! \\cdot 2!} = \\frac{24}{4} = 6$ Möglichkeiten.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002217,
+        "topicId": 520023,
+        "type": "FLASH_CARD",
+        "info": "Prüfe: Passt der Term $\\binom{7}{2} \\cdot \\binom{5}{2}$ zu einer Auswahl von 4 Personen aus einer 12er-Gruppe?",
+        "backInfo": "Ja, da die Summe der unteren Indizes ($2+2=4$) und der oberen Indizes ($7+5=12$) mit der Gesamtsituation übereinstimmt.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002218,
+        "topicId": 520023,
+        "type": "FLASH_CARD",
+        "info": "Welche Formel nutzt man für 'Ziehen mit Zurücklegen ohne Beachtung der Reihenfolge'?",
+        "backInfo": "Für dieses Modell nutzt man die Formel $\\binom{n+k-1}{k}$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002219,
+        "topicId": 520023,
+        "type": "FLASH_CARD",
+        "info": "Wie unterscheidet sich 'Ziehen mit einem Griff' formal vom 'Ziehen nacheinander ohne Zurücklegen'?",
+        "backInfo": "Formal gibt es keinen Unterschied; beide Situationen werden durch den Binomialkoeffizienten $\\binom{n}{k}$ modelliert.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      }
+    ]
+  }
+}

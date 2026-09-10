@@ -1,0 +1,220 @@
+{
+  "epId": 500001,
+  "outlineId": 500002,
+  "topicGroupId": 510001,
+  "topicId": 520003,
+  "packageId": 5001,
+  "contentType": "flashCard",
+  "contentStatus": "READY",
+  "generationId": "",
+  "progress": {
+    "totalCount": 20,
+    "completedCount": 0,
+    "items": {}
+  },
+  "platform": "system",
+  "payload": {
+    "cards": [
+      {
+        "id": 53000200,
+        "topicId": 520003,
+        "type": "FLASH_CARD",
+        "info": "In welche Richtung verschiebt sich der Graph von $g(x) = f(x - c)$ für $c > 0$?",
+        "backInfo": "Der Graph verschiebt sich um $c$ Einheiten nach rechts in positive x-Richtung.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000201,
+        "topicId": 520003,
+        "type": "FLASH_CARD",
+        "info": "Welche geometrische Auswirkung hat die Transformation $g(x) = f(x) + d$ für $d > 0$?",
+        "backInfo": "Der Graph wird um $d$ Einheiten nach oben in positive y-Richtung verschoben.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000202,
+        "topicId": 520003,
+        "type": "FLASH_CARD",
+        "info": "Was bewirkt ein negativer Faktor $a$ in der Transformation $g(x) = a \\cdot f(x)$?",
+        "backInfo": "Er bewirkt eine Streckung in y-Richtung und zusätzlich eine Spiegelung des Graphen an der x-Achse.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000203,
+        "topicId": 520003,
+        "type": "FLASH_CARD",
+        "info": "Wie lautet der Streckungsfaktor in x-Richtung bei der Transformation $g(x) = f(b \\cdot x)$?",
+        "backInfo": "Der Streckungsfaktor in x-Richtung beträgt $1/|b|$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000204,
+        "topicId": 520003,
+        "type": "FLASH_CARD",
+        "info": "Was geschieht bei der Bildung der Umkehrfunktion $f^{-1}$ mit Definitions- und Wertebereich?",
+        "backInfo": "Die Rollen von Definitionsbereich und Wertebereich werden vertauscht.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000205,
+        "topicId": 520003,
+        "type": "FLASH_CARD",
+        "info": "An welcher Geraden wird ein Graph gespiegelt, um seine Umkehrfunktion grafisch darzustellen?",
+        "backInfo": "Der Graph wird an der ersten Winkelhalbierenden mit der Gleichung $y = x$ gespiegelt.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000206,
+        "topicId": 520003,
+        "type": "FLASH_CARD",
+        "info": "Wie verändert eine reine Verschiebung in y-Richtung die erste Ableitung einer Funktion?",
+        "backInfo": "Die erste Ableitung bleibt unverändert, es gilt $g'(x) = f'(x)$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000207,
+        "topicId": 520003,
+        "type": "FLASH_CARD",
+        "info": "In welche Richtung verschiebt $f(x + c)$ den Graphen, wenn $c$ positiv ist?",
+        "backInfo": "Der Graph verschiebt sich nach links, nicht nach rechts.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000208,
+        "topicId": 520003,
+        "type": "FLASH_CARD",
+        "info": "Wie verändern sich die Extrempunkte bei einer Transformation $g(x) = f(x) + d$?",
+        "backInfo": "Die x-Koordinaten bleiben identisch; nur die y-Werte der Extrempunkte ändern sich um den Wert $d$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000209,
+        "topicId": 520003,
+        "type": "FLASH_CARD",
+        "info": "Mit welchem Term wird eine Spiegelung eines Graphen an der y-Achse mathematisch ausgedrückt?",
+        "backInfo": "Die Spiegelung an der y-Achse wird durch den Term $g(x) = f(-x)$ dargestellt.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000210,
+        "topicId": 520003,
+        "type": "FLASH_CARD",
+        "info": "Wie muss der Term $f(x)$ angepasst werden, um einen Graphen um 3 Einheiten nach rechts zu verschieben?",
+        "backInfo": "Man ersetzt jedes $x$ im Funktionsterm durch $(x - 3)$, sodass $g(x) = f(x - 3)$ entsteht.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000211,
+        "topicId": 520003,
+        "type": "FLASH_CARD",
+        "info": "Ein Graph wird um 5 Einheiten nach unten verschoben. Wie lautet die neue Funktionsgleichung $g(x)$?",
+        "backInfo": "Die neue Gleichung lautet $g(x) = f(x) - 5$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000212,
+        "topicId": 520003,
+        "type": "FLASH_CARD",
+        "info": "Welche Transformation liegt vor, wenn aus $f(x)$ die Funktion $g(x) = -2 \\cdot f(x)$ wird?",
+        "backInfo": "Eine Streckung in y-Richtung um den Faktor 2 mit einer gleichzeitigen Spiegelung an der x-Achse.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000213,
+        "topicId": 520003,
+        "type": "FLASH_CARD",
+        "info": "Was passiert mit der Breite eines Graphen, wenn man $f(x)$ zu $g(x) = f(2x)$ transformiert?",
+        "backInfo": "Der Graph wird in x-Richtung gestaucht; er ist nur noch halb so breit (Faktor 0,5).",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000214,
+        "topicId": 520003,
+        "type": "FLASH_CARD",
+        "info": "Ein Punkt $P(2|5)$ liegt auf $f$. Welche Koordinaten hat der entsprechende Punkt auf der Umkehrfunktion $f^{-1}$?",
+        "backInfo": "Der entsprechende Punkt auf der Umkehrfunktion hat die Koordinaten $P'(5|2)$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000215,
+        "topicId": 520003,
+        "type": "FLASH_CARD",
+        "info": "Warum muss eine Funktion streng monoton sein, damit ihre Spiegelung an $y=x$ wieder eine Funktion ergibt?",
+        "backInfo": "Nur bei strenger Monotonie ist die Zuordnung eindeutig, sodass jedem x-Wert der Umkehrrelation genau ein y-Wert zugeordnet wird.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000216,
+        "topicId": 520003,
+        "type": "FLASH_CARD",
+        "info": "Wie bildet man die Verkettung $(f \\circ g)(x)$, wenn $f(x) = x^2$ und $g(x) = x + 1$?",
+        "backInfo": "Man setzt $g(x)$ in $f(x)$ ein: $(f \\circ g)(x) = f(g(x)) = (x + 1)^2$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000217,
+        "topicId": 520003,
+        "type": "FLASH_CARD",
+        "info": "Beurteile: Ändert eine Verschiebung des Graphen entlang der y-Achse die Steigung an der Stelle $x_0$?",
+        "backInfo": "Nein. Da $g(x) = f(x) + d$ ist, gilt $g'(x) = f'(x)$. Die Steigung bleibt identisch.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000218,
+        "topicId": 520003,
+        "type": "FLASH_CARD",
+        "info": "Diagnose: Ein Schüler behauptet, $f(x+2)$ sei eine Verschiebung um 2 nach rechts. Warum ist das falsch?",
+        "backInfo": "Das ist falsch, weil die Addition innerhalb des Arguments eine Verschiebung nach links (in negative x-Richtung) bewirkt.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000219,
+        "topicId": 520003,
+        "type": "FLASH_CARD",
+        "info": "Was passiert mit der Lage eines Hochpunkts $H(1|3)$, wenn $g(x) = f(x) - 4$ gebildet wird?",
+        "backInfo": "Die x-Koordinate bleibt bei 1, aber der y-Wert sinkt auf -1. Der neue Hochpunkt ist $H'(1|-1)$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      }
+    ]
+  }
+}

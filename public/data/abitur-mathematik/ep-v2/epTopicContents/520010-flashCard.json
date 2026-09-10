@@ -1,0 +1,220 @@
+{
+  "epId": 500001,
+  "outlineId": 500002,
+  "topicGroupId": 510001,
+  "topicId": 520010,
+  "packageId": 5001,
+  "contentType": "flashCard",
+  "contentStatus": "READY",
+  "generationId": "",
+  "progress": {
+    "totalCount": 20,
+    "completedCount": 0,
+    "items": {}
+  },
+  "platform": "system",
+  "payload": {
+    "cards": [
+      {
+        "id": 53000900,
+        "topicId": 520010,
+        "type": "FLASH_CARD",
+        "info": "Was entspricht geometrisch dem Grenzwert der Riemann-Summen einer Funktion $f$ auf $[a, b]$?",
+        "backInfo": "Dies entspricht dem bestimmten Integral $\\int_{a}^{b} f(x) dx$, welches als orientierter Flächeninhalt zwischen Graph und x-Achse gedeutet wird.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000901,
+        "topicId": 520010,
+        "type": "FLASH_CARD",
+        "info": "Wie werden Flächenstücke unterhalb der x-Achse beim Berechnen eines bestimmten Integrals gewertet?",
+        "backInfo": "Flächenstücke unterhalb der x-Achse ($f(x) < 0$) gehen mit einem negativen Vorzeichen in den Wert des bestimmten Integrals ein.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000902,
+        "topicId": 520010,
+        "type": "FLASH_CARD",
+        "info": "Welches Verfahren ist nötig, um den absoluten Flächeninhalt bei Vorzeichenwechseln zu berechnen?",
+        "backInfo": "Man muss die Nullstellen bestimmen, das Integral in Teilintervalle zerlegen und die Beträge der einzelnen Teilintegrale addieren.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000903,
+        "topicId": 520010,
+        "type": "FLASH_CARD",
+        "info": "Was gibt das Integral $\\int_{a}^{b} f(t) dt$ an, wenn $f(t)$ eine Änderungsrate beschreibt?",
+        "backInfo": "Es gibt die Netto-Änderung (Bilanz) des Bestands im Zeitraum von $a$ bis $b$ an.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000904,
+        "topicId": 520010,
+        "type": "FLASH_CARD",
+        "info": "Wie lautet die Formel für den Mittelwert $\\bar{m}$ einer Funktion $f$ auf $[a, b]$?",
+        "backInfo": "Der Mittelwert berechnet sich durch die Formel $\\bar{m} = \\frac{1}{b-a} \\cdot \\int_{a}^{b} f(x) dx$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000905,
+        "topicId": 520010,
+        "type": "FLASH_CARD",
+        "info": "Welche geometrische Figur hat dieselbe Breite und Fläche wie das Integral unter der Kurve?",
+        "backInfo": "Ein Rechteck über dem Intervall $[a, b]$, dessen Höhe dem Mittelwert $\\bar{m}$ der Funktion entspricht.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000906,
+        "topicId": 520010,
+        "type": "FLASH_CARD",
+        "info": "Wie bestimmt man die physikalische Einheit eines Integrals aus einem Graphen?",
+        "backInfo": "Die Einheit ergibt sich aus dem Produkt der Einheit der y-Achse und der Einheit der x-Achse.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000907,
+        "topicId": 520010,
+        "type": "FLASH_CARD",
+        "info": "Bedeutet ein Integralwert von Null, dass keine Fläche zwischen Graph und Achse existiert?",
+        "backInfo": "Nein, es bedeutet lediglich, dass sich die positiven und negativen orientierten Flächenanteile gegenseitig exakt aufheben.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000908,
+        "topicId": 520010,
+        "type": "FLASH_CARD",
+        "info": "Wie berechnet man den absoluten Bestand $B(b)$ zum Zeitpunkt $b$ bei gegebener Änderungsrate?",
+        "backInfo": "Man addiert den Anfangsbestand $B(a)$ zum Integral der Änderungsrate: $B(b) = B(a) + \\int_{a}^{b} f(t) dt$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000909,
+        "topicId": 520010,
+        "type": "FLASH_CARD",
+        "info": "Wann ist der Wert eines bestimmten Integrals identisch mit dem absoluten Flächeninhalt?",
+        "backInfo": "Dies ist der Fall, wenn die Funktion $f$ im gesamten Intervall $[a, b]$ nur positive Werte (oder Null) annimmt.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000910,
+        "topicId": 520010,
+        "type": "FLASH_CARD",
+        "info": "Wie ändert sich die Interpretation des Integrals $\\int_{a}^{b} f(x) dx$, wenn $f(x)$ stetig ist?",
+        "backInfo": "Es bleibt der Grenzwert der Riemann-Summen, wird aber geometrisch als Bilanz der Flächenanteile (orientierter Flächeninhalt) zwischen Graph und x-Achse gedeutet.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000911,
+        "topicId": 520010,
+        "type": "FLASH_CARD",
+        "info": "Warum führt das Integral $\\int_{0}^{2\\pi} \\sin(x) dx$ zum Ergebnis 0?",
+        "backInfo": "Weil sich die positive Fläche im ersten Teilintervall und die gleich große negative Fläche im zweiten Teilintervall aufgrund der Orientierung gegenseitig aufheben.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000912,
+        "topicId": 520010,
+        "type": "FLASH_CARD",
+        "info": "Welcher Fehler unterläuft bei $\\int_{a}^{b} f(x) dx$ zur Flächenberechnung, wenn Nullstellen ignoriert werden?",
+        "backInfo": "Man berechnet nur die Bilanz (orientierter Inhalt). Negative Flächenanteile würden von positiven subtrahiert, statt deren absoluten Betrag zu addieren.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000913,
+        "topicId": 520010,
+        "type": "FLASH_CARD",
+        "info": "Was bedeutet ein negatives Ergebnis bei der Berechnung der Bilanz einer Zuflussrate?",
+        "backInfo": "Ein negativer Wert zeigt eine Netto-Abnahme des Bestands im betrachteten Zeitraum an, da mehr abgeflossen als zugeflossen ist.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000914,
+        "topicId": 520010,
+        "type": "FLASH_CARD",
+        "info": "Wie berechnet man die mittlere Zuflussrate, wenn die Gesamtänderung $\\Delta B$ auf $[a, b]$ bekannt ist?",
+        "backInfo": "Man teilt die Gesamtänderung (das Integral) durch die Dauer des Zeitraums: $\\bar{m} = \\frac{\\Delta B}{b-a}$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000915,
+        "topicId": 520010,
+        "type": "FLASH_CARD",
+        "info": "Welche Bedeutung hat die Rechteckhöhe $\\bar{m}$ im Vergleich zum Funktionsgraphen?",
+        "backInfo": "Die Höhe $\\bar{m}$ stellt den konstanten Wert dar, den die Funktion annehmen müsste, um auf demselben Intervall dieselbe Bilanz zu erzielen.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000916,
+        "topicId": 520010,
+        "type": "FLASH_CARD",
+        "info": "Wie berechnet man die Fläche zwischen zwei Graphen $f$ und $g$, die sich im Intervall schneiden?",
+        "backInfo": "Man bestimmt die Schnittstellen und addiert die Beträge der Integrale der Differenzfunktion $\\int |f(x) - g(x)| dx$ für jedes Teilintervall.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000917,
+        "topicId": 520010,
+        "type": "FLASH_CARD",
+        "info": "Welche Einheit hat das Integral, wenn $f(t)$ in $m^3/h$ und $t$ in Stunden angegeben ist?",
+        "backInfo": "Die Einheit ist Kubikmeter ($m^3$), da $(m^3/h) \\cdot h = m^3$ gilt.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000918,
+        "topicId": 520010,
+        "type": "FLASH_CARD",
+        "info": "Diagnose: Ein Schüler berechnet ein Integral zu $-5$ und nennt dies 'Flächeninhalt'. Warum ist das falsch?",
+        "backInfo": "Ein Flächeninhalt ist per Definition immer positiv oder Null. Das Ergebnis $-5$ ist ein orientierter Flächeninhalt bzw. ein Integralwert.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000919,
+        "topicId": 520010,
+        "type": "FLASH_CARD",
+        "info": "Warum reicht das Integral der Änderungsrate nicht aus, um den Füllstand eines Tanks zu bestimmen?",
+        "backInfo": "Das Integral liefert nur die Änderung des Füllstands. Ohne den Anfangsbestand $B(0)$ ist die absolute Menge im Tank unbekannt.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      }
+    ]
+  }
+}

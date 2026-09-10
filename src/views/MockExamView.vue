@@ -11,6 +11,9 @@ import { loadActEpExam } from '../data/actData'
 import { buildActDiagnosticExam, ACT_DIAGNOSTIC_QUESTIONS_PER_SECTION } from '../data/actDiagnostic'
 import { loadApEpExam } from '../data/apData'
 import { AP_CALCULUS_BC_DIAGNOSTIC_QUESTION_COUNT, buildApDiagnosticExam } from '../data/apDiagnostic'
+import { loadAbiturEpExam } from '../data/abiturData'
+import { ABITUR_MATHEMATIK_DIAGNOSTIC_QUESTION_COUNT, buildAbiturDiagnosticExam } from '../data/abiturDiagnostic'
+import { abiturNotenpunkte } from '../data/abiturReport'
 import { getApReferenceSheet, isApExamSlug } from '../data/apReferenceSheets'
 import type { EpExam } from '../types/epV2'
 import { parseActPassage, type TextReference } from '../utils/actReference'
@@ -113,6 +116,12 @@ const apCalculusBcModules: ModuleDefinition[] = [
 const apCalculusBcDiagnosticModules: ModuleDefinition[] = [
   { id: 'ap-calculus-bc-diagnostic', sectionNumber: 1, moduleNumber: 1, section: 'math', title: 'Multiple Choice', total: AP_CALCULUS_BC_DIAGNOSTIC_QUESTION_COUNT, duration: 0 },
 ]
+const abiturMathematikModules: ModuleDefinition[] = [
+  { id: 'abitur-mathematik', sectionNumber: 1, moduleNumber: 1, section: 'math', title: 'Mathematik', total: 23, duration: 300 * 60 },
+]
+const abiturMathematikDiagnosticModules: ModuleDefinition[] = [
+  { id: 'abitur-mathematik-diagnostic', sectionNumber: 1, moduleNumber: 1, section: 'math', title: 'Mathematik', total: ABITUR_MATHEMATIK_DIAGNOSTIC_QUESTION_COUNT, duration: 0 },
+]
 
 const route = useRoute()
 const router = useRouter()
@@ -122,10 +131,13 @@ const apReferenceSheet = computed(() => getApReferenceSheet(examSlug.value))
 const isDiagnostic = computed(() => String(route.query.mode || '') === 'diagnostic')
 const isActExam = computed(() => examSlug.value === 'act')
 const isApExam = computed(() => examSlug.value === 'ap-calculus-bc')
-const examName = computed(() => isApExam.value ? 'AP Calculus BC' : isActExam.value ? 'ACT' : 'SAT')
-const packageHash = computed(() => isApExam.value ? '#course-2' : isActExam.value ? '#course-1' : '#course-0')
-const examQuery = computed(() => isApExam.value ? { exam: 'ap-calculus-bc' } : isActExam.value ? { exam: 'act' } : {})
-const modules = computed(() => isApExam.value
+const isAbiturExam = computed(() => examSlug.value === 'abitur-mathematik')
+const examName = computed(() => isAbiturExam.value ? 'Abitur Mathematik' : isApExam.value ? 'AP Calculus BC' : isActExam.value ? 'ACT' : 'SAT')
+const packageHash = computed(() => isAbiturExam.value ? '#course-3' : isApExam.value ? '#course-2' : isActExam.value ? '#course-1' : '#course-0')
+const examQuery = computed(() => isAbiturExam.value ? { exam: 'abitur-mathematik' } : isApExam.value ? { exam: 'ap-calculus-bc' } : isActExam.value ? { exam: 'act' } : {})
+const modules = computed(() => isAbiturExam.value
+  ? (isDiagnostic.value ? abiturMathematikDiagnosticModules : abiturMathematikModules)
+  : isApExam.value
   ? (isDiagnostic.value ? apCalculusBcDiagnosticModules : apCalculusBcModules)
   : isActExam.value
   ? (isDiagnostic.value ? actDiagnosticModules : actFullLengthModules)
@@ -140,7 +152,7 @@ function adaptEpExam(exam: EpExam, index: number, diagnostic = false): SourceExa
     id: String(exam._id),
     title: diagnostic
       ? `Free ${examName.value} Diagnostic Test`
-      : isApExam.value ? 'AP Calculus BC Full-Length Practice Test' : isActExam.value ? 'ACT Full-Length Practice Test' : `Digital SAT Full-Length Practice Test ${index + 1}`,
+      : isAbiturExam.value ? 'Abitur Mathematik eA Full-Length Practice Test' : isApExam.value ? 'AP Calculus BC Full-Length Practice Test' : isActExam.value ? 'ACT Full-Length Practice Test' : `Digital SAT Full-Length Practice Test ${index + 1}`,
     questions: exam.questions.map((question) => {
       const module = question.module === 'Module 2' ? 'M2' : 'M1'
       const moduleKey = `${question.sectionTitle}:${module}`
@@ -171,7 +183,7 @@ function adaptEpExam(exam: EpExam, index: number, diagnostic = false): SourceExa
 const activeExam = computed<SourceExam>(() => activeEpExam.value
   ? adaptEpExam(
       isDiagnostic.value
-        ? (isApExam.value ? buildApDiagnosticExam(activeEpExam.value) : isActExam.value ? buildActDiagnosticExam(activeEpExam.value) : buildSatDiagnosticExam(activeEpExam.value))
+        ? (isAbiturExam.value ? buildAbiturDiagnosticExam(activeEpExam.value) : isApExam.value ? buildApDiagnosticExam(activeEpExam.value) : isActExam.value ? buildActDiagnosticExam(activeEpExam.value) : buildSatDiagnosticExam(activeEpExam.value))
         : activeEpExam.value,
       examId.value - 1,
       isDiagnostic.value,
@@ -182,7 +194,9 @@ async function loadActiveExam() {
   examLoadError.value = ''
   activeEpExam.value = null
   try {
-    activeEpExam.value = await (isApExam.value
+    activeEpExam.value = await (isAbiturExam.value
+      ? loadAbiturEpExam()
+      : isApExam.value
       ? loadApEpExam(1)
       : isActExam.value
       ? loadActEpExam(isDiagnostic.value ? 2 : examId.value)
@@ -192,14 +206,14 @@ async function loadActiveExam() {
   }
 }
 
-watch([examId, isActExam, isApExam, isDiagnostic], () => { void loadActiveExam() })
+watch([examId, isActExam, isApExam, isAbiturExam, isDiagnostic], () => { void loadActiveExam() })
 
 function sourceQuestionFor(module: ModuleDefinition, number: number) {
-  const section = isActExam.value || isApExam.value
+  const section = isActExam.value || isApExam.value || isAbiturExam.value
     ? module.title
     : module.section === 'reading' ? 'Reading and Writing' : 'Math'
   const moduleCode = module.moduleNumber === 1 ? 'M1' : 'M2'
-  return activeExam.value.questions.find((question) => question.section === section && (isActExam.value || isApExam.value || question.module === moduleCode) && question.questionNumber === number)
+  return activeExam.value.questions.find((question) => question.section === section && (isActExam.value || isApExam.value || isAbiturExam.value || question.module === moduleCode) && question.questionNumber === number)
 }
 
 function displayQuestion(source: SourceQuestion | undefined): Question {
@@ -281,7 +295,9 @@ const reportIssues = [
 ]
 
 const currentModule = computed(() => modules.value[moduleIndex.value])
-const showReferenceTool = computed(() => isAnyApExam.value
+const showReferenceTool = computed(() => isAbiturExam.value
+  ? false
+  : isAnyApExam.value
   ? Boolean(apReferenceSheet.value)
   : currentModule.value.section === 'math')
 watch(showReferenceTool, (visible) => {
@@ -296,22 +312,24 @@ const questionKey = computed(() => `${currentModule.value.id}-${currentNumber.va
 const usesPassageLayout = computed(() => currentModule.value.section !== 'math')
 const activeSectionKinds = computed<SectionKind[]>(() => isActExam.value
   ? ['english', 'math', 'reading', 'science']
-  : isApExam.value ? ['math'] : ['reading', 'math'])
+  : isApExam.value || isAbiturExam.value ? ['math'] : ['reading', 'math'])
 function sectionName(section: SectionKind) {
   if (section === 'english') return 'English'
   if (section === 'reading') return isActExam.value ? 'Reading' : 'Reading and Writing'
   if (section === 'science') return 'Science'
-  return isApExam.value ? 'AP Calculus BC' : isActExam.value ? 'Mathematics' : 'Math'
+  return isAbiturExam.value ? 'Mathematik' : isApExam.value ? 'AP Calculus BC' : isActExam.value ? 'Mathematics' : 'Math'
 }
 const sectionLabel = computed(() =>
-  isActExam.value || isApExam.value || isDiagnostic.value
+  isAbiturExam.value
+    ? currentModule.value.title
+    : isActExam.value || isApExam.value || isDiagnostic.value
     ? `Section ${currentModule.value.sectionNumber}`
     : `Section ${currentModule.value.sectionNumber}, Module ${currentModule.value.moduleNumber}`,
 )
 const primaryActionLabel = computed(() => {
   if (stage.value !== 'review') return 'Next'
   if (moduleIndex.value === modules.value.length - 1) return isDiagnostic.value ? 'Submit Diagnostic' : 'Finish Test'
-  return isActExam.value || isApExam.value || isDiagnostic.value ? 'Next Section' : 'Next'
+  return isActExam.value || isApExam.value || isAbiturExam.value || isDiagnostic.value ? 'Next Section' : 'Next'
 })
 const timeLabel = computed(() => formatTime(timeRemaining.value))
 const displayedTimerLabel = computed(() => isDiagnostic.value ? formatTime(diagnosticElapsedSeconds.value) : timeLabel.value)
@@ -403,7 +421,9 @@ const subjectStats = computed(() =>
       attempted,
       accuracy: attempted ? Math.round((correct / attempted) * 100) : 0,
       averageSeconds: attempted ? Math.round(seconds / attempted) : 0,
-      score: isApExam.value
+      score: isAbiturExam.value
+        ? abiturNotenpunkte((correct / Math.max(1, total)) * 100)
+        : isApExam.value
         ? Math.max(1, Math.min(5, Math.round(1 + (correct / Math.max(1, total)) * 4)))
         : isActExam.value
         ? Math.max(1, Math.min(36, Math.round(1 + (correct / Math.max(1, total)) * 35)))
@@ -423,7 +443,9 @@ const totalStats = computed(() => {
     incorrect,
     unattempted: total - attempted,
     accuracy: attempted ? Math.round((correct / attempted) * 100) : 0,
-    score: isApExam.value
+    score: isAbiturExam.value
+      ? subjectStats.value[0]?.score ?? 0
+      : isApExam.value
       ? subjectStats.value[0]?.score ?? 1
       : isActExam.value
       ? Math.round(subjectStats.value.filter((subject) => ['english', 'math', 'reading'].includes(subject.section)).reduce((sum, subject) => sum + subject.score, 0) / 3)
@@ -916,7 +938,7 @@ onBeforeUnmount(() => {
       <p>You've completed</p>
       <h2>{{ activeExam.title }}</h2>
       <p class="completion-encouragement">Great work — every completed test brings you one step closer to your best score.</p>
-      <p class="completion-summary">{{ totalStats.total }} questions submitted · Your detailed results are being prepared.</p>
+      <p class="completion-summary">{{ totalStats.total }} {{ isAbiturExam ? 'tasks' : 'questions' }} submitted · Your detailed results are being prepared.</p>
       <button class="view-results-button" type="button" @click="openResults">View Results</button>
     </section>
     <div v-if="toastMessage" class="exam-toast" role="status">{{ toastMessage }}</div>
@@ -936,7 +958,7 @@ onBeforeUnmount(() => {
 
       <section class="report-disclaimer">
         <div class="report-brand-mark" aria-hidden="true">S</div>
-        <div><h2>Practice score disclaimer</h2><p>{{ isActExam ? 'This practice test follows the current ACT structure with Science. Its score is an estimate and is not an official ACT score.' : 'This practice test is calibrated to the current Digital SAT structure. Its score is an estimate and is not an official College Board score.' }}</p></div>
+        <div><h2>Practice score disclaimer</h2><p>{{ isAbiturExam ? 'This practice test follows an IQB-aligned cross-state eA blueprint. Its 0–15 Notenpunkte result is an estimate and not an official state Abitur grade.' : isActExam ? 'This practice test follows the current ACT structure with Science. Its score is an estimate and is not an official ACT score.' : 'This practice test is calibrated to the current Digital SAT structure. Its score is an estimate and is not an official College Board score.' }}</p></div>
       </section>
 
       <section class="report-section" aria-labelledby="overview-title">
@@ -1063,7 +1085,12 @@ onBeforeUnmount(() => {
           <HighlightablePassage :key="questionKey" :text="currentQuestion.passage" :enabled="highlighterEnabled" :model-value="highlights[questionKey] ?? []" :reference-highlights="currentQuestion.referenceHighlights" extra-class="math-stem-copy" @update:model-value="updateHighlights" />
           <h1>{{ currentQuestion.prompt }}</h1>
           <div v-if="currentQuestion.options.length" class="choices math-choices" role="radiogroup" :aria-label="currentQuestion.prompt"><div v-for="(option, index) in currentQuestion.options" :key="`${questionKey}-${index}`" class="choice-row" :class="{ selected: answers[questionKey] === index, eliminated: eliminated[questionKey]?.has(index), 'elimination-mode': eliminationMode }"><button class="choice-card" type="button" role="radio" :aria-checked="answers[questionKey] === index" @click="selectAnswer(index)"><span class="choice-letter">{{ choiceLabel(index) }}</span><span class="choice-copy">{{ option }}</span></button><button v-if="eliminationMode" class="eliminate-button" type="button" :aria-label="`${eliminated[questionKey]?.has(index) ? 'Restore' : 'Cross out'} answer ${choiceLabel(index)}`" :aria-pressed="eliminated[questionKey]?.has(index) ?? false" @click="toggleEliminated(index)"><span>{{ choiceLabel(index) }}</span></button></div></div>
-          <div v-else class="student-response-field"><label :for="`response-${questionKey}`">Student-produced response</label><input :id="`response-${questionKey}`" inputmode="decimal" :value="responses[questionKey] || ''" placeholder="Enter your answer" @input="setResponse" /><small>You may enter an integer, decimal, or fraction.</small></div>
+          <div v-else class="student-response-field">
+            <label :for="`response-${questionKey}`">{{ isAbiturExam ? 'Written response' : 'Student-produced response' }}</label>
+            <textarea v-if="isAbiturExam" :id="`response-${questionKey}`" :value="responses[questionKey] || ''" rows="8" placeholder="Schreiben Sie Ihren Lösungsweg und Ihre Begründung…" @input="setResponse" />
+            <input v-else :id="`response-${questionKey}`" inputmode="decimal" :value="responses[questionKey] || ''" placeholder="Enter your answer" @input="setResponse" />
+            <small>{{ isAbiturExam ? 'Show the relevant calculations, reasoning, and units.' : 'You may enter an integer, decimal, or fraction.' }}</small>
+          </div>
           <p v-if="currentQuestion.options.length" class="keyboard-tip">Tip:&nbsp; press <kbd v-for="index in currentQuestion.options.length" :key="`math-shortcut-${index}`">{{ index }}</kbd> to pick an answer, then <kbd class="enter-key">Enter</kbd> to go to the next question</p>
         </div></article>
       </section>
@@ -1073,6 +1100,7 @@ onBeforeUnmount(() => {
       <h1>Check Your Work</h1>
       <p v-if="isDiagnostic">Review the {{ currentModule.total }} questions in this section. You can return to any question before moving on.</p>
       <p v-else-if="isActExam">On test day, you won't be able to return to this section after moving on.<br />For this practice test, click <strong>Next Section</strong> when you're ready.</p>
+      <p v-else-if="isAbiturExam">Review all {{ currentModule.total }} tasks before submitting. Your written responses are saved as you work.</p>
       <p v-else>On test day, you won't be able to move on to the next module until time expires.<br />For these practice questions, you can click <strong>Next</strong> when you're ready to move on.</p>
       <section class="review-card" :aria-label="`${sectionLabel}: ${currentModule.title}`"><div class="review-card-header"><h2>{{ sectionLabel }}: {{ currentModule.title }}</h2><div class="review-legend"><span><i class="unanswered-key" />Unanswered</span><span><i class="review-key" />For Review</span></div></div><div class="review-grid"><button v-for="number in currentModule.total" :key="number" type="button" :class="{ answered: answeredNumbers.has(number), current: currentNumber === number, review: review.has(keyFor(number)) }" @click="stage = 'exam'; goToQuestion(number)">{{ number }}</button></div></section>
     </div></section>
@@ -1089,7 +1117,7 @@ onBeforeUnmount(() => {
       @close="referenceOpen = false"
     />
     <MathReferenceSheet
-      v-else-if="referenceOpen && !isAnyApExam && currentModule.section === 'math'"
+      v-else-if="referenceOpen && !isAnyApExam && !isAbiturExam && currentModule.section === 'math'"
       @close="referenceOpen = false"
     />
 

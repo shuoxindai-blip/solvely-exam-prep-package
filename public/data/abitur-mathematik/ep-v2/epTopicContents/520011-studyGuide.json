@@ -1,0 +1,130 @@
+{
+  "epId": 500001,
+  "outlineId": 500002,
+  "topicGroupId": 510001,
+  "topicId": 520011,
+  "packageId": 5001,
+  "contentType": "studyGuide",
+  "contentStatus": "READY",
+  "generationId": "",
+  "progress": {
+    "totalCount": 0,
+    "completedCount": 0,
+    "items": {}
+  },
+  "platform": "system",
+  "payload": {
+    "content": {
+      "lesson_id": "ABITUR-MATHEMATIK-011",
+      "title": "Volumen, Bestandsänderung und Integralmodelle",
+      "overview": "Dieses Modul behandelt die Anwendung der Integralrechnung zur Bestimmung von Bestandsgrößen aus Änderungsraten sowie die Berechnung von Volumina von Rotationskörpern. Im Fokus steht die Interpretation des Integrals als kumulierte Größe in anwendungsorientierten Kontexten.",
+      "learning_objectives": [
+        "Berechnung des Bestands zu einem Zeitpunkt aus einer gegebenen Änderungsrate und einem Anfangsbestand.",
+        "Bestimmung der gesamten Bestandsänderung in einem Zeitintervall.",
+        "Herleitung und Anwendung der Formel für das Rotationsvolumen bei Rotation um die x-Achse.",
+        "Interpretation von Integralen im Sachkontext unter Berücksichtigung der Einheiten."
+      ],
+      "sections": [
+        {
+          "title": "Bestandsänderung und kumulierte Größen",
+          "content": "In der Analysis beschreibt die Funktion f(t) oft eine momentane Änderungsrate (z. B. Zuflussrate in l/h oder Abbaurate in t/Jahr). Das bestimmte Integral dieser Rate über ein Intervall [a; b] entspricht der Netto-Änderung des Bestands in diesem Zeitraum. Gilt F'(t) = f(t), so ist das Integral von a bis b über f(t) dt gleich F(b) - F(a). Um den absoluten Bestand B(t) zu einem Zeitpunkt t zu berechnen, muss zum Integral der Anfangsbestand B(a) addiert werden: B(t) = B(a) + Integral von a bis t über f(x) dx. Die Einheit des Ergebnisses ergibt sich aus dem Produkt der Einheiten von f(t) und t."
+        },
+        {
+          "title": "Volumen von Rotationskörpern",
+          "content": "Rotiert der Graph einer Funktion f über dem Intervall [a; b] um die x-Achse, entsteht ein Rotationskörper. Da der Querschnitt an jeder Stelle x ein Kreis mit dem Radius r = f(x) ist, beträgt die Querschnittsfläche A(x) = π * [f(x)]². Das Gesamtvolumen V ergibt sich durch Integration dieser Flächenelemente: V = π * Integral von a bis b über [f(x)]² dx. Wichtig ist hierbei, dass die Funktion f im Integrationsintervall stetig sein muss."
+        }
+      ],
+      "worked_examples": [
+        {
+          "question": "Eine Pumpe füllt ein Becken mit einer Rate von v(t) = 10 * e^(-0,2t) (in m³/h), wobei t die Zeit in Stunden seit Beginn des Pumpvorgangs ist. Zu Beginn (t=0) befinden sich bereits 5 m³ Wasser im Becken. Berechnen Sie das Wasservolumen nach 5 Stunden und bestimmen Sie den Zeitpunkt, an dem das Volumen 30 m³ erreicht.",
+          "solution": "1. Modellierung des Bestands: B(t) = B(0) + ∫[0 bis t] v(x) dx = 5 + ∫[0 bis t] 10 * e^(-0,2x) dx.\n2. Berechnung für t=5: Stammfunktion von 10 * e^(-0,2x) ist -50 * e^(-0,2x). B(5) = 5 + [-50 * e^(-0,2x)] von 0 bis 5 = 5 + (-50 * e^-1 - (-50 * e^0)) = 5 - 50 * 0,3679 + 50 = 55 - 18,395 ≈ 36,61 m³.\n3. Zeitpunkt für 30 m³: 5 + [-50 * e^(-0,2x)] von 0 bis t = 30 => 5 - 50 * e^(-0,2t) + 50 = 30 => 55 - 50 * e^(-0,2t) = 30 => -50 * e^(-0,2t) = -25 => e^(-0,2t) = 0,5 => -0,2t = ln(0,5) => t = ln(0,5) / -0,2 ≈ 3,47 Stunden."
+        }
+      ],
+      "common_mistakes": [
+        "Vergessen des Anfangsbestands: Oft wird nur das Integral berechnet, ohne den Startwert B(0) zu addieren.",
+        "Fehler bei der Rotationsformel: Das Quadrat [f(x)]² wird häufig vergessen oder π wird nicht als Faktor vor das Integral gesetzt.",
+        "Einheitenfehler: Die Einheit der Änderungsrate wird nicht korrekt mit der Einheit der Integrationsvariablen verrechnet."
+      ],
+      "exam_tips": [
+        "Prüfen Sie immer, ob nach einer 'Änderung' (nur Integral) oder einem 'Bestand' (Integral + Anfangswert) gefragt ist.",
+        "Skizzieren Sie bei Rotationskörpern den Graphen, um die Integrationsgrenzen (oft Nullstellen) zu verifizieren.",
+        "Nutzen Sie die Einheitenkontrolle: [Einheit der Rate] * [Einheit der Zeit] muss die [Einheit des Bestands] ergeben."
+      ],
+      "recap": "Integrale modellieren kumulierte Effekte. Während das Integral über eine Rate die Bestandsänderung liefert, erzeugt das Integral über die quadratische Funktion (multipliziert mit π) das Volumen eines Rotationskörpers.",
+      "knowledge_claims": [
+        {
+          "claim_id": "claim_01",
+          "type": "formula",
+          "content": "Die Bestandsänderung im Intervall [a; b] wird durch das bestimmte Integral der Änderungsrate f(t) berechnet: ΔB = ∫[a bis b] f(t) dt."
+        },
+        {
+          "claim_id": "claim_02",
+          "type": "procedure",
+          "content": "Um den absoluten Bestand B(t) zu einem Zeitpunkt t zu ermitteln, muss zum Integral der Änderungsrate über [0; t] der Anfangsbestand B(0) addiert werden."
+        },
+        {
+          "claim_id": "claim_03",
+          "type": "formula",
+          "content": "Das Volumen V eines Rotationskörpers bei Rotation um die x-Achse berechnet sich durch V = π * ∫[a bis b] (f(x))² dx."
+        },
+        {
+          "claim_id": "claim_04",
+          "type": "interpretation",
+          "content": "Die Einheit des Integrals einer Funktion f(t) entspricht dem Produkt der Einheiten von f(t) und t (z.B. m³/h * h = m³)."
+        },
+        {
+          "claim_id": "claim_05",
+          "type": "recognition",
+          "content": "In Sachzusammenhängen deutet der Begriff 'Rate' (z.B. Zuflussrate, Geschwindigkeit) darauf hin, dass die Funktion die Ableitung des gesuchten Bestands ist."
+        },
+        {
+          "claim_id": "claim_06",
+          "type": "mistake",
+          "content": "Ein häufiger Fehler bei Rotationsvolumina ist die Berechnung von (∫ f(x) dx)² anstelle von ∫ (f(x))² dx."
+        },
+        {
+          "claim_id": "claim_07",
+          "type": "rule",
+          "content": "Der Mittelwertsatz der Integralrechnung ermöglicht die Berechnung der durchschnittlichen Änderungsrate über ein Intervall [a; b] durch 1/(b-a) * ∫[a bis b] f(t) dt."
+        },
+        {
+          "claim_id": "claim_08",
+          "type": "check",
+          "content": "Bei Bestandsmodellen muss das Ergebnis plausibel sein; sinkt die Rate unter Null, muss der Bestand abnehmen (lokales Maximum des Bestands bei Nullstelle der Rate mit Vorzeichenwechsel von + nach -)."
+        },
+        {
+          "claim_id": "claim_09",
+          "type": "definition",
+          "content": "Ein Rotationskörper entsteht geometrisch durch das Drehen einer Fläche, die von einem Funktionsgraphen und der x-Achse begrenzt wird, um 360 Grad um die x-Achse."
+        },
+        {
+          "claim_id": "claim_10",
+          "type": "application",
+          "content": "Um den Zeitpunkt zu finden, an dem ein Bestand einen Zielwert erreicht, setzt man die Bestandsfunktion B(t) gleich dem Zielwert und löst nach t auf."
+        },
+        {
+          "claim_id": "claim_11",
+          "type": "interpretation",
+          "content": "Das Integral über die Differenz zweier Raten (Zuflussrate minus Abflussrate) ergibt die Netto-Änderung des Gesamtbestands."
+        },
+        {
+          "claim_id": "claim_12",
+          "type": "rule",
+          "content": "Für die Volumenberechnung muss der Radius r(x) an jeder Stelle x dem Funktionswert f(x) entsprechen."
+        }
+      ],
+      "visual_requests": [],
+      "visual_assets": []
+    },
+    "items": [],
+    "videoLesson": {
+      "title": "Stelle Bilanz auf und berechne Bestand",
+      "coverUrl": "https://solve-now.s3.us-west-2.amazonaws.com/german-abitur/atomic-videos-v2/ABITUR-MATHEMATIK-011/cover.png",
+      "playbackUrl": "https://solve-now.s3.us-west-2.amazonaws.com/german-abitur/atomic-videos-v2/ABITUR-MATHEMATIK-011/lesson.html",
+      "durationSeconds": 480,
+      "description": "Feingranulares IQB-basiertes Topic `Volumen, Bestandsänderung und Integralmodelle`; abgegrenzt durch: Rotationsvolumen oder kumulierte Größen aus Raten bestimmen. Im Quellkorpus: 30 Aufgaben, davon 7 offizielle Pool- oder Beispielaufgaben."
+    }
+  },
+  "lastViewedQuestionId": null,
+  "lastViewedAt": null
+}

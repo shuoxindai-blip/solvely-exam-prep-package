@@ -1,0 +1,134 @@
+{
+  "epId": 500001,
+  "outlineId": 500002,
+  "topicGroupId": 510003,
+  "topicId": 520023,
+  "packageId": 5001,
+  "contentType": "studyGuide",
+  "contentStatus": "READY",
+  "generationId": "",
+  "progress": {
+    "totalCount": 0,
+    "completedCount": 0,
+    "items": {}
+  },
+  "platform": "system",
+  "payload": {
+    "content": {
+      "lesson_id": "ABITUR-MATHEMATIK-023",
+      "title": "Kombinatorik und Zählprinzipien",
+      "overview": "Die Kombinatorik befasst sich mit der Bestimmung der Anzahl möglicher Anordnungen oder Auswahlen von Objekten. Im Abitur-Kontext ist die zentrale Herausforderung, zwischen geordneten und ungeordneten sowie zwischen Modellen mit und ohne Zurücklegen zu unterscheiden, um das korrekte Zählprinzip anzuwenden.",
+      "learning_objectives": [
+        "Unterscheidung zwischen Permutation, Variation und Kombination.",
+        "Anwendung des Binomialkoeffizienten für ungeordnete Stichproben.",
+        "Einsatz des allgemeinen Zählprinzips (Multiplikationsregel) bei mehrstufigen Vorgängen.",
+        "Modellierung komplexer Sachzusammenhänge durch Zerlegung in Teilprobleme."
+      ],
+      "sections": [
+        {
+          "title": "Grundlegende Zählprinzipien",
+          "content": "Das fundamentale Prinzip ist die Multiplikationsregel: Besteht ein Gesamtvorgang aus n Teilentscheidungen mit jeweils k_i Möglichkeiten, so beträgt die Gesamtzahl k_1 * k_2 * ... * k_n. Bei der Anordnung von n unterscheidbaren Objekten spricht man von einer Permutation, deren Anzahl durch n! (n-Fakultät) berechnet wird. Sind einige Objekte identisch (Permutation mit Wiederholung), wird n! durch das Produkt der Fakultäten der Anzahlen identischer Objekte dividiert."
+        },
+        {
+          "title": "Geordnete vs. Ungeordnete Stichproben",
+          "content": "Bei der Auswahl von k Elementen aus einer Menge von n Elementen ist entscheidend, ob die Reihenfolge wichtig ist (geordnet) und ob Elemente mehrfach gewählt werden können (mit Zurücklegen). \n1. Geordnet, mit Zurücklegen: n^k (z.B. Zahlenschloss).\n2. Geordnet, ohne Zurücklegen: n! / (n-k)! (z.B. Podestplätze beim Rennen).\n3. Ungeordnet, ohne Zurücklegen: 'n über k' (Binomialkoeffizient), berechnet als n! / (k! * (n-k)!). Dies ist das Standardmodell für 'Lotto' oder Teamwahlen."
+        },
+        {
+          "title": "Interpretation von Termen im Sachkontext",
+          "content": "In Abituraufgaben müssen oft vorgegebene kombinatorische Terme erklärt werden. Ein Faktor wie (n über k) steht meist für die Auswahl von k Plätzen oder Objekten aus n Möglichkeiten ohne Berücksichtigung der Reihenfolge. Ein Faktor wie k! beschreibt die Anzahl der Möglichkeiten, diese k Objekte anzuordnen."
+        }
+      ],
+      "worked_examples": [
+        {
+          "question": "Ein Gremium besteht aus 12 Personen (7 Frauen, 5 Männer). Es soll ein Ausschuss aus 4 Personen gebildet werden. \na) Berechnen Sie die Anzahl der Möglichkeiten, den Ausschuss zu bilden.\nb) Berechnen Sie die Anzahl der Möglichkeiten, wenn der Ausschuss aus genau 2 Frauen und 2 Männern bestehen soll.",
+          "solution": "a) Da die Reihenfolge im Ausschuss keine Rolle spielt und Personen nicht doppelt gewählt werden können, nutzen wir den Binomialkoeffizienten: (12 über 4) = 12! / (4! * 8!) = 495 Möglichkeiten.\n\nb) Hier wenden wir die Multiplikationsregel auf zwei Teilwahlen an:\n1. Auswahl der Frauen: (7 über 2) = 21.\n2. Auswahl der Männer: (5 über 2) = 10.\nGesamtzahl = 21 * 10 = 210 Möglichkeiten.\nCheck: Die Summe der gewählten Personen (2+2=4) entspricht der Ausschussgröße; die Summe der Grundmengen (7+5=12) entspricht der Gesamtzahl der Personen."
+        }
+      ],
+      "common_mistakes": [
+        "Verwechslung von 'geordnet' und 'ungeordnet': Wenn die Position (z.B. Vorsitzender vs. Beisitzer) eine Rolle spielt, darf der Binomialkoeffizient nicht allein stehen.",
+        "Fakultät-Null-Fehler: Es gilt per Definition 0! = 1.",
+        "Doppeltes Zählen: Bei Aufgaben mit 'mindestens' oder 'höchstens' werden oft Fälle überlappend gezählt, statt sie disjunkt zu addieren."
+      ],
+      "exam_tips": [
+        "Fragen Sie sich immer: 'Macht es einen Unterschied, ob A vor B oder B vor A gewählt wird?' Wenn nein -> Binomialkoeffizient.",
+        "Skizzieren Sie bei Platzierungsproblemen (z.B. Personen auf Stühlen mit Lücken) die festen Bedingungen zuerst.",
+        "Nutzen Sie bei 'mindestens'-Aufgaben oft das Komplementärereignis (Gegenereignis), um Rechenaufwand zu sparen."
+      ],
+      "recap": "Kombinatorik im Abitur erfordert die präzise Identifikation des Modells (n^k, n! oder Binomialkoeffizient). Die Multiplikationsregel verknüpft unabhängige Teilentscheidungen, während die Addition bei sich ausschließenden Fällen (Fallunterscheidung) angewendet wird.",
+      "knowledge_claims": [
+        {
+          "claim_id": "claim_01",
+          "type": "definition",
+          "content": "Die Fakultät n! gibt die Anzahl der Möglichkeiten an, n unterscheidbare Objekte in einer Reihe anzuordnen (Permutation)."
+        },
+        {
+          "claim_id": "claim_02",
+          "type": "formula",
+          "content": "Die Anzahl der Möglichkeiten, k Objekte aus einer Menge von n Objekten unter Beachtung der Reihenfolge und ohne Zurücklegen auszuwählen, ist n! / (n-k)!."
+        },
+        {
+          "claim_id": "claim_03",
+          "type": "formula",
+          "content": "Der Binomialkoeffizient (n über k) berechnet die Anzahl der Möglichkeiten, k Objekte aus n Objekten ohne Beachtung der Reihenfolge und ohne Zurücklegen auszuwählen."
+        },
+        {
+          "claim_id": "claim_04",
+          "type": "rule",
+          "content": "Das allgemeine Zählprinzip (Multiplikationsregel) besagt, dass bei n hintereinander ausgeführten Schritten mit k_i Möglichkeiten die Gesamtzahl das Produkt aller k_i ist."
+        },
+        {
+          "claim_id": "claim_05",
+          "type": "interpretation",
+          "content": "In einem kombinatorischen Term beschreibt ein Faktor der Form (n über k) oft die Auswahl einer Teilmenge oder die Platzierung von k identischen Objekten auf n verfügbaren Plätzen."
+        },
+        {
+          "claim_id": "claim_06",
+          "type": "mistake",
+          "content": "Ein häufiger Fehler ist die Anwendung des Binomialkoeffizienten bei Aufgaben, in denen die Reihenfolge (z.B. verschiedene Ämter oder zeitliche Abfolge) relevant ist."
+        },
+        {
+          "claim_id": "claim_07",
+          "type": "procedure",
+          "content": "Bei der Berechnung von Anordnungen mit identischen Objekten wird die Gesamtfakultät durch die Fakultäten der Anzahlen der jeweils identischen Objekte dividiert."
+        },
+        {
+          "claim_id": "claim_08",
+          "type": "check",
+          "content": "Bei der Zerlegung in Teilmengen (z.B. 2 aus 5 Frauen UND 3 aus 6 Männern) muss die Summe der unteren Indizes der Binomialkoeffizienten der Gesamtzahl der gezogenen Objekte entsprechen."
+        },
+        {
+          "claim_id": "claim_09",
+          "type": "application",
+          "content": "Das Modell 'Ziehen mit Zurücklegen und ohne Beachtung der Reihenfolge' wird im Abitur seltener verlangt, folgt aber der Formel ((n+k-1) über k)."
+        },
+        {
+          "claim_id": "claim_10",
+          "type": "recognition",
+          "content": "Das Ziehen von k Kugeln aus einer Urne mit n Kugeln 'mit einem Griff' entspricht mathematisch dem Ziehen 'ohne Zurücklegen und ohne Beachtung der Reihenfolge'."
+        },
+        {
+          "claim_id": "claim_11",
+          "type": "comparison",
+          "content": "Der Unterschied zwischen Variation (mit Reihenfolge) und Kombination (ohne Reihenfolge) liegt mathematisch im Faktor k!, um den die Variation größer ist."
+        },
+        {
+          "claim_id": "claim_12",
+          "type": "rule",
+          "content": "Wenn ein Ereignis durch mehrere disjunkte (sich ausschließende) Fälle beschrieben wird, werden die Anzahlen der Möglichkeiten der einzelnen Fälle addiert."
+        }
+      ],
+      "visual_requests": [],
+      "visual_assets": []
+    },
+    "items": [],
+    "videoLesson": {
+      "title": "Positionen skizzieren und Zählaufgaben fehlerfrei lösen",
+      "coverUrl": "https://solve-now.s3.us-west-2.amazonaws.com/german-abitur/atomic-videos-v2/ABITUR-MATHEMATIK-023/cover.png",
+      "playbackUrl": "https://solve-now.s3.us-west-2.amazonaws.com/german-abitur/atomic-videos-v2/ABITUR-MATHEMATIK-023/lesson.html",
+      "durationSeconds": 480,
+      "description": "Feingranulares IQB-basiertes Topic `Kombinatorik und Zählprinzipien`; abgegrenzt durch: Anzahlen geordneter oder ungeordneter Auswahlen bestimmen. Im Quellkorpus: 30 Aufgaben, davon 10 offizielle Pool- oder Beispielaufgaben."
+    }
+  },
+  "lastViewedQuestionId": null,
+  "lastViewedAt": null
+}

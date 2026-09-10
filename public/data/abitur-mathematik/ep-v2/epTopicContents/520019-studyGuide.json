@@ -1,0 +1,159 @@
+{
+  "epId": 500001,
+  "outlineId": 500002,
+  "topicGroupId": 510002,
+  "topicId": 520019,
+  "packageId": 5001,
+  "contentType": "studyGuide",
+  "contentStatus": "READY",
+  "generationId": "",
+  "progress": {
+    "totalCount": 2,
+    "completedCount": 0,
+    "items": {}
+  },
+  "platform": "system",
+  "payload": {
+    "content": {
+      "lesson_id": "ABITUR-MATHEMATIK-019",
+      "title": "Flächen und Volumina geometrischer Körper",
+      "overview": "Dieses Modul behandelt die Berechnung von Flächeninhalten und Volumina geometrischer Körper (wie Pyramiden, Prismen und Tetraeder) im dreidimensionalen Raum unter Verwendung von Vektoren und Koordinaten. Ein besonderer Fokus liegt auf der Anwendung des Kreuzprodukts und des Spatprodukts sowie der Identifikation von Symmetrieeigenschaften.",
+      "learning_objectives": [
+        "Berechnung von Flächeninhalten von Dreiecken und Parallelogrammen mittels Vektorprodukt.",
+        "Bestimmung des Volumens von Pyramiden und Prismen unter Nutzung des Spatprodukts.",
+        "Analyse von Symmetrieeigenschaften geometrischer Körper im Koordinatensystem.",
+        "Herleitung von Körperhöhen über den Abstand eines Punktes zu einer Ebene."
+      ],
+      "sections": [
+        {
+          "title": "Flächenberechnung im Raum",
+          "content": "Der Flächeninhalt eines von zwei Vektoren $\\vec{a}$ und $\\vec{b}$ aufgespannten Parallelogramms entspricht dem Betrag ihres Kreuzproduktes: $A_{Para} = |\\vec{a} \\times \\vec{b}|$. Da ein Dreieck genau die Hälfte eines Parallelogramms darstellt, gilt für die Dreiecksfläche $A_{Dreieck} = \\frac{1}{2} |\\vec{a} \\times \\vec{b}|$. In Koordinatenform bedeutet dies für ein Dreieck $ABC$: $A = \\frac{1}{2} |\\vec{AB} \\times \\vec{AC}|$. Diese Methode ist effizienter als die klassische Formel $\\frac{1}{2} \\cdot g \\cdot h$, da die Höhe nicht explizit berechnet werden muss."
+        },
+        {
+          "title": "Volumenberechnung mit dem Spatprodukt",
+          "content": "Das Volumen eines Spats (Parallelepipeds), das von den Vektoren $\\vec{a}$, $\\vec{b}$ und $\\vec{c}$ aufgespannt wird, berechnet sich durch das absolute Spatprodukt: $V_{Spat} = |(\\vec{a} \\times \\vec{b}) \\cdot \\vec{c}|$. Für eine dreiseitige Pyramide (Tetraeder) gilt $V_{Tetraeder} = \\frac{1}{6} |(\\vec{a} \\times \\vec{b}) \\cdot \\vec{c}|$. Bei einer vierseitigen Pyramide mit einer parallelogrammförmigen Grundfläche beträgt das Volumen $V_{Pyramide} = \\frac{1}{3} \\cdot G \\cdot h$, wobei $G$ die Grundfläche und $h$ die Höhe (Abstand der Spitze zur Grundebene) ist."
+        },
+        {
+          "title": "Symmetrie und Lage im Koordinatensystem",
+          "content": "Körper weisen oft Symmetrien zu den Koordinatenebenen auf. Eine Ebene ist eine Symmetrieebene, wenn zu jedem Punkt des Körpers ein Spiegelpunkt existiert, der ebenfalls zum Körper gehört. Beispielsweise liegt eine Fläche parallel zur $x_2x_3$-Ebene, wenn alle ihre Punkte dieselbe $x_1$-Koordinate besitzen. Symmetrie zur $x_1x_3$-Ebene liegt vor, wenn bei Spiegelung der $x_2$-Koordinate ($x_2 \\to -x_2$) die Form des Körpers invariant bleibt."
+        }
+      ],
+      "worked_examples": [
+        {
+          "question": "Gegeben ist eine Pyramide mit der Grundfläche $ABCD$ und der Spitze $S(0|0|6)$. Die Eckpunkte der Grundfläche sind $A(2|2|0)$, $B(-2|2|0)$, $C(-2|-2|0)$ und $D(2|-2|0)$. Berechnen Sie das Volumen der Pyramide und begründen Sie, dass die $x_1x_3$-Ebene eine Symmetrieebene ist.",
+          "solution": "1. Grundfläche bestimmen: Die Grundfläche ist ein Quadrat in der $x_1x_2$-Ebene ($x_3=0$). Seitenlänge $a = |\\vec{AB}| = |(-4|0|0)| = 4$. Fläche $G = 4 \\cdot 4 = 16$ FE.\n2. Höhe bestimmen: Die Spitze $S(0|0|6)$ hat den Abstand $h = 6$ zur Grundfläche ($x_3=0$).\n3. Volumen berechnen: $V = \\frac{1}{3} \\cdot G \\cdot h = \\frac{1}{3} \\cdot 16 \\cdot 6 = 32$ VE.\n4. Symmetrie begründen: Die Punkte $A(2|2|0)$ und $B(-2|2|0)$ liegen symmetrisch zur $x_2x_3$-Ebene ($x_1 \\to -x_1$). Die Punkte $A(2|2|0)$ und $D(2|-2|0)$ liegen symmetrisch zur $x_1x_3$-Ebene ($x_2 \\to -x_2$). Da dies für alle Eckpunktepaare gilt und die Spitze $S(0|0|6)$ auf der $x_3$-Achse (Schnittgerade der Symmetrieebenen) liegt, ist die $x_1x_3$-Ebene eine Symmetrieebene."
+        }
+      ],
+      "common_mistakes": [
+        "Vergessen des Faktors 1/2 beim Dreieck oder 1/3 bzw. 1/6 beim Volumen.",
+        "Verwechslung von Skalarprodukt (Ergebnis ist Zahl) und Kreuzprodukt (Ergebnis ist Vektor) bei der Flächenformel.",
+        "Nichtbeachtung der Betragsstriche beim Spatprodukt, was zu negativen Volumina führen kann."
+      ],
+      "exam_tips": [
+        "Prüfen Sie bei Volumenaufgaben immer, ob die Grundfläche ein Dreieck (1/6) oder ein Parallelogramm (1/3) ist.",
+        "Nutzen Sie die 'Lotfußpunktmethode' oder die Hessesche Normalform, um die Höhe $h$ eines Körpers als Abstand zwischen Spitze und Grundebene zu berechnen.",
+        "Achten Sie auf Einheiten: Wenn keine Längeneinheiten (LE) gegeben sind, nutzen Sie FE für Flächen und VE für Volumina."
+      ],
+      "recap": "Die Berechnung von Flächen und Volumina im Abitur erfordert die sichere Handhabung des Kreuz- und Spatprodukts. Symmetrieüberlegungen helfen oft, komplexe Rechnungen durch geometrische Intuition zu vereinfachen oder Ergebnisse zu validieren.",
+      "knowledge_claims": [
+        {
+          "claim_id": "claim_01",
+          "type": "formula",
+          "content": "Der Flächeninhalt eines Dreiecks $ABC$ berechnet sich durch $A = \\frac{1}{2} |\\vec{AB} \\times \\vec{AC}|$."
+        },
+        {
+          "claim_id": "claim_02",
+          "type": "formula",
+          "content": "Das Volumen eines Tetraeders mit den aufspannenden Vektoren $\\vec{a}, \\vec{b}, \\vec{c}$ ist $V = \\frac{1}{6} |(\\vec{a} \\times \\vec{b}) \\cdot \\vec{c}|$."
+        },
+        {
+          "claim_id": "claim_03",
+          "type": "rule",
+          "content": "Das Volumen einer Pyramide mit beliebiger Grundfläche $G$ und Höhe $h$ wird allgemein durch $V = \\frac{1}{3} G \\cdot h$ berechnet."
+        },
+        {
+          "claim_id": "claim_04",
+          "type": "interpretation",
+          "content": "Eine Ebene im Raum ist parallel zur $x_2x_3$-Ebene, wenn alle Punkte der Ebene dieselbe $x_1$-Koordinate aufweisen (Gleichung $x_1 = k$)."
+        },
+        {
+          "claim_id": "claim_05",
+          "type": "recognition",
+          "content": "Ein Körper ist symmetrisch bezüglich der $x_1x_3$-Ebene, wenn mit jedem Punkt $P(x_1|x_2|x_3)$ auch der Punkt $P'(x_1|-x_2|x_3)$ zum Körper gehört."
+        },
+        {
+          "claim_id": "claim_06",
+          "type": "procedure",
+          "content": "Die Höhe eines Körpers kann als senkrechter Abstand der Spitze zur Ebene, in der die Grundfläche liegt, bestimmt werden."
+        },
+        {
+          "claim_id": "claim_07",
+          "type": "definition",
+          "content": "Das Spatprodukt $(\\vec{a} \\times \\vec{b}) \\cdot \\vec{c}$ kombiniert das Kreuzprodukt zweier Vektoren mit dem Skalarprodukt des dritten Vektors."
+        },
+        {
+          "claim_id": "claim_08",
+          "type": "mistake",
+          "content": "Ein häufiger Fehler ist die Annahme, dass das Volumen einer vierseitigen Pyramide mit $\\frac{1}{6}$ berechnet wird; dieser Faktor gilt nur für Tetraeder (dreiseitige Pyramiden)."
+        },
+        {
+          "claim_id": "claim_09",
+          "type": "check",
+          "content": "Ein negatives Ergebnis beim Spatprodukt muss durch Betragsstriche korrigiert werden, da Volumina stets positiv sind."
+        },
+        {
+          "claim_id": "claim_10",
+          "type": "application",
+          "content": "Das Kreuzprodukt $\\vec{a} \\times \\vec{b}$ liefert einen Vektor, der senkrecht auf der von $\\vec{a}$ und $\\vec{b}$ aufgespannten Fläche steht."
+        },
+        {
+          "claim_id": "claim_11",
+          "type": "comparison",
+          "content": "Im Gegensatz zum Parallelogramm ($|\\vec{a} \\times \\vec{b}|$) benötigt das Spatvolumen eine dritte Dimension $\\vec{c}$ zur Berechnung des Rauminhalts."
+        },
+        {
+          "claim_id": "claim_12",
+          "type": "interpretation",
+          "content": "Liegt die Spitze einer Pyramide direkt über dem Schwerpunkt einer regelmäßigen Grundfläche, handelt es sich um eine gerade Pyramide."
+        }
+      ],
+      "visual_requests": [],
+      "visual_assets": []
+    },
+    "items": [
+      {
+        "id": 55001800,
+        "sourceQuestionId": "MAT-37070E9D8E-01",
+        "topicId": 520019,
+        "type": "STUDENT_PRODUCED_RESPONSE",
+        "stem": "Weisen Sie nach, dass das Viereck ABCD ein Tra-\npez ist, in dem zwei gegenüberliegende Seiten gleich \nlang sind, und dass dieses Trapez kein Rechteck ist.",
+        "options": {},
+        "correctAnswer": "Sowohl A und B als auch C und D haben übereinstimmende 1x - und 3x -Koordina-\nten, AB und CD sind also parallel. Außerdem gilt AD BC= sowie \nAB AD 6 0= ≠\n   \n .",
+        "explanation": "Sowohl A und B als auch C und D haben übereinstimmende 1x - und 3x -Koordina-\nten, AB und CD sind also parallel. Außerdem gilt AD BC= sowie \nAB AD 6 0= ≠\n   \n .",
+        "userAnswer": null,
+        "isCorrect": -1
+      },
+      {
+        "id": 55001801,
+        "sourceQuestionId": "MAT-37070E9D8E-02",
+        "topicId": 520019,
+        "type": "STUDENT_PRODUCED_RESPONSE",
+        "stem": "Berechnen Sie den Flächeninhalt des Vierecks ABCD. 3",
+        "options": {},
+        "correctAnswer": "Mit ( )F 0|4|0 ergibt sich für den Flächeninhalt ( )1\n2 AB CD FD 10 5⋅ + ⋅= . 3 \nc \nn AB 0 n AD 0= ∧=\n     \n liefert \n2\nn0\n1\n\n= −\n\n als Normalenvektor von E. Da E den Koordi-\nnatenursprung enthält, ergibt sich für die gesuchte Gleichung 132x x 0−= . \n3 \nd ( )2|0|4 , ( )−−2|0| 4 2",
+        "explanation": "Mit ( )F 0|4|0 ergibt sich für den Flächeninhalt ( )1\n2 AB CD FD 10 5⋅ + ⋅= . 3 \nc \nn AB 0 n AD 0= ∧=\n     \n liefert \n2\nn0\n1\n\n= −\n\n als Normalenvektor von E. Da E den Koordi-\nnatenursprung enthält, ergibt sich für die gesuchte Gleichung 132x x 0−= . \n3 \nd ( )2|0|4 , ( )−−2|0| 4 2",
+        "userAnswer": null,
+        "isCorrect": -1
+      }
+    ],
+    "videoLesson": {
+      "title": "Berechne Flächen und Volumina vektoriell sicher",
+      "coverUrl": "https://solve-now.s3.us-west-2.amazonaws.com/german-abitur/atomic-videos-v2/ABITUR-MATHEMATIK-019/cover.png",
+      "playbackUrl": "https://solve-now.s3.us-west-2.amazonaws.com/german-abitur/atomic-videos-v2/ABITUR-MATHEMATIK-019/lesson.html",
+      "durationSeconds": 480,
+      "description": "Feingranulares IQB-basiertes Topic `Flächen und Volumina geometrischer Körper`; abgegrenzt durch: geometrische Größen aus Koordinaten bestimmen. Im Quellkorpus: 132 Aufgaben, davon 132 offizielle Pool- oder Beispielaufgaben."
+    }
+  },
+  "lastViewedQuestionId": null,
+  "lastViewedAt": null
+}

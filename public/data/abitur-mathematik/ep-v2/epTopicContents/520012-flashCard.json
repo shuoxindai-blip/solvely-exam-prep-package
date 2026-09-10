@@ -1,0 +1,220 @@
+{
+  "epId": 500001,
+  "outlineId": 500002,
+  "topicGroupId": 510001,
+  "topicId": 520012,
+  "packageId": 5001,
+  "contentType": "flashCard",
+  "contentStatus": "READY",
+  "generationId": "",
+  "progress": {
+    "totalCount": 20,
+    "completedCount": 0,
+    "items": {}
+  },
+  "platform": "system",
+  "payload": {
+    "cards": [
+      {
+        "id": 53001100,
+        "topicId": 520012,
+        "type": "FLASH_CARD",
+        "info": "Was gibt der Parameter $a$ in der Exponentialfunktion $f(t) = a \\cdot b^t$ an?",
+        "backInfo": "Der Parameter $a$ stellt den Anfangswert der Größe zum Zeitpunkt $t=0$ dar.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001101,
+        "topicId": 520012,
+        "type": "FLASH_CARD",
+        "info": "Wie berechnet man den Wachstumsfaktor $b$ aus einer prozentualen Wachstumsrate $p$?",
+        "backInfo": "Der Wachstumsfaktor $b$ berechnet sich durch die Formel $b = 1 + \\frac{p}{100}$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001102,
+        "topicId": 520012,
+        "type": "FLASH_CARD",
+        "info": "Wie hängen die Basis $b$ und die Wachstumskonstante $k$ mathematisch zusammen?",
+        "backInfo": "Der Zusammenhang ist durch $k = \\ln(b)$ bzw. $b = e^k$ gegeben.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001103,
+        "topicId": 520012,
+        "type": "FLASH_CARD",
+        "info": "Woran erkennt man einen Zerfallsprozess in der Form $f(t) = a \\cdot e^{kt}$?",
+        "backInfo": "Ein Zerfallsprozess liegt vor, wenn die Wachstumskonstante $k$ negativ ist ($k < 0$).",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001104,
+        "topicId": 520012,
+        "type": "FLASH_CARD",
+        "info": "Wie lautet die Formel zur Berechnung der Halbwertszeit $T_H$ bei bekanntem $k$?",
+        "backInfo": "Die Halbwertszeit berechnet sich durch $T_H = \\frac{\\ln(0,5)}{k}$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001105,
+        "topicId": 520012,
+        "type": "FLASH_CARD",
+        "info": "Welche Bedeutung hat der Parameter $d$ in $f(x) = a \\cdot \\sin(b \\cdot (x - c)) + d$?",
+        "backInfo": "Der Parameter $d$ gibt die Mittellage oder Ruhelage des periodischen Prozesses an.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001106,
+        "topicId": 520012,
+        "type": "FLASH_CARD",
+        "info": "Wie ist die Amplitude $a$ einer trigonometrischen Funktion definiert?",
+        "backInfo": "Die Amplitude $a$ ist die maximale Abweichung (Auslenkung) des Funktionswertes von der Mittellage $d$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001107,
+        "topicId": 520012,
+        "type": "FLASH_CARD",
+        "info": "Wie berechnet man die Periodenlänge $p$ aus der Periodenzahl $b$?",
+        "backInfo": "Die Periodenlänge $p$ berechnet sich mit der Formel $p = \\frac{2\\pi}{b}$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001108,
+        "topicId": 520012,
+        "type": "FLASH_CARD",
+        "info": "Welche geometrische Transformation bewirkt der Parameter $c$ bei einer Sinusfunktion?",
+        "backInfo": "Der Parameter $c$ bewirkt eine horizontale Verschiebung des Graphen, auch Phasenverschiebung genannt.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001109,
+        "topicId": 520012,
+        "type": "FLASH_CARD",
+        "info": "Was unterscheidet exponentielles Wachstum grundlegend von linearem Wachstum?",
+        "backInfo": "Lineares Wachstum addiert pro Schritt einen festen Wert; exponentielles Wachstum multipliziert mit einem festen Faktor.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001110,
+        "topicId": 520012,
+        "type": "FLASH_CARD",
+        "info": "Wie bestimmt man grafisch den Parameter $a$ in $f(t) = a \\cdot b^t$?",
+        "backInfo": "Der Parameter $a$ entspricht dem $y$-Achsenabschnitt, also dem Funktionswert an der Stelle $t=0$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001111,
+        "topicId": 520012,
+        "type": "FLASH_CARD",
+        "info": "Ein Bestand sinkt jährlich um $15\\%$. Welchen Wert hat der Wachstumsfaktor $b$?",
+        "backInfo": "Der Wachstumsfaktor $b$ beträgt $0,85$, da $b = 1 - \\frac{15}{100} = 0,85$ gilt.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001112,
+        "topicId": 520012,
+        "type": "FLASH_CARD",
+        "info": "Wie transformiert man $f(t) = 5 \\cdot 1,2^t$ in die Form $a \\cdot e^{kt}$?",
+        "backInfo": "Man setzt $a = 5$ und berechnet $k = \\ln(1,2)$, woraus $f(t) = 5 \\cdot e^{\\ln(1,2) \\cdot t}$ folgt.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001113,
+        "topicId": 520012,
+        "type": "FLASH_CARD",
+        "info": "Welche Bedingung muss für die Basis $b$ gelten, damit ein Zerfallsprozess vorliegt?",
+        "backInfo": "Die Basis $b$ muss zwischen $0$ und $1$ liegen ($0 < b < 1$).",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001114,
+        "topicId": 520012,
+        "type": "FLASH_CARD",
+        "info": "Leite den Ausdruck für $t$ aus der Gleichung $y = a \\cdot e^{kt}$ her.",
+        "backInfo": "1. Division durch $a$: $\\frac{y}{a} = e^{kt}$ \n2. Logarithmieren: $\\ln(\\frac{y}{a}) = kt$ \n3. Division durch $k$: $t = \\frac{\\ln(y/a)}{k}$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001115,
+        "topicId": 520012,
+        "type": "FLASH_CARD",
+        "info": "Warum ist die Halbwertszeit $T_H$ unabhängig vom Anfangswert $a$?",
+        "backInfo": "Da sich $a$ beim Ansatz $0,5a = a \\cdot e^{kt}$ herauskürzt, hängt $T_H$ nur von der Zerfallskonstante $k$ ab.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001116,
+        "topicId": 520012,
+        "type": "FLASH_CARD",
+        "info": "Wie berechnet man die Mittellage $d$ aus dem Maximum ($y_{max}$) und Minimum ($y_{min}$)?",
+        "backInfo": "Die Mittellage berechnet sich über den Mittelwert: $d = \\frac{y_{max} + y_{min}}{2}$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001117,
+        "topicId": 520012,
+        "type": "FLASH_CARD",
+        "info": "Wie berechnet man die Amplitude $a$ aus dem Maximum ($y_{max}$) und Minimum ($y_{min}$)?",
+        "backInfo": "Die Amplitude ist die halbe Differenz der Extremwerte: $a = \\frac{y_{max} - y_{min}}{2}$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001118,
+        "topicId": 520012,
+        "type": "FLASH_CARD",
+        "info": "Eine Welle hat eine Periodenlänge von $p = 4\\pi$. Welchen Wert hat der Faktor $b$?",
+        "backInfo": "Aus $p = \\frac{2\\pi}{b}$ folgt $b = \\frac{2\\pi}{p}$. Mit $p = 4\\pi$ ergibt sich $b = \\frac{2\\pi}{4\\pi} = 0,5$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001119,
+        "topicId": 520012,
+        "type": "FLASH_CARD",
+        "info": "In welche Richtung verschiebt sich der Graph, wenn in $\\sin(b(x-c))$ der Wert $c > 0$ ist?",
+        "backInfo": "Der Graph verschiebt sich bei $c > 0$ nach rechts (in positive $x$-Richtung).",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      }
+    ]
+  }
+}

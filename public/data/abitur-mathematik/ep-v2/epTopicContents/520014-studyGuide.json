@@ -1,0 +1,159 @@
+{
+  "epId": 500001,
+  "outlineId": 500002,
+  "topicGroupId": 510002,
+  "topicId": 520014,
+  "packageId": 5001,
+  "contentType": "studyGuide",
+  "contentStatus": "READY",
+  "generationId": "",
+  "progress": {
+    "totalCount": 2,
+    "completedCount": 0,
+    "items": {}
+  },
+  "platform": "system",
+  "payload": {
+    "content": {
+      "lesson_id": "ABITUR-MATHEMATIK-014",
+      "title": "Vektoroperationen und Koordinatendarstellung",
+      "overview": "Diese Lektion behandelt die Grundlagen der Vektorrechnung im dreidimensionalen Raum. Im Fokus stehen die Unterscheidung zwischen Punkten und Vektoren, die Berechnung von Verbindungsvektoren sowie die grundlegenden Rechenoperationen (Addition, Subtraktion, S-Multiplikation) zur Beschreibung geometrischer Objekte.",
+      "learning_objectives": [
+        "Unterscheidung zwischen Ortsvektoren und Richtungsvektoren sicher anwenden.",
+        "Verbindungsvektoren zwischen zwei Punkten im Raum berechnen.",
+        "Linearkombinationen von Vektoren bilden und geometrisch interpretieren.",
+        "Vektorielle Terme zur Bestimmung von Punktkoordinaten aufstellen."
+      ],
+      "sections": [
+        {
+          "title": "Grundlagen der Koordinatendarstellung",
+          "content": "Ein Punkt P(x|y|z) beschreibt eine feste Position im Raum. Der zugehörige Ortsvektor p (oder OP) zeigt vom Ursprung O(0|0|0) zu diesem Punkt. Im Gegensatz dazu beschreibt ein Richtungsvektor eine Verschiebung oder eine Orientierung im Raum, ohne an einen festen Startpunkt gebunden zu sein. In der Koordinatenschreibweise werden Vektoren als Spaltenvektoren dargestellt, wobei die Komponenten untereinander stehen."
+        },
+        {
+          "title": "Verbindungsvektoren und Vektoroperationen",
+          "content": "Der Verbindungsvektor zwischen zwei Punkten A und B wird berechnet, indem man die Koordinaten des Startpunktes von denen des Endpunktes subtrahiert: AB = b - a (Spitze minus Anfang). Die Addition zweier Vektoren erfolgt komponentenweise und entspricht geometrisch dem Nacheinanderausführen von Verschiebungen. Die Multiplikation eines Vektors mit einem Skalar k (S-Multiplikation) streckt oder staucht den Vektor um den Faktor |k| und kehrt bei negativem k die Richtung um."
+        },
+        {
+          "title": "Linearkombinationen und Punktbestimmung",
+          "content": "Eine Linearkombination ist ein Ausdruck der Form v = r * a + s * b. In der Analytischen Geometrie werden so neue Punkte erreicht. Um die Koordinaten eines unbekannten Punktes F zu finden, nutzt man oft eine Kette von Vektoren ausgehend vom Ursprung: f = a + AB + BC... Dies ist essenziell für die Beschreibung von Figuren wie Parallelogrammen oder Prismen."
+        }
+      ],
+      "worked_examples": [
+        {
+          "question": "Gegeben sind die Punkte A(1|2|0) und B(3|5|2). Bestimmen Sie den Ortsvektor des Punktes C, der entsteht, wenn man von A aus das Doppelte des Verbindungsvektors AB abträgt. Geben Sie die Koordinaten von C an.",
+          "solution": "1. Berechnung des Verbindungsvektors AB: AB = b - a = (3-1 | 5-2 | 2-0) = (2 | 3 | 2).\n2. Aufstellen des Terms für den Ortsvektor c: c = a + 2 * AB.\n3. Einsetzen der Werte: c = (1 | 2 | 0) + 2 * (2 | 3 | 2) = (1 | 2 | 0) + (4 | 6 | 4) = (5 | 8 | 4).\n4. Antwort: Der Punkt C hat die Koordinaten (5|8|4)."
+        }
+      ],
+      "common_mistakes": [
+        "Verwechslung der Reihenfolge beim Verbindungsvektor: 'Anfang minus Spitze' statt 'Spitze minus Anfang'.",
+        "Vermischung von Skalaren und Vektoren: Addition einer bloßen Zahl zu einem Vektor (nicht definiert).",
+        "Punkt- und Vektorschreibweise: Punkte werden meist waagerecht P(x|y|z), Vektoren senkrecht notiert."
+      ],
+      "exam_tips": [
+        "Prüfen Sie bei Aufgaben zur Punktbestimmung immer, ob das Ergebnis grafisch plausibel ist (z.B. Skizze der x-y-Ebene).",
+        "Achten Sie auf den Operator: 'Berechnen' erfordert den Rechenweg, 'Begründen' eine logische Herleitung des Terms.",
+        "Nutzen Sie die 'Spitze-minus-Anfang'-Regel konsequent, um Vorzeichenfehler zu vermeiden."
+      ],
+      "recap": "Vektoren sind Werkzeuge zur Beschreibung von Verschiebungen. Durch die Operationen Addition, Subtraktion und S-Multiplikation lassen sich alle Punkte und Richtungen im Raum rechnerisch erfassen und geometrische Probleme in algebraische Gleichungen übersetzen.",
+      "knowledge_claims": [
+        {
+          "claim_id": "claim_01",
+          "type": "definition",
+          "content": "Ein Ortsvektor verknüpft den Koordinatenursprung mit einem spezifischen Punkt im Raum."
+        },
+        {
+          "claim_id": "claim_02",
+          "type": "procedure",
+          "content": "Der Verbindungsvektor AB zwischen zwei Punkten A und B wird durch die Differenz der Ortsvektoren b - a berechnet."
+        },
+        {
+          "claim_id": "claim_03",
+          "type": "rule",
+          "content": "Die Addition von Vektoren erfolgt komponentenweise: (a1, a2, a3) + (b1, b2, b3) = (a1+b1, a2+b2, a3+b3)."
+        },
+        {
+          "claim_id": "claim_04",
+          "type": "rule",
+          "content": "Bei der S-Multiplikation wird jede Komponente des Vektors mit dem Skalar multipliziert."
+        },
+        {
+          "claim_id": "claim_05",
+          "type": "interpretation",
+          "content": "Ein negativer Skalar bei der S-Multiplikation bewirkt eine Richtungsumkehr des Vektors."
+        },
+        {
+          "claim_id": "claim_06",
+          "type": "mistake",
+          "content": "Die Addition eines Skalars (Zahl) zu einem Vektor ist mathematisch nicht definiert."
+        },
+        {
+          "claim_id": "claim_07",
+          "type": "recognition",
+          "content": "Punkte werden in der Notation üblicherweise durch Zeilenvektoren oder Koordinatentupel, Vektoren durch Spaltenvektoren dargestellt."
+        },
+        {
+          "claim_id": "claim_08",
+          "type": "application",
+          "content": "Um den Mittelpunkt M einer Strecke AB zu finden, nutzt man die Formel m = 0,5 * (a + b)."
+        },
+        {
+          "claim_id": "claim_09",
+          "type": "check",
+          "content": "Zwei Vektoren sind kollinear, wenn einer ein Vielfaches des anderen ist (a = k * b)."
+        },
+        {
+          "claim_id": "claim_10",
+          "type": "procedure",
+          "content": "Zur Bestimmung der Koordinaten eines neuen Punktes wird eine Vektorkette ausgehend vom Ursprung gebildet."
+        },
+        {
+          "claim_id": "claim_11",
+          "type": "definition",
+          "content": "Ein Richtungsvektor beschreibt eine Verschiebung und ist ortsunabhängig."
+        },
+        {
+          "claim_id": "claim_12",
+          "type": "interpretation",
+          "content": "Der Betrag eines Vektors entspricht geometrisch der Länge des Pfeils im Raum."
+        }
+      ],
+      "visual_requests": [],
+      "visual_assets": []
+    },
+    "items": [
+      {
+        "id": 55001300,
+        "sourceQuestionId": "MAT-2AA134C72D-03",
+        "topicId": 520014,
+        "type": "STUDENT_PRODUCED_RESPONSE",
+        "stem": "Um die Ausbreitung der Europäischen Wildkatze in Deutschland zu unterstützen, ha-\nben Tierschützer zwischen den Wäldern, in denen Wildkatzen leben, sogenannte \ngrüne Korridore aus Büschen angelegt. Diese Korridore ermöglichen eine Wander-\nbewegung der Wildkatzen zwischen den Wäldern. \nZunächst wird das Wanderverhalten der Wildkatzen zwischen den Wäldern A, B und \nC betrachtet. Die Verteilung der Wildkatzen auf die drei Wälder kann durch \nVektoren der Form \na\nb\nc\n\n\n\n dargestellt werden, wobei a, b und c die Anzahlen der \nWildkatzen in den Wäldern A, B bzw. C angeben. Das Wanderverhalten von einem \nJahr n zum nächsten wird modellhaft durch die Gleichung n1 nv Mv+ = ⋅\n   \n mit \n0, 45 0,1 0, 07\n0, 28 0, 6 0,18\n0, 27 0, 3 0, 75\nM\n\n= \n beschrieben.\nBestimmen Sie die exakten Einträge der Grenzmatrix ( )\nn\nn\nG lim M\n→∞\n= . Interpretieren \nSie diese Einträge im Sachzusammenhang.",
+        "options": {},
+        "correctAnswer": "3 \nGleichung r1 rv Pv+ = ⋅\n   \n mit \n024\nP 0, 2 0 0\n0 0, 4 0,7\n\n= \n beschrieben werden. Zu Beginn der \nUntersuchung befinden sich im Waldgebiet ausschließlich acht Jungtiere und acht \nerwachsene Tiere. \n a Zeigen Sie, dass das Modell zur Beschreibung der Entwicklung der Population vor \nBeginn der Untersuchung nicht geeignet ist. \n2 \n b Gegeben ist die folgende Lösung einer Aufgabe im Sachzusammenhang: \n( ) ( )\n \n = ⋅⋅   \nr\n0\nfr 1 0 0 P 8\n8\n \nFür ≥r4 gilt + ≈f(r 1)\nf(r) 1,1. \n⋅= 4k 1,1 f ( 4 ) liefert ≈k 32 , d. h. ≈⋅ rf ( r ) 32 1,1 für alle ≥r4 . \nFormulieren Sie eine passende Aufgabenstellung und beschreiben Sie die Bedeu-\ntung der Zahl 1,1. \n4 \n 25 \n2 Erwartungshorizont \nDer Erwartungshorizont stellt für jede Teilaufgabe eine mögliche Lösung dar. Nicht dargestellte \nkorrekte Lösungen sind als gleichwertig zu akzeptieren. \n BE \n1 a \n \n3 \n b \n3\n82\n204\n349\n100\nM 110\n425\n⋅≈\n  \n  \n      \n \n2 \n c \nMG G⋅ = mit \nxxx\nyyy\n1x y1x y1x y\nG\n−− −− −−\n\n= \n liefert 230\n1783x = und 593\n1783y = . Lang-\nfristig werden also etwa 13 % der Tiere im Wald A, etwa 33 % im Wald B und etwa \n54 % im Wald C leben. \n4",
+        "explanation": "3 \nGleichung r1 rv Pv+ = ⋅\n   \n mit \n024\nP 0, 2 0 0\n0 0, 4 0,7\n\n= \n beschrieben werden. Zu Beginn der \nUntersuchung befinden sich im Waldgebiet ausschließlich acht Jungtiere und acht \nerwachsene Tiere. \n a Zeigen Sie, dass das Modell zur Beschreibung der Entwicklung der Population vor \nBeginn der Untersuchung nicht geeignet ist. \n2 \n b Gegeben ist die folgende Lösung einer Aufgabe im Sachzusammenhang: \n( ) ( )\n \n = ⋅⋅   \nr\n0\nfr 1 0 0 P 8\n8\n \nFür ≥r4 gilt + ≈f(r 1)\nf(r) 1,1. \n⋅= 4k 1,1 f ( 4 ) liefert ≈k 32 , d. h. ≈⋅ rf ( r ) 32 1,1 für alle ≥r4 . \nFormulieren Sie eine passende Aufgabenstellung und beschreiben Sie die Bedeu-\ntung der Zahl 1,1. \n4 \n 25 \n2 Erwartungshorizont \nDer Erwartungshorizont stellt für jede Teilaufgabe eine mögliche Lösung dar. Nicht dargestellte \nkorrekte Lösungen sind als gleichwertig zu akzeptieren. \n BE \n1 a \n \n3 \n b \n3\n82\n204\n349\n100\nM 110\n425\n⋅≈\n  \n  \n      \n \n2 \n c \nMG G⋅ = mit \nxxx\nyyy\n1x y1x y1x y\nG\n−− −− −−\n\n= \n liefert 230\n1783x = und 593\n1783y = . Lang-\nfristig werden also etwa 13 % der Tiere im Wald A, etwa 33 % im Wald B und etwa \n54 % im Wald C leben. \n4",
+        "userAnswer": null,
+        "isCorrect": -1
+      },
+      {
+        "id": 55001301,
+        "sourceQuestionId": "MAT-2AA134C72D-04",
+        "topicId": 520014,
+        "type": "STUDENT_PRODUCED_RESPONSE",
+        "stem": "Um die Ausbreitung der Europäischen Wildkatze in Deutschland zu unterstützen, ha-\nben Tierschützer zwischen den Wäldern, in denen Wildkatzen leben, sogenannte \ngrüne Korridore aus Büschen angelegt. Diese Korridore ermöglichen eine Wander-\nbewegung der Wildkatzen zwischen den Wäldern. \nZunächst wird das Wanderverhalten der Wildkatzen zwischen den Wäldern A, B und \nC betrachtet. Die Verteilung der Wildkatzen auf die drei Wälder kann durch \nVektoren der Form \na\nb\nc\n\n\n\n dargestellt werden, wobei a, b und c die Anzahlen der \nWildkatzen in den Wäldern A, B bzw. C angeben. Das Wanderverhalten von einem \nJahr n zum nächsten wird modellhaft durch die Gleichung n1 nv Mv+ = ⋅\n   \n mit \n0, 45 0,1 0, 07\n0, 28 0, 6 0,18\n0, 27 0, 3 0, 75\nM\n\n= \n beschrieben.\nAufgrund von Tierschutzmaßnahmen im Wald A hat sich der Anteil der Wildkat-\nzen, die von einem Jahr zum nächsten dort verbleiben, auf 64 % erhöht. Es soll \ndavon ausgegangen werden, dass die Maßnahmen weder auf die Gesamtzahl der \nWildkatzen in den drei Wäldern noch auf das Wanderverhalten der Tiere in den \nWäldern B und C Einfluss hatten. Ermitteln Sie, wie groß die Abwanderungsraten \naus dem Wald A sein müssten, damit sich eine Verteilung der Wildkatzen, bei der \n200 Tiere im Wald B leben, nicht mehr ändert. \n4 \n Zu Beginn eines Jahres wird das Wandergebiet der Wildkatzen durch weitere grüne \nKorridore um den Wald D erweitert. Die Verteilung der Wildkatzen auf die vier Wäl-\nder wird im entsprechend erweiterten Modell durch Vektoren der Form \na\nb\nc\nd\n\n\n\n\n\n\n beschrie-\nben, ihr Wanderverhalten durch die Matrix \n0, 6 0,1 0, 05 0, 2\n0, 2 0, 5 0,1 0,1N 0,1 0, 2 0, 65 0,15\n0,1 0, 2 0, 2 0, 55\n\n\n= \n\n\n. Unmittelbar \nnach der Erweiterung des Wandergebiets um den Wald D leben 115 Wildkatzen im \nWald A, 200 im Wald B, 320 im Wald C und 70 im Wald D. \nUm die Ausbreitung der Wildkatzen weiter zu fördern, werden am Ende jedes Jahres \nin jedem der vier Wälder zwei zusätzliche Wildkatzen ausgesetzt.",
+        "options": {},
+        "correctAnswer": "3 \nGleichung r1 rv Pv+ = ⋅\n   \n mit \n024\nP 0, 2 0 0\n0 0, 4 0,7\n\n= \n beschrieben werden. Zu Beginn der \nUntersuchung befinden sich im Waldgebiet ausschließlich acht Jungtiere und acht \nerwachsene Tiere. \n a Zeigen Sie, dass das Modell zur Beschreibung der Entwicklung der Population vor \nBeginn der Untersuchung nicht geeignet ist. \n2 \n b Gegeben ist die folgende Lösung einer Aufgabe im Sachzusammenhang: \n( ) ( )\n \n = ⋅⋅   \nr\n0\nfr 1 0 0 P 8\n8\n \nFür ≥r4 gilt + ≈f(r 1)\nf(r) 1,1. \n⋅= 4k 1,1 f ( 4 ) liefert ≈k 32 , d. h. ≈⋅ rf ( r ) 32 1,1 für alle ≥r4 . \nFormulieren Sie eine passende Aufgabenstellung und beschreiben Sie die Bedeu-\ntung der Zahl 1,1. \n4 \n 25 \n2 Erwartungshorizont \nDer Erwartungshorizont stellt für jede Teilaufgabe eine mögliche Lösung dar. Nicht dargestellte \nkorrekte Lösungen sind als gleichwertig zu akzeptieren. \n BE \n1 a \n \n3 \n b \n3\n82\n204\n349\n100\nM 110\n425\n⋅≈\n  \n  \n      \n \n2 \n c \nMG G⋅ = mit \nxxx\nyyy\n1x y1x y1x y\nG\n−− −− −−\n\n= \n liefert 230\n1783x = und 593\n1783y = . Lang-\nfristig werden also etwa 13 % der Tiere im Wald A, etwa 33 % im Wald B und etwa \n54 % im Wald C leben. \n4",
+        "explanation": "3 \nGleichung r1 rv Pv+ = ⋅\n   \n mit \n024\nP 0, 2 0 0\n0 0, 4 0,7\n\n= \n beschrieben werden. Zu Beginn der \nUntersuchung befinden sich im Waldgebiet ausschließlich acht Jungtiere und acht \nerwachsene Tiere. \n a Zeigen Sie, dass das Modell zur Beschreibung der Entwicklung der Population vor \nBeginn der Untersuchung nicht geeignet ist. \n2 \n b Gegeben ist die folgende Lösung einer Aufgabe im Sachzusammenhang: \n( ) ( )\n \n = ⋅⋅   \nr\n0\nfr 1 0 0 P 8\n8\n \nFür ≥r4 gilt + ≈f(r 1)\nf(r) 1,1. \n⋅= 4k 1,1 f ( 4 ) liefert ≈k 32 , d. h. ≈⋅ rf ( r ) 32 1,1 für alle ≥r4 . \nFormulieren Sie eine passende Aufgabenstellung und beschreiben Sie die Bedeu-\ntung der Zahl 1,1. \n4 \n 25 \n2 Erwartungshorizont \nDer Erwartungshorizont stellt für jede Teilaufgabe eine mögliche Lösung dar. Nicht dargestellte \nkorrekte Lösungen sind als gleichwertig zu akzeptieren. \n BE \n1 a \n \n3 \n b \n3\n82\n204\n349\n100\nM 110\n425\n⋅≈\n  \n  \n      \n \n2 \n c \nMG G⋅ = mit \nxxx\nyyy\n1x y1x y1x y\nG\n−− −− −−\n\n= \n liefert 230\n1783x = und 593\n1783y = . Lang-\nfristig werden also etwa 13 % der Tiere im Wald A, etwa 33 % im Wald B und etwa \n54 % im Wald C leben. \n4",
+        "userAnswer": null,
+        "isCorrect": -1
+      }
+    ],
+    "videoLesson": {
+      "title": "Berechne Punktkoordinaten mit Vektoroperationen",
+      "coverUrl": "https://solve-now.s3.us-west-2.amazonaws.com/german-abitur/atomic-videos-v2/ABITUR-MATHEMATIK-014/cover.png",
+      "playbackUrl": "https://solve-now.s3.us-west-2.amazonaws.com/german-abitur/atomic-videos-v2/ABITUR-MATHEMATIK-014/lesson.html",
+      "durationSeconds": 480,
+      "description": "Feingranulares IQB-basiertes Topic `Vektoroperationen und Koordinatendarstellung`; abgegrenzt durch: Orts-, Verbindungs- und Richtungsvektoren berechnen. Im Quellkorpus: 238 Aufgaben, davon 238 offizielle Pool- oder Beispielaufgaben."
+    }
+  },
+  "lastViewedQuestionId": null,
+  "lastViewedAt": null
+}

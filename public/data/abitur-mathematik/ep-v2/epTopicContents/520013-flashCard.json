@@ -1,0 +1,220 @@
+{
+  "epId": 500001,
+  "outlineId": 500002,
+  "topicGroupId": 510001,
+  "topicId": 520013,
+  "packageId": 5001,
+  "contentType": "flashCard",
+  "contentStatus": "READY",
+  "generationId": "",
+  "progress": {
+    "totalCount": 20,
+    "completedCount": 0,
+    "items": {}
+  },
+  "platform": "system",
+  "payload": {
+    "cards": [
+      {
+        "id": 53001200,
+        "topicId": 520013,
+        "type": "FLASH_CARD",
+        "info": "Was definiert eine Differentialgleichung (DGL) erster Ordnung in der Analysis?",
+        "backInfo": "Es ist eine Gleichung, die eine Beziehung zwischen einer Funktion $f(t)$ und ihrer ersten Ableitung $f'(t)$ herstellt.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001201,
+        "topicId": 520013,
+        "type": "FLASH_CARD",
+        "info": "Welche Bedeutung hat der Term $f'(t)$ in einem Sachzusammenhang?",
+        "backInfo": "Der Term $f'(t)$ entspricht der momentanen Änderungsrate der betrachteten Größe zu einem bestimmten Zeitpunkt $t$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001202,
+        "topicId": 520013,
+        "type": "FLASH_CARD",
+        "info": "Was kennzeichnet die allgemeine Lösung einer Differentialgleichung?",
+        "backInfo": "Die allgemeine Lösung enthält eine Integrationskonstante $C$ und beschreibt damit eine ganze Kurvenschar von Funktionen.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001203,
+        "topicId": 520013,
+        "type": "FLASH_CARD",
+        "info": "Wie bestimmt man eine spezielle Lösung aus einer allgemeinen Lösung?",
+        "backInfo": "Man setzt einen gegebenen Anfangswert (Punkt auf dem Graphen) in die allgemeine Lösung ein, um die Konstante $C$ zu berechnen.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001204,
+        "topicId": 520013,
+        "type": "FLASH_CARD",
+        "info": "Wie lautet die Lösung der DGL $f'(t) = k \\cdot f(t)$ für exponentielles Wachstum?",
+        "backInfo": "Die Lösung lautet $f(t) = f(0) \\cdot e^{kt}$, wobei $f(0)$ der Anfangsbestand zum Zeitpunkt $t=0$ ist.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001205,
+        "topicId": 520013,
+        "type": "FLASH_CARD",
+        "info": "Welche DGL beschreibt beschränktes Wachstum gegen eine Sättigungsgrenze $S$?",
+        "backInfo": "Das beschränkte Wachstum wird durch die Differentialgleichung $f'(t) = k \\cdot (S - f(t))$ beschrieben.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001206,
+        "topicId": 520013,
+        "type": "FLASH_CARD",
+        "info": "Wie verhält sich $f(t)$ beim beschränkten Wachstum für $t \\to \\infty$?",
+        "backInfo": "Sofern $k > 0$ ist, nähert sich der Funktionswert $f(t)$ asymptotisch der Sättigungsschranke $S$ an.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001207,
+        "topicId": 520013,
+        "type": "FLASH_CARD",
+        "info": "Wie lässt sich eine gefundene Lösung einer DGL rechnerisch verifizieren?",
+        "backInfo": "Man leitet die Lösung ab und führt eine Probe durch, indem man $f$ und $f'$ in die ursprüngliche DGL einsetzt.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001208,
+        "topicId": 520013,
+        "type": "FLASH_CARD",
+        "info": "Welcher Objekttyp ist das Ergebnis beim Lösen einer Differentialgleichung?",
+        "backInfo": "Das Ergebnis ist kein einzelner Zahlenwert, sondern immer eine Funktion oder eine ganze Funktionsschar.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001209,
+        "topicId": 520013,
+        "type": "FLASH_CARD",
+        "info": "Was bedeutet ein negatives $k$ in der DGL $f'(t) = k \\cdot f(t)$?",
+        "backInfo": "Ein negatives $k$ bedeutet, dass es sich um einen exponentiellen Zerfallsprozess anstelle eines Wachstumsprozesses handelt.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001210,
+        "topicId": 520013,
+        "type": "FLASH_CARD",
+        "info": "Warum wird eine DGL der Form $f'(t) = k \\cdot f(t)$ als 'erster Ordnung' bezeichnet?",
+        "backInfo": "Weil die höchste in der Gleichung vorkommende Ableitung der gesuchten Funktion $f(t)$ die erste Ableitung $f'(t)$ ist.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001211,
+        "topicId": 520013,
+        "type": "FLASH_CARD",
+        "info": "Wie interpretiert man die Einheit von $f'(t)$, wenn $f(t)$ in Litern und $t$ in Minuten gemessen wird?",
+        "backInfo": "Die Einheit von $f'(t)$ ist Liter pro Minute ($l/min$), was den momentanen Volumenstrom oder die Zuflussrate beschreibt.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001212,
+        "topicId": 520013,
+        "type": "FLASH_CARD",
+        "info": "Was passiert grafisch mit der Lösungskurve einer DGL, wenn man die Integrationskonstante $C$ variiert?",
+        "backInfo": "Durch Variation von $C$ entstehen verschiedene Kurven der Funktionsschar, die alle die Bedingung der Differentialgleichung erfüllen.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001213,
+        "topicId": 520013,
+        "type": "FLASH_CARD",
+        "info": "Welcher Schritt folgt nach der Bestimmung der allgemeinen Lösung, um ein konkretes physikalisches Modell abzuschließen?",
+        "backInfo": "Die Bestimmung der speziellen Lösung durch Einsetzen der Anfangsbedingungen (z. B. $f(0) = y_0$), um den Wert von $C$ zu fixieren.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001214,
+        "topicId": 520013,
+        "type": "FLASH_CARD",
+        "info": "Ein Bestand wächst proportional zu sich selbst. Welchen Funktionstyp muss der Lösungsansatz für $f(t)$ haben?",
+        "backInfo": "Der Lösungsansatz muss eine Exponentialfunktion der Form $f(t) = C \\cdot e^{kt}$ sein.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001215,
+        "topicId": 520013,
+        "type": "FLASH_CARD",
+        "info": "Was beschreibt der Term $(S - f(t))$ in der DGL des beschränkten Wachstums?",
+        "backInfo": "Er beschreibt das Sättigungsdefizit, also den noch verfügbaren Abstand zwischen dem aktuellen Bestand und der oberen Grenze $S$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001216,
+        "topicId": 520013,
+        "type": "FLASH_CARD",
+        "info": "Skizziere das Krümmungsverhalten beim beschränkten Wachstum ($k>0$) gegen eine Schranke $S$, wenn $f(0) < S$.",
+        "backInfo": "Der Graph ist rechtsgekrümmt (degressiv steigend), da die Änderungsrate $f'(t)$ mit abnehmendem Sättigungsdefizit immer kleiner wird.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001217,
+        "topicId": 520013,
+        "type": "FLASH_CARD",
+        "info": "Prüfe, ob $f(t) = 5e^{2t}$ die DGL $f'(t) = 2 \\cdot f(t)$ löst.",
+        "backInfo": "Ja. Ableitung $f'(t) = 10e^{2t}$. Einsetzen in DGL: $10e^{2t} = 2 \\cdot (5e^{2t})$ ergibt $10e^{2t} = 10e^{2t}$ (wahre Aussage).",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001218,
+        "topicId": 520013,
+        "type": "FLASH_CARD",
+        "info": "Diagnose: Ein Schüler berechnet für eine DGL das Ergebnis $x = 42$. Warum ist dies als Lösung der DGL falsch?",
+        "backInfo": "Eine DGL wird durch eine Funktion gelöst, nicht durch einen Skalar. Das Ergebnis müsste eine Funktionsvorschrift für $f(t)$ sein.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001219,
+        "topicId": 520013,
+        "type": "FLASH_CARD",
+        "info": "Wie ändert sich die DGL $f'(t) = k \\cdot f(t)$, wenn eine Substanz mit einer Halbwertszeit zerfällt?",
+        "backInfo": "Die Struktur bleibt gleich, aber der Parameter $k$ muss negativ sein ($k < 0$), um die Abnahme des Bestands mathematisch abzubilden.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      }
+    ]
+  }
+}

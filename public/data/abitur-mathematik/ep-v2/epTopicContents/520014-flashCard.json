@@ -1,0 +1,220 @@
+{
+  "epId": 500001,
+  "outlineId": 500002,
+  "topicGroupId": 510002,
+  "topicId": 520014,
+  "packageId": 5001,
+  "contentType": "flashCard",
+  "contentStatus": "READY",
+  "generationId": "",
+  "progress": {
+    "totalCount": 20,
+    "completedCount": 0,
+    "items": {}
+  },
+  "platform": "system",
+  "payload": {
+    "cards": [
+      {
+        "id": 53001300,
+        "topicId": 520014,
+        "type": "FLASH_CARD",
+        "info": "Was ist die Definition eines Ortsvektors im dreidimensionalen Raum?",
+        "backInfo": "Ein Ortsvektor verknüpft den Koordinatenursprung $O(0|0|0)$ mit einem spezifischen Punkt im Raum und beschreibt dessen feste Position.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001301,
+        "topicId": 520014,
+        "type": "FLASH_CARD",
+        "info": "Wie lautet die Rechenregel zur Bestimmung des Verbindungsvektors $\\vec{AB}$?",
+        "backInfo": "Der Verbindungsvektor wird durch die Differenz der Ortsvektoren berechnet: $\\vec{AB} = \\vec{b} - \\vec{a}$ (Regel: Spitze minus Anfang).",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001302,
+        "topicId": 520014,
+        "type": "FLASH_CARD",
+        "info": "Nach welchem Prinzip erfolgt die Addition zweier Vektoren in Koordinatenschreibweise?",
+        "backInfo": "Die Addition erfolgt komponentenweise, indem die jeweiligen $x$-, $y$- und $z$-Werte der Vektoren addiert werden.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001303,
+        "topicId": 520014,
+        "type": "FLASH_CARD",
+        "info": "Wie wird ein Vektor mit einem Skalar $k$ multipliziert (S-Multiplikation)?",
+        "backInfo": "Bei der S-Multiplikation wird jede einzelne Komponente des Vektors mit dem Skalar $k$ multipliziert.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001304,
+        "topicId": 520014,
+        "type": "FLASH_CARD",
+        "info": "Welche geometrische Auswirkung hat ein negativer Skalar bei der S-Multiplikation?",
+        "backInfo": "Ein negativer Skalar bewirkt eine Umkehrung der Richtung des Vektors sowie eine Streckung oder Stauchung.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001305,
+        "topicId": 520014,
+        "type": "FLASH_CARD",
+        "info": "Warum ist der Ausdruck $\\vec{v} + 5$ mathematisch nicht korrekt?",
+        "backInfo": "Die Addition eines Skalars (einer bloßen Zahl) zu einem Vektor ist mathematisch nicht definiert.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001306,
+        "topicId": 520014,
+        "type": "FLASH_CARD",
+        "info": "Wie unterscheiden sich Punkte und Vektoren üblicherweise in ihrer Notation?",
+        "backInfo": "Punkte werden meist waagerecht als Koordinatentupel $P(x|y|z)$ notiert, Vektoren hingegen senkrecht als Spaltenvektoren.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001307,
+        "topicId": 520014,
+        "type": "FLASH_CARD",
+        "info": "Wie bestimmt man die Koordinaten eines neuen Punktes mithilfe einer Vektorkette?",
+        "backInfo": "Man bildet eine Vektorkette ausgehend vom Ursprung, z. B. $\\vec{f} = \\vec{a} + \\vec{AB} + \\vec{BC}$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001308,
+        "topicId": 520014,
+        "type": "FLASH_CARD",
+        "info": "Was charakterisiert einen Richtungsvektor im Gegensatz zu einem Ortsvektor?",
+        "backInfo": "Ein Richtungsvektor beschreibt eine Verschiebung oder Orientierung im Raum und ist nicht an einen festen Startpunkt gebunden.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001309,
+        "topicId": 520014,
+        "type": "FLASH_CARD",
+        "info": "Wann bezeichnet man zwei Vektoren als kollinear?",
+        "backInfo": "Zwei Vektoren sind kollinear, wenn einer ein Vielfaches des anderen ist, also die Gleichung $\\vec{a} = k \\cdot \\vec{b}$ erfüllt ist.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001310,
+        "topicId": 520014,
+        "type": "FLASH_CARD",
+        "info": "Welcher Vektor verbindet den Ursprung mit dem Punkt $P(4|2|-1)$?",
+        "backInfo": "Der Ortsvektor $\\vec{p} = \\begin{pmatrix} 4 \\\\ 2 \\\\ -1 \\end{pmatrix}$ verbindet den Ursprung direkt mit diesem Punkt.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001311,
+        "topicId": 520014,
+        "type": "FLASH_CARD",
+        "info": "Diagnose: Ein Schüler rechnet $\\vec{AB} = \\vec{a} - \\vec{b}$. Welcher Fehler liegt vor?",
+        "backInfo": "Er hat 'Anfang minus Spitze' gerechnet. Korrekt ist 'Spitze minus Anfang', also $\\vec{AB} = \\vec{b} - \\vec{a}$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001312,
+        "topicId": 520014,
+        "type": "FLASH_CARD",
+        "info": "Was bedeutet die komponentenweise Addition geometrisch beim Nacheinanderausführen von Verschiebungen?",
+        "backInfo": "Sie entspricht dem Aneinanderfügen von Vektorpfeilen, wobei der Endpunkt der ersten Verschiebung der Startpunkt der zweiten ist.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001313,
+        "topicId": 520014,
+        "type": "FLASH_CARD",
+        "info": "Berechne das Ergebnis der S-Multiplikation: $3 \\cdot \\begin{pmatrix} 1 \\\\ -2 \\\\ 0 \\end{pmatrix}$.",
+        "backInfo": "Das Ergebnis ist $\\begin{pmatrix} 3 \\cdot 1 \\\\ 3 \\cdot (-2) \\\\ 3 \\cdot 0 \\end{pmatrix} = \\begin{pmatrix} 3 \\\\ -6 \\\\ 0 \\end{pmatrix}$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001314,
+        "topicId": 520014,
+        "type": "FLASH_CARD",
+        "info": "Wie verändert sich ein Vektor $\\vec{v}$, wenn er mit $k = -0,5$ multipliziert wird?",
+        "backInfo": "Seine Richtung wird umgekehrt (Gegenvektor-Eigenschaft) und seine Länge wird auf die Hälfte gestaucht.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001315,
+        "topicId": 520014,
+        "type": "FLASH_CARD",
+        "info": "Warum darf man in der Vektorrechnung nicht schreiben: $\\begin{pmatrix} 1 \\\\ 2 \\\\ 3 \\end{pmatrix} + 10$?",
+        "backInfo": "Weil Vektoren und Skalare unterschiedliche mathematische Objekte sind; eine Addition ist nur zwischen zwei Vektoren gleicher Dimension definiert.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001316,
+        "topicId": 520014,
+        "type": "FLASH_CARD",
+        "info": "In welcher Form werden die Komponenten eines Vektors im Gegensatz zu Punktkoordinaten notiert?",
+        "backInfo": "Vektorkomponenten werden untereinander in einer Klammer (Spaltenform) geschrieben, Punktkoordinaten meist nebeneinander mit Trennstrichen.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001317,
+        "topicId": 520014,
+        "type": "FLASH_CARD",
+        "info": "Wie berechnet man den Ortsvektor des Mittelpunkts $M$ der Strecke $AB$?",
+        "backInfo": "Man addiert die Ortsvektoren der Endpunkte und multipliziert das Ergebnis mit $0,5$: $\\vec{m} = 0,5 \\cdot (\\vec{a} + \\vec{b})$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001318,
+        "topicId": 520014,
+        "type": "FLASH_CARD",
+        "info": "Prüfe auf Kollinearität: $\\vec{a} = \\begin{pmatrix} 2 \\\\ 4 \\\\ 6 \\end{pmatrix}$ und $\\vec{b} = \\begin{pmatrix} 1 \\\\ 2 \\\\ 3 \\end{pmatrix}$.",
+        "backInfo": "Die Vektoren sind kollinear, da $\\vec{a} = 2 \\cdot \\vec{b}$ gilt (ein Vektor ist ein Vielfaches des anderen).",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001319,
+        "topicId": 520014,
+        "type": "FLASH_CARD",
+        "info": "Wie erreicht man den Punkt $D$ in einem Parallelogramm $ABCD$ vektoriell von $A$ aus?",
+        "backInfo": "Man nutzt die Vektorkette $\\vec{d} = \\vec{a} + \\vec{BC}$ (da im Parallelogramm $\\vec{AD} = \\vec{BC}$ gilt).",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      }
+    ]
+  }
+}

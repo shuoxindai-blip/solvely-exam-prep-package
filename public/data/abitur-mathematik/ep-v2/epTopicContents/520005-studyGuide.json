@@ -1,0 +1,134 @@
+{
+  "epId": 500001,
+  "outlineId": 500002,
+  "topicGroupId": 510001,
+  "topicId": 520005,
+  "packageId": 5001,
+  "contentType": "studyGuide",
+  "contentStatus": "READY",
+  "generationId": "",
+  "progress": {
+    "totalCount": 0,
+    "completedCount": 0,
+    "items": {}
+  },
+  "platform": "system",
+  "payload": {
+    "content": {
+      "lesson_id": "ABITUR-MATHEMATIK-005",
+      "title": "Grenzwerte, Stetigkeit und asymptotisches Verhalten",
+      "overview": "Dieses Modul behandelt das Verhalten von Funktionen an den Rändern ihres Definitionsbereichs sowie an Definitionslücken. Im Fokus stehen die Bestimmung von Grenzwerten (Limes), die Identifikation von Asymptoten und die Analyse der Stetigkeit, basierend auf Funktionstermen und Graphen.",
+      "learning_objectives": [
+        "Grenzwerte für x gegen Unendlich sowie gegen spezifische Definitionslücken bestimmen.",
+        "Horizontale und vertikale Asymptoten aus Funktionstermen herleiten.",
+        "Das Konzept der Stetigkeit an einer Stelle x_0 anwenden.",
+        "Das Dominanzverhalten verschiedener Funktionstypen (z. B. e-Funktion vs. Potenzfunktion) zur Grenzwertbestimmung nutzen."
+      ],
+      "sections": [
+        {
+          "title": "Grenzwerte im Unendlichen",
+          "content": "Das Verhalten einer Funktion f(x) für sehr große positive oder negative x-Werte wird als Grenzwert im Unendlichen bezeichnet (lim x→±∞ f(x)). Bei gebrochen-rationalen Funktionen entscheidet das Verhältnis der höchsten Potenzen von Zähler und Nenner: Ist der Grad des Zählers gleich dem des Nenners, ergibt sich eine waagerechte Asymptote y = k (Quotient der Leitkoeffizienten). Bei Exponentialfunktionen der Form e^x dominiert das Wachstum der e-Funktion gegenüber jeder Potenzfunktion x^n."
+        },
+        {
+          "title": "Definitionslücken und vertikale Asymptoten",
+          "content": "Eine Stelle x_0, an der der Nenner einer Funktion null wird, heißt Definitionslücke. Man unterscheidet: 1. Polstellen (mit Vorzeichenwechsel oder ohne): Hier strebt der Funktionswert gegen ±∞, es liegt eine vertikale Asymptote x = x_0 vor. 2. Hebbare Definitionslücken: Der Grenzwert existiert als endliche Zahl, da sich der 'Nullstellen-Faktor' im Bruch kürzen lässt."
+        },
+        {
+          "title": "Stetigkeit",
+          "content": "Eine Funktion f ist an einer Stelle x_0 stetig, wenn der linksseitige Grenzwert, der rechtsseitige Grenzwert und der Funktionswert f(x_0) existieren und identisch sind. Anschaulich bedeutet dies, dass der Graph an dieser Stelle keine Sprünge oder Löcher aufweist."
+        }
+      ],
+      "worked_examples": [
+        {
+          "question": "Gegeben ist die Funktion f mit f(x) = (2x² - 8) / (x² - x - 2). Bestimmen Sie die Definitionsmenge, untersuchen Sie das Verhalten an den Definitionslücken und geben Sie die Gleichung der waagerechten Asymptote an.",
+          "solution": "1. Definitionsmenge: Nenner x² - x - 2 = 0 führt zu x₁ = 2 und x₂ = -1. D = R \\ {-1; 2}.\n2. Untersuchung x = 2: Zähler 2(2)² - 8 = 0. Da Zähler und Nenner null sind, Faktorisieren: f(x) = [2(x-2)(x+2)] / [(x-2)(x+1)]. Kürzen ergibt g(x) = 2(x+2)/(x+1). Der Limes für x→2 ist 2(4)/3 = 8/3. Somit ist x=2 eine hebbare Lücke.\n3. Untersuchung x = -1: Zähler 2(-1)² - 8 = -6 ≠ 0. Da der Nenner null und der Zähler ungleich null ist, liegt eine Polstelle vor. Vertikale Asymptote: x = -1.\n4. Waagerechte Asymptote: Da Zählergrad (2) = Nennergrad (2), betrachte Leitkoeffizienten: 2/1 = 2. Waagerechte Asymptote: y = 2."
+        }
+      ],
+      "common_mistakes": [
+        "Verwechslung von Polstellen mit hebbaren Lücken: Nicht jede Nullstelle des Nenners führt automatisch zu einer Asymptote.",
+        "Vernachlässigung des Vorzeichens beim Limes gegen Unendlich: lim x→-∞ e^x ist 0, während lim x→+∞ e^x gegen +∞ strebt.",
+        "Fehlende Prüfung der Stetigkeit: Nur den Grenzwert zu berechnen reicht nicht; er muss mit dem Funktionswert übereinstimmen."
+      ],
+      "exam_tips": [
+        "Nutzen Sie bei e-Funktionen das Wissen, dass e^x für x→-∞ schneller gegen Null geht als jede Potenzfunktion gegen Unendlich wächst.",
+        "Skizzieren Sie bei Unklarheiten den Graphen im Kopf oder auf Schmierpapier, um die Plausibilität von Asymptoten zu prüfen.",
+        "Achten Sie auf die Aufgabenstellung: 'Geben Sie an' verlangt nur das Ergebnis, 'Untersuchen Sie' oder 'Begründen Sie' erfordert den Rechenweg oder eine verbale Herleitung."
+      ],
+      "recap": "Grenzwerte beschreiben das Zielverhalten einer Funktion. Während Polstellen zu vertikalen Asymptoten führen, bestimmen die Dominanzverhältnisse der Terme (z. B. Zähler- vs. Nennergrad) die horizontalen Asymptoten. Stetigkeit erfordert die Übereinstimmung von Grenzwert und Funktionswert.",
+      "knowledge_claims": [
+        {
+          "claim_id": "claim_01",
+          "type": "definition",
+          "content": "Eine vertikale Asymptote liegt an einer Stelle x_0 vor, wenn der Betrag der Funktionswerte für x gegen x_0 über alle Grenzen wächst (Polstelle)."
+        },
+        {
+          "claim_id": "claim_02",
+          "type": "rule",
+          "content": "Bei gebrochen-rationalen Funktionen existiert eine waagerechte Asymptote y = 0, wenn der Grad des Nennerpolynoms größer ist als der Grad des Zählerpolynoms."
+        },
+        {
+          "claim_id": "claim_03",
+          "type": "rule",
+          "content": "Ist bei einer gebrochen-rationalen Funktion der Zählergrad gleich dem Nennergrad, so ist die waagerechte Asymptote y = a/b, wobei a und b die Leitkoeffizienten sind."
+        },
+        {
+          "claim_id": "claim_04",
+          "type": "interpretation",
+          "content": "Eine Definitionslücke ist hebbar, wenn der Grenzwert der Funktion an dieser Stelle existiert und endlich ist (Zähler und Nenner haben dort eine Nullstelle gleicher Ordnung)."
+        },
+        {
+          "claim_id": "claim_05",
+          "type": "comparison",
+          "content": "Im Unendlichen (x -> +inf) dominiert die Exponentialfunktion f(x) = e^x jedes Polynom P(x), sodass lim (P(x)/e^x) = 0 gilt."
+        },
+        {
+          "claim_id": "claim_06",
+          "type": "definition",
+          "content": "Eine Funktion f ist an der Stelle x_0 stetig, wenn der linksseitige Grenzwert, der rechtsseitige Grenzwert und der Funktionswert f(x_0) gleich sind."
+        },
+        {
+          "claim_id": "claim_07",
+          "type": "procedure",
+          "content": "Um das Verhalten für x -> -inf bei e-Funktionen zu bestimmen, ersetzt man gedanklich x durch eine sehr große negative Zahl und nutzt lim x->-inf (e^x) = 0."
+        },
+        {
+          "claim_id": "claim_08",
+          "type": "mistake",
+          "content": "Ein häufiger Fehler ist die Annahme, dass eine Funktion eine Asymptote nicht schneiden darf; waagerechte Asymptoten können im Nahbereich durchaus vom Graphen gekreuzt werden."
+        },
+        {
+          "claim_id": "claim_09",
+          "type": "check",
+          "content": "Zur Prüfung einer Polstelle ohne Vorzeichenwechsel untersucht man, ob die Vielfachheit der Nullstelle im Nenner gerade ist."
+        },
+        {
+          "claim_id": "claim_10",
+          "type": "application",
+          "content": "Bei der Analyse von Wachstumsraten (Ableitungsfunktionen) gibt der Grenzwert für t -> inf die langfristige Sättigungsgrenze oder den Stillstand des Wachstums an."
+        },
+        {
+          "claim_id": "claim_11",
+          "type": "recognition",
+          "content": "Ein 'Loch' im Graphen deutet grafisch auf eine hebbare Definitionslücke hin, während eine Annäherung an eine senkrechte Gerade eine Polstelle signalisiert."
+        },
+        {
+          "claim_id": "claim_12",
+          "type": "formula",
+          "content": "Der Grenzwert lim x->0 (1/x^2) ist +inf, was eine Polstelle ohne Vorzeichenwechsel an der Stelle x=0 beschreibt."
+        }
+      ],
+      "visual_requests": [],
+      "visual_assets": []
+    },
+    "items": [],
+    "videoLesson": {
+      "title": "Kürzen und Stetigkeit durch Grenzwert herstellen",
+      "coverUrl": "https://solve-now.s3.us-west-2.amazonaws.com/german-abitur/atomic-videos-v2/ABITUR-MATHEMATIK-005/cover.png",
+      "playbackUrl": "https://solve-now.s3.us-west-2.amazonaws.com/german-abitur/atomic-videos-v2/ABITUR-MATHEMATIK-005/lesson.html",
+      "durationSeconds": 480,
+      "description": "Feingranulares IQB-basiertes Topic `Grenzwerte, Stetigkeit und asymptotisches Verhalten`; abgegrenzt durch: Grenzwerte und Asymptoten aus Term oder Graph bestimmen. Im Quellkorpus: 30 Aufgaben, davon 5 offizielle Pool- oder Beispielaufgaben."
+    }
+  },
+  "lastViewedQuestionId": null,
+  "lastViewedAt": null
+}

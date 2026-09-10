@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { loadSatManifest, loadTopicContent, loadTopicQuiz } from '../data/satData'
 import { loadActManifest, loadActTopicContent, loadActTopicQuiz } from '../data/actData'
 import { loadApManifest, loadApTopicContent, loadApTopicQuiz } from '../data/apData'
+import { loadAbiturManifest, loadAbiturTopicContent, loadAbiturTopicQuiz } from '../data/abiturData'
 import { loadImprovePracticeProgress, saveImprovePracticeProgress } from '../data/improvePracticeProgress'
 import AskSolvelyPanel from '../components/AskSolvelyPanel.vue'
 import CommercialDemoController from '../components/CommercialDemoController.vue'
@@ -21,9 +22,11 @@ const router = useRouter()
 const { accessState, isProMember, setProAccess } = useProAccess()
 const isActPackage = computed(() => String(route.query.exam || '').toLowerCase() === 'act')
 const isApPackage = computed(() => String(route.query.exam || '').toLowerCase() === 'ap-calculus-bc')
-const examName = computed(() => isApPackage.value ? 'AP Calculus BC' : isActPackage.value ? 'ACT' : 'SAT')
-const packageHash = computed(() => isApPackage.value ? '#course-2' : isActPackage.value ? '#course-1' : '#course-0')
-const examRouteQuery = computed(() => isApPackage.value ? { exam: 'ap-calculus-bc' } : isActPackage.value ? { exam: 'act' } : {})
+const isAbiturPackage = computed(() => String(route.query.exam || '').toLowerCase() === 'abitur-mathematik')
+const examName = computed(() => isAbiturPackage.value ? 'Abitur Mathematik' : isApPackage.value ? 'AP Calculus BC' : isActPackage.value ? 'ACT' : 'SAT')
+const packageHash = computed(() => isAbiturPackage.value ? '#course-3' : isApPackage.value ? '#course-2' : isActPackage.value ? '#course-1' : '#course-0')
+const examRouteQuery = computed(() => isAbiturPackage.value ? { exam: 'abitur-mathematik' } : isApPackage.value ? { exam: 'ap-calculus-bc' } : isActPackage.value ? { exam: 'act' } : {})
+const packageLabel = computed(() => isAbiturPackage.value ? 'Abitur Mathematik Exam Prep' : isApPackage.value ? 'AP Calculus BC Exam Prep' : isActPackage.value ? 'ACT Exam Prep' : 'Digital SAT Exam Prep')
 const manifest = ref<SatManifest | null>(null)
 const loadError = ref('')
 const collapsedSections = ref(new Set<string>())
@@ -339,7 +342,7 @@ async function loadQuiz() {
   if (!topic.value || mode.value !== 'quiz') return
   quizLoading.value = true
   try {
-    quizQuestions.value = await (isApPackage.value ? loadApTopicQuiz(topic.value.id) : isActPackage.value ? loadActTopicQuiz(topic.value.id) : loadTopicQuiz(topic.value.id))
+    quizQuestions.value = await (isAbiturPackage.value ? loadAbiturTopicQuiz(topic.value.id) : isApPackage.value ? loadApTopicQuiz(topic.value.id) : isActPackage.value ? loadActTopicQuiz(topic.value.id) : loadTopicQuiz(topic.value.id))
     improvePracticeProgress.value = isImprovePractice.value ? (loadImprovePracticeProgress()[topic.value.id] ?? 0) : 0
     quizIndex.value = isImprovePractice.value && improvePracticeProgress.value > 0 && improvePracticeProgress.value < quizQuestions.value.length ? improvePracticeProgress.value : 0
     selectedAnswer.value = null
@@ -363,9 +366,9 @@ async function loadActiveContent() {
   contentLoading.value = true
   try {
     if (mode.value === 'study-guide') {
-      studyGuideContent.value = await (isApPackage.value ? loadApTopicContent(topic.value.id, 'studyGuide') : isActPackage.value ? loadActTopicContent(topic.value.id, 'studyGuide') : loadTopicContent(topic.value.id, 'studyGuide')) as EpStudyGuideContent
+      studyGuideContent.value = await (isAbiturPackage.value ? loadAbiturTopicContent(topic.value.id, 'studyGuide') : isApPackage.value ? loadApTopicContent(topic.value.id, 'studyGuide') : isActPackage.value ? loadActTopicContent(topic.value.id, 'studyGuide') : loadTopicContent(topic.value.id, 'studyGuide')) as EpStudyGuideContent
     } else {
-      flashCardContent.value = await (isApPackage.value ? loadApTopicContent(topic.value.id, 'flashCard') : isActPackage.value ? loadActTopicContent(topic.value.id, 'flashCard') : loadTopicContent(topic.value.id, 'flashCard')) as EpFlashCardContent
+      flashCardContent.value = await (isAbiturPackage.value ? loadAbiturTopicContent(topic.value.id, 'flashCard') : isApPackage.value ? loadApTopicContent(topic.value.id, 'flashCard') : isActPackage.value ? loadActTopicContent(topic.value.id, 'flashCard') : loadTopicContent(topic.value.id, 'flashCard')) as EpFlashCardContent
     }
   } catch (error) {
     loadError.value = error instanceof Error ? error.message : `Unable to load ${toolLabel.value}.`
@@ -398,7 +401,7 @@ onMounted(async () => {
   document.body.classList.add('topic-tool-route')
   window.addEventListener('keydown', onKeydown)
   try {
-    manifest.value = await (isApPackage.value ? loadApManifest() : isActPackage.value ? loadActManifest() : loadSatManifest())
+    manifest.value = await (isAbiturPackage.value ? loadAbiturManifest() : isApPackage.value ? loadApManifest() : isActPackage.value ? loadActManifest() : loadSatManifest())
     if (!topic.value && manifest.value.topics[0]) await router.replace({ name: mode.value, params: { topicId: manifest.value.topics[0].id }, query: examRouteQuery.value })
     await loadActiveContent()
   } catch (error) {
@@ -419,7 +422,7 @@ onBeforeUnmount(() => {
       <button class="topic-back-button" type="button" @click="backToPackage" :aria-label="`Back to ${examName} exam prep`">←</button>
       <button class="topic-package-button" type="button" @click="backToPackage">
         <img src="/assets/solvely-ai-logo.jpeg" alt="" width="27" height="27" />
-        <span><strong>{{ isApPackage ? 'AP Calculus BC Exam Prep' : isActPackage ? 'ACT Exam Prep' : 'Digital SAT Exam Prep' }}</strong><small>{{ isImprovePractice ? 'Targeted Practice' : toolLabel }}</small></span>
+        <span><strong>{{ packageLabel }}</strong><small>{{ isImprovePractice ? 'Targeted Practice' : toolLabel }}</small></span>
       </button>
       <nav v-if="!isImprovePractice" class="topic-mode-switch" aria-label="Topic study tools">
         <button :class="{ active: mode === 'study-guide' }" type="button" @click="toolRoute('study-guide')">Study Guide</button>
@@ -427,7 +430,7 @@ onBeforeUnmount(() => {
         <button :class="{ active: mode === 'quiz' }" type="button" @click="toolRoute('quiz')">Quiz</button>
       </nav>
       <span v-else class="topic-practice-only-label">Quiz only</span>
-      <span class="topic-material-count">{{ isImprovePractice ? `${topic?.quizCount ?? 0} questions` : `${manifest?.totals.topics ?? (isApPackage ? 49 : isActPackage ? 235 : 100)} ${examName} topics` }}</span>
+      <span class="topic-material-count">{{ isImprovePractice ? `${topic?.quizCount ?? 0} questions` : `${manifest?.totals.topics ?? (isAbiturPackage ? 31 : isApPackage ? 49 : isActPackage ? 235 : 100)} ${examName} topics` }}</span>
     </header>
 
     <div v-if="loadError" class="topic-load-state"><strong>Unable to load {{ examName }} materials</strong><p>{{ loadError }}</p></div>
@@ -539,7 +542,7 @@ onBeforeUnmount(() => {
               </div>
               <div v-else class="study-quick-written-response">
                 <label for="studyWrittenResponse">Write your response</label>
-                <textarea id="studyWrittenResponse" v-model="studyPracticeWrittenResponse" :disabled="studyPracticeWrittenSubmitted" rows="8" placeholder="Draft your essay response here…" />
+                <textarea id="studyWrittenResponse" v-model="studyPracticeWrittenResponse" :disabled="studyPracticeWrittenSubmitted" rows="8" placeholder="Write your solution and reasoning here…" />
                 <button type="button" :disabled="!studyPracticeWrittenResponse.trim() || studyPracticeWrittenSubmitted" @click="submitStudyPracticeWrittenResponse">Submit response</button>
               </div>
               <section v-if="studyPracticeAnswered" class="study-quick-feedback" :class="{ success: studyPracticeHasOptions ? studyPracticeCorrect : true }" aria-live="polite">
@@ -599,11 +602,18 @@ onBeforeUnmount(() => {
                   <i>{{ answerLetter(index) }}</i><span>{{ option }}</span><b v-if="selectedAnswer !== null && currentQuestion.correctIndex === index">✓</b><b v-else-if="selectedAnswer === index">×</b>
                 </button>
               </div>
-              <div v-else class="quiz-short-answer"><label for="shortAnswer">Enter your answer</label><div><input id="shortAnswer" v-model="shortAnswer" :disabled="shortAnswerChecked" /><button type="button" :disabled="!shortAnswer.trim() || shortAnswerChecked" @click="checkShortAnswer">Check answer</button></div></div>
+              <div v-else class="quiz-short-answer">
+                <label for="shortAnswer">{{ isAbiturPackage ? 'Write your solution' : 'Enter your answer' }}</label>
+                <div>
+                  <textarea v-if="isAbiturPackage" id="shortAnswer" v-model="shortAnswer" :disabled="shortAnswerChecked" rows="7" placeholder="Rechenweg und Begründung…" />
+                  <input v-else id="shortAnswer" v-model="shortAnswer" :disabled="shortAnswerChecked" />
+                  <button type="button" :disabled="!shortAnswer.trim() || shortAnswerChecked" @click="checkShortAnswer">{{ isAbiturPackage ? 'Submit response' : 'Check answer' }}</button>
+                </div>
+              </div>
 
-              <section v-if="selectedAnswer !== null || shortAnswerChecked" class="quiz-feedback" :class="{ success: selectedAnswer !== null ? selectedCorrect : normalize(shortAnswer) === normalize(currentQuestion.answer) }">
-                <span>{{ selectedAnswer !== null ? (selectedCorrect ? 'Correct' : 'Keep learning') : `Answer: ${currentQuestion.answer}` }}</span>
-                <h3>Explanation</h3>
+              <section v-if="selectedAnswer !== null || shortAnswerChecked" class="quiz-feedback" :class="{ success: selectedAnswer !== null ? selectedCorrect : isAbiturPackage || normalize(shortAnswer) === normalize(currentQuestion.answer) }">
+                <span>{{ selectedAnswer !== null ? (selectedCorrect ? 'Correct' : 'Keep learning') : isAbiturPackage ? 'Response submitted' : `Answer: ${currentQuestion.answer}` }}</span>
+                <h3>{{ isAbiturPackage ? 'Model answer and rubric' : 'Explanation' }}</h3>
                 <p>{{ currentQuestion.explanation || 'Review the study guide for the complete solution path.' }}</p>
                 <button v-if="!isImprovePractice" type="button" @click="toolRoute('study-guide')">View Study Guide</button>
               </section>
@@ -619,7 +629,7 @@ onBeforeUnmount(() => {
       v-model:open="askSolvelyOpen"
       v-model:panel-width="askSolvelyPanelWidth"
       :context-title="topic.title"
-      :context-detail="isApPackage ? 'AP Calculus BC Exam Prep' : isActPackage ? 'ACT Exam Prep' : 'Digital SAT Exam Prep'"
+      :context-detail="packageLabel"
       @request-open="requestAskSolvely"
     />
     <CommercialDemoController

@@ -1,0 +1,147 @@
+{
+  "epId": 500001,
+  "outlineId": 500002,
+  "topicGroupId": 510001,
+  "topicId": 520010,
+  "packageId": 5001,
+  "contentType": "studyGuide",
+  "contentStatus": "READY",
+  "generationId": "",
+  "progress": {
+    "totalCount": 1,
+    "completedCount": 0,
+    "items": {}
+  },
+  "platform": "system",
+  "payload": {
+    "content": {
+      "lesson_id": "ABITUR-MATHEMATIK-010",
+      "title": "Bestimmte Integrale, Flächen und mittlere Änderung",
+      "overview": "Dieses Modul behandelt die Interpretation des bestimmten Integrals als orientierter Flächeninhalt, als Bilanz von Bestandsänderungen sowie die Berechnung des Mittelwerts von Funktionen. Im Fokus steht der Übergang von der rein rechnerischen Bestimmung zur geometrischen und sachbezogenen Deutung.",
+      "learning_objectives": [
+        "Das bestimmte Integral geometrisch als orientierten Flächeninhalt interpretieren.",
+        "Integrale als Netto-Änderung (Bilanz) in Sachzusammenhängen deuten.",
+        "Den Mittelwert einer Funktion über einem Intervall berechnen und interpretieren.",
+        "Flächeninhalte zwischen Graphen und der x-Achse sowie zwischen zwei Graphen bestimmen."
+      ],
+      "sections": [
+        {
+          "title": "Geometrische Deutung: Orientierter Flächeninhalt",
+          "content": "Das bestimmte Integral $\\int_{a}^{b} f(x) dx$ entspricht dem orientierten Flächeninhalt zwischen dem Graphen von $f$ und der x-Achse im Intervall $[a, b]$. Flächen oberhalb der x-Achse ($f(x) > 0$) gehen positiv in den Integralwert ein, Flächen unterhalb der x-Achse ($f(x) < 0$) negativ. Möchte man den tatsächlichen (absoluten) Flächeninhalt berechnen, müssen die Nullstellen der Funktion bestimmt und das Integral in Teilintervalle zerlegt werden, wobei die Beträge der Teilintegrale addiert werden."
+        },
+        {
+          "title": "Integrale als Bilanz und Bestandsänderung",
+          "content": "In Sachzusammenhängen beschreibt die Funktion $f(t)$ oft eine Änderungsrate (z. B. Zuflussrate in $l/h$). Das Integral $\\int_{a}^{b} f(t) dt$ gibt dann die Netto-Änderung (Bilanz) des Bestands im Zeitraum $[a, b]$ an. Ein positiver Integralwert bedeutet eine Zunahme, ein negativer eine Abnahme. Wichtig: Das Integral liefert nur die Änderung; für den absoluten Bestand zum Zeitpunkt $b$ muss der Anfangsbestand zum Zeitpunkt $a$ addiert werden: $B(b) = B(a) + \\int_{a}^{b} f(t) dt$."
+        },
+        {
+          "title": "Der Mittelwertsatz der Integralrechnung",
+          "content": "Der durchschnittliche Funktionswert (mittlere Änderung/mittlerer Bestand) einer stetigen Funktion $f$ auf dem Intervall $[a, b]$ wird berechnet durch: $\\bar{m} = \\frac{1}{b-a} \\cdot \\int_{a}^{b} f(x) dx$. Geometrisch entspricht dies der Höhe eines Rechtecks mit der Breite $(b-a)$, das denselben Flächeninhalt wie das Integral unter der Kurve besitzt."
+        }
+      ],
+      "worked_examples": [
+        {
+          "question": "Eine Zuflussrate in ein Wasserbecken wird für $0 \\le t \\le 6$ durch $f(t) = -t^2 + 6t$ (in $m^3/h$) beschrieben. Berechnen Sie die gesamte Wassermenge, die in den ersten 4 Stunden zufließt, und bestimmen Sie die mittlere Zuflussrate in diesem Zeitraum.",
+          "solution": "1. Modellierung: Die Wassermenge entspricht dem Integral der Rate. Da $f(t) = -t(t-6)$, ist die Funktion im Intervall $[0, 4]$ stets positiv ($f(t) \\ge 0$).\n2. Berechnung der Bilanz: $\\int_{0}^{4} (-t^2 + 6t) dt = [-\\frac{1}{3}t^3 + 3t^2]_{0}^{4} = (-\\frac{1}{3} \\cdot 64 + 3 \\cdot 16) - 0 = -\\frac{64}{3} + 48 = \\frac{-64 + 144}{3} = \\frac{80}{3} \\approx 26,67 \\, m^3$.\n3. Mittlere Zuflussrate: $\\bar{m} = \\frac{1}{4-0} \\cdot \\frac{80}{3} = \\frac{20}{3} \\approx 6,67 \\, m^3/h$.\n4. Plausibilitätscheck: Da das Maximum der Parabel bei $t=3$ mit $f(3)=9$ liegt, ist ein Mittelwert von $6,67$ im Intervall $[0, 4]$ sinnvoll."
+        }
+      ],
+      "common_mistakes": [
+        "Verwechslung von Integralwert und Flächeninhalt: Wenn der Graph die x-Achse schneidet, heben sich positive und negative Flächenanteile im Integral teilweise auf.",
+        "Fehlender Anfangsbestand: Bei der Frage nach dem 'Gesamtbestand' wird oft vergessen, den Startwert $B(0)$ zum Integral zu addieren.",
+        "Einheitenfehler: Die Einheit des Integrals ist das Produkt der Einheiten von $f(x)$ und $x$ (z. B. $(m/s) \\cdot s = m$)."
+      ],
+      "exam_tips": [
+        "Achten Sie auf Operatoren: 'Berechnen Sie den Flächeninhalt' erfordert Betragsstriche bei negativen Flächen, 'Berechnen Sie das Integral' nicht.",
+        "Skizzieren Sie den Graphen grob, um Nullstellen und Vorzeichenbereiche schnell zu identifizieren.",
+        "Nutzen Sie Symmetrien (Achsen- oder Punktsymmetrie), um Integrationsgrenzen zu vereinfachen."
+      ],
+      "recap": "Das bestimmte Integral misst die Bilanz zwischen Kurve und Achse. Während das Integral Flächenanteile unter der Achse negativ wertet, addiert die Flächenberechnung deren Beträge. Der Mittelwert normiert diese Bilanz auf die Intervallbreite.",
+      "knowledge_claims": [
+        {
+          "claim_id": "claim_01",
+          "type": "definition",
+          "content": "Das bestimmte Integral $\\int_{a}^{b} f(x) dx$ ist definiert als der Grenzwert der Riemann-Summen und entspricht dem orientierten Flächeninhalt."
+        },
+        {
+          "claim_id": "claim_02",
+          "type": "interpretation",
+          "content": "Flächenstücke unterhalb der x-Achse werden beim bestimmten Integral negativ gezählt, solche oberhalb positiv."
+        },
+        {
+          "claim_id": "claim_03",
+          "type": "procedure",
+          "content": "Zur Berechnung des absoluten Flächeninhalts zwischen Graph und x-Achse müssen die Nullstellen bestimmt und die Integrale der Teilintervalle als Beträge addiert werden."
+        },
+        {
+          "claim_id": "claim_04",
+          "type": "application",
+          "content": "Ist $f(t)$ eine Änderungsrate, so gibt das Integral $\\int_{a}^{b} f(t) dt$ die Netto-Änderung (Bilanz) des Bestands im Intervall $[a, b]$ an."
+        },
+        {
+          "claim_id": "claim_05",
+          "type": "formula",
+          "content": "Der Mittelwert $\\bar{m}$ einer Funktion $f$ auf $[a, b]$ berechnet sich durch $\\bar{m} = \\frac{1}{b-a} \\int_{a}^{b} f(x) dx$."
+        },
+        {
+          "claim_id": "claim_06",
+          "type": "interpretation",
+          "content": "Geometrisch ist der Mittelwert die Höhe eines Rechtecks über dem Intervall $[a, b]$, das den gleichen Flächeninhalt wie die Fläche unter dem Graphen hat."
+        },
+        {
+          "claim_id": "claim_07",
+          "type": "rule",
+          "content": "Der Flächeninhalt zwischen zwei Graphen $f$ und $g$ berechnet sich durch das Integral der Differenzfunktion $|f(x) - g(x)|$ über dem betrachteten Intervall."
+        },
+        {
+          "claim_id": "claim_08",
+          "type": "check",
+          "content": "Die Einheit des Integrals ergibt sich aus der Multiplikation der Einheit der y-Achse mit der Einheit der x-Achse."
+        },
+        {
+          "claim_id": "claim_09",
+          "type": "mistake",
+          "content": "Ein Integralwert von Null bedeutet nicht zwingend, dass keine Fläche vorhanden ist, sondern dass sich positive und negative orientierte Flächen exakt aufheben."
+        },
+        {
+          "claim_id": "claim_10",
+          "type": "application",
+          "content": "Um den Gesamtwert eines Bestands zu einem Zeitpunkt $T$ zu finden, muss zum Integral der Änderungsrate von $0$ bis $T$ der Anfangsbestand $B(0)$ addiert werden."
+        },
+        {
+          "claim_id": "claim_11",
+          "type": "recognition",
+          "content": "Wenn eine Funktion $f$ im Intervall $[a, b]$ nur positive Werte annimmt, ist der Wert des bestimmten Integrals identisch mit dem absoluten Flächeninhalt."
+        },
+        {
+          "claim_id": "claim_12",
+          "type": "interpretation",
+          "content": "Eine Zunahme des Bestands liegt in einem Intervall vor, wenn die Änderungsrate (die Integrandenfunktion) dort durchgehend positive Werte aufweist."
+        }
+      ],
+      "visual_requests": [],
+      "visual_assets": []
+    },
+    "items": [
+      {
+        "id": 55000900,
+        "sourceQuestionId": "MAT-FF8BB0ADA1-01",
+        "topicId": 520010,
+        "type": "STUDENT_PRODUCED_RESPONSE",
+        "stem": "Bestimmen Sie den Wert des Integrals \n( )\n7\n1\nf x dx∫ .",
+        "options": {},
+        "correctAnswer": "2 \n2 Erwartungshorizont \nDer Erwartungshorizont stellt für jede Teilaufgabe eine mögliche Lösung dar. Nicht dargestellte \nkorrekte Lösungen sind als gleichwertig zu akzeptieren. \n BE \na \n( ) ( ) ( )\n7\n1\nf x dx F 7 F 1 5 1 4= − = −=∫ \n2 \nb ( ) ( )f1 F1 4′= = 3 \n 5",
+        "explanation": "2 \n2 Erwartungshorizont \nDer Erwartungshorizont stellt für jede Teilaufgabe eine mögliche Lösung dar. Nicht dargestellte \nkorrekte Lösungen sind als gleichwertig zu akzeptieren. \n BE \na \n( ) ( ) ( )\n7\n1\nf x dx F 7 F 1 5 1 4= − = −=∫ \n2 \nb ( ) ( )f1 F1 4′= = 3 \n 5",
+        "userAnswer": null,
+        "isCorrect": -1
+      }
+    ],
+    "videoLesson": {
+      "title": "Bestimme orientierte Fläche und mittlere Änderungsrate",
+      "coverUrl": "https://solve-now.s3.us-west-2.amazonaws.com/german-abitur/atomic-videos-v2/ABITUR-MATHEMATIK-010/cover.png",
+      "playbackUrl": "https://solve-now.s3.us-west-2.amazonaws.com/german-abitur/atomic-videos-v2/ABITUR-MATHEMATIK-010/lesson.html",
+      "durationSeconds": 480,
+      "description": "Feingranulares IQB-basiertes Topic `Bestimmte Integrale, Flächen und mittlere Änderung`; abgegrenzt durch: Integrale geometrisch und als Bilanz deuten. Im Quellkorpus: 31 Aufgaben, davon 31 offizielle Pool- oder Beispielaufgaben."
+    }
+  },
+  "lastViewedQuestionId": null,
+  "lastViewedAt": null
+}

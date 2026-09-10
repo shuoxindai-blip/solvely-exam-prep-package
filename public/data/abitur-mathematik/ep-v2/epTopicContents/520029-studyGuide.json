@@ -1,0 +1,134 @@
+{
+  "epId": 500001,
+  "outlineId": 500002,
+  "topicGroupId": 510003,
+  "topicId": 520029,
+  "packageId": 5001,
+  "contentType": "studyGuide",
+  "contentStatus": "READY",
+  "generationId": "",
+  "progress": {
+    "totalCount": 0,
+    "completedCount": 0,
+    "items": {}
+  },
+  "platform": "system",
+  "payload": {
+    "content": {
+      "lesson_id": "ABITUR-MATHEMATIK-029",
+      "title": "Normalverteilung und Standardisierung",
+      "overview": "Dieses Study Guide behandelt die stetige Wahrscheinlichkeitsverteilung von Zufallsgrößen, die durch die Gaußsche Glockenkurve beschrieben werden. Im Fokus stehen die Berechnung von Wahrscheinlichkeiten durch Standardisierung sowie der Umgang mit den Parametern Erwartungswert (μ) und Standardabweichung (σ).",
+      "learning_objectives": [
+        "Die Dichtefunktion der Normalverteilung und ihre Eigenschaften verstehen.",
+        "Zufallsgrößen mithilfe der z-Transformation standardisieren.",
+        "Wahrscheinlichkeiten für Intervalle unter Nutzung der Standardnormalverteilung Φ(z) berechnen.",
+        "Parameter μ oder σ bei gegebenen Wahrscheinlichkeiten bestimmen."
+      ],
+      "sections": [
+        {
+          "title": "Grundlagen der Normalverteilung",
+          "content": "Eine stetige Zufallsgröße X heißt normalverteilt mit den Parametern μ (Erwartungswert) und σ (Standardabweichung), kurz X ~ N(μ; σ²), wenn ihre Dichtefunktion der Gaußschen Glockenkurve entspricht. Wichtige Eigenschaften sind: 1. Symmetrie zum Erwartungswert μ. 2. Die Gesamtfläche unter der Kurve ist 1. 3. Die Wendepunkte liegen exakt bei μ ± σ. Der Parameter μ verschiebt die Glocke auf der x-Achse, während σ die Breite und Höhe (Streuung) beeinflusst."
+        },
+        {
+          "title": "Die Standardisierung (z-Transformation)",
+          "content": "Um Wahrscheinlichkeiten für beliebige N(μ; σ²)-verteilte Zufallsgrößen zu berechnen, transformiert man diese in die Standardnormalverteilung N(0; 1). Der Rechenschritt lautet: z = (x - μ) / σ. Der z-Wert gibt an, wie viele Standardabweichungen ein Wert x vom Mittelwert μ entfernt ist. Die Wahrscheinlichkeit P(X ≤ x) entspricht dann Φ(z), wobei Φ die Verteilungsfunktion der Standardnormalverteilung ist."
+        },
+        {
+          "title": "Berechnung von Intervallwahrscheinlichkeiten",
+          "content": "Für eine normalverteilte Zufallsgröße X gelten folgende Rechenregeln: \n1. P(X ≤ k) = Φ((k - μ) / σ) \n2. P(X > k) = 1 - Φ((k - μ) / σ) \n3. P(a ≤ X ≤ b) = Φ((b - μ) / σ) - Φ((a - μ) / σ) \nAufgrund der Symmetrie gilt für negative z-Werte: Φ(-z) = 1 - Φ(z)."
+        }
+      ],
+      "worked_examples": [
+        {
+          "question": "Eine Zufallsgröße Y ist normalverteilt mit μ = 150 und σ = 20. Berechnen Sie die Wahrscheinlichkeit P(120 ≤ Y ≤ 160) unter Verwendung der Standardnormalverteilung.",
+          "solution": "1. Identifikation der Parameter: μ = 150, σ = 20.\n2. Standardisierung der Grenzen:\n   z1 = (120 - 150) / 20 = -30 / 20 = -1,5\n   z2 = (160 - 150) / 20 = 10 / 20 = 0,5\n3. Ansatz mit der Verteilungsfunktion Φ:\n   P(120 ≤ Y ≤ 160) = Φ(0,5) - Φ(-1,5)\n4. Anwendung der Symmetrieregel Φ(-z) = 1 - Φ(z):\n   P = Φ(0,5) - (1 - Φ(1,5))\n5. Werte aus der Tabelle ablesen (beispielhaft): Φ(0,5) ≈ 0,6915; Φ(1,5) ≈ 0,9332.\n6. Berechnung: 0,6915 - (1 - 0,9332) = 0,6915 - 0,0668 = 0,6247.\nDie Wahrscheinlichkeit beträgt ca. 62,47 %."
+        }
+      ],
+      "common_mistakes": [
+        "Verwechslung von Varianz (σ²) und Standardabweichung (σ) in der Notation N(μ; σ²).",
+        "Vergessen der Symmetrieregel Φ(-z) = 1 - Φ(z) bei negativen z-Werten.",
+        "Annahme, dass P(X = k) einen Wert größer 0 hat (bei stetigen Verteilungen ist P(X = k) immer 0)."
+      ],
+      "exam_tips": [
+        "Prüfen Sie immer, ob σ oder σ² gegeben ist, bevor Sie standardisieren.",
+        "Skizzieren Sie bei komplexen Intervallen die Glockenkurve, um die Plausibilität des Ergebnisses (z.B. > 0,5 oder < 0,5) zu prüfen.",
+        "Nutzen Sie den GTR/CAS-Befehl 'normCDF' zur Kontrolle, aber stellen Sie den Rechenweg über z-Werte explizit dar, wenn 'Standardisierung' gefordert ist."
+      ],
+      "recap": "Die Normalverteilung beschreibt symmetrische Streuungen um einen Mittelwert. Durch die z-Transformation z = (x - μ) / σ wird jede Normalverteilung auf die Standardnormalverteilung N(0; 1) zurückgeführt, deren Werte in Tabellen oder über die Funktion Φ verfügbar sind.",
+      "knowledge_claims": [
+        {
+          "claim_id": "claim_01",
+          "type": "definition",
+          "content": "Die Normalverteilung N(μ; σ²) ist eine stetige Wahrscheinlichkeitsverteilung, die durch den Erwartungswert μ und die Standardabweichung σ definiert ist."
+        },
+        {
+          "claim_id": "claim_02",
+          "type": "rule",
+          "content": "Die Dichtefunktion der Normalverteilung ist achsensymmetrisch zur Geraden x = μ."
+        },
+        {
+          "claim_id": "claim_03",
+          "type": "procedure",
+          "content": "Die Standardisierung einer Zufallsgröße X erfolgt durch die Transformation z = (x - μ) / σ."
+        },
+        {
+          "claim_id": "claim_04",
+          "type": "interpretation",
+          "content": "Ein z-Wert von 1 bedeutet, dass der betrachtete Wert genau eine Standardabweichung oberhalb des Erwartungswerts liegt."
+        },
+        {
+          "claim_id": "claim_05",
+          "type": "formula",
+          "content": "Für die Standardnormalverteilung gilt die Symmetrieeigenschaft Φ(-z) = 1 - Φ(z)."
+        },
+        {
+          "claim_id": "claim_06",
+          "type": "rule",
+          "content": "Bei stetigen Verteilungen wie der Normalverteilung gilt P(X ≤ k) = P(X < k), da die Punktwahrscheinlichkeit P(X = k) gleich null ist."
+        },
+        {
+          "claim_id": "claim_07",
+          "type": "recognition",
+          "content": "Die Wendepunkte des Graphen der Dichtefunktion einer N(μ; σ²)-Verteilung liegen an den Stellen x = μ - σ und x = μ + σ."
+        },
+        {
+          "claim_id": "claim_08",
+          "type": "application",
+          "content": "Die Wahrscheinlichkeit für ein Intervall [a; b] wird berechnet durch Φ((b - μ) / σ) - Φ((a - μ) / σ)."
+        },
+        {
+          "claim_id": "claim_09",
+          "type": "mistake",
+          "content": "Ein häufiger Fehler ist die Verwendung der Varianz σ² anstelle der Standardabweichung σ im Nenner der Standardisierungsformel."
+        },
+        {
+          "claim_id": "claim_10",
+          "type": "check",
+          "content": "Liegt ein Wert x rechts vom Erwartungswert μ, muss der berechnete z-Wert positiv sein."
+        },
+        {
+          "claim_id": "claim_11",
+          "type": "interpretation",
+          "content": "Die Fläche unter der gesamten Dichtefunktion der Normalverteilung hat stets den Wert 1."
+        },
+        {
+          "claim_id": "claim_12",
+          "type": "procedure",
+          "content": "Um den Wert x zu einem gegebenen Φ(z) zu finden, muss zuerst z über die inverse Verteilungsfunktion bestimmt und dann nach x = μ + z * σ aufgelöst werden."
+        }
+      ],
+      "visual_requests": [],
+      "visual_assets": []
+    },
+    "items": [],
+    "videoLesson": {
+      "title": "Standardisieren, Wahrscheinlichkeiten und Quantile bestimmen",
+      "coverUrl": "https://solve-now.s3.us-west-2.amazonaws.com/german-abitur/atomic-videos-v2/ABITUR-MATHEMATIK-029/cover.png",
+      "playbackUrl": "https://solve-now.s3.us-west-2.amazonaws.com/german-abitur/atomic-videos-v2/ABITUR-MATHEMATIK-029/lesson.html",
+      "durationSeconds": 480,
+      "description": "Feingranulares IQB-basiertes Topic `Normalverteilung und Standardisierung`; abgegrenzt durch: Normalwahrscheinlichkeiten und Parameter bestimmen. Im Quellkorpus: 30 Aufgaben, davon 0 offizielle Pool- oder Beispielaufgaben."
+    }
+  },
+  "lastViewedQuestionId": null,
+  "lastViewedAt": null
+}

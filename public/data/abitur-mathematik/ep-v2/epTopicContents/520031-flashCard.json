@@ -1,0 +1,220 @@
+{
+  "epId": 500001,
+  "outlineId": 500002,
+  "topicGroupId": 510003,
+  "topicId": 520031,
+  "packageId": 5001,
+  "contentType": "flashCard",
+  "contentStatus": "READY",
+  "generationId": "",
+  "progress": {
+    "totalCount": 20,
+    "completedCount": 0,
+    "items": {}
+  },
+  "platform": "system",
+  "payload": {
+    "cards": [
+      {
+        "id": 53003000,
+        "topicId": 520031,
+        "type": "FLASH_CARD",
+        "info": "Was versteht man unter der Nullhypothese $H_0$ in einem statistischen Test?",
+        "backInfo": "Die Nullhypothese $H_0$ ist die Annahme, die auf signifikante Gegenbeweise geprüft und nur bei hinreichender Evidenz verworfen wird.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53003001,
+        "topicId": 520031,
+        "type": "FLASH_CARD",
+        "info": "Wo liegt der Ablehnungsbereich bei einem rechtsseitigen Test mit $H_1: p > p_0$?",
+        "backInfo": "Der Ablehnungsbereich liegt bei großen Werten der Testgröße $X$, da diese gegen die Nullhypothese sprechen.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53003002,
+        "topicId": 520031,
+        "type": "FLASH_CARD",
+        "info": "Wie ist das Signifikanzniveau $\\alpha$ definiert?",
+        "backInfo": "Das Signifikanzniveau $\\alpha$ ist die vorgegebene Obergrenze für die Wahrscheinlichkeit, einen Fehler 1. Art zu begehen.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53003003,
+        "topicId": 520031,
+        "type": "FLASH_CARD",
+        "info": "Wann begeht man einen Fehler 1. Art ($\\alpha$-Fehler)?",
+        "backInfo": "Ein Fehler 1. Art liegt vor, wenn die Nullhypothese $H_0$ abgelehnt wird, obwohl sie in der Realität wahr ist.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53003004,
+        "topicId": 520031,
+        "type": "FLASH_CARD",
+        "info": "Wann tritt ein Fehler 2. Art ($\\beta$-Fehler) auf?",
+        "backInfo": "Ein Fehler 2. Art liegt vor, wenn die Nullhypothese $H_0$ beibehalten wird, obwohl sie in der Realität falsch ist.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53003005,
+        "topicId": 520031,
+        "type": "FLASH_CARD",
+        "info": "Wie bestimmt man das kleinste $k$ für den Ablehnungsbereich eines rechtsseitigen Tests?",
+        "backInfo": "Man sucht das kleinste $k$, für das die Bedingung $P(X \\geq k) \\leq \\alpha$ erfüllt ist.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53003006,
+        "topicId": 520031,
+        "type": "FLASH_CARD",
+        "info": "Wie bestimmt man das größte $k$ für den Ablehnungsbereich eines linksseitigen Tests?",
+        "backInfo": "Man sucht das größte $k$, für das die Bedingung $P(X \\leq k) \\leq \\alpha$ erfüllt ist.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53003007,
+        "topicId": 520031,
+        "type": "FLASH_CARD",
+        "info": "Beweist das Nicht-Ablehnen von $H_0$, dass die Nullhypothese wahr ist?",
+        "backInfo": "Nein, es bedeutet lediglich, dass die Daten nicht ausreichen, um $H_0$ mit dem gewählten Signifikanzniveau zu verwerfen.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53003008,
+        "topicId": 520031,
+        "type": "FLASH_CARD",
+        "info": "Welche Auswirkung hat eine Verkleinerung des Signifikanzniveaus $\\alpha$ auf die Fehlerarten?",
+        "backInfo": "Der Fehler 1. Art wird seltener, aber die Wahrscheinlichkeit für einen Fehler 2. Art steigt an.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53003009,
+        "topicId": 520031,
+        "type": "FLASH_CARD",
+        "info": "Welche Identität nutzt man zur Berechnung von $P(X \\geq k)$ mit kumulierten Tabellen?",
+        "backInfo": "Man verwendet die Gegenwahrscheinlichkeit: $P(X \\geq k) = 1 - P(X \\leq k-1)$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53003010,
+        "topicId": 520031,
+        "type": "FLASH_CARD",
+        "info": "Welche Hypothese wird beim Testen kontrolliert verworfen, wenn die Daten signifikant abweichen?",
+        "backInfo": "Es wird die Nullhypothese $H_0$ verworfen, die meist den Status quo oder eine konservative Annahme darstellt.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53003011,
+        "topicId": 520031,
+        "type": "FLASH_CARD",
+        "info": "Wie lautet die Alternativhypothese $H_1$ bei einem rechtsseitigen Test?",
+        "backInfo": "Die Alternativhypothese lautet $H_1: p > p_0$, wobei $p_0$ der Grenzwert der Nullhypothese ist.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53003012,
+        "topicId": 520031,
+        "type": "FLASH_CARD",
+        "info": "Wo liegt der Ablehnungsbereich bei einem linksseitigen Test mit $H_1: p < p_0$?",
+        "backInfo": "Der Ablehnungsbereich liegt bei kleinen Werten der Testgröße $X$ (linker Rand der Verteilung).",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53003013,
+        "topicId": 520031,
+        "type": "FLASH_CARD",
+        "info": "Welche Rolle spielt $\\alpha$ bei der Festlegung des Ablehnungsbereichs?",
+        "backInfo": "$\\alpha$ begrenzt die Wahrscheinlichkeit, dass die Testgröße $X$ in den Ablehnungsbereich fällt, obwohl $H_0$ wahr ist.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53003014,
+        "topicId": 520031,
+        "type": "FLASH_CARD",
+        "info": "Ein Hersteller behauptet $p \\leq 0,1$. Der Test ergibt $p > 0,1$, obwohl $p=0,08$ gilt. Fehlerart?",
+        "backInfo": "Dies ist ein Fehler 1. Art, da $H_0$ fälschlicherweise abgelehnt wurde.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53003015,
+        "topicId": 520031,
+        "type": "FLASH_CARD",
+        "info": "Was passiert in der Realität bei einem Fehler 2. Art?",
+        "backInfo": "Die Nullhypothese wird beibehalten, obwohl die Alternativhypothese $H_1$ eigentlich zutrifft.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53003016,
+        "topicId": 520031,
+        "type": "FLASH_CARD",
+        "info": "Wie lautet der Ansatz zur Bestimmung des Ablehnungsbereichs $K = \\{k, \\dots, n\\}$?",
+        "backInfo": "Man sucht das kleinste $k$, sodass $P(X \\geq k) \\leq \\alpha$ gilt.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53003017,
+        "topicId": 520031,
+        "type": "FLASH_CARD",
+        "info": "Wie lautet der Ansatz zur Bestimmung des Ablehnungsbereichs $K = \\{0, \\dots, k\\}$?",
+        "backInfo": "Man sucht das größte $k$, sodass $P(X \\leq k) \\leq \\alpha$ gilt.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53003018,
+        "topicId": 520031,
+        "type": "FLASH_CARD",
+        "info": "Warum ist 'H₀ beibehalten' kein Beweis für die Richtigkeit von H₀?",
+        "backInfo": "Weil die Stichprobe lediglich nicht genug Evidenz gegen H₀ liefert; H₀ könnte dennoch falsch sein (Fehler 2. Art).",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53003019,
+        "topicId": 520031,
+        "type": "FLASH_CARD",
+        "info": "Wie verändert sich der Ablehnungsbereich, wenn man das Signifikanzniveau $\\alpha$ vergrößert?",
+        "backInfo": "Der Ablehnungsbereich wird größer, wodurch $H_0$ leichter abgelehnt wird und der Fehler 1. Art wahrscheinlicher wird.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      }
+    ]
+  }
+}

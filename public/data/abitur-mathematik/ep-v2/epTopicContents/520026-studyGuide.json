@@ -1,0 +1,159 @@
+{
+  "epId": 500001,
+  "outlineId": 500002,
+  "topicGroupId": 510003,
+  "topicId": 520026,
+  "packageId": 5001,
+  "contentType": "studyGuide",
+  "contentStatus": "READY",
+  "generationId": "",
+  "progress": {
+    "totalCount": 2,
+    "completedCount": 0,
+    "items": {}
+  },
+  "platform": "system",
+  "payload": {
+    "content": {
+      "lesson_id": "ABITUR-MATHEMATIK-026",
+      "title": "Diskrete Zufallsgrößen und Wahrscheinlichkeitsverteilungen",
+      "overview": "Dieses Modul behandelt die Grundlagen diskreter Zufallsgrößen, deren Wertebereiche und die Zuordnung von Wahrscheinlichkeiten. Im Fokus steht die systematische Darstellung von Verteilungen und die Identifikation spezifischer Verteilungsmodelle wie der Binomialverteilung im Abitur-Kontext.",
+      "learning_objectives": [
+        "Definition und Identifikation diskreter Zufallsgrößen und ihres Wertebereichs.",
+        "Erstellung und Interpretation von Wahrscheinlichkeitsverteilungen in Tabellen- und Graphform.",
+        "Anwendung der Normierungsbedingung zur Bestimmung unbekannter Wahrscheinlichkeiten.",
+        "Modellierung von Zufallsexperimenten durch geeignete Zufallsgrößen."
+      ],
+      "sections": [
+        {
+          "title": "Grundlagen diskreter Zufallsgrößen",
+          "content": "Eine Zufallsgröße (oder Zufallsvariable) $X$ ist eine Funktion, die jedem Ergebnis eines Zufallsexperiments eine reelle Zahl zuordnet. Man spricht von einer 'diskreten' Zufallsgröße, wenn sie nur endlich viele oder abzählbar unendlich viele Werte annehmen kann (z. B. Trefferzahlen, Augensummen). Der Wertebereich $W = \\{x_1, x_2, ..., x_n\\}$ umfasst alle möglichen Realisierungen der Zufallsgröße."
+        },
+        {
+          "title": "Wahrscheinlichkeitsverteilung und Normierung",
+          "content": "Die Wahrscheinlichkeitsverteilung ordnet jedem Wert $x_i$ die Wahrscheinlichkeit $P(X = x_i)$ zu. Für jede gültige Verteilung müssen zwei Bedingungen erfüllt sein: 1. Alle Einzelwahrscheinlichkeiten liegen im Intervall $[0; 1]$. 2. Die Summe aller Wahrscheinlichkeiten über den gesamten Wertebereich muss exakt 1 ergeben (Normierungsbedingung): $\\sum_{i=1}^{n} P(X = x_i) = 1$. In Abituraufgaben wird oft eine Wahrscheinlichkeit durch eine Variable (z. B. $k$) ersetzt, die über diese Summenbedingung berechnet werden muss."
+        },
+        {
+          "title": "Darstellungsformen",
+          "content": "Verteilungen werden meist als Tabelle (Wahrscheinlichkeitsfunktion) oder als Histogramm (Säulendiagramm) dargestellt. Bei einem Histogramm entspricht die Höhe der Säule über dem Wert $x_i$ der Wahrscheinlichkeit $P(X = x_i)$, sofern die Säulenbreite 1 beträgt. Dies ermöglicht das schnelle Ablesen von Wahrscheinlichkeiten und die visuelle Beurteilung der Symmetrie oder Schiefe einer Verteilung."
+        }
+      ],
+      "worked_examples": [
+        {
+          "question": "Ein Glücksrad hat drei Sektoren mit den Werten 0, 2 und 5. Die Wahrscheinlichkeit für die 0 ist 0,5. Die Wahrscheinlichkeit für die 5 ist doppelt so groß wie die für die 2. Bestimmen Sie die vollständige Wahrscheinlichkeitsverteilung der Zufallsgröße X (erzielter Wert).",
+          "solution": "1. Wertebereich identifizieren: $W = \\{0, 2, 5\\}$.\n2. Gegebene Größen: $P(X=0) = 0,5$. Sei $P(X=2) = p$, dann ist $P(X=5) = 2p$.\n3. Normierungsbedingung anwenden: $P(X=0) + P(X=2) + P(X=5) = 1$.\n4. Gleichung aufstellen: $0,5 + p + 2p = 1 \\Rightarrow 0,5 + 3p = 1 \\Rightarrow 3p = 0,5 \\Rightarrow p = 1/6$.\n5. Ergebnisse berechnen: $P(X=2) = 1/6$ und $P(X=5) = 2/6 = 1/3$.\n6. Plausibilitätscheck: $0,5 + 1/6 + 2/6 = 3/6 + 1/6 + 2/6 = 6/6 = 1$. Die Verteilung ist korrekt."
+        }
+      ],
+      "common_mistakes": [
+        "Verwechslung von Ergebnissen des Zufallsexperiments (z. B. 'Kopf/Zahl') mit den Werten der Zufallsgröße (z. B. '1/0').",
+        "Vergessen der Normierungsbedingung: Die Summe der Wahrscheinlichkeiten wird nicht auf 1 geprüft.",
+        "Fehlerhafte Definition des Wertebereichs: Werte, die eintreten können, aber die Wahrscheinlichkeit 0 haben, oder unmögliche Werte werden falsch zugeordnet."
+      ],
+      "exam_tips": [
+        "Prüfen Sie bei Tabellenaufgaben immer zuerst, ob die Summe der Wahrscheinlichkeiten 1 ergibt, um Rechenfehler frühzeitig zu finden.",
+        "Achten Sie auf Formulierungen wie 'mindestens' oder 'höchstens', um Teilwahrscheinlichkeiten korrekt zu summieren.",
+        "Skizzieren Sie bei unübersichtlichen Verteilungen ein kurzes Stabdiagramm, um die Lage des Erwartungswerts grob abzuschätzen."
+      ],
+      "recap": "Eine diskrete Zufallsgröße ordnet Ergebnissen Zahlenwerte zu. Ihre Verteilung ist durch die Einzelwahrscheinlichkeiten definiert, deren Summe stets 1 sein muss. Die grafische Darstellung erfolgt meist über Histogramme.",
+      "knowledge_claims": [
+        {
+          "claim_id": "claim_01",
+          "type": "definition",
+          "content": "Eine diskrete Zufallsgröße ordnet jedem Ergebnis eines Zufallsexperiments eine reelle Zahl zu und besitzt einen endlichen oder abzählbar unendlichen Wertebereich."
+        },
+        {
+          "claim_id": "claim_02",
+          "type": "rule",
+          "content": "Die Summe aller Wahrscheinlichkeiten $P(X=x_i)$ einer diskreten Zufallsgröße über ihren gesamten Wertebereich muss stets genau 1 ergeben."
+        },
+        {
+          "claim_id": "claim_03",
+          "type": "interpretation",
+          "content": "In einem Histogramm einer diskreten Zufallsgröße mit Säulenbreite 1 entspricht die Höhe einer Säule direkt der Wahrscheinlichkeit des entsprechenden Wertes."
+        },
+        {
+          "claim_id": "claim_04",
+          "type": "check",
+          "content": "Jede einzelne Wahrscheinlichkeit $P(X=x_i)$ einer Verteilung muss im abgeschlossenen Intervall zwischen 0 und 1 liegen."
+        },
+        {
+          "claim_id": "claim_05",
+          "type": "procedure",
+          "content": "Um eine unbekannte Wahrscheinlichkeit in einer Verteilungstabelle zu finden, subtrahiert man die Summe aller bekannten Wahrscheinlichkeiten von 1."
+        },
+        {
+          "claim_id": "claim_06",
+          "type": "recognition",
+          "content": "Eine Zufallsgröße ist binomialverteilt, wenn das zugrunde liegende Experiment eine Bernoulli-Kette ist (nur zwei Ausgänge, konstante Trefferwahrscheinlichkeit, Unabhängigkeit)."
+        },
+        {
+          "claim_id": "claim_07",
+          "type": "comparison",
+          "content": "Der Wertebereich einer Zufallsgröße unterscheidet sich von der Ergebnismenge des Zufallsexperiments dadurch, dass er ausschließlich numerische Werte enthält."
+        },
+        {
+          "claim_id": "claim_08",
+          "type": "application",
+          "content": "Die Wahrscheinlichkeit für ein Ereignis $A$ (z. B. $X > 2$) wird berechnet, indem man die Wahrscheinlichkeiten aller Werte $x_i$ addiert, die die Bedingung erfüllen."
+        },
+        {
+          "claim_id": "claim_09",
+          "type": "mistake",
+          "content": "Ein häufiger Fehler ist die Annahme einer Gleichverteilung (Laplace), obwohl die Sektoren oder Ergebnisse unterschiedliche physikalische Wahrscheinlichkeiten besitzen."
+        },
+        {
+          "claim_id": "claim_10",
+          "type": "interpretation",
+          "content": "Die Notation $P(X \\le k)$ beschreibt die kumulierte Wahrscheinlichkeitsverteilung, also die Summe der Wahrscheinlichkeiten von $x_{min}$ bis $k$."
+        },
+        {
+          "claim_id": "claim_11",
+          "type": "definition",
+          "content": "Die Wahrscheinlichkeitsfunktion einer diskreten Zufallsgröße ist die Zuordnungsvorschrift $x_i \\mapsto P(X=x_i)$."
+        },
+        {
+          "claim_id": "claim_12",
+          "type": "check",
+          "content": "Bei der Modellierung einer Zufallsgröße muss sichergestellt sein, dass jedem möglichen Ergebnis des Ergebnisraums genau ein Wert der Zufallsgröße zugeordnet ist."
+        }
+      ],
+      "visual_requests": [],
+      "visual_assets": []
+    },
+    "items": [
+      {
+        "id": 55002500,
+        "sourceQuestionId": "MAT-E3801225DE-02",
+        "topicId": 520026,
+        "type": "STUDENT_PRODUCED_RESPONSE",
+        "stem": "Zeigen Sie, dass etwa 9,18 % aller Haushalte überbelegt sind. 2 \nUnter allen Haushalten der Großstadt werden 1000 Haushalte zufällig ausgewählt. \nDie Zufallsgröße X beschreibt die Anzahl der überbelegten Haushalte in der Stichprobe \nund wird als binomialverteilt angenommen.",
+        "options": {},
+        "correctAnswer": "2 \ne Zwei Jahre später kann davon ausgegangen werden, dass in der Großstadt sich so-\nwohl der Anteil der Haushalte mit mindestens einem Kind als auch der Anteil der \nüberbelegten Haushalte an den Haushalten ohne Kind nicht verändert hat. \nDie Abbildung zeigt den Graphen der Funktion f mit \n( ) ( )\n( )\n0,285 0,159 xfx 0,285 0,159 x 0,715 0,065\n−=  − + \n und \n0 x 0,159 . \nBestimmen Sie grafisch \ndenjenigen Wert von x, \nfür den \n( )f x 0,4= gilt, \nund interpretieren Sie \ndiesen Wert von x so-\nwie den Funktionswert \nvon x im Sachzusam-\nmenhang. \n \n \n \n \n4 \n 15 \n2 Erwartungshorizont \nDer Erwartungshorizont stellt für jede Teilaufgabe eine mögliche Lösung dar. Nicht dargestellte \nkorrekte Lösungen sind als gleichwertig zu akzeptieren. \n BE \n a K: „Im Haushalt lebt mindestens ein Kind.“ \nB: „Der Haushalt ist überbelegt.“ \n3 \n b \n0,285 0,159 0,715 0,065 0,0918 +   2 \n c Wegen \n( )E X 1000 0,0918 91 ,8=  = ist die Aussage falsch. 2 \n d \n( )1000\n0,0918P X 103 0,8984 \n( )1000\n0,0918P X 104 0,9159\n \n4",
+        "explanation": "2 \ne Zwei Jahre später kann davon ausgegangen werden, dass in der Großstadt sich so-\nwohl der Anteil der Haushalte mit mindestens einem Kind als auch der Anteil der \nüberbelegten Haushalte an den Haushalten ohne Kind nicht verändert hat. \nDie Abbildung zeigt den Graphen der Funktion f mit \n( ) ( )\n( )\n0,285 0,159 xfx 0,285 0,159 x 0,715 0,065\n−=  − + \n und \n0 x 0,159 . \nBestimmen Sie grafisch \ndenjenigen Wert von x, \nfür den \n( )f x 0,4= gilt, \nund interpretieren Sie \ndiesen Wert von x so-\nwie den Funktionswert \nvon x im Sachzusam-\nmenhang. \n \n \n \n \n4 \n 15 \n2 Erwartungshorizont \nDer Erwartungshorizont stellt für jede Teilaufgabe eine mögliche Lösung dar. Nicht dargestellte \nkorrekte Lösungen sind als gleichwertig zu akzeptieren. \n BE \n a K: „Im Haushalt lebt mindestens ein Kind.“ \nB: „Der Haushalt ist überbelegt.“ \n3 \n b \n0,285 0,159 0,715 0,065 0,0918 +   2 \n c Wegen \n( )E X 1000 0,0918 91 ,8=  = ist die Aussage falsch. 2 \n d \n( )1000\n0,0918P X 103 0,8984 \n( )1000\n0,0918P X 104 0,9159\n \n4",
+        "userAnswer": null,
+        "isCorrect": -1
+      },
+      {
+        "id": 55002501,
+        "sourceQuestionId": "MAT-FFD8E279DC-01",
+        "topicId": 520026,
+        "type": "STUDENT_PRODUCED_RESPONSE",
+        "stem": "Die Abbildung 1 zeigt das Netz eines Würfels. \nDer Würfel wird 30-mal geworfen. Die Zufallsgröße \nX gibt an, wie oft die Zahl „4“ erzielt wird. \n Abb. 1\nBegründen Sie, dass X binomialverteilt mit dem Parameter 1\n3p = ist. 2",
+        "options": {},
+        "correctAnswer": "Bei jedem Wurf gibt es nur zwei mögliche Ergebnisse. Dabei tritt das Ergebnis „4“ \nmit der Wahrscheinlichkeit 1\n3 ein, da zwei der sechs Seiten des Würfels mit dieser \nZahl beschriftet sind. Jeder Wurf ist unabhängig von den anderen Würfen. \n2 \n b ( )1\n3\n30P X 16 2%≥≈ 2",
+        "explanation": "Bei jedem Wurf gibt es nur zwei mögliche Ergebnisse. Dabei tritt das Ergebnis „4“ \nmit der Wahrscheinlichkeit 1\n3 ein, da zwei der sechs Seiten des Würfels mit dieser \nZahl beschriftet sind. Jeder Wurf ist unabhängig von den anderen Würfen. \n2 \n b ( )1\n3\n30P X 16 2%≥≈ 2",
+        "userAnswer": null,
+        "isCorrect": -1
+      }
+    ],
+    "videoLesson": {
+      "title": "Lege Ergebnisraum fest und bestimme pX(k)",
+      "coverUrl": "https://solve-now.s3.us-west-2.amazonaws.com/german-abitur/atomic-videos-v2/ABITUR-MATHEMATIK-026/cover.png",
+      "playbackUrl": "https://solve-now.s3.us-west-2.amazonaws.com/german-abitur/atomic-videos-v2/ABITUR-MATHEMATIK-026/lesson.html",
+      "durationSeconds": 480,
+      "description": "Feingranulares IQB-basiertes Topic `Diskrete Zufallsgrößen und Wahrscheinlichkeitsverteilungen`; abgegrenzt durch: Werte und Wahrscheinlichkeiten einer Zufallsgröße angeben. Im Quellkorpus: 33 Aufgaben, davon 28 offizielle Pool- oder Beispielaufgaben."
+    }
+  },
+  "lastViewedQuestionId": null,
+  "lastViewedAt": null
+}

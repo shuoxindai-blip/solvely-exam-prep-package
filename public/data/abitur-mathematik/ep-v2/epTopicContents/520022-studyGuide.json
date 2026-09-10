@@ -1,0 +1,159 @@
+{
+  "epId": 500001,
+  "outlineId": 500002,
+  "topicGroupId": 510002,
+  "topicId": 520022,
+  "packageId": 5001,
+  "contentType": "studyGuide",
+  "contentStatus": "READY",
+  "generationId": "",
+  "progress": {
+    "totalCount": 2,
+    "completedCount": 0,
+    "items": {}
+  },
+  "platform": "system",
+  "payload": {
+    "content": {
+      "lesson_id": "ABITUR-MATHEMATIK-022",
+      "title": "Matrizen, Übergangsprozesse und Langzeitverhalten",
+      "overview": "Dieses Modul behandelt die mathematische Modellierung von zeitlich diskreten Zustandsänderungen mithilfe von Matrizen. Im Fokus stehen die Aufstellung von Übergangsmatrizen, die Berechnung von Zustandsvektoren sowie die Analyse des Langzeitverhaltens (Grenzverhalten).",
+      "learning_objectives": [
+        "Übergangsmatrizen aus Texten oder Diagrammen erstellen",
+        "Zustandsänderungen über mehrere Zeitschritte berechnen",
+        "Stationäre Zustände (Fixvektoren) identifizieren und berechnen",
+        "Die Bedeutung von Potenzen der Übergangsmatrix interpretieren"
+      ],
+      "sections": [
+        {
+          "title": "Grundlagen der Übergangsmatrizen",
+          "content": "Ein Übergangsprozess beschreibt, wie sich ein System zwischen verschiedenen Zuständen (z. B. Marktanteile, Populationen) entwickelt. Eine Übergangsmatrix M ist quadratisch. Der Eintrag m_ij gibt die Übergangswahrscheinlichkeit oder den Anteil an, der vom Zustand j zum Zustand i wechselt (Spalten-zu-Zeilen-Notation). Wichtig: Bei stochastischen Matrizen ist die Summe jeder Spalte stets 1, da die Gesamtheit des Systems erhalten bleibt."
+        },
+        {
+          "title": "Zustandsvektoren und Iteration",
+          "content": "Der aktuelle Zustand wird durch einen Vektor v_n dargestellt. Der Folgezustand v_{n+1} berechnet sich durch die Matrix-Vektor-Multiplikation: v_{n+1} = M * v_n. Für einen Zustand nach k Schritten gilt: v_k = M^k * v_0. Die Matrix M^k enthält in ihren Einträgen die Übergangsraten über genau k Zeitschritte."
+        },
+        {
+          "title": "Langzeitverhalten und stationärer Zustand",
+          "content": "Ein System erreicht einen stationären Zustand (Grenzverteilung), wenn sich der Zustandsvektor durch Anwendung der Matrix nicht mehr ändert. Es gilt die Fixpunktgleichung: M * x = x. Dies entspricht einem linearen Gleichungssystem (M - I) * x = 0, wobei I die Einheitsmatrix ist. Zusätzlich muss oft die Bedingung erfüllt sein, dass die Summe der Komponenten von x dem Gesamtwert (z. B. 100% oder Gesamtpopulation) entspricht."
+        }
+      ],
+      "worked_examples": [
+        {
+          "question": "Ein Markt wird von zwei Anbietern A und B beherrscht. Jedes Jahr wechseln 20% der Kunden von A zu B, während 10% von B zu A wechseln. Bestimmen Sie die Übergangsmatrix M und berechnen Sie die langfristige Marktverteilung.",
+          "solution": "1. Matrix aufstellen: Spalte 1 (von A): 0,8 bleibt bei A, 0,2 geht zu B. Spalte 2 (von B): 0,1 geht zu A, 0,9 bleibt bei B. M = [[0,8; 0,1], [0,2; 0,9]]. 2. Fixvektor-Ansatz: M * x = x führt zu: 0,8x + 0,1y = x und 0,2x + 0,9y = y. Beides vereinfacht sich zu -0,2x + 0,1y = 0, also y = 2x. 3. Normierung: Da x + y = 1 (100%), folgt x + 2x = 1 -> 3x = 1 -> x = 1/3 und y = 2/3. Langfristig hält A ca. 33,3% und B ca. 66,7% des Marktes."
+        }
+      ],
+      "common_mistakes": [
+        "Vertauschen von Zeilen und Spalten beim Aufstellen der Matrix (Spaltensumme muss 1 sein).",
+        "Vergessen der Normierungsbedingung (z. B. x + y + z = Gesamtmenge) beim Lösen des Fixvektors.",
+        "Annahme, dass jedes System einen stabilen Grenzwert besitzt (zyklisches Verhalten ist möglich)."
+      ],
+      "exam_tips": [
+        "Prüfen Sie immer, ob die Spaltensummen der Matrix 1 ergeben, um Rechenfehler beim Aufstellen auszuschließen.",
+        "Interpretieren Sie Potenzen: M^2 beschreibt den Übergang über zwei Zeitintervalle.",
+        "Nutzen Sie bei Aufgaben zum Langzeitverhalten das LGS (M - I)x = 0."
+      ],
+      "recap": "Übergangsmatrizen modellieren dynamische Systeme. Durch Multiplikation mit Zustandsvektoren werden Prognosen erstellt; der Fixvektor beschreibt das stabile Gleichgewicht des Systems.",
+      "knowledge_claims": [
+        {
+          "claim_id": "claim_01",
+          "type": "definition",
+          "content": "Eine Übergangsmatrix M beschreibt die Anteile oder Wahrscheinlichkeiten für den Wechsel zwischen Systemzuständen in diskreten Schritten."
+        },
+        {
+          "claim_id": "claim_02",
+          "type": "rule",
+          "content": "In einer stochastischen Übergangsmatrix muss die Summe der Einträge jeder Spalte genau 1 ergeben."
+        },
+        {
+          "claim_id": "claim_03",
+          "type": "formula",
+          "content": "Der Zustandsvektor nach einem Zeitschritt berechnet sich durch die Gleichung v_{n+1} = M * v_n."
+        },
+        {
+          "claim_id": "claim_04",
+          "type": "formula",
+          "content": "Der Zustand nach k Zeitschritten wird durch v_k = M^k * v_0 ermittelt."
+        },
+        {
+          "claim_id": "claim_05",
+          "type": "interpretation",
+          "content": "Der Eintrag in der i-ten Zeile und j-ten Spalte der Matrix M^k gibt die Wahrscheinlichkeit an, nach k Schritten von Zustand j in Zustand i zu gelangen."
+        },
+        {
+          "claim_id": "claim_06",
+          "type": "definition",
+          "content": "Ein stationärer Zustand (Fixvektor) ist ein Zustandsvektor x, für den die Bedingung M * x = x erfüllt ist."
+        },
+        {
+          "claim_id": "claim_07",
+          "type": "procedure",
+          "content": "Zur Berechnung des Fixvektors löst man das homogene lineare Gleichungssystem (M - I) * x = 0 unter Berücksichtigung der Summenbedingung."
+        },
+        {
+          "claim_id": "claim_08",
+          "type": "check",
+          "content": "Ein berechneter Fixvektor kann durch die Probe M * x = x auf Korrektheit überprüft werden."
+        },
+        {
+          "claim_id": "claim_09",
+          "type": "mistake",
+          "content": "Ein häufiger Fehler ist die falsche Multiplikationsreihenfolge; im Standardmodell steht die Matrix links vom Spaltenvektor."
+        },
+        {
+          "claim_id": "claim_10",
+          "type": "application",
+          "content": "Wenn eine Matrix M invertierbar ist, kann durch v_{n-1} = M^-1 * v_n der vorherige Zustand berechnet werden."
+        },
+        {
+          "claim_id": "claim_11",
+          "type": "recognition",
+          "content": "Ein System zeigt zyklisches Verhalten, wenn die Zustandsvektoren periodisch wiederkehren, ohne gegen einen festen Vektor zu konvergieren."
+        },
+        {
+          "claim_id": "claim_12",
+          "type": "comparison",
+          "content": "Im Gegensatz zu einem Fixvektor beschreibt ein Grenzvektor den Zustand, dem sich das System für n gegen Unendlich annähert."
+        }
+      ],
+      "visual_requests": [],
+      "visual_assets": []
+    },
+    "items": [
+      {
+        "id": 55002100,
+        "sourceQuestionId": "MAT-8244516AB3-03",
+        "topicId": 520022,
+        "type": "STUDENT_PRODUCED_RESPONSE",
+        "stem": "Interpretieren Sie die Bedeutung der zweiten Zeile der Matrix 2M im Sachzusam-\nmenhang. \n2 \n 5 \n \n1 verwendete Abkürzungen: AG/LA - Analytische Geometrie/Lineare Algebra, AG/LA (A1) - Analytische Geomet-\nrie/Lineare Algebra (Alternative A1), AG/LA (A2) - Analytische Geometrie/Lineare Algebra (Alternative A2)",
+        "options": {},
+        "correctAnswer": "An einem beliebigen Tag setzen sich die Nutzer der Kantine aus Essern des Fleisch-\ngerichts, des vegetarischen Gerichts und des Nudelgerichts zusammen. Mit dieser \nZusammensetzung liefert die zweite Zeile der Matrix 2M die Anzahl der Nutzer, die \nzwei Tage später das vegetarische Gericht auswählen. \n2",
+        "explanation": "An einem beliebigen Tag setzen sich die Nutzer der Kantine aus Essern des Fleisch-\ngerichts, des vegetarischen Gerichts und des Nudelgerichts zusammen. Mit dieser \nZusammensetzung liefert die zweite Zeile der Matrix 2M die Anzahl der Nutzer, die \nzwei Tage später das vegetarische Gericht auswählen. \n2",
+        "userAnswer": null,
+        "isCorrect": -1
+      },
+      {
+        "id": 55002101,
+        "sourceQuestionId": "MAT-8AED00292C-02",
+        "topicId": 520022,
+        "type": "STUDENT_PRODUCED_RESPONSE",
+        "stem": "Auf einer der Waldflächen erreichen innerhalb einer Wachstumsperiode 50 % der \nTannen der Größenklasse K die Größenklasse M und 10 % die Größenklasse G, 30 % \nverbleiben in der Größenklasse K. Von den Tannen der Größenklasse M erreichen \n55 % die Größenklasse G, 40 % verbleiben in der Größenklasse M. Der Anteil der \nTannen der Größenklasse G, die auch am Ende einer Wachstumsperiode noch in \ndieser Größenklasse enthalten sind, beträgt 98 %.\nErmitteln Sie ohne Verwendung von Matrizen den prozentualen Anteil der Tannen \nder Größenklasse K, die sich nach zwei Wachstumsperioden in der Größenklas-\nse G befinden. \n3 \n \n \n1 verwendete Abkürzungen: AG/LA - Analytische Geometrie/Lineare Algebra, AG/LA (A1) - Analytische Geomet-\nrie/Lineare Algebra (Alternative A1), AG/LA (A2) - Analytische Geometrie/Lineare Algebra (Alternative A2)",
+        "options": {},
+        "correctAnswer": "3 \n2 Erwartungshorizont \nDer Erwartungshorizont stellt für jede Teilaufgabe dar, in welchem Umfang und in welcher \nForm eine Lösung erwartet wird; nicht alle Lösungen sind dazu vollständig ausgeführt. Nicht \ndargestellte korrekte Lösungen sind als gleichwertig zu akzeptieren. \n BE \n1 a \n \n3 \n b 0,3 0,1 0,5 0,55 0,1 0,98 40,3 %⋅+ ⋅ +⋅ = 3 \n2 a Im Vergleich zum Wachstumsverhalten der in Aufgabe 1 betrachteten Tannen ver-\nbleiben von den Tannen auf dieser Waldfläche innerhalb einer Wachstumsperiode \nweniger in der Größenklasse K, während ein größerer Anteil der Tannen in die \nGrößenklasse M übergeht. Einen direkten Übergang von der Größenklasse K in die \nGrößenklasse G gibt es auf dieser Waldfläche nicht. \n2 \n b \nMit \n0, 25 0 0\nA 0,7 0,55 0\n0 0, 4 0,95\n\n= \n ergibt sich: 2\n450 28\nA 4230 1532\n5320 7465\n  \n  ⋅≈      \n \nZwei Wachstumsperioden nach der Bestandsaufnahme sind etwa 28 Tannen in der \nGrößenklasse K, 1532 in der Größenklasse M und 7465 in der Größenklasse G \nenthalten. \n2 \n c \n2\nk 450\nA m 4230\ng 5320\n \n ⋅=   \n liefert \nk 7200\nm 655\ng 3226\n \n  ≈   \n. \nZwei Wachstumsperioden vor der Bestandsaufnahme waren etwa 7200 Tannen in \nder Größenklasse K, 655 in der Größenklasse M und 3226 in der Größenklasse G \nenthalten. \n3 \n d k 0, 25 k\nA m 0,7 k 0,55 m\ng 0, 4 m 0,95 g\n⋅ \n ⋅ = ⋅+ ⋅  ⋅+ ⋅ \n \n( )0, 25 k 0,7 k 0,55 m 0, 4 m 0,95 g 0,95 k m g⋅+ ⋅+ ⋅ + ⋅ + ⋅= ⋅ + + \nAm Ende der Wachstumsperiode sind noch 95 % der Tannen erhalten, die Anzahl \nder Tannen hat also um 5 % abgenommen. \n3",
+        "explanation": "3 \n2 Erwartungshorizont \nDer Erwartungshorizont stellt für jede Teilaufgabe dar, in welchem Umfang und in welcher \nForm eine Lösung erwartet wird; nicht alle Lösungen sind dazu vollständig ausgeführt. Nicht \ndargestellte korrekte Lösungen sind als gleichwertig zu akzeptieren. \n BE \n1 a \n \n3 \n b 0,3 0,1 0,5 0,55 0,1 0,98 40,3 %⋅+ ⋅ +⋅ = 3 \n2 a Im Vergleich zum Wachstumsverhalten der in Aufgabe 1 betrachteten Tannen ver-\nbleiben von den Tannen auf dieser Waldfläche innerhalb einer Wachstumsperiode \nweniger in der Größenklasse K, während ein größerer Anteil der Tannen in die \nGrößenklasse M übergeht. Einen direkten Übergang von der Größenklasse K in die \nGrößenklasse G gibt es auf dieser Waldfläche nicht. \n2 \n b \nMit \n0, 25 0 0\nA 0,7 0,55 0\n0 0, 4 0,95\n\n= \n ergibt sich: 2\n450 28\nA 4230 1532\n5320 7465\n  \n  ⋅≈      \n \nZwei Wachstumsperioden nach der Bestandsaufnahme sind etwa 28 Tannen in der \nGrößenklasse K, 1532 in der Größenklasse M und 7465 in der Größenklasse G \nenthalten. \n2 \n c \n2\nk 450\nA m 4230\ng 5320\n \n ⋅=   \n liefert \nk 7200\nm 655\ng 3226\n \n  ≈   \n. \nZwei Wachstumsperioden vor der Bestandsaufnahme waren etwa 7200 Tannen in \nder Größenklasse K, 655 in der Größenklasse M und 3226 in der Größenklasse G \nenthalten. \n3 \n d k 0, 25 k\nA m 0,7 k 0,55 m\ng 0, 4 m 0,95 g\n⋅ \n ⋅ = ⋅+ ⋅  ⋅+ ⋅ \n \n( )0, 25 k 0,7 k 0,55 m 0, 4 m 0,95 g 0,95 k m g⋅+ ⋅+ ⋅ + ⋅ + ⋅= ⋅ + + \nAm Ende der Wachstumsperiode sind noch 95 % der Tannen erhalten, die Anzahl \nder Tannen hat also um 5 % abgenommen. \n3",
+        "userAnswer": null,
+        "isCorrect": -1
+      }
+    ],
+    "videoLesson": {
+      "title": "Bestimme die stationäre Verteilung in drei Schritten",
+      "coverUrl": "https://solve-now.s3.us-west-2.amazonaws.com/german-abitur/atomic-videos-v2/ABITUR-MATHEMATIK-022/cover.png",
+      "playbackUrl": "https://solve-now.s3.us-west-2.amazonaws.com/german-abitur/atomic-videos-v2/ABITUR-MATHEMATIK-022/lesson.html",
+      "durationSeconds": 480,
+      "description": "Feingranulares IQB-basiertes Topic `Matrizen, Übergangsprozesse und Langzeitverhalten`; abgegrenzt durch: Zustandsvektoren und Übergangsmatrizen deuten. Im Quellkorpus: 51 Aufgaben, davon 51 offizielle Pool- oder Beispielaufgaben."
+    }
+  },
+  "lastViewedQuestionId": null,
+  "lastViewedAt": null
+}

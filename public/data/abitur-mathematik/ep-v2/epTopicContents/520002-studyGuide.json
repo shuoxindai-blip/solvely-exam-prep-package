@@ -1,0 +1,163 @@
+{
+  "epId": 500001,
+  "outlineId": 500002,
+  "topicGroupId": 510001,
+  "topicId": 520002,
+  "packageId": 5001,
+  "contentType": "studyGuide",
+  "contentStatus": "READY",
+  "generationId": "",
+  "progress": {
+    "totalCount": 2,
+    "completedCount": 0,
+    "items": {}
+  },
+  "platform": "system",
+  "payload": {
+    "content": {
+      "lesson_id": "ABITUR-MATHEMATIK-002",
+      "title": "Symmetrie, Periodizität und Grapheneigenschaften",
+      "overview": "Diese Lektion behandelt die Untersuchung von Funktionen auf Symmetrie (Achsen- und Punktsymmetrie), Periodizität sowie die Identifikation globaler Grapheneigenschaften. Diese Merkmale sind essenziell für die Kurvendiskussion und die effiziente Lösung von Analysis-Aufgaben im Abitur.",
+      "learning_objectives": [
+        "Achsensymmetrie zur y-Achse und Punktsymmetrie zum Ursprung rechnerisch nachweisen.",
+        "Symmetrieeigenschaften bei ganzrationalen Funktionen anhand der Exponenten erkennen.",
+        "Die Periodizität trigonometrischer Funktionen bestimmen und interpretieren.",
+        "Globale Grapheneigenschaften (z. B. Symmetriezentren) begründen und zur Problemlösung nutzen."
+      ],
+      "sections": [
+        {
+          "title": "Achsensymmetrie zur y-Achse",
+          "content": "Ein Funktionsgraph ist achsensymmetrisch zur y-Achse, wenn für alle x des Definitionsbereichs gilt: f(-x) = f(x). Bei ganzrationalen Funktionen tritt dies genau dann auf, wenn ausschließlich gerade Exponenten (einschließlich des konstanten Gliedes x^0) vorkommen. Geometrisch bedeutet dies, dass jeder Punkt (x|y) durch Spiegelung an der y-Achse auf den Punkt (-x|y) abgebildet wird."
+        },
+        {
+          "title": "Punktsymmetrie zum Koordinatenursprung",
+          "content": "Ein Funktionsgraph ist punktsymmetrisch zum Ursprung (0|0), wenn für alle x gilt: f(-x) = -f(x). Bei ganzrationalen Funktionen besitzen alle Terme ausschließlich ungerade Exponenten (kein konstantes Glied). Geometrisch entspricht dies einer Drehung des Graphen um 180 Grad um den Ursprung; der Punkt (x|y) wird auf (-x|-y) abgebildet."
+        },
+        {
+          "title": "Periodizität",
+          "content": "Eine Funktion f heißt periodisch mit der Periode p > 0, wenn für alle x gilt: f(x + p) = f(x). Besonders relevant sind Sinus- und Kosinusfunktionen der Form f(x) = a * sin(b * (x - c)) + d. Hierbei berechnet sich die Periode durch p = 2π / |b|. Die Amplitude wird durch |a| bestimmt, während d die Mittellinie (Verschiebung in y-Richtung) angibt."
+        },
+        {
+          "title": "Globale Grapheneigenschaften und Begründungen",
+          "content": "Im Abitur wird oft verlangt, Symmetrie nicht nur zu berechnen, sondern anhand von Graphen oder Funktionstermen zu begründen. Ein Widerspruch zur Symmetrie kann durch ein Gegenbeispiel (z. B. f(1) ≠ f(-1)) erbracht werden. Bei Ableitungsfunktionen f'(x) führt die Symmetrie von f(x) zu einer korrespondierenden Symmetrie: Ist f achsensymmetrisch zur y-Achse, so ist f' punktsymmetrisch zum Ursprung."
+        }
+      ],
+      "worked_examples": [
+        {
+          "question": "Gegeben ist die Funktion f mit f(x) = x^3 - 4x. Begründen Sie die Symmetrie des Graphen und zeigen Sie, dass der Punkt P(2|0) auf dem Graphen liegt. Folgern Sie daraus einen weiteren Punkt Q, der aufgrund der Symmetrie auf dem Graphen liegen muss.",
+          "solution": "1. Symmetrie-Check: Der Funktionsterm f(x) = x^3 - 4x^1 enthält nur ungerade Exponenten (3 und 1). Daher ist der Graph punktsymmetrisch zum Koordinatenursprung (0|0). Rechnerischer Nachweis: f(-x) = (-x)^3 - 4(-x) = -x^3 + 4x = -(x^3 - 4x) = -f(x). 2. Punktprobe P: f(2) = 2^3 - 4(2) = 8 - 8 = 0. P(2|0) liegt auf dem Graphen. 3. Folgerung Q: Aufgrund der Punktsymmetrie zum Ursprung gilt: Wenn (x|y) auf dem Graphen liegt, liegt auch (-x|-y) darauf. Für P(2|0) ergibt sich Q(-2|-0), also Q(-2|0)."
+        }
+      ],
+      "common_mistakes": [
+        "Konstante Glieder vergessen: Bei f(x) = x^2 + 5 wird die 5 oft als 'kein Exponent' übersehen. Sie entspricht 5*x^0 (gerader Exponent), also bleibt die Achsensymmetrie erhalten.",
+        "Mischformen: Funktionen wie f(x) = x^2 + x besitzen weder Achsen- noch Punktsymmetrie zum Ursprung. Schüler versuchen oft fälschlicherweise, eine Symmetrie zu erzwingen.",
+        "Periodenberechnung: Der Faktor b in sin(bx) wird oft direkt als Periode bezeichnet, anstatt p = 2π/b zu rechnen."
+      ],
+      "exam_tips": [
+        "Nutzen Sie bei Begründungsaufgaben das Argument der 'ausschließlich geraden/ungeraden Exponenten' für ganzrationale Funktionen; das spart Zeit gegenüber dem formalen Nachweis f(-x) = +/- f(x).",
+        "Achten Sie auf den Definitionsbereich. Eine Symmetrie des Terms nützt nichts, wenn der Definitionsbereich nicht symmetrisch zur Null ist (z. B. D = [0; 10]).",
+        "Skizzieren Sie bei Unsicherheit markante Punkte (z. B. Hochpunkte), um Symmetriehypothesen visuell zu prüfen."
+      ],
+      "recap": "Symmetrie wird durch f(-x) = f(x) (Achse) oder f(-x) = -f(x) (Punkt) definiert. Bei Sinusfunktionen bestimmt der Faktor vor dem x die Periode (p=2π/b). Diese Eigenschaften erlauben Rückschlüsse auf Funktionswerte, Nullstellen und Extrempunkte.",
+      "knowledge_claims": [
+        {
+          "claim_id": "claim_01",
+          "type": "definition",
+          "content": "Achsensymmetrie zur y-Achse liegt vor, wenn für alle x im Definitionsbereich die Bedingung f(-x) = f(x) erfüllt ist."
+        },
+        {
+          "claim_id": "claim_02",
+          "type": "definition",
+          "content": "Punktsymmetrie zum Koordinatenursprung liegt vor, wenn für alle x im Definitionsbereich die Bedingung f(-x) = -f(x) erfüllt ist."
+        },
+        {
+          "claim_id": "claim_03",
+          "type": "rule",
+          "content": "Eine ganzrationale Funktion ist achsensymmetrisch zur y-Achse, wenn ihr Funktionsterm ausschließlich gerade Exponenten (einschließlich x^0) enthält."
+        },
+        {
+          "claim_id": "claim_04",
+          "type": "rule",
+          "content": "Eine ganzrationale Funktion ist punktsymmetrisch zum Ursprung, wenn ihr Funktionsterm ausschließlich ungerade Exponenten enthält."
+        },
+        {
+          "claim_id": "claim_05",
+          "type": "formula",
+          "content": "Die Periode p einer trigonometrischen Funktion der Form f(x) = a * sin(b * x + c) + d berechnet sich durch p = 2π / |b|."
+        },
+        {
+          "claim_id": "claim_06",
+          "type": "interpretation",
+          "content": "Die Amplitude einer Sinusfunktion f(x) = a * sin(b * x) entspricht dem Betrag des Faktors a und gibt die maximale Auslenkung von der Mittellinie an."
+        },
+        {
+          "claim_id": "claim_07",
+          "type": "mistake",
+          "content": "Ein konstantes Glied in einer ganzrationalen Funktion (z. B. +3) verhindert die Punktsymmetrie zum Ursprung, da es einem geraden Exponenten (x^0) entspricht."
+        },
+        {
+          "claim_id": "claim_08",
+          "type": "check",
+          "content": "Um Symmetrie zum Ursprung zu widerlegen, genügt der Nachweis eines x-Wertes, für den f(-x) ungleich -f(x) ist."
+        },
+        {
+          "claim_id": "claim_09",
+          "type": "comparison",
+          "content": "Ist eine Funktion f achsensymmetrisch zur y-Achse, so ist ihre Ableitungsfunktion f' punktsymmetrisch zum Ursprung."
+        },
+        {
+          "claim_id": "claim_10",
+          "type": "application",
+          "content": "Bei einer punktsymmetrischen Funktion zum Ursprung muss, sofern 0 im Definitionsbereich liegt, f(0) = 0 gelten."
+        },
+        {
+          "claim_id": "claim_11",
+          "type": "recognition",
+          "content": "Die Mittellinie einer verschobenen Sinusfunktion f(x) = sin(x) + d liegt auf der horizontalen Geraden y = d."
+        },
+        {
+          "claim_id": "claim_12",
+          "type": "procedure",
+          "content": "Zur rechnerischen Prüfung der Symmetrie ersetzt man im Funktionsterm jedes x durch (-x) und vereinfacht den Ausdruck, um ihn mit f(x) oder -f(x) zu vergleichen."
+        }
+      ],
+      "visual_requests": [],
+      "visual_assets": []
+    },
+    "items": [
+      {
+        "id": 55000100,
+        "sourceQuestionId": "MAT-8B83D341F0-05",
+        "topicId": 520002,
+        "type": "STUDENT_PRODUCED_RESPONSE",
+        "stem": "Die Abbildung zeigt den Graphen der in IR \ndefinierten Funktion + x\n4\n1ef:x  . \nDer Graph ist symmetrisch bezüglich seines \nWendepunkts ( )0|2 .\nBeurteilen Sie die folgende Aussage: \nDer Graph von F verläuft vollständig unterhalb der x-Achse.",
+        "options": {},
+        "correctAnswer": "3 \n2 Erwartungshorizont \nDer Erwartungshorizont stellt für jede Teilaufgabe eine mögliche Lösung dar. Nicht dargestellte \nkorrekte Lösungen sind als gleichwertig zu akzeptieren. \n BE \n1 a f hat keine Nullstelle, da der Funktionsterm von f als Bruch mit dem Zähler 4 gege-\nben ist. \n( )\n→ −∞\n=\nx\nlim f x 4 , ( )\n→ +∞\n=\nx\nlim f x 0 \n3 \n b ( ) ( )\n( )\n−−\n−− ≈−\nf1 f 1\n11 0,92 \nSteigung des Graphen im Wendepunkt: etwa −1 \n5 \n c Der Graph von ′f ist symmetrisch bezüglich der y-Achse. \n \n3 \n d \n( ) ( )⋅ +−\n+ ++\n′ = − ⋅= =\nxx\nx xx\n4 e 1 4ex44\ne1 e1 e1Fx 4 e 3 \n e Die Aussage ist richtig, da ( )−⋅ + < −⋅ =xx4x 4 ln e 1 4x 4 lne 0 gilt. 3 \n f Aufgrund der Symmetrie des Graphen von f haben die beiden Flächenstücke, die \nder Graph von f und die Gerade mit der Gleichung =y2 für −≤ ≤kx0 bzw. für\n≤≤0xk einschließen, den gleichen Inhalt. Damit stimmt der Wert des Integrals \nmit dem Flächeninhalt eines Rechtecks mit den Seitenlängen 2k und 2 überein. \nWert des Integrals: 4k \n4 \n2 a =c0 gehört zu I, da die Funktionswerte von a;b;0w konstant sind, =c1 zu II, da \n→+∞\n=a;b;1x\nlim w 0 gilt. Damit gehört = −c1 zu III. \n4 \n b Es wurden 20 Seeadler angesiedelt. \n( ) −⋅ −⋅= ⇔+ = ⇔ = 0,2 x 0,2 x5 1\n44w x 32 1 e e liefert ≈x7 , d. h. die Anzahl der See-\nadler ist nach etwa sieben Jahren auf 32 angewachsen. \n4 \n c ( ) ≈w 4 27, 6 \nBei Beschreibung der Entwicklung mithilfe der Tangente ergeben sich für den ge-\nnannten Zeitpunkt +⋅=20 2 4 28 Seeadler und damit etwa die gleiche Anzahl. \n3",
+        "explanation": "3 \n2 Erwartungshorizont \nDer Erwartungshorizont stellt für jede Teilaufgabe eine mögliche Lösung dar. Nicht dargestellte \nkorrekte Lösungen sind als gleichwertig zu akzeptieren. \n BE \n1 a f hat keine Nullstelle, da der Funktionsterm von f als Bruch mit dem Zähler 4 gege-\nben ist. \n( )\n→ −∞\n=\nx\nlim f x 4 , ( )\n→ +∞\n=\nx\nlim f x 0 \n3 \n b ( ) ( )\n( )\n−−\n−− ≈−\nf1 f 1\n11 0,92 \nSteigung des Graphen im Wendepunkt: etwa −1 \n5 \n c Der Graph von ′f ist symmetrisch bezüglich der y-Achse. \n \n3 \n d \n( ) ( )⋅ +−\n+ ++\n′ = − ⋅= =\nxx\nx xx\n4 e 1 4ex44\ne1 e1 e1Fx 4 e 3 \n e Die Aussage ist richtig, da ( )−⋅ + < −⋅ =xx4x 4 ln e 1 4x 4 lne 0 gilt. 3 \n f Aufgrund der Symmetrie des Graphen von f haben die beiden Flächenstücke, die \nder Graph von f und die Gerade mit der Gleichung =y2 für −≤ ≤kx0 bzw. für\n≤≤0xk einschließen, den gleichen Inhalt. Damit stimmt der Wert des Integrals \nmit dem Flächeninhalt eines Rechtecks mit den Seitenlängen 2k und 2 überein. \nWert des Integrals: 4k \n4 \n2 a =c0 gehört zu I, da die Funktionswerte von a;b;0w konstant sind, =c1 zu II, da \n→+∞\n=a;b;1x\nlim w 0 gilt. Damit gehört = −c1 zu III. \n4 \n b Es wurden 20 Seeadler angesiedelt. \n( ) −⋅ −⋅= ⇔+ = ⇔ = 0,2 x 0,2 x5 1\n44w x 32 1 e e liefert ≈x7 , d. h. die Anzahl der See-\nadler ist nach etwa sieben Jahren auf 32 angewachsen. \n4 \n c ( ) ≈w 4 27, 6 \nBei Beschreibung der Entwicklung mithilfe der Tangente ergeben sich für den ge-\nnannten Zeitpunkt +⋅=20 2 4 28 Seeadler und damit etwa die gleiche Anzahl. \n3",
+        "userAnswer": null,
+        "isCorrect": -1
+      },
+      {
+        "id": 55000101,
+        "sourceQuestionId": "MAT-8B83D341F0-06",
+        "topicId": 520002,
+        "type": "STUDENT_PRODUCED_RESPONSE",
+        "stem": "Die Abbildung zeigt den Graphen der in IR \ndefinierten Funktion + x\n4\n1ef:x  . \nDer Graph ist symmetrisch bezüglich seines \nWendepunkts ( )0|2 .\nBegründen Sie, dass der Wert des Integrals ( )\n−\n∫\nk\nk\nf x dx für jede positive reelle \nZahl k ohne Verwendung einer Stammfunktion von f exakt bestimmt werden kann, \nund geben Sie den Wert des Integrals an.",
+        "options": {},
+        "correctAnswer": "3 \n2 Erwartungshorizont \nDer Erwartungshorizont stellt für jede Teilaufgabe eine mögliche Lösung dar. Nicht dargestellte \nkorrekte Lösungen sind als gleichwertig zu akzeptieren. \n BE \n1 a f hat keine Nullstelle, da der Funktionsterm von f als Bruch mit dem Zähler 4 gege-\nben ist. \n( )\n→ −∞\n=\nx\nlim f x 4 , ( )\n→ +∞\n=\nx\nlim f x 0 \n3 \n b ( ) ( )\n( )\n−−\n−− ≈−\nf1 f 1\n11 0,92 \nSteigung des Graphen im Wendepunkt: etwa −1 \n5 \n c Der Graph von ′f ist symmetrisch bezüglich der y-Achse. \n \n3 \n d \n( ) ( )⋅ +−\n+ ++\n′ = − ⋅= =\nxx\nx xx\n4 e 1 4ex44\ne1 e1 e1Fx 4 e 3 \n e Die Aussage ist richtig, da ( )−⋅ + < −⋅ =xx4x 4 ln e 1 4x 4 lne 0 gilt. 3 \n f Aufgrund der Symmetrie des Graphen von f haben die beiden Flächenstücke, die \nder Graph von f und die Gerade mit der Gleichung =y2 für −≤ ≤kx0 bzw. für\n≤≤0xk einschließen, den gleichen Inhalt. Damit stimmt der Wert des Integrals \nmit dem Flächeninhalt eines Rechtecks mit den Seitenlängen 2k und 2 überein. \nWert des Integrals: 4k \n4 \n2 a =c0 gehört zu I, da die Funktionswerte von a;b;0w konstant sind, =c1 zu II, da \n→+∞\n=a;b;1x\nlim w 0 gilt. Damit gehört = −c1 zu III. \n4 \n b Es wurden 20 Seeadler angesiedelt. \n( ) −⋅ −⋅= ⇔+ = ⇔ = 0,2 x 0,2 x5 1\n44w x 32 1 e e liefert ≈x7 , d. h. die Anzahl der See-\nadler ist nach etwa sieben Jahren auf 32 angewachsen. \n4 \n c ( ) ≈w 4 27, 6 \nBei Beschreibung der Entwicklung mithilfe der Tangente ergeben sich für den ge-\nnannten Zeitpunkt +⋅=20 2 4 28 Seeadler und damit etwa die gleiche Anzahl. \n3",
+        "explanation": "3 \n2 Erwartungshorizont \nDer Erwartungshorizont stellt für jede Teilaufgabe eine mögliche Lösung dar. Nicht dargestellte \nkorrekte Lösungen sind als gleichwertig zu akzeptieren. \n BE \n1 a f hat keine Nullstelle, da der Funktionsterm von f als Bruch mit dem Zähler 4 gege-\nben ist. \n( )\n→ −∞\n=\nx\nlim f x 4 , ( )\n→ +∞\n=\nx\nlim f x 0 \n3 \n b ( ) ( )\n( )\n−−\n−− ≈−\nf1 f 1\n11 0,92 \nSteigung des Graphen im Wendepunkt: etwa −1 \n5 \n c Der Graph von ′f ist symmetrisch bezüglich der y-Achse. \n \n3 \n d \n( ) ( )⋅ +−\n+ ++\n′ = − ⋅= =\nxx\nx xx\n4 e 1 4ex44\ne1 e1 e1Fx 4 e 3 \n e Die Aussage ist richtig, da ( )−⋅ + < −⋅ =xx4x 4 ln e 1 4x 4 lne 0 gilt. 3 \n f Aufgrund der Symmetrie des Graphen von f haben die beiden Flächenstücke, die \nder Graph von f und die Gerade mit der Gleichung =y2 für −≤ ≤kx0 bzw. für\n≤≤0xk einschließen, den gleichen Inhalt. Damit stimmt der Wert des Integrals \nmit dem Flächeninhalt eines Rechtecks mit den Seitenlängen 2k und 2 überein. \nWert des Integrals: 4k \n4 \n2 a =c0 gehört zu I, da die Funktionswerte von a;b;0w konstant sind, =c1 zu II, da \n→+∞\n=a;b;1x\nlim w 0 gilt. Damit gehört = −c1 zu III. \n4 \n b Es wurden 20 Seeadler angesiedelt. \n( ) −⋅ −⋅= ⇔+ = ⇔ = 0,2 x 0,2 x5 1\n44w x 32 1 e e liefert ≈x7 , d. h. die Anzahl der See-\nadler ist nach etwa sieben Jahren auf 32 angewachsen. \n4 \n c ( ) ≈w 4 27, 6 \nBei Beschreibung der Entwicklung mithilfe der Tangente ergeben sich für den ge-\nnannten Zeitpunkt +⋅=20 2 4 28 Seeadler und damit etwa die gleiche Anzahl. \n3",
+        "userAnswer": null,
+        "isCorrect": -1
+      }
+    ],
+    "videoLesson": {
+      "title": "Prüfe Parität, finde Periode, bestimme Nullstelle und Maximum",
+      "coverUrl": "https://solve-now.s3.us-west-2.amazonaws.com/german-abitur/atomic-videos-v2/ABITUR-MATHEMATIK-002/cover.png",
+      "playbackUrl": "https://solve-now.s3.us-west-2.amazonaws.com/german-abitur/atomic-videos-v2/ABITUR-MATHEMATIK-002/lesson.html",
+      "durationSeconds": 480,
+      "description": "Feingranulares IQB-basiertes Topic `Symmetrie, Periodizität und Grapheneigenschaften`; abgegrenzt durch: Symmetrie, Periodizität und globale Grapheneigenschaften begründen. Im Quellkorpus: 61 Aufgaben, davon 56 offizielle Pool- oder Beispielaufgaben."
+    }
+  },
+  "lastViewedQuestionId": null,
+  "lastViewedAt": null
+}

@@ -1,0 +1,159 @@
+{
+  "epId": 500001,
+  "outlineId": 500002,
+  "topicGroupId": 510001,
+  "topicId": 520006,
+  "packageId": 5001,
+  "contentType": "studyGuide",
+  "contentStatus": "READY",
+  "generationId": "",
+  "progress": {
+    "totalCount": 2,
+    "completedCount": 0,
+    "items": {}
+  },
+  "platform": "system",
+  "payload": {
+    "content": {
+      "lesson_id": "ABITUR-MATHEMATIK-006",
+      "title": "Ableitung, Tangente und Normale",
+      "overview": "Dieses Modul behandelt die Grundlagen der Differentialrechnung mit Fokus auf die geometrische Interpretation der Ableitung als lokale Änderungsrate sowie die Berechnung von Tangenten- und Normalengleichungen an Funktionsgraphen.",
+      "learning_objectives": [
+        "Die Ableitung an einer Stelle als lokale Änderungsrate und Tangentensteigung interpretieren.",
+        "Gleichungen von Tangenten an einem gegebenen Punkt aufstellen.",
+        "Gleichungen von Normalen unter Verwendung der Orthogonalitätsbedingung bestimmen.",
+        "Schnittwinkel von Tangenten mit den Koordinatenachsen berechnen."
+      ],
+      "sections": [
+        {
+          "title": "Die Ableitung als lokale Änderungsrate",
+          "content": "Die Ableitung f'(x) einer Funktion f an der Stelle x_0 gibt die lokale (momentane) Änderungsrate des Funktionswertes an. Geometrisch entspricht dies der Steigung m der Tangente an den Graphen von f im Punkt P(x_0 | f(x_0)). In Sachzusammenhängen beschreibt die Ableitung oft physikalische oder biologische Raten, wie etwa die Wachstumsrate einer Pflanze (cm/Woche) oder die Geschwindigkeit (m/s) als Ableitung des Weges nach der Zeit."
+        },
+        {
+          "title": "Tangente und Normale",
+          "content": "Eine Tangente berührt den Graphen in einem Punkt P(x_0 | y_0) und hat dort dieselbe Steigung wie die Funktion: m_t = f'(x_0). Die Tangentengleichung lautet in der Punkt-Steigungs-Form: t(x) = f'(x_0) * (x - x_0) + f(x_0). Eine Normale steht senkrecht (orthogonal) auf der Tangente im Berührpunkt. Für ihre Steigung m_n gilt die Bedingung m_t * m_n = -1, woraus folgt: m_n = -1 / f'(x_0) (sofern f'(x_0) ≠ 0). Die Normalengleichung lautet entsprechend: n(x) = (-1 / f'(x_0)) * (x - x_0) + f(x_0)."
+        },
+        {
+          "title": "Winkelberechnungen",
+          "content": "Der Steigungswinkel α einer Tangente (oder einer beliebigen Geraden) gegenüber der positiven x-Achse wird über die Beziehung tan(α) = m berechnet. Daraus folgt α = arctan(m). Ist die Steigung negativ, ergibt der Taschenrechner einen negativen Winkel, zu dem 180° addiert werden können, um den Winkel zur positiven x-Achse im Bereich [0°; 180°[ anzugeben."
+        }
+      ],
+      "worked_examples": [
+        {
+          "question": "Gegeben ist die Funktion f(x) = 0,5x² - 2x + 3. Bestimmen Sie die Gleichungen der Tangente und der Normale im Punkt P(4 | f(4)). Berechnen Sie zudem den Schnittwinkel der Tangente mit der x-Achse.",
+          "solution": "1. Punkt berechnen: f(4) = 0,5*(4)² - 2*(4) + 3 = 8 - 8 + 3 = 3. Der Punkt ist P(4|3).\n2. Ableitung bilden: f'(x) = x - 2.\n3. Tangentensteigung: m_t = f'(4) = 4 - 2 = 2.\n4. Tangentengleichung: t(x) = 2 * (x - 4) + 3 = 2x - 8 + 3 = 2x - 5.\n5. Normalensteigung: m_n = -1 / m_t = -1/2 = -0,5.\n6. Normalengleichung: n(x) = -0,5 * (x - 4) + 3 = -0,5x + 2 + 3 = -0,5x + 5.\n7. Schnittwinkel: tan(α) = 2 => α = arctan(2) ≈ 63,43°.\nCheck: Da m_t positiv ist, muss α zwischen 0° und 90° liegen. 63,43° ist plausibel."
+        }
+      ],
+      "common_mistakes": [
+        "Verwechslung von f(x_0) und f'(x_0): f(x_0) ist der y-Wert (Position), f'(x_0) ist die Steigung.",
+        "Vorzeichenfehler bei der Normalensteigung: Vergessen des Minuszeichens bei m_n = -1/m.",
+        "Bogenmaß vs. Gradmaß: Beim Berechnen des Winkels mit arctan muss der Taschenrechner auf 'DEG' stehen, falls Grad gefragt sind."
+      ],
+      "exam_tips": [
+        "Waagerechte Tangenten: Diese treten dort auf, wo f'(x) = 0 gilt (notwendige Bedingung für Extrema).",
+        "Einheiten beachten: In Sachaufgaben hat die Ableitung immer die Einheit [y-Einheit] pro [x-Einheit].",
+        "Skizze nutzen: Eine kurze Skizze hilft zu prüfen, ob die berechnete Tangente grafisch zum Verlauf der Funktion passt."
+      ],
+      "recap": "Die Ableitung f'(x_0) liefert die Steigung der Tangente. Die Normale ist die Senkrechte dazu mit der Steigung -1/f'(x_0). Beide Geraden gehen durch den Punkt (x_0 | f(x_0)).",
+      "knowledge_claims": [
+        {
+          "claim_id": "claim_01",
+          "type": "interpretation",
+          "content": "Die Ableitung f'(x_0) entspricht geometrisch der Steigung der Tangente an den Graphen von f im Punkt (x_0 | f(x_0))."
+        },
+        {
+          "claim_id": "claim_02",
+          "type": "definition",
+          "content": "Die lokale Änderungsrate einer Größe an einer Stelle x_0 wird mathematisch durch den Wert der ersten Ableitung f'(x_0) beschrieben."
+        },
+        {
+          "claim_id": "claim_03",
+          "type": "formula",
+          "content": "Die Tangentengleichung in Punkt-Steigungs-Form lautet t(x) = f'(x_0) * (x - x_0) + f(x_0)."
+        },
+        {
+          "claim_id": "claim_04",
+          "type": "rule",
+          "content": "Zwei Geraden mit den Steigungen m1 und m2 stehen genau dann senkrecht aufeinander, wenn das Produkt ihrer Steigungen m1 * m2 = -1 ergibt."
+        },
+        {
+          "claim_id": "claim_05",
+          "type": "formula",
+          "content": "Die Steigung der Normale m_n berechnet sich aus der Tangentensteigung m_t durch m_n = -1 / m_t."
+        },
+        {
+          "claim_id": "claim_06",
+          "type": "formula",
+          "content": "Der Steigungswinkel α einer Geraden mit der Steigung m gegenüber der positiven x-Achse wird über α = arctan(m) berechnet."
+        },
+        {
+          "claim_id": "claim_07",
+          "type": "recognition",
+          "content": "Eine waagerechte Tangente liegt vor, wenn die Steigung m = 0 ist, was bedeutet, dass f'(x_0) = 0 gilt."
+        },
+        {
+          "claim_id": "claim_08",
+          "type": "mistake",
+          "content": "Ein häufiger Fehler ist die Annahme, die Normale hätte die Steigung 1/f'(x_0); korrekt ist der negative Kehrwert -1/f'(x_0)."
+        },
+        {
+          "claim_id": "claim_09",
+          "type": "application",
+          "content": "In Sachzusammenhängen gibt die Ableitung einer Bestandsfunktion (z.B. Volumen) die momentane Änderungsrate (z.B. Zuflussrate) an."
+        },
+        {
+          "claim_id": "claim_10",
+          "type": "check",
+          "content": "Zur Plausibilitätsprüfung einer Tangentengleichung sollte geprüft werden, ob t(x_0) tatsächlich den Funktionswert f(x_0) ergibt."
+        },
+        {
+          "claim_id": "claim_11",
+          "type": "interpretation",
+          "content": "Ein negativer Wert der Ableitung f'(x_0) bedeutet, dass der Graph von f an dieser Stelle fällt und die Tangente eine negative Steigung besitzt."
+        },
+        {
+          "claim_id": "claim_12",
+          "type": "procedure",
+          "content": "Um den Schnittpunkt einer Tangente mit der y-Achse zu finden, setzt man x = 0 in die Tangentengleichung ein."
+        }
+      ],
+      "visual_requests": [],
+      "visual_assets": []
+    },
+    "items": [
+      {
+        "id": 55000500,
+        "sourceQuestionId": "MAT-3DEBFE5924-02",
+        "topicId": 520006,
+        "type": "STUDENT_PRODUCED_RESPONSE",
+        "stem": "Begründen Sie mithilfe des Funktionsterms von \naf , dass \naG die x-Achse nur in den \nPunkten \n( )A 0 | 0 und \n( )B a | 0 schneidet. Zeigen Sie, dass die Steigung von \naG im \nPunkt A dem 60-fachen Wert von a entspricht und dass die x-Achse die Tangente an \naG\n im Punkt B ist.",
+        "options": {},
+        "correctAnswer": "3 \nangenommen wird, und geben Sie die Bedeutung des Maximums von D im Sachzu-\nsammenhang an. \n 30 \n2 Erwartungshorizont \nDer Erwartungshorizont stellt für jede Teilaufgabe eine mögliche Lösung dar. Nicht dargestellte \nkorrekte Lösungen sind als gleichwertig zu akzeptieren. \n BE \na \n( ) ( )\n2260\na x x a 0 x 0 x a 0 x 0 x a  − =  =  − =  =  = \n( )af 0 60a =\n \n( )af a 0 =\n \n4 \nb \n( )\na\n3\na\n0\nf x dx 10 a 2=  =\n \n3 \nc \n( ) 2\na 3f x 0 x a =  = \n( ) 322\na3 3 20a f a a=  =\n \n4 \nd \n10\nx 11s = ; \n11\ny 10s = \nDie Strecken \nAB und \nAB werden als die Grundseiten der Dreiecke ABC bzw. \nABC  \n betrachtet. Die zugehörigen Höhen sind die y-Koordinaten \nCy und \nCy  der \nPunkte C bzw. \nC . Wegen \nxA B s AB = und \nC y Cy s y = folgt aus \nxys s 1= , \ndass die Aussage wahr ist. \n5 \ne Im Modell entspricht \nx 11= dem Zeitpunkt 20:00 Uhr. \nFür \nx 11 ist \n( )g x 0 = und damit die Eingangsrate gemäß dem Modell gleich null. \n2 \nf Für \n0 x 11 gilt: \n( ) 11\n3g x 0 x x 11 =  =  = \n( ) 968011\n39g =\n; \n( )g 11 0= \nUm 12:40 Uhr ist die Eingangsrate mit etwa \n1\nh1076 am größten. \n4 \ng Der Inhalt der Fläche, die der Graph von g und die x-Achse einschließen, entspricht \nder Anzahl aller Gäste, die am betrachteten Tag das Strandbad betreten. Der Inhalt \nder Fläche, die der Graph von h und die x-Achse einschließen, entspricht der Anzahl \naller Gäste, die am betrachteten Tag das Strandbad verlassen. Die Gleichheit der In-\nhalte der Flächen I und III ist somit gleichbedeutend mit der Tatsache, dass am be-\ntrachteten Tag ebenso viele Gäste das Strandbad betreten wie verlassen. \n4 \nh Im Bereich \n2 x 11 ist \nSx wegen \n( ) ( ) ( ) =−D x g x h x die einzige Nullstelle der \nAbleitungsfunktion \nD von D. Da es sich um eine Nullstelle mit einem Vorzeichen-\nwechsel von plus nach minus handelt, nimmt die Funktion D an dieser Stelle ihr Ma-\n4",
+        "explanation": "3 \nangenommen wird, und geben Sie die Bedeutung des Maximums von D im Sachzu-\nsammenhang an. \n 30 \n2 Erwartungshorizont \nDer Erwartungshorizont stellt für jede Teilaufgabe eine mögliche Lösung dar. Nicht dargestellte \nkorrekte Lösungen sind als gleichwertig zu akzeptieren. \n BE \na \n( ) ( )\n2260\na x x a 0 x 0 x a 0 x 0 x a  − =  =  − =  =  = \n( )af 0 60a =\n \n( )af a 0 =\n \n4 \nb \n( )\na\n3\na\n0\nf x dx 10 a 2=  =\n \n3 \nc \n( ) 2\na 3f x 0 x a =  = \n( ) 322\na3 3 20a f a a=  =\n \n4 \nd \n10\nx 11s = ; \n11\ny 10s = \nDie Strecken \nAB und \nAB werden als die Grundseiten der Dreiecke ABC bzw. \nABC  \n betrachtet. Die zugehörigen Höhen sind die y-Koordinaten \nCy und \nCy  der \nPunkte C bzw. \nC . Wegen \nxA B s AB = und \nC y Cy s y = folgt aus \nxys s 1= , \ndass die Aussage wahr ist. \n5 \ne Im Modell entspricht \nx 11= dem Zeitpunkt 20:00 Uhr. \nFür \nx 11 ist \n( )g x 0 = und damit die Eingangsrate gemäß dem Modell gleich null. \n2 \nf Für \n0 x 11 gilt: \n( ) 11\n3g x 0 x x 11 =  =  = \n( ) 968011\n39g =\n; \n( )g 11 0= \nUm 12:40 Uhr ist die Eingangsrate mit etwa \n1\nh1076 am größten. \n4 \ng Der Inhalt der Fläche, die der Graph von g und die x-Achse einschließen, entspricht \nder Anzahl aller Gäste, die am betrachteten Tag das Strandbad betreten. Der Inhalt \nder Fläche, die der Graph von h und die x-Achse einschließen, entspricht der Anzahl \naller Gäste, die am betrachteten Tag das Strandbad verlassen. Die Gleichheit der In-\nhalte der Flächen I und III ist somit gleichbedeutend mit der Tatsache, dass am be-\ntrachteten Tag ebenso viele Gäste das Strandbad betreten wie verlassen. \n4 \nh Im Bereich \n2 x 11 ist \nSx wegen \n( ) ( ) ( ) =−D x g x h x die einzige Nullstelle der \nAbleitungsfunktion \nD von D. Da es sich um eine Nullstelle mit einem Vorzeichen-\nwechsel von plus nach minus handelt, nimmt die Funktion D an dieser Stelle ihr Ma-\n4",
+        "userAnswer": null,
+        "isCorrect": -1
+      },
+      {
+        "id": 55000501,
+        "sourceQuestionId": "MAT-3E01420059-02",
+        "topicId": 520006,
+        "type": "STUDENT_PRODUCED_RESPONSE",
+        "stem": "Ein mit Wasser befülltes Glas wird aus einem Kühlschrank genommen. Die anschlie-\nßende Entwicklung der Wassertemperatur infolge der höheren Raumtemperatur \nlässt sich mithilfe der in IR definierten Funktion −− 0,014 tf : t 25 20e modellhaft \nbeschreiben. Dabei ist t die Zeit in Minuten, die seit der Entnahme aus dem Kühl-\nschrank vergangen ist, und ( )ft die Wassertemperatur in °C. Die Raumtemperatur \nbeträgt konstant 25 °C.\nBestimmen Sie die mittlere Änderungsrate der Wassertemperatur innerhalb der \nersten 30 Minuten. Berechnen Sie ( )′f 30 und geben Sie die Bedeutung dieses \nWerts im Sachzusammenhang an.",
+        "options": {},
+        "correctAnswer": "3 \n e Es gibt einen Wert von a, sodass das Produkt der x-Koordinaten der beiden Ext-\nrempunkte von aH gleich dem Produkt der y-Koordinaten dieser beiden Punkte ist. \nBerechnen Sie diesen Wert von a. \n5 \n f Die Schnittpunkte von aH mit der \nx-Achse und der Hochpunkt von aH sind \ndie Eckpunkte eines Dreiecks. Dieses \nDreieck rotiert um die x-Achse. \nDie in +IR definierte Funktion v gibt das \nVolumen dieses Rotationskörpers in Ab-\nhängigkeit von a an. Abbildung 2 zeigt \ndrei Graphen \n1G , 2G und 3G , von de-\nnen einer die Ableitungsfunktion ′v von v \ndarstellt. \nBeurteilen Sie ohne Rechnung und unter \nVerwendung der Tatsache, dass die \ny-Koordinate des Hochpunkts von \naH \numso größer ist, je größer der Wert von \na ist, welcher Graph dies ist. \n4 \n 40 \n2 Erwartungshorizont \nDer Erwartungshorizont stellt für jede Teilaufgabe eine mögliche Lösung dar. Nicht dargestellte \nkorrekte Lösungen sind als gleichwertig zu akzeptieren. \n BE \n1 a Wassertemperatur zum Zeitpunkt der Entnahme: 5 °C \n( ) =f t 12 liefert ≈t 30,8 . \nSomit hat das Wasser etwa 31 Minuten nach Beobachtungsbeginn eine Tempera-\ntur von 12 °C. \n3 \n b mittlere Änderungsrate in °C\nmin : ( ) ( )−\n− ≈\nf3 0 f0\n30 0 0, 23 \n( )′ ≈f 30 0,18 \nDie momentane Änderungsrate der Wassertemperatur 30 Minuten nach Beobach-\ntungsbeginn beträgt etwa °C\nmin0,18 . \n4 \n c Für jeden Zeitpunkt ∗t liefert die Gleichung ( ) ( )\n∗+\n=\n25 f t\n2ft eine Lösung t, mit der \ndie Differenz ∗−tt den Wert ⋅500\n7 ln2 annimmt und damit unabhängig von ∗t ist. \n4 \n d Der Graph von g kann aus dem Graphen von f durch Spiegelung an der t-Achse \nund Verschiebung um 30 in positive y-Richtung erzeugt werden. \n2 \nAbb. 2",
+        "explanation": "3 \n e Es gibt einen Wert von a, sodass das Produkt der x-Koordinaten der beiden Ext-\nrempunkte von aH gleich dem Produkt der y-Koordinaten dieser beiden Punkte ist. \nBerechnen Sie diesen Wert von a. \n5 \n f Die Schnittpunkte von aH mit der \nx-Achse und der Hochpunkt von aH sind \ndie Eckpunkte eines Dreiecks. Dieses \nDreieck rotiert um die x-Achse. \nDie in +IR definierte Funktion v gibt das \nVolumen dieses Rotationskörpers in Ab-\nhängigkeit von a an. Abbildung 2 zeigt \ndrei Graphen \n1G , 2G und 3G , von de-\nnen einer die Ableitungsfunktion ′v von v \ndarstellt. \nBeurteilen Sie ohne Rechnung und unter \nVerwendung der Tatsache, dass die \ny-Koordinate des Hochpunkts von \naH \numso größer ist, je größer der Wert von \na ist, welcher Graph dies ist. \n4 \n 40 \n2 Erwartungshorizont \nDer Erwartungshorizont stellt für jede Teilaufgabe eine mögliche Lösung dar. Nicht dargestellte \nkorrekte Lösungen sind als gleichwertig zu akzeptieren. \n BE \n1 a Wassertemperatur zum Zeitpunkt der Entnahme: 5 °C \n( ) =f t 12 liefert ≈t 30,8 . \nSomit hat das Wasser etwa 31 Minuten nach Beobachtungsbeginn eine Tempera-\ntur von 12 °C. \n3 \n b mittlere Änderungsrate in °C\nmin : ( ) ( )−\n− ≈\nf3 0 f0\n30 0 0, 23 \n( )′ ≈f 30 0,18 \nDie momentane Änderungsrate der Wassertemperatur 30 Minuten nach Beobach-\ntungsbeginn beträgt etwa °C\nmin0,18 . \n4 \n c Für jeden Zeitpunkt ∗t liefert die Gleichung ( ) ( )\n∗+\n=\n25 f t\n2ft eine Lösung t, mit der \ndie Differenz ∗−tt den Wert ⋅500\n7 ln2 annimmt und damit unabhängig von ∗t ist. \n4 \n d Der Graph von g kann aus dem Graphen von f durch Spiegelung an der t-Achse \nund Verschiebung um 30 in positive y-Richtung erzeugt werden. \n2 \nAbb. 2",
+        "userAnswer": null,
+        "isCorrect": -1
+      }
+    ],
+    "videoLesson": {
+      "title": "Leite ab und konstruiere Tangente und Normale",
+      "coverUrl": "https://solve-now.s3.us-west-2.amazonaws.com/german-abitur/atomic-videos-v2/ABITUR-MATHEMATIK-006/cover.png",
+      "playbackUrl": "https://solve-now.s3.us-west-2.amazonaws.com/german-abitur/atomic-videos-v2/ABITUR-MATHEMATIK-006/lesson.html",
+      "durationSeconds": 480,
+      "description": "Feingranulares IQB-basiertes Topic `Ableitung, Tangente und Normale`; abgegrenzt durch: lokale Änderungsrate und Geradengleichungen bestimmen. Im Quellkorpus: 200 Aufgaben, davon 200 offizielle Pool- oder Beispielaufgaben."
+    }
+  },
+  "lastViewedQuestionId": null,
+  "lastViewedAt": null
+}

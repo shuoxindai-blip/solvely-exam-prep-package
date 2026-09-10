@@ -1,0 +1,220 @@
+{
+  "epId": 500001,
+  "outlineId": 500002,
+  "topicGroupId": 510001,
+  "topicId": 520005,
+  "packageId": 5001,
+  "contentType": "flashCard",
+  "contentStatus": "READY",
+  "generationId": "",
+  "progress": {
+    "totalCount": 20,
+    "completedCount": 0,
+    "items": {}
+  },
+  "platform": "system",
+  "payload": {
+    "cards": [
+      {
+        "id": 53000400,
+        "topicId": 520005,
+        "type": "FLASH_CARD",
+        "info": "Wann liegt an einer Stelle $x_0$ eine vertikale Asymptote vor?",
+        "backInfo": "Eine vertikale Asymptote liegt vor, wenn der Betrag der Funktionswerte für $x \\to x_0$ über alle Grenzen wächst (Polstelle).",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000401,
+        "topicId": 520005,
+        "type": "FLASH_CARD",
+        "info": "Welche waagerechte Asymptote hat eine Funktion, wenn der Nennergrad größer als der Zählergrad ist?",
+        "backInfo": "In diesem Fall existiert eine waagerechte Asymptote mit der Gleichung $y = 0$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000402,
+        "topicId": 520005,
+        "type": "FLASH_CARD",
+        "info": "Wie bestimmt man die waagerechte Asymptote bei gleichem Zähler- und Nennergrad?",
+        "backInfo": "Die waagerechte Asymptote ist $y = a/b$, wobei $a$ und $b$ die Leitkoeffizienten der höchsten Potenzen sind.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000403,
+        "topicId": 520005,
+        "type": "FLASH_CARD",
+        "info": "Unter welcher Bedingung wird eine Definitionslücke als \"hebbar\" bezeichnet?",
+        "backInfo": "Eine Definitionslücke ist hebbar, wenn der Grenzwert der Funktion an dieser Stelle existiert und ein endlicher Wert ist.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000404,
+        "topicId": 520005,
+        "type": "FLASH_CARD",
+        "info": "Wie verhält sich der Quotient $P(x)/e^x$ für $x \\to +\\infty$?",
+        "backInfo": "Da die Exponentialfunktion jedes Polynom $P(x)$ dominiert, gilt $\\lim_{x \\to +\\infty} (P(x)/e^x) = 0$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000405,
+        "topicId": 520005,
+        "type": "FLASH_CARD",
+        "info": "Welche drei Bedingungen müssen für Stetigkeit an der Stelle $x_0$ erfüllt sein?",
+        "backInfo": "Der linksseitige Grenzwert, der rechtsseitige Grenzwert und der Funktionswert $f(x_0)$ müssen existieren und identisch sein.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000406,
+        "topicId": 520005,
+        "type": "FLASH_CARD",
+        "info": "Welchen Grenzwert besitzt die Funktion $f(x) = e^x$ für $x \\to -\\infty$?",
+        "backInfo": "Der Grenzwert für $x \\to -\\infty$ bei der Funktion $e^x$ ist $0$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000407,
+        "topicId": 520005,
+        "type": "FLASH_CARD",
+        "info": "Darf ein Funktionsgraph seine eigene waagerechte Asymptote schneiden?",
+        "backInfo": "Ja, waagerechte Asymptoten können im Nahbereich durchaus vom Graphen gekreuzt werden; sie beschreiben nur das Fernverhalten.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000408,
+        "topicId": 520005,
+        "type": "FLASH_CARD",
+        "info": "Woran erkennt man rechnerisch eine Polstelle ohne Vorzeichenwechsel?",
+        "backInfo": "Eine Polstelle ohne Vorzeichenwechsel liegt vor, wenn die Vielfachheit der Nullstelle im Nenner gerade ist.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000409,
+        "topicId": 520005,
+        "type": "FLASH_CARD",
+        "info": "Was signalisiert ein \"Loch\" im Graphen einer Funktion?",
+        "backInfo": "Ein grafisches \"Loch\" deutet auf eine hebbare Definitionslücke an dieser Stelle hin.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000410,
+        "topicId": 520005,
+        "type": "FLASH_CARD",
+        "info": "Wie verhalten sich die Funktionswerte grafisch in der unmittelbaren Nähe einer Polstelle?",
+        "backInfo": "Die Funktionswerte streben gegen $+\\infty$ oder $-\\infty$, wodurch sich der Graph einer senkrechten Geraden (der vertikalen Asymptote) annähert.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000411,
+        "topicId": 520005,
+        "type": "FLASH_CARD",
+        "info": "Bestimme die waagerechte Asymptote für $f(x) = \\frac{3x + 5}{x^2 - 1}$. Begründe kurz.",
+        "backInfo": "Die Asymptote ist $y = 0$, da der Nennergrad (2) größer ist als der Zählergrad (1).",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000412,
+        "topicId": 520005,
+        "type": "FLASH_CARD",
+        "info": "Welche Asymptote hat $f(x) = \\frac{4x^2 - 1}{2x^2 + 3}$ für $x \\to \\infty$?",
+        "backInfo": "Die waagerechte Asymptote ist $y = 2$, berechnet durch den Quotienten der Leitkoeffizienten $\\frac{4}{2}$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000413,
+        "topicId": 520005,
+        "type": "FLASH_CARD",
+        "info": "Wie lässt sich eine hebbare Lücke rechnerisch in eine stetige Fortsetzung überführen?",
+        "backInfo": "Man kürzt den gemeinsamen Nullstellen-Faktor aus Zähler und Nenner und berechnet den Grenzwert an dieser Stelle.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000414,
+        "topicId": 520005,
+        "type": "FLASH_CARD",
+        "info": "Warum gilt $\\lim_{x \\to \\infty} \\frac{x^{100}}{e^x} = 0$ trotz des hohen Exponenten?",
+        "backInfo": "Weil die Exponentialfunktion $e^x$ im Unendlichen jedes Polynom $x^n$ dominiert und somit wesentlich schneller wächst.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000415,
+        "topicId": 520005,
+        "type": "FLASH_CARD",
+        "info": "Was bedeutet Stetigkeit anschaulich für das Zeichnen eines Funktionsgraphen?",
+        "backInfo": "Der Graph weist keine Sprünge oder Löcher auf und kann ohne Absetzen des Stiftes gezeichnet werden.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000416,
+        "topicId": 520005,
+        "type": "FLASH_CARD",
+        "info": "Welche Strategie hilft bei der Grenzwertbestimmung von $e^x$ für sehr kleine $x$-Werte?",
+        "backInfo": "Man setzt gedanklich eine sehr große negative Zahl ein und nutzt die Eigenschaft $\\lim_{x \\to -\\infty} e^x = 0$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000417,
+        "topicId": 520005,
+        "type": "FLASH_CARD",
+        "info": "Wahr oder Falsch: Eine Funktion darf ihre waagerechte Asymptote niemals berühren.",
+        "backInfo": "Falsch. Waagerechte Asymptoten beschreiben nur das Verhalten für $x \\to \\pm\\infty$ und können im Nahbereich geschnitten werden.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000418,
+        "topicId": 520005,
+        "type": "FLASH_CARD",
+        "info": "Welches Vorzeichenverhalten zeigt $f(x) = \\frac{1}{(x-2)^2}$ an der Stelle $x=2$?",
+        "backInfo": "Es liegt eine Polstelle ohne Vorzeichenwechsel vor, da die Nullstelle im Nenner eine gerade Vielfachheit (2) hat.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000419,
+        "topicId": 520005,
+        "type": "FLASH_CARD",
+        "info": "Was gibt der Grenzwert der Ableitung für $t \\to \\infty$ in Sachzusammenhängen an?",
+        "backInfo": "Er beschreibt die langfristige Sättigungsgrenze oder den Stillstand einer Wachstumsrate.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      }
+    ]
+  }
+}

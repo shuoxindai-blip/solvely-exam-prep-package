@@ -1,0 +1,134 @@
+{
+  "epId": 500001,
+  "outlineId": 500002,
+  "topicGroupId": 510003,
+  "topicId": 520027,
+  "packageId": 5001,
+  "contentType": "studyGuide",
+  "contentStatus": "READY",
+  "generationId": "",
+  "progress": {
+    "totalCount": 0,
+    "completedCount": 0,
+    "items": {}
+  },
+  "platform": "system",
+  "payload": {
+    "content": {
+      "lesson_id": "ABITUR-MATHEMATIK-027",
+      "title": "Erwartungswert, Varianz und Standardabweichung",
+      "overview": "Dieses Study Guide behandelt die zentralen Kenngrößen diskreter Zufallsgrößen. Während der Erwartungswert das Zentrum einer Verteilung beschreibt, quantifizieren Varianz und Standardabweichung die Streuung der Werte um diesen Mittelpunkt.",
+      "learning_objectives": [
+        "Berechnung des Erwartungswerts diskreter Zufallsgrößen.",
+        "Bestimmung von Varianz und Standardabweichung als Maß für die Streuung.",
+        "Anwendung der Kenngrößen auf spezielle Verteilungen wie die Binomialverteilung.",
+        "Interpretation der Ergebnisse im Sachkontext."
+      ],
+      "sections": [
+        {
+          "title": "Der Erwartungswert E(X)",
+          "content": "Der Erwartungswert einer diskreten Zufallsgröße X gibt an, welcher Wert bei einer großen Anzahl von Durchführungen im Durchschnitt zu erwarten ist. Er wird als gewichtetes Mittel der möglichen Werte x_i mit ihren Wahrscheinlichkeiten P(X = x_i) berechnet. Die Formel lautet: E(X) = μ = Σ (x_i * P(X = x_i)). Bei einem fairen Spiel entspricht der Erwartungswert des Gewinns genau dem Einsatz."
+        },
+        {
+          "title": "Varianz und Standardabweichung",
+          "content": "Die Varianz Var(X) misst die mittlere quadratische Abweichung der Zufallsgröße von ihrem Erwartungswert: Var(X) = σ² = Σ ((x_i - μ)² * P(X = x_i)). Da die Varianz eine quadratische Einheit besitzt, nutzt man zur besseren Interpretation die Standardabweichung σ = √Var(X). Sie gibt die durchschnittliche Entfernung der Werte vom Erwartungswert in der Originaleinheit an."
+        },
+        {
+          "title": "Kenngrößen der Binomialverteilung",
+          "content": "Für eine binomialverteilte Zufallsgröße X ~ B(n; p) vereinfachen sich die Berechnungen erheblich. Der Erwartungswert ist E(X) = n * p. Die Varianz berechnet sich durch Var(X) = n * p * (1 - p). Die Standardabweichung ist entsprechend σ = √(n * p * (1 - p)). Diese Formeln sind besonders im Abitur relevant, da sie oft die Grundlage für die Modellierung von Zufallsexperimenten mit zwei Ausgängen bilden."
+        }
+      ],
+      "worked_examples": [
+        {
+          "question": "Ein Glücksrad hat drei Sektoren: 50% Chance auf 0 €, 30% auf 2 € und 20% auf 5 €. Berechnen Sie den Erwartungswert und die Standardabweichung des Gewinns X.",
+          "solution": "1. Erwartungswert berechnen: E(X) = 0 * 0,5 + 2 * 0,3 + 5 * 0,2 = 0 + 0,6 + 1,0 = 1,60 €. \n2. Varianz berechnen: Var(X) = (0 - 1,6)² * 0,5 + (2 - 1,6)² * 0,3 + (5 - 1,6)² * 0,2 = (-1,6)² * 0,5 + (0,4)² * 0,3 + (3,4)² * 0,2 = 2,56 * 0,5 + 0,16 * 0,3 + 11,56 * 0,2 = 1,28 + 0,048 + 2,312 = 3,64 €². \n3. Standardabweichung berechnen: σ = √3,64 ≈ 1,91 €. \nCheck: Der Erwartungswert 1,60 € liegt sinnvoll zwischen den Extremwerten 0 und 5."
+        }
+      ],
+      "common_mistakes": [
+        "Verwechslung von Varianz und Standardabweichung (Wurzelziehen vergessen).",
+        "Negative Varianz berechnet: Da Abweichungen quadriert werden, muss die Varianz immer ≥ 0 sein.",
+        "Erwartungswert als 'garantiertes' Ergebnis missverstehen: Er ist ein langfristiger Durchschnittswert."
+      ],
+      "exam_tips": [
+        "Achten Sie auf Einheiten: Wenn X in Euro angegeben ist, hat E(X) die Einheit Euro, Var(X) Euro-Quadrat und σ wieder Euro.",
+        "Nutzen Sie bei Binomialverteilungen immer die Kurzformeln n*p und √(npq), um Zeit zu sparen.",
+        "Interpretieren Sie σ im Sachkontext oft als Maß für das Risiko oder die Vorhersagegenauigkeit."
+      ],
+      "recap": "Der Erwartungswert beschreibt das Zentrum (Lage) einer Verteilung, während Varianz und Standardabweichung die Breite (Streuung) angeben. Für das Abitur ist die sichere Anwendung der Formeln sowohl für allgemeine diskrete Verteilungen als auch für die Binomialverteilung essenziell.",
+      "knowledge_claims": [
+        {
+          "claim_id": "claim_01",
+          "type": "definition",
+          "content": "Der Erwartungswert E(X) einer diskreten Zufallsgröße ist die Summe der Produkte aus jedem Wert x_i und seiner Wahrscheinlichkeit P(X=x_i)."
+        },
+        {
+          "claim_id": "claim_02",
+          "type": "interpretation",
+          "content": "Der Erwartungswert entspricht dem langfristigen Mittelwert der Ergebnisse bei häufiger Durchführung des Zufallsexperiments."
+        },
+        {
+          "claim_id": "claim_03",
+          "type": "formula",
+          "content": "Die Varianz Var(X) ist definiert als E((X - μ)²), also die Summe von (x_i - E(X))² * P(X=x_i)."
+        },
+        {
+          "claim_id": "claim_04",
+          "type": "rule",
+          "content": "Die Standardabweichung σ ist die positive Quadratwurzel aus der Varianz Var(X)."
+        },
+        {
+          "claim_id": "claim_05",
+          "type": "formula",
+          "content": "Für eine binomialverteilte Zufallsgröße X ~ B(n; p) gilt für den Erwartungswert die Formel E(X) = n * p."
+        },
+        {
+          "claim_id": "claim_06",
+          "type": "formula",
+          "content": "Die Standardabweichung einer binomialverteilten Zufallsgröße berechnet sich durch σ = √(n * p * (1 - p))."
+        },
+        {
+          "claim_id": "claim_07",
+          "type": "check",
+          "content": "Die Varianz einer Zufallsgröße kann niemals negativ sein, da sie auf quadrierten Differenzen basiert."
+        },
+        {
+          "claim_id": "claim_08",
+          "type": "comparison",
+          "content": "Während der Erwartungswert die Lage (Zentrum) beschreibt, beschreibt die Standardabweichung die Streuung (Breite) der Verteilung."
+        },
+        {
+          "claim_id": "claim_09",
+          "type": "application",
+          "content": "Ein Spiel gilt als 'fair', wenn der Erwartungswert des Gewinns (unter Berücksichtigung des Einsatzes) gleich Null ist."
+        },
+        {
+          "claim_id": "claim_10",
+          "type": "interpretation",
+          "content": "In der Qualitätssicherung deutet eine kleine Standardabweichung auf eine hohe Prozessstabilität und geringe Schwankungen hin."
+        },
+        {
+          "claim_id": "claim_11",
+          "type": "mistake",
+          "content": "Ein häufiger Fehler ist die Annahme, dass der Erwartungswert einer der Werte sein muss, die die Zufallsgröße tatsächlich annehmen kann."
+        },
+        {
+          "claim_id": "claim_12",
+          "type": "procedure",
+          "content": "Zur Berechnung der Varianz muss zwingend zuerst der Erwartungswert bestimmt werden."
+        }
+      ],
+      "visual_requests": [],
+      "visual_assets": []
+    },
+    "items": [],
+    "videoLesson": {
+      "title": "Berechne Erwartungswert, Varianz und Standardabweichung sicher",
+      "coverUrl": "https://solve-now.s3.us-west-2.amazonaws.com/german-abitur/atomic-videos-v2/ABITUR-MATHEMATIK-027/cover.png",
+      "playbackUrl": "https://solve-now.s3.us-west-2.amazonaws.com/german-abitur/atomic-videos-v2/ABITUR-MATHEMATIK-027/lesson.html",
+      "durationSeconds": 480,
+      "description": "Feingranulares IQB-basiertes Topic `Erwartungswert, Varianz und Standardabweichung`; abgegrenzt durch: Lage und Streuung diskreter Zufallsgrößen berechnen. Im Quellkorpus: 30 Aufgaben, davon 10 offizielle Pool- oder Beispielaufgaben."
+    }
+  },
+  "lastViewedQuestionId": null,
+  "lastViewedAt": null
+}

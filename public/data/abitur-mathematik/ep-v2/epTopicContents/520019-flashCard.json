@@ -1,0 +1,220 @@
+{
+  "epId": 500001,
+  "outlineId": 500002,
+  "topicGroupId": 510002,
+  "topicId": 520019,
+  "packageId": 5001,
+  "contentType": "flashCard",
+  "contentStatus": "READY",
+  "generationId": "",
+  "progress": {
+    "totalCount": 20,
+    "completedCount": 0,
+    "items": {}
+  },
+  "platform": "system",
+  "payload": {
+    "cards": [
+      {
+        "id": 53001800,
+        "topicId": 520019,
+        "type": "FLASH_CARD",
+        "info": "Wie lautet die Vektorformel zur Berechnung des Flächeninhalts eines Dreiecks $ABC$?",
+        "backInfo": "Der Flächeninhalt berechnet sich durch $A = \\frac{1}{2} |\\vec{AB} \\times \\vec{AC}|$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001801,
+        "topicId": 520019,
+        "type": "FLASH_CARD",
+        "info": "Wie berechnet man das Volumen eines Tetraeders mit den Vektoren $\\vec{a}, \\vec{b}, \\vec{c}$?",
+        "backInfo": "Das Volumen eines Tetraeders ist $V = \\frac{1}{6} |(\\vec{a} \\times \\vec{b}) \\cdot \\vec{c}|$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001802,
+        "topicId": 520019,
+        "type": "FLASH_CARD",
+        "info": "Welche allgemeine Formel gilt für das Volumen einer Pyramide mit Grundfläche $G$?",
+        "backInfo": "Das Volumen wird allgemein durch $V = \\frac{1}{3} G \\cdot h$ berechnet.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001803,
+        "topicId": 520019,
+        "type": "FLASH_CARD",
+        "info": "Woran erkennt man, dass eine Ebene parallel zur $x_2x_3$-Ebene verläuft?",
+        "backInfo": "Alle Punkte der Ebene besitzen dieselbe $x_1$-Koordinate (Gleichung $x_1 = k$).",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001804,
+        "topicId": 520019,
+        "type": "FLASH_CARD",
+        "info": "Welche Bedingung erfüllt ein Körper, der symmetrisch zur $x_1x_3$-Ebene liegt?",
+        "backInfo": "Zu jedem Punkt $P(x_1|x_2|x_3)$ gehört auch der Punkt $P'(x_1|-x_2|x_3)$ zum Körper.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001805,
+        "topicId": 520019,
+        "type": "FLASH_CARD",
+        "info": "Wie kann die Höhe $h$ eines Körpers geometrisch bestimmt werden?",
+        "backInfo": "Als senkrechter Abstand der Spitze zur Ebene, in der die Grundfläche liegt.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001806,
+        "topicId": 520019,
+        "type": "FLASH_CARD",
+        "info": "Aus welchen zwei Vektoroperationen setzt sich das Spatprodukt zusammen?",
+        "backInfo": "Es kombiniert das Kreuzprodukt zweier Vektoren mit dem Skalarprodukt des dritten Vektors.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001807,
+        "topicId": 520019,
+        "type": "FLASH_CARD",
+        "info": "Welcher Vorfaktor unterscheidet das Volumen einer vierseitigen Pyramide von einem Tetraeder?",
+        "backInfo": "Die vierseitige Pyramide nutzt den Faktor $\\frac{1}{3}$, das Tetraeder hingegen $\\frac{1}{6}$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001808,
+        "topicId": 520019,
+        "type": "FLASH_CARD",
+        "info": "Warum müssen beim Spatprodukt zur Volumenberechnung Betragsstriche gesetzt werden?",
+        "backInfo": "Um ein negatives Ergebnis zu korrigieren, da Volumina stets positiv sind.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001809,
+        "topicId": 520019,
+        "type": "FLASH_CARD",
+        "info": "Welche geometrische Eigenschaft besitzt der Ergebnisvektor eines Kreuzprodukts $\\vec{a} \\times \\vec{b}$?",
+        "backInfo": "Der Vektor steht senkrecht auf der von $\\vec{a}$ und $\\vec{b}$ aufgespannten Fläche.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001810,
+        "topicId": 520019,
+        "type": "FLASH_CARD",
+        "info": "Warum ist die Vektorformel $A = \\frac{1}{2} |\\vec{AB} \\times \\vec{AC}|$ oft effizienter als $\\frac{1}{2} g h$?",
+        "backInfo": "Weil die Höhe $h$ des Dreiecks nicht explizit berechnet werden muss, da das Kreuzprodukt die Flächeninformation direkt enthält.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001811,
+        "topicId": 520019,
+        "type": "FLASH_CARD",
+        "info": "Wie verhält sich das Volumen eines Tetraeders zum Volumen des von denselben Vektoren aufgespannten Spats?",
+        "backInfo": "Das Volumen des Tetraeders entspricht genau einem Sechstel ($1/6$) des Volumens des zugehörigen Spats.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001812,
+        "topicId": 520019,
+        "type": "FLASH_CARD",
+        "info": "Berechne das Volumen einer Pyramide mit Grundfläche $G=16$ FE und Spitze $S(0|0|6)$ über der $x_1x_2$-Ebene.",
+        "backInfo": "Mit $h=6$ ergibt sich $V = \\frac{1}{3} \\cdot 16 \\cdot 6 = 32$ VE.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001813,
+        "topicId": 520019,
+        "type": "FLASH_CARD",
+        "info": "Welche Eigenschaft teilen alle Punkte einer Fläche, die parallel zur $x_2x_3$-Ebene liegt?",
+        "backInfo": "Alle Punkte dieser Fläche besitzen denselben konstanten Wert für die $x_1$-Koordinate.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001814,
+        "topicId": 520019,
+        "type": "FLASH_CARD",
+        "info": "Wie prüft man rechnerisch die Symmetrie eines Körpers zur $x_1x_3$-Ebene?",
+        "backInfo": "Man prüft, ob die Form invariant bleibt, wenn man bei allen Punkten die $x_2$-Koordinate spiegelt ($x_2 \\to -x_2$).",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001815,
+        "topicId": 520019,
+        "type": "FLASH_CARD",
+        "info": "Welches Verfahren eignet sich, um die Höhe $h$ als Abstand zwischen Spitze und Grundebene zu berechnen?",
+        "backInfo": "Hierfür kann die Lotfußpunktmethode oder die Hessesche Normalform der Grundebene verwendet werden.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001816,
+        "topicId": 520019,
+        "type": "FLASH_CARD",
+        "info": "Notiere die mathematische Struktur des Spatprodukts für drei Vektoren $\\vec{a}, \\vec{b}$ und $\\vec{c}$.",
+        "backInfo": "Die Struktur lautet $(\\vec{a} \\times \\vec{b}) \\cdot \\vec{c}$, also das Skalarprodukt aus einem Kreuzprodukt und einem Vektor.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001817,
+        "topicId": 520019,
+        "type": "FLASH_CARD",
+        "info": "Diagnose: Ein Schüler rechnet $V = \\frac{1}{6} G \\cdot h$ für eine quadratische Pyramide. Was ist falsch?",
+        "backInfo": "Der Faktor $1/6$ gilt nur für dreiseitige Pyramiden (Tetraeder); für vierseitige Pyramiden muss der Faktor $1/3$ verwendet werden.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001818,
+        "topicId": 520019,
+        "type": "FLASH_CARD",
+        "info": "Was bedeutet ein negatives Vorzeichen beim Berechnen von $(\\vec{a} \\times \\vec{b}) \\cdot \\vec{c}$ für das Volumen?",
+        "backInfo": "Das Vorzeichen gibt die Orientierung des Vektorsystems an; für das Volumen muss der Betrag genommen werden, da es nur positiv sein kann.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001819,
+        "topicId": 520019,
+        "type": "FLASH_CARD",
+        "info": "Wie nutzt man das Kreuzprodukt, um den Flächeninhalt eines Parallelogramms zu bestimmen?",
+        "backInfo": "Der Flächeninhalt des Parallelogramms entspricht dem Betrag des Kreuzproduktes der aufspannenden Vektoren: $A = |\\vec{a} \\times \\vec{b}|$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      }
+    ]
+  }
+}

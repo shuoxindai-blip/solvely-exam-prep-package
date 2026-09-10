@@ -1,0 +1,134 @@
+{
+  "epId": 500001,
+  "outlineId": 500002,
+  "topicGroupId": 510002,
+  "topicId": 520015,
+  "packageId": 5001,
+  "contentType": "studyGuide",
+  "contentStatus": "READY",
+  "generationId": "",
+  "progress": {
+    "totalCount": 0,
+    "completedCount": 0,
+    "items": {}
+  },
+  "platform": "system",
+  "payload": {
+    "content": {
+      "lesson_id": "ABITUR-MATHEMATIK-015",
+      "title": "Geraden in Parameterform",
+      "overview": "Dieses Modul behandelt die Darstellung von Geraden im dreidimensionalen Raum mittels der Parameterform. Sie lernen, Geradengleichungen aus Punkten aufzustellen und die Lage von Punkten bezüglich einer Geraden (Punktprobe) rechnerisch zu überprüfen.",
+      "learning_objectives": [
+        "Aufstellen einer Geradengleichung aus einem Stützpunkt und einem Richtungsvektor.",
+        "Konstruktion einer Geraden durch zwei gegebene Punkte.",
+        "Durchführung und Interpretation der Punktprobe.",
+        "Verständnis der geometrischen Bedeutung des Parameters."
+      ],
+      "sections": [
+        {
+          "title": "Die Parameterform einer Geraden",
+          "content": "Eine Gerade im Raum wird durch einen Stützvektor (Ortsvektor eines Punktes auf der Geraden) und einen Richtungsvektor (Vektor, der die Ausrichtung angibt) definiert. Die allgemeine Formel lautet: g: x = a + r * v. Hierbei ist 'x' der Ortsvektor eines beliebigen Punktes auf der Geraden, 'a' der Stützvektor, 'r' ein reeller Parameter (Skalar) und 'v' der Richtungsvektor (v ≠ 0). Durch Variation von 'r' erreicht man jeden Punkt auf der Geraden."
+        },
+        {
+          "title": "Gerade durch zwei Punkte",
+          "content": "Sind zwei Punkte A und B gegeben, wählt man den Ortsvektor von A als Stützvektor. Der Richtungsvektor ergibt sich aus dem Verbindungsvektor AB (B - A). Die Gleichung lautet dann: g: x = OA + r * AB. Wichtig: Der Richtungsvektor darf durch Multiplikation mit einem Skalar vereinfacht werden, solange seine Richtung erhalten bleibt."
+        },
+        {
+          "title": "Die Punktprobe",
+          "content": "Um zu prüfen, ob ein Punkt P auf einer Geraden g liegt, setzt man den Ortsvektor von P für 'x' in die Geradengleichung ein. Es entsteht ein lineares Gleichungssystem (LGS) mit drei Gleichungen und einer Unbekannten (dem Parameter r). Der Punkt liegt genau dann auf der Geraden, wenn alle drei Gleichungen denselben Wert für r liefern. Ergibt sich ein Widerspruch, liegt der Punkt nicht auf der Geraden."
+        }
+      ],
+      "worked_examples": [
+        {
+          "question": "Gegeben sind die Punkte A(1|2|-3) und B(3|5|0). Stellen Sie die Gleichung der Geraden g durch A und B auf und prüfen Sie, ob der Punkt P(7|11|6) auf dieser Geraden liegt.",
+          "solution": "1. Richtungsvektor berechnen: v = AB = B - A = (3-1 | 5-2 | 0-(-3)) = (2 | 3 | 3). \n2. Geradengleichung aufstellen: g: x = (1 | 2 | -3) + r * (2 | 3 | 3). \n3. Punktprobe mit P(7|11|6): \n(7 | 11 | 6) = (1 | 2 | -3) + r * (2 | 3 | 3) \nI: 7 = 1 + 2r => 6 = 2r => r = 3 \nII: 11 = 2 + 3r => 9 = 3r => r = 3 \nIII: 6 = -3 + 3r => 9 = 3r => r = 3 \nDa r in allen drei Zeilen identisch ist (r = 3), liegt der Punkt P auf der Geraden g."
+        }
+      ],
+      "common_mistakes": [
+        "Verwechslung von Stütz- und Richtungsvektor: Der Stützvektor ist ein Ortsvektor (Punkt), der Richtungsvektor beschreibt die Verschiebung.",
+        "Nullvektor als Richtungsvektor: Ein Richtungsvektor darf niemals der Nullvektor sein, da sonst keine Gerade, sondern nur ein Punkt definiert wird.",
+        "Unvollständige Punktprobe: Es wird nur eine Koordinate geprüft. Alle drei Koordinatengleichungen müssen denselben Parameterwert ergeben."
+      ],
+      "exam_tips": [
+        "Prüfen Sie bei der Punktprobe immer alle drei Zeilen des LGS, um Rechenfehler auszuschließen.",
+        "Richtungsvektoren können zur Vereinfachung gekürzt werden (z.B. (2|4|6) zu (1|2|3)), Stützvektoren hingegen nicht.",
+        "Achten Sie auf die Aufgabenstellung: 'Zeigen Sie' verlangt eine Bestätigung, 'Prüfen Sie' lässt offen, ob der Punkt auf der Geraden liegt."
+      ],
+      "recap": "Eine Gerade in Parameterform wird durch g: x = a + r * v beschrieben. Sie wird durch zwei Punkte oder einen Punkt und eine Richtung eindeutig festgelegt. Die Punktprobe entscheidet über die Inzidenz eines Punktes mit der Geraden.",
+      "knowledge_claims": [
+        {
+          "claim_id": "claim_01",
+          "type": "definition",
+          "content": "Die Parameterform einer Geraden im Raum lautet g: x = a + r * v, wobei a der Stützvektor und v der Richtungsvektor ist."
+        },
+        {
+          "claim_id": "claim_02",
+          "type": "rule",
+          "content": "Der Richtungsvektor einer Geraden darf nicht der Nullvektor sein."
+        },
+        {
+          "claim_id": "claim_03",
+          "type": "procedure",
+          "content": "Um eine Gerade durch zwei Punkte A und B aufzustellen, berechnet man den Richtungsvektor durch die Differenz der Ortsvektoren (B - A)."
+        },
+        {
+          "claim_id": "claim_04",
+          "type": "interpretation",
+          "content": "Der Parameter r in der Geradengleichung gibt an, das Wievielfache des Richtungsvektors vom Stützpunkt aus abgetragen wird, um einen bestimmten Punkt auf der Geraden zu erreichen."
+        },
+        {
+          "claim_id": "claim_05",
+          "type": "procedure",
+          "content": "Bei der Punktprobe wird der Ortsvektor des zu prüfenden Punktes mit dem allgemeinen Geradenvektor gleichgesetzt, um ein lineares Gleichungssystem für den Parameter r zu lösen."
+        },
+        {
+          "claim_id": "claim_06",
+          "type": "check",
+          "content": "Ein Punkt liegt nur dann auf einer Geraden, wenn die Punktprobe für alle drei Koordinatengleichungen denselben Wert für den Parameter r liefert."
+        },
+        {
+          "claim_id": "claim_07",
+          "type": "mistake",
+          "content": "Ein häufiger Fehler ist die Annahme, ein Punkt liege auf der Geraden, wenn nur zwei der drei Koordinatengleichungen einen konsistenten Parameterwert ergeben."
+        },
+        {
+          "claim_id": "claim_08",
+          "type": "rule",
+          "content": "Jeder beliebige Punkt auf der Geraden kann als Stützpunkt (Stützvektor) für die Geradengleichung verwendet werden."
+        },
+        {
+          "claim_id": "claim_09",
+          "type": "comparison",
+          "content": "Zwei Geradengleichungen können formal unterschiedlich aussehen (andere Stütz- oder Richtungsvektoren), aber dennoch dieselbe Punktmenge im Raum beschreiben."
+        },
+        {
+          "claim_id": "claim_10",
+          "type": "application",
+          "content": "Ein Richtungsvektor kann durch Multiplikation mit einem beliebigen Skalar k (k ≠ 0) verändert werden, ohne die Richtung der Geraden zu ändern."
+        },
+        {
+          "claim_id": "claim_11",
+          "type": "recognition",
+          "content": "Wenn bei einer Punktprobe ein Widerspruch wie '0 = 5' in einer der Zeilen auftritt, liegt der Punkt definitiv nicht auf der Geraden."
+        },
+        {
+          "claim_id": "claim_12",
+          "type": "interpretation",
+          "content": "Der Stützvektor einer Geraden ist der Ortsvektor eines Punktes, der bei dem Parameterwert r = 0 erreicht wird."
+        }
+      ],
+      "visual_requests": [],
+      "visual_assets": []
+    },
+    "items": [],
+    "videoLesson": {
+      "title": "Stelle die Parameterform durch zwei Punkte auf",
+      "coverUrl": "https://solve-now.s3.us-west-2.amazonaws.com/german-abitur/atomic-videos-v2/ABITUR-MATHEMATIK-015/cover.png",
+      "playbackUrl": "https://solve-now.s3.us-west-2.amazonaws.com/german-abitur/atomic-videos-v2/ABITUR-MATHEMATIK-015/lesson.html",
+      "durationSeconds": 480,
+      "description": "Feingranulares IQB-basiertes Topic `Geraden in Parameterform`; abgegrenzt durch: Geraden aufstellen und Punkte prüfen. Im Quellkorpus: 30 Aufgaben, davon 6 offizielle Pool- oder Beispielaufgaben."
+    }
+  },
+  "lastViewedQuestionId": null,
+  "lastViewedAt": null
+}

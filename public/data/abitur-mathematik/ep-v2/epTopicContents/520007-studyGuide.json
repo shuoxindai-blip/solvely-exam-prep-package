@@ -1,0 +1,169 @@
+{
+  "epId": 500001,
+  "outlineId": 500002,
+  "topicGroupId": 510001,
+  "topicId": 520007,
+  "packageId": 5001,
+  "contentType": "studyGuide",
+  "contentStatus": "READY",
+  "generationId": "",
+  "progress": {
+    "totalCount": 2,
+    "completedCount": 0,
+    "items": {}
+  },
+  "platform": "system",
+  "payload": {
+    "content": {
+      "lesson_id": "ABITUR-MATHEMATIK-007",
+      "title": "Monotonie, Extrempunkte, Krümmung und Wendepunkte",
+      "overview": "Dieses Modul behandelt die Untersuchung des Graphenverlaufs mithilfe von Ableitungen. Im Fokus stehen die Kriterien für Monotonie, die Identifikation von Extrempunkten sowie die Analyse des Krümmungsverhaltens und der Wendepunkte.",
+      "learning_objectives": [
+        "Zusammenhang zwischen der ersten Ableitung und dem Monotonieverhalten erklären.",
+        "Notwendige und hinreichende Kriterien für lokale Extrema anwenden.",
+        "Krümmungsverhalten mithilfe der zweiten Ableitung bestimmen.",
+        "Wendepunkte als Stellen maximaler oder minimaler Steigung identifizieren."
+      ],
+      "sections": [
+        {
+          "title": "Monotonie und erste Ableitung",
+          "content": "Das Monotonieverhalten einer Funktion f gibt an, ob der Graph steigt oder fällt. Dies wird über das Vorzeichen der ersten Ableitung f'(x) bestimmt. Gilt f'(x) > 0 für alle x in einem Intervall I, so ist f in I streng monoton steigend. Gilt f'(x) < 0, ist f streng monoton fallend. Ein Vorzeichenwechsel von f' an einer Stelle x_0 deutet auf eine Änderung des Monotonieverhaltens hin."
+        },
+        {
+          "title": "Lokale Extrempunkte",
+          "content": "Extrempunkte (Hoch- und Tiefpunkte) sind Stellen, an denen die Tangente waagerecht verläuft. \n1. Notwendiges Kriterium: f'(x_0) = 0. \n2. Hinreichendes Kriterium: Entweder ein Vorzeichenwechsel (VZW) von f' an x_0 (von + nach - für Hochpunkt, von - nach + für Tiefpunkt) oder die Prüfung der zweiten Ableitung: f''(x_0) < 0 (Hochpunkt) bzw. f''(x_0) > 0 (Tiefpunkt)."
+        },
+        {
+          "title": "Krümmung und Wendepunkte",
+          "content": "Die Krümmung beschreibt die Linkskurve (f''(x) > 0) oder Rechtskurve (f''(x) < 0) eines Graphen. Ein Wendepunkt ist der Punkt, an dem sich das Krümmungsverhalten ändert. \n1. Notwendiges Kriterium: f''(x_0) = 0. \n2. Hinreichendes Kriterium: f'''(x_0) ≠ 0 oder ein VZW von f'' an der Stelle x_0. An einem Wendepunkt ist die Steigung lokal extremal."
+        }
+      ],
+      "worked_examples": [
+        {
+          "question": "Gegeben ist die Funktion f(x) = 1/3 x³ - x² - 3x. Untersuchen Sie die Funktion auf lokale Extrempunkte.",
+          "solution": "1. Ableitungen bilden: f'(x) = x² - 2x - 3; f''(x) = 2x - 2.\n2. Notwendiges Kriterium: f'(x) = 0 setzen. x² - 2x - 3 = 0 liefert über die p-q-Formel x_1 = 3 und x_2 = -1.\n3. Hinreichendes Kriterium prüfen: \nf''(3) = 2(3) - 2 = 4 > 0 => Tiefpunkt bei x = 3.\nf''(-1) = 2(-1) - 2 = -4 < 0 => Hochpunkt bei x = -1.\n4. y-Werte berechnen: f(3) = 9 - 9 - 9 = -9; f(-1) = -1/3 - 1 + 3 = 5/3.\nErgebnis: H(-1 | 5/3), T(3 | -9)."
+        }
+      ],
+      "common_mistakes": [
+        "Verwechseln von f'(x) = 0 (Extremstelle) mit f(x) = 0 (Nullstelle).",
+        "Annahme, dass f'(x) = 0 automatisch ein Extrempunkt ist (Sattelpunkte beachten!).",
+        "Vergessen des hinreichenden Kriteriums bei der Begründung von Wendepunkten."
+      ],
+      "exam_tips": [
+        "Nutzen Sie bei Begründungsaufgaben immer die Fachbegriffe 'Vorzeichenwechsel' oder 'hinreichendes Kriterium'.",
+        "Skizzieren Sie im Kopf den Verlauf von f', um Monotonieintervalle schnell zu visualisieren.",
+        "Achten Sie auf die Aufgabenstellung: 'Stelle' meint den x-Wert, 'Punkt' meint (x|y)."
+      ],
+      "recap": "Die erste Ableitung steuert die Monotonie und Extrema, die zweite Ableitung die Krümmung und Wendepunkte. Ein Vorzeichenwechsel ist oft das robusteste Kriterium für die Art eines Extremums.",
+      "knowledge_claims": [
+        {
+          "claim_id": "claim_01",
+          "type": "rule",
+          "content": "Wenn f'(x) > 0 für alle x in einem Intervall I gilt, ist die Funktion f in diesem Intervall streng monoton steigend."
+        },
+        {
+          "claim_id": "claim_02",
+          "type": "rule",
+          "content": "Wenn f'(x) < 0 für alle x in einem Intervall I gilt, ist die Funktion f in diesem Intervall streng monoton fallend."
+        },
+        {
+          "claim_id": "claim_03",
+          "type": "procedure",
+          "content": "Das notwendige Kriterium für ein lokales Extremum an der Stelle x_0 lautet f'(x_0) = 0."
+        },
+        {
+          "claim_id": "claim_04",
+          "type": "interpretation",
+          "content": "Ein Vorzeichenwechsel von f' von Plus nach Minus an einer Nullstelle von f' signalisiert einen lokalen Hochpunkt."
+        },
+        {
+          "claim_id": "claim_05",
+          "type": "interpretation",
+          "content": "Ein Vorzeichenwechsel von f' von Minus nach Plus an einer Nullstelle von f' signalisiert einen lokalen Tiefpunkt."
+        },
+        {
+          "claim_id": "claim_06",
+          "type": "check",
+          "content": "Gilt f'(x_0) = 0 und f''(x_0) < 0, so liegt an der Stelle x_0 ein lokaler Hochpunkt vor."
+        },
+        {
+          "claim_id": "claim_07",
+          "type": "check",
+          "content": "Gilt f'(x_0) = 0 und f''(x_0) > 0, so liegt an der Stelle x_0 ein lokaler Tiefpunkt vor."
+        },
+        {
+          "claim_id": "claim_08",
+          "type": "definition",
+          "content": "Ein Graph heißt linksgekrümmt (Positivkrümmung), wenn f''(x) > 0 gilt."
+        },
+        {
+          "claim_id": "claim_09",
+          "type": "definition",
+          "content": "Ein Graph heißt rechtsgekrümmt (Negativkrümmung), wenn f''(x) < 0 gilt."
+        },
+        {
+          "claim_id": "claim_10",
+          "type": "procedure",
+          "content": "Das notwendige Kriterium für einen Wendepunkt an der Stelle x_0 lautet f''(x_0) = 0."
+        },
+        {
+          "claim_id": "claim_11",
+          "type": "interpretation",
+          "content": "Ein Wendepunkt ist eine Stelle, an der die lokale Steigung der Funktion f (also f') einen Extremwert annimmt."
+        },
+        {
+          "claim_id": "claim_12",
+          "type": "mistake",
+          "content": "Die Bedingung f'(x_0) = 0 ist nicht hinreichend für ein Extremum; es könnte sich auch um einen Sattelpunkt handeln, wenn kein Vorzeichenwechsel vorliegt."
+        },
+        {
+          "claim_id": "claim_13",
+          "type": "check",
+          "content": "Ein Wendepunkt liegt sicher vor, wenn f''(x_0) = 0 und f'''(x_0) ≠ 0 erfüllt sind."
+        },
+        {
+          "claim_id": "claim_14",
+          "type": "application",
+          "content": "Besitzt eine Funktion f keine Nullstellen in ihrer Ableitung f', so verläuft der Graph von f streng monoton."
+        }
+      ],
+      "visual_requests": [],
+      "visual_assets": []
+    },
+    "items": [
+      {
+        "id": 55000600,
+        "sourceQuestionId": "MAT-7FB32EC65E-08",
+        "topicId": 520007,
+        "type": "STUDENT_PRODUCED_RESPONSE",
+        "stem": "Betrachtet wird die in IR definierte Funktion s mit ( ) ( )s x a sin b x 1= ⋅ ⋅+ . Die Punkte \n( )1E 2| 1−− und ( )2E 2|3 sind direkt aufeinanderfolgende Extrempunkte des Gra-\nphen von s.",
+        "options": {},
+        "correctAnswer": "3 \n a Bestimmen Sie die Werte von a und b. \n(zur Kontrolle: =a2 , = π\n4b ) \n3 \n b Es gilt ( )\n2\n2\nsxd x 4\n−\n=∫ . Beschreiben Sie \nmithilfe der Abbildung 3, wie man zu \ndiesem Wert mit geometrischen Über-\nlegungen gelangen kann. \nAbb. 3 \n5 \n Die Punkte des Graphen von s mit der y-Koordinate 1 sind die Wendepunkte des \nGraphen. \n \n c Zeigen Sie, dass jeder Wendepunkt des Graphen von s eine ganzzahlige x-Koor-\ndinate hat und dass der Graph von s in jedem seiner Wendepunkte entweder die \nSteigung π\n2− oder die Steigung π\n2+ hat. \n4 \n d Für jeden Wendepunkt des Graphen von s wird die Gerade betrachtet, die durch \ndiesen Wendepunkt und den Punkt ( )P 2022 | 2022 verläuft. Untersuchen Sie, ob \neine dieser Geraden im jeweiligen Wendepunkt Tangente an den Graphen von s \nist. \n3 \n 40 \n2 Erwartungshorizont \nDer Erwartungshorizont stellt für jede Teilaufgabe eine mögliche Lösung dar. Nicht dargestellte \nkorrekte Lösungen sind als gleichwertig zu akzeptieren. \n BE \n1 a ( )f 0,5 221 ,25= , die Geschwindigkeit beträgt also etwa km\nh220 . \n( ) ( )f 0 f 0,5 18,75−= , ( ) ( )f 0,5 f 1 41 ,25−= \n4 \n b ( ) ( )2f x 90x 180x 90x x 2′ = − = ⋅− \nf′ ist eine quadratische Funktion, die ein Minimum besitzt. Die Nullstellen von f′ \nsind 0 und 2, f′ nimmt das Minimum also bei x1= an. Der gesuchte Zeitpunkt ist \nalso 15:01 Uhr. \n4 \n c \n( )\n2 2431511\n60 60 2 00\nf x dx x 30x 240x 6⋅ = ⋅ −+ = ∫ \nDer ICE legt sechs Kilometer zurück. \n3 \n d ( )f 1 90′ = − , ( )f 1 180= \nFür die Tangente an den Graphen von f im Punkt ( )( )1| f 1 ergibt sich damit die \nGleichung y 90x 270= −+ . Diese Tangente hat die Nullstelle 3 und schließt mit \n5",
+        "explanation": "3 \n a Bestimmen Sie die Werte von a und b. \n(zur Kontrolle: =a2 , = π\n4b ) \n3 \n b Es gilt ( )\n2\n2\nsxd x 4\n−\n=∫ . Beschreiben Sie \nmithilfe der Abbildung 3, wie man zu \ndiesem Wert mit geometrischen Über-\nlegungen gelangen kann. \nAbb. 3 \n5 \n Die Punkte des Graphen von s mit der y-Koordinate 1 sind die Wendepunkte des \nGraphen. \n \n c Zeigen Sie, dass jeder Wendepunkt des Graphen von s eine ganzzahlige x-Koor-\ndinate hat und dass der Graph von s in jedem seiner Wendepunkte entweder die \nSteigung π\n2− oder die Steigung π\n2+ hat. \n4 \n d Für jeden Wendepunkt des Graphen von s wird die Gerade betrachtet, die durch \ndiesen Wendepunkt und den Punkt ( )P 2022 | 2022 verläuft. Untersuchen Sie, ob \neine dieser Geraden im jeweiligen Wendepunkt Tangente an den Graphen von s \nist. \n3 \n 40 \n2 Erwartungshorizont \nDer Erwartungshorizont stellt für jede Teilaufgabe eine mögliche Lösung dar. Nicht dargestellte \nkorrekte Lösungen sind als gleichwertig zu akzeptieren. \n BE \n1 a ( )f 0,5 221 ,25= , die Geschwindigkeit beträgt also etwa km\nh220 . \n( ) ( )f 0 f 0,5 18,75−= , ( ) ( )f 0,5 f 1 41 ,25−= \n4 \n b ( ) ( )2f x 90x 180x 90x x 2′ = − = ⋅− \nf′ ist eine quadratische Funktion, die ein Minimum besitzt. Die Nullstellen von f′ \nsind 0 und 2, f′ nimmt das Minimum also bei x1= an. Der gesuchte Zeitpunkt ist \nalso 15:01 Uhr. \n4 \n c \n( )\n2 2431511\n60 60 2 00\nf x dx x 30x 240x 6⋅ = ⋅ −+ = ∫ \nDer ICE legt sechs Kilometer zurück. \n3 \n d ( )f 1 90′ = − , ( )f 1 180= \nFür die Tangente an den Graphen von f im Punkt ( )( )1| f 1 ergibt sich damit die \nGleichung y 90x 270= −+ . Diese Tangente hat die Nullstelle 3 und schließt mit \n5",
+        "userAnswer": null,
+        "isCorrect": -1
+      },
+      {
+        "id": 55000601,
+        "sourceQuestionId": "MAT-80A27EDC92-01",
+        "topicId": 520007,
+        "type": "STUDENT_PRODUCED_RESPONSE",
+        "stem": "Gegeben ist die in \nIR definierte Funktion \nxf : x 5x e −\n. \nAbbildung 1 zeigt den Graphen G von f.\nG hat genau einen Extrempunkt. \nBerechnen Sie die Koordinaten des \nExtrempunkts von G. \n(zur Kontrolle: \n5\ne1|() )",
+        "options": {},
+        "correctAnswer": "3 \n2 Erwartungshorizont \nDer Erwartungshorizont stellt für jede Teilaufgabe eine mögliche Lösung dar. Nicht dargestellte \nkorrekte Lösungen sind als gleichwertig zu akzeptieren. \n BE \n1 a \n( ) ( ) ( )x x xf x 5e 5x e 1 5 1 x e− − − = +   − =  −  \n( )f x 0 x 1 =  =\n \n( ) 5\nef1 =\n; Extrempunkt: \n( )5\ne1| \n4 \n b Gleichung der Gerade: \n2e\n5y x n=  + \n225 e 5 e\ne 5 e 5 1 n n=  +  = −\n \n3 \n c Abbildung 1 ist zu entnehmen, dass es zwei x-Werte gibt, für die \n( )f x 1 = gilt. Da-\nher ist f nicht umkehrbar. \nDie Funktion h ist umkehrbar, da f nur die Extremstelle 1 besitzt und somit im In-\ntervall \n 1;+ streng monoton ist. \nDefinitionsbereich der Umkehrfunktion von h: \n5\ne0; \nWertebereich der Umkehrfunktion von h: \n 1;+ \n6 \n d Der Wert des Terms \n( )5 ln5 ln5− \nkann als Flächeninhalt eines Recht-\necks der Länge \n5 ln5− und der Breite \nln5\n gedeutet werden. \nDer Wert des Terms \n( )\n5\nln5\nf x dx \nentspricht dem Inhalt des Flächen-\nstücks, das G und die Geraden mit den \nGleichungen \nx ln5= und \nx5= mit der \nx-Achse einschließen. \nSubtrahiert man vom Flächeninhalt des \nRechtecks den Flächeninhalt des be-\nschriebenen Flächenstücks, so erhält \nman den Inhalt der schraffierten Fläche. Dieser entspricht dem Flächeninhalt der-\njenigen Hälfte der Figur, die durch Spiegeln an der Gerade mit der Gleichung \nyx=\n aus der schraffierten Fläche hervorgeht. \n5 \n e \n( ) ( ) ( )( )( )2 5 ln5 ln5 F 5 F ln5 6,1 −  − −  3 \n2 a Graph III: \nk1= , Koordinaten des Tiefpunkts: \n( )5\ne1| − \nI: \nk 0,5=− ; II: \nk1=− ; IV: \nk 0,5= \n5",
+        "explanation": "3 \n2 Erwartungshorizont \nDer Erwartungshorizont stellt für jede Teilaufgabe eine mögliche Lösung dar. Nicht dargestellte \nkorrekte Lösungen sind als gleichwertig zu akzeptieren. \n BE \n1 a \n( ) ( ) ( )x x xf x 5e 5x e 1 5 1 x e− − − = +   − =  −  \n( )f x 0 x 1 =  =\n \n( ) 5\nef1 =\n; Extrempunkt: \n( )5\ne1| \n4 \n b Gleichung der Gerade: \n2e\n5y x n=  + \n225 e 5 e\ne 5 e 5 1 n n=  +  = −\n \n3 \n c Abbildung 1 ist zu entnehmen, dass es zwei x-Werte gibt, für die \n( )f x 1 = gilt. Da-\nher ist f nicht umkehrbar. \nDie Funktion h ist umkehrbar, da f nur die Extremstelle 1 besitzt und somit im In-\ntervall \n 1;+ streng monoton ist. \nDefinitionsbereich der Umkehrfunktion von h: \n5\ne0; \nWertebereich der Umkehrfunktion von h: \n 1;+ \n6 \n d Der Wert des Terms \n( )5 ln5 ln5− \nkann als Flächeninhalt eines Recht-\necks der Länge \n5 ln5− und der Breite \nln5\n gedeutet werden. \nDer Wert des Terms \n( )\n5\nln5\nf x dx \nentspricht dem Inhalt des Flächen-\nstücks, das G und die Geraden mit den \nGleichungen \nx ln5= und \nx5= mit der \nx-Achse einschließen. \nSubtrahiert man vom Flächeninhalt des \nRechtecks den Flächeninhalt des be-\nschriebenen Flächenstücks, so erhält \nman den Inhalt der schraffierten Fläche. Dieser entspricht dem Flächeninhalt der-\njenigen Hälfte der Figur, die durch Spiegeln an der Gerade mit der Gleichung \nyx=\n aus der schraffierten Fläche hervorgeht. \n5 \n e \n( ) ( ) ( )( )( )2 5 ln5 ln5 F 5 F ln5 6,1 −  − −  3 \n2 a Graph III: \nk1= , Koordinaten des Tiefpunkts: \n( )5\ne1| − \nI: \nk 0,5=− ; II: \nk1=− ; IV: \nk 0,5= \n5",
+        "userAnswer": null,
+        "isCorrect": -1
+      }
+    ],
+    "videoLesson": {
+      "title": "Bestimme Monotonie, Extremtypen, Krümmung und Wendepunkt",
+      "coverUrl": "https://solve-now.s3.us-west-2.amazonaws.com/german-abitur/atomic-videos-v2/ABITUR-MATHEMATIK-007/cover.png",
+      "playbackUrl": "https://solve-now.s3.us-west-2.amazonaws.com/german-abitur/atomic-videos-v2/ABITUR-MATHEMATIK-007/lesson.html",
+      "durationSeconds": 480,
+      "description": "Feingranulares IQB-basiertes Topic `Monotonie, Extrempunkte, Krümmung und Wendepunkte`; abgegrenzt durch: Verlauf eines Graphen mit Ableitungen untersuchen. Im Quellkorpus: 75 Aufgaben, davon 75 offizielle Pool- oder Beispielaufgaben."
+    }
+  },
+  "lastViewedQuestionId": null,
+  "lastViewedAt": null
+}

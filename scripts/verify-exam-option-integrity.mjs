@@ -13,6 +13,16 @@ const suites = [
     examDirectory: resolve(root, 'public/data/act/ep-v2/epExams'),
     contentDirectory: resolve(root, 'public/data/act/ep-v2/epTopicContents'),
   },
+  {
+    name: 'AP Calculus BC',
+    examDirectory: resolve(root, 'public/data/ap-calculus-bc/ep-v2/epExams'),
+    contentDirectory: resolve(root, 'public/data/ap-calculus-bc/ep-v2/epTopicContents'),
+  },
+  {
+    name: 'Abitur Mathematik',
+    examDirectory: resolve(root, 'public/data/abitur-mathematik/ep-v2/epExams'),
+    contentDirectory: resolve(root, 'public/data/abitur-mathematik/ep-v2/epTopicContents'),
+  },
 ]
 
 const failures = []

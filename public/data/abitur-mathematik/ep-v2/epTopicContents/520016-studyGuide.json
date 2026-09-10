@@ -1,0 +1,138 @@
+{
+  "epId": 500001,
+  "outlineId": 500002,
+  "topicGroupId": 510002,
+  "topicId": 520016,
+  "packageId": 5001,
+  "contentType": "studyGuide",
+  "contentStatus": "READY",
+  "generationId": "",
+  "progress": {
+    "totalCount": 0,
+    "completedCount": 0,
+    "items": {}
+  },
+  "platform": "system",
+  "payload": {
+    "content": {
+      "lesson_id": "ABITUR-MATHEMATIK-016",
+      "title": "Ebenengleichungen und Darstellungswechsel",
+      "overview": "Dieses Modul behandelt die drei zentralen Darstellungsformen von Ebenen im dreidimensionalen Raum: die Parameterform, die Normalenform und die Koordinatenform. Ein sicherer Wechsel zwischen diesen Formen ist essenziell für die Lösung komplexer geometrischer Abituraufgaben.",
+      "learning_objectives": [
+        "Aufstellen von Ebenengleichungen aus gegebenen Punkten oder Vektoren.",
+        "Umwandlung zwischen Parameter-, Normalen- und Koordinatenform.",
+        "Bestimmung von Normalenvektoren mittels Kreuzprodukt oder Gleichungssystem.",
+        "Interpretation der geometrischen Bedeutung der Koeffizienten in der Koordinatenform."
+      ],
+      "sections": [
+        {
+          "title": "Die Parameterform",
+          "content": "Die Parameterform beschreibt eine Ebene durch einen Stützvektor (Ortsvektor eines Punktes in der Ebene) und zwei Spannvektoren, die die Ebene aufspannen. Die Vektoren dürfen nicht kollinear (parallel) sein. Formel: E: x = p + r * u + s * v. Hierbei ist p der Stützvektor, u und v sind die Spannvektoren, und r, s sind reelle Skalare."
+        },
+        {
+          "title": "Die Normalenform und der Normalenvektor",
+          "content": "Die Normalenform nutzt die Eigenschaft, dass ein Vektor n (Normalenvektor) senkrecht auf allen Vektoren der Ebene steht. Formel: E: (x - p) · n = 0. Der Normalenvektor n kann aus zwei Spannvektoren u und v durch das Kreuzprodukt (Vektorprodukt) berechnet werden: n = u × v. Alternativ kann n über ein lineares Gleichungssystem bestimmt werden, indem man n · u = 0 und n · v = 0 setzt."
+        },
+        {
+          "title": "Die Koordinatenform",
+          "content": "Die Koordinatenform ist eine skalare Gleichung der Form E: ax₁ + bx₂ + cx₃ = d. Die Koeffizienten (a, b, c) entsprechen direkt den Komponenten des Normalenvektors n. Der Wert d ergibt sich durch Einsetzen eines Punktes der Ebene in die linke Seite der Gleichung. Diese Form ist besonders effizient für Schnittpunktberechnungen und Abstandsberechnungen."
+        },
+        {
+          "title": "Verfahren zum Darstellungswechsel",
+          "content": "1. Parameterform zu Koordinatenform: Berechne n = u × v. Setze n in ax₁ + bx₂ + cx₃ = d ein. Bestimme d durch Einsetzen des Stützpunktes. 2. Koordinatenform zu Parameterform: Wähle drei Punkte, die die Gleichung erfüllen (z. B. Spurpunkte auf den Achsen), und stelle damit die Parameterform auf. Alternativ: Löse die Gleichung nach einer Variablen auf und führe Parameter für die anderen beiden ein."
+        }
+      ],
+      "worked_examples": [
+        {
+          "question": "Gegeben sind die Punkte A(2|0|1), B(5|3|1) und C(2|4|5). Bestimmen Sie eine Gleichung der Ebene E, in der diese Punkte liegen, in Koordinatenform.",
+          "solution": "1. Spannvektoren aufstellen: u = AB = (3, 3, 0) und v = AC = (0, 4, 4). 2. Normalenvektor n berechnen: n = u × v = (3*4 - 0*4, 0*0 - 3*4, 3*4 - 3*0) = (12, -12, 12). Zur Vereinfachung kann n = (1, -1, 1) verwendet werden. 3. Koordinatenform ansetzen: 1*x₁ - 1*x₂ + 1*x₃ = d. 4. Punkt A(2|0|1) einsetzen: 2 - 0 + 1 = 3, also d = 3. Ergebnis: E: x₁ - x₂ + x₃ = 3. Prüfung: B(5|3|1) einsetzen: 5 - 3 + 1 = 3 (korrekt)."
+        }
+      ],
+      "common_mistakes": [
+        "Verwendung kollinearer Spannvektoren: Die Ebene ist dann nur eine Gerade.",
+        "Rechenfehler beim Kreuzprodukt: Ein falsches Vorzeichen führt zu einem falschen Normalenvektor.",
+        "Verwechslung von d in der Koordinatenform mit dem Abstand zum Ursprung: d ist nur dann der Abstand, wenn der Normalenvektor die Länge 1 hat (Hessesche Normalform)."
+      ],
+      "exam_tips": [
+        "Nutzen Sie zur Kontrolle immer die Punktprobe mit einem Punkt, der nicht zur Herleitung verwendet wurde.",
+        "Normalenvektoren dürfen gekürzt oder erweitert werden (Skalierung), um die Rechnung in der Koordinatenform zu vereinfachen.",
+        "Achten Sie auf die Aufgabenstellung: 'Bestimmen Sie eine Gleichung' lässt die Wahl der Form oft offen, 'Koordinatenform' ist jedoch meist für Folgeschritte (Schnittpunkte) am besten geeignet."
+      ],
+      "recap": "Ebenen können durch Punkte (Parameterform), durch Orthogonalität (Normalenform) oder als algebraische Gleichung (Koordinatenform) beschrieben werden. Der Normalenvektor n = (a, b, c) ist das Bindeglied zwischen diesen Formen.",
+      "knowledge_claims": [
+        {
+          "claim_id": "claim_01",
+          "type": "definition",
+          "content": "Die Parameterform einer Ebene lautet E: x = p + r * u + s * v, wobei p der Stützvektor und u, v nicht-kollineare Spannvektoren sind."
+        },
+        {
+          "claim_id": "claim_02",
+          "type": "rule",
+          "content": "Zwei Vektoren sind kollinear, wenn einer ein Vielfaches des anderen ist; sie können dann keine Ebene aufspannen."
+        },
+        {
+          "claim_id": "claim_03",
+          "type": "procedure",
+          "content": "Der Normalenvektor n einer Ebene kann durch das Kreuzprodukt der beiden Spannvektoren u und v berechnet werden (n = u × v)."
+        },
+        {
+          "claim_id": "claim_04",
+          "type": "interpretation",
+          "content": "In der Koordinatenform ax₁ + bx₂ + cx₃ = d entsprechen die Koeffizienten a, b und c den Komponenten des Normalenvektors n."
+        },
+        {
+          "claim_id": "claim_05",
+          "type": "formula",
+          "content": "Die Normalenform einer Ebene wird als Skalarprodukt (x - p) · n = 0 dargestellt."
+        },
+        {
+          "claim_id": "claim_06",
+          "type": "procedure",
+          "content": "Um d in der Koordinatenform zu bestimmen, setzt man die Koordinaten eines beliebigen Punktes der Ebene für x₁, x₂ und x₃ in die Gleichung ein."
+        },
+        {
+          "claim_id": "claim_07",
+          "type": "check",
+          "content": "Eine Punktprobe bestätigt, ob ein Punkt in einer Ebene liegt, indem seine Koordinaten die Ebenengleichung erfüllen müssen."
+        },
+        {
+          "claim_id": "claim_08",
+          "type": "comparison",
+          "content": "Die Koordinatenform ist für die Berechnung von Schnittpunkten mit Geraden effizienter als die Parameterform, da sie direkt zu einer linearen Gleichung in einer Variablen führt."
+        },
+        {
+          "claim_id": "claim_09",
+          "type": "recognition",
+          "content": "Spurpunkte sind die Schnittpunkte einer Ebene mit den Koordinatenachsen; sie lassen sich leicht aus der Koordinatenform bestimmen, indem zwei Koordinaten Null gesetzt werden."
+        },
+        {
+          "claim_id": "claim_10",
+          "type": "mistake",
+          "content": "Ein häufiger Fehler ist die Annahme, dass der Vektor p in der Normalenform (x - p) · n = 0 eindeutig ist; jeder Punkt der Ebene kann als Stützvektor dienen."
+        },
+        {
+          "claim_id": "claim_11",
+          "type": "application",
+          "content": "Wenn eine Ebene parallel zu einer Koordinatenachse verläuft, ist der entsprechende Koeffizient (a, b oder c) in der Koordinatenform gleich Null."
+        },
+        {
+          "claim_id": "claim_12",
+          "type": "procedure",
+          "content": "Zur Umwandlung der Koordinatenform in die Parameterform können drei Punkte der Ebene bestimmt und daraus Stütz- und Spannvektoren gebildet werden."
+        }
+      ],
+      "visual_requests": [],
+      "visual_assets": []
+    },
+    "items": [],
+    "videoLesson": {
+      "title": "Bestimme die Normale und wechsle Ebenenformen sicher",
+      "coverUrl": "https://solve-now.s3.us-west-2.amazonaws.com/german-abitur/atomic-videos-v2/ABITUR-MATHEMATIK-016/cover.png",
+      "playbackUrl": "https://solve-now.s3.us-west-2.amazonaws.com/german-abitur/atomic-videos-v2/ABITUR-MATHEMATIK-016/lesson.html",
+      "durationSeconds": 480,
+      "description": "Feingranulares IQB-basiertes Topic `Ebenengleichungen und Darstellungswechsel`; abgegrenzt durch: Parameter-, Normalen- und Koordinatenform verwenden. Im Quellkorpus: 30 Aufgaben, davon 29 offizielle Pool- oder Beispielaufgaben."
+    }
+  },
+  "lastViewedQuestionId": null,
+  "lastViewedAt": null
+}

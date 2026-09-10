@@ -1,0 +1,220 @@
+{
+  "epId": 500001,
+  "outlineId": 500002,
+  "topicGroupId": 510002,
+  "topicId": 520018,
+  "packageId": 5001,
+  "contentType": "flashCard",
+  "contentStatus": "READY",
+  "generationId": "",
+  "progress": {
+    "totalCount": 20,
+    "completedCount": 0,
+    "items": {}
+  },
+  "platform": "system",
+  "payload": {
+    "cards": [
+      {
+        "id": 53001700,
+        "topicId": 520018,
+        "type": "FLASH_CARD",
+        "info": "Unter welcher Bedingung sind zwei Vektoren $\\vec{a}$ und $\\vec{b}$ orthogonal zueinander?",
+        "backInfo": "Zwei Vektoren sind genau dann orthogonal, wenn ihr Skalarprodukt null ergibt: $\\vec{a} \\cdot \\vec{b} = 0$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001701,
+        "topicId": 520018,
+        "type": "FLASH_CARD",
+        "info": "Wie lautet die Formel zur Berechnung des Winkels $\\alpha$ zwischen zwei Vektoren?",
+        "backInfo": "Der Winkel wird berechnet durch $\\cos(\\alpha) = \\frac{|\\vec{u} \\cdot \\vec{v}|}{|\\vec{u}| \\cdot |\\vec{v}|}$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001702,
+        "topicId": 520018,
+        "type": "FLASH_CARD",
+        "info": "Welche Winkelfunktion wird für den Schnittwinkel zwischen einer Geraden und einer Ebene genutzt?",
+        "backInfo": "Für den Schnittwinkel zwischen Gerade und Ebene wird in der Formel der Sinus verwendet.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001703,
+        "topicId": 520018,
+        "type": "FLASH_CARD",
+        "info": "Wie berechnet man den Abstand eines Punktes zu einer Ebene in Koordinatenform?",
+        "backInfo": "Man setzt die Punktkoordinaten in die Hessische Normalform (HNF) der Ebene ein.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001704,
+        "topicId": 520018,
+        "type": "FLASH_CARD",
+        "info": "Was zeichnet den Normalenvektor einer Ebene bezüglich ihrer Spannvektoren aus?",
+        "backInfo": "Der Normalenvektor steht senkrecht auf allen Spannvektoren und somit auf der gesamten Ebene.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001705,
+        "topicId": 520018,
+        "type": "FLASH_CARD",
+        "info": "Warum nutzt man Betragsstriche im Zähler der Winkelformel?",
+        "backInfo": "Um ein negatives Ergebnis zu korrigieren und so stets den spitzen Schnittwinkel zu erhalten.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001706,
+        "topicId": 520018,
+        "type": "FLASH_CARD",
+        "info": "Welche Bedingung erfüllt der Lotfußpunkt $F$ bei einer Punkt-Gerade-Projektion?",
+        "backInfo": "Der Vektor $\\vec{PF}$ muss orthogonal zum Richtungsvektor der Geraden stehen.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001707,
+        "topicId": 520018,
+        "type": "FLASH_CARD",
+        "info": "Wie stehen Richtungsvektor und Normalenvektor zueinander, wenn eine Gerade senkrecht auf einer Ebene steht?",
+        "backInfo": "Der Richtungsvektor der Geraden ist kollinear (parallel) zum Normalenvektor der Ebene.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001708,
+        "topicId": 520018,
+        "type": "FLASH_CARD",
+        "info": "Wie ist die Länge (der Betrag) eines Vektors $\\vec{a}$ definiert?",
+        "backInfo": "Die Länge ist definiert als $\\sqrt{a_1^2 + a_2^2 + a_3^2}$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001709,
+        "topicId": 520018,
+        "type": "FLASH_CARD",
+        "info": "Was bedeutet ein Schnittwinkel von $90^\\circ$ zwischen zwei Ebenen für deren Normalenvektoren?",
+        "backInfo": "Ein Winkel von $90^\\circ$ bedeutet, dass die Normalenvektoren der beiden Ebenen orthogonal sind.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001710,
+        "topicId": 520018,
+        "type": "FLASH_CARD",
+        "info": "Wie prüft man rechnerisch, ob zwei Richtungsvektoren von Geraden einen rechten Winkel bilden?",
+        "backInfo": "Man berechnet das Skalarprodukt der Richtungsvektoren; ergibt dieses exakt null, bilden die Geraden einen rechten Winkel.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001711,
+        "topicId": 520018,
+        "type": "FLASH_CARD",
+        "info": "Welche Vektoren setzt man in die Kosinus-Formel ein, um den Schnittwinkel zweier Ebenen zu bestimmen?",
+        "backInfo": "Man setzt die Normalenvektoren $\\vec{n}_1$ und $\\vec{n}_2$ der beiden Ebenen in die Formel ein.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001712,
+        "topicId": 520018,
+        "type": "FLASH_CARD",
+        "info": "Warum führt $\\sin(\\alpha) = \\frac{|\\vec{u} \\cdot \\vec{n}|}{|\\vec{u}| \\cdot |\\vec{n}|}$ zum Winkel zwischen Gerade und Ebene?",
+        "backInfo": "Da der Kosinus den Winkel zum Normalenvektor liefert, ergibt der Sinus den Komplementärwinkel zur Ebene selbst.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001713,
+        "topicId": 520018,
+        "type": "FLASH_CARD",
+        "info": "Was muss im Nenner der HNF stehen, um den Abstand eines Punktes zur Ebene korrekt zu berechnen?",
+        "backInfo": "Im Nenner muss der Betrag des Normalenvektors stehen, also $\\sqrt{a^2 + b^2 + c^2}$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001714,
+        "topicId": 520018,
+        "type": "FLASH_CARD",
+        "info": "Wie verläuft ein Vektor relativ zu einer Ebene, wenn er parallel zu ihrem Normalenvektor ist?",
+        "backInfo": "Der Vektor steht in diesem Fall senkrecht (orthogonal) auf der Ebene.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001715,
+        "topicId": 520018,
+        "type": "FLASH_CARD",
+        "info": "Welche geometrische Eigenschaft des Schnittwinkels wird durch die Betragsstriche in der Formel sichergestellt?",
+        "backInfo": "Es wird sichergestellt, dass der berechnete Winkel $\\alpha$ im Bereich $0^\\circ \\le \\alpha \\le 90^\\circ$ (spitzer Winkel) liegt.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001716,
+        "topicId": 520018,
+        "type": "FLASH_CARD",
+        "info": "Wie bestimmt man den Abstand zweier paralleler Ebenen $E_1$ und $E_2$?",
+        "backInfo": "Man wählt einen beliebigen Punkt $P$ auf $E_1$ und berechnet dessen Abstand zu $E_2$ mittels der Hessischen Normalform.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001717,
+        "topicId": 520018,
+        "type": "FLASH_CARD",
+        "info": "Welcher Fehler liegt vor, wenn bei der Winkelberechnung zwischen Geraden die Ortsvektoren genutzt werden?",
+        "backInfo": "Es wurden Stützvektoren statt der für die Ausrichtung relevanten Richtungsvektoren verwendet, was zu falschen Winkeln führt.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001718,
+        "topicId": 520018,
+        "type": "FLASH_CARD",
+        "info": "Wie lässt sich das Lotfußpunktverfahren zur Abstandsbestimmung Punkt-Gerade über ein Skalarprodukt begründen?",
+        "backInfo": "Der Differenzvektor zwischen Punkt und Gerade muss senkrecht auf dem Richtungsvektor stehen, also muss ihr Skalarprodukt null sein.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53001719,
+        "topicId": 520018,
+        "type": "FLASH_CARD",
+        "info": "Eine Gerade $g$ ist orthogonal zu Ebene $E$. Was gilt für $\\vec{u}_g$ und $\\vec{n}_E$?",
+        "backInfo": "Der Richtungsvektor $\\vec{u}_g$ ist ein Vielfaches des Normalenvektors $\\vec{n}_E$ (sie sind kollinear).",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      }
+    ]
+  }
+}

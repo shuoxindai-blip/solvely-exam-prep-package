@@ -1,0 +1,220 @@
+{
+  "epId": 500001,
+  "outlineId": 500002,
+  "topicGroupId": 510001,
+  "topicId": 520009,
+  "packageId": 5001,
+  "contentType": "flashCard",
+  "contentStatus": "READY",
+  "generationId": "",
+  "progress": {
+    "totalCount": 20,
+    "completedCount": 0,
+    "items": {}
+  },
+  "platform": "system",
+  "payload": {
+    "cards": [
+      {
+        "id": 53000800,
+        "topicId": 520009,
+        "type": "FLASH_CARD",
+        "info": "Wie ist eine Stammfunktion $F$ einer Funktion $f$ formal definiert?",
+        "backInfo": "Eine Funktion $F$ heißt Stammfunktion von $f$, wenn für alle $x$ im Definitionsbereich gilt: $F'(x) = f(x)$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000801,
+        "topicId": 520009,
+        "type": "FLASH_CARD",
+        "info": "Was muss bei der Angabe aller Stammfunktionen einer Funktion $f$ stets ergänzt werden?",
+        "backInfo": "Es muss eine additive Integrationskonstante $C \\in \\mathbb{R}$ hinzugefügt werden, da die Ableitung einer Konstanten null ist.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000802,
+        "topicId": 520009,
+        "type": "FLASH_CARD",
+        "info": "Wie lautet die allgemeine Stammfunktion für $f(x) = x^n$ mit $n \\neq -1$?",
+        "backInfo": "Die Stammfunktion lautet $F(x) = \\frac{1}{n+1} \\cdot x^{n+1} + C$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000803,
+        "topicId": 520009,
+        "type": "FLASH_CARD",
+        "info": "Welche Regel erlaubt es, Funktionen innerhalb einer Summe einzeln zu integrieren?",
+        "backInfo": "Die Summenregel: Das Integral einer Summe ist gleich der Summe der Integrale der einzelnen Summanden.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000804,
+        "topicId": 520009,
+        "type": "FLASH_CARD",
+        "info": "Was besagt die Faktorregel bei der Bildung von Stammfunktionen?",
+        "backInfo": "Ein konstanter Faktor $k$ bleibt beim Integrieren als multiplikativer Faktor erhalten: $\\int k \\cdot f(x) dx = k \\cdot F(x)$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000805,
+        "topicId": 520009,
+        "type": "FLASH_CARD",
+        "info": "Wie bestimmt man den Wert der Konstante $C$ bei einem gegebenen Punkt $P(x_0|y_0)$?",
+        "backInfo": "Man setzt $x_0$ in $F(x) + C$ ein, stellt die Gleichung $F(x_0) + C = y_0$ auf und löst nach $C$ auf.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000806,
+        "topicId": 520009,
+        "type": "FLASH_CARD",
+        "info": "Was ist die korrekte Stammfunktion der Sinusfunktion $f(x) = \\sin(x)$?",
+        "backInfo": "Die Stammfunktion lautet $F(x) = -\\cos(x) + C$. Ein häufiger Fehler ist das Vergessen des negativen Vorzeichens.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000807,
+        "topicId": 520009,
+        "type": "FLASH_CARD",
+        "info": "Mit welcher Methode lässt sich die Korrektheit einer gefundenen Stammfunktion $F$ prüfen?",
+        "backInfo": "Durch Ableiten: Wenn $F'(x) = f(x)$ ergibt, ist die Stammfunktion korrekt bestimmt worden.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000808,
+        "topicId": 520009,
+        "type": "FLASH_CARD",
+        "info": "Wie liegen die Graphen der verschiedenen Stammfunktionen einer Funktion $f$ zueinander?",
+        "backInfo": "Die Graphen sind aufgrund der unterschiedlichen Integrationskonstanten $C$ alle parallel in $y$-Richtung zueinander verschoben.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000809,
+        "topicId": 520009,
+        "type": "FLASH_CARD",
+        "info": "Welche Eigenschaft hat der Graph von $F$ an Nullstellen von $f$ mit Vorzeichenwechsel?",
+        "backInfo": "An diesen Stellen besitzt der Graph der Stammfunktion $F$ ein lokales Extremum (Maximum oder Minimum).",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000810,
+        "topicId": 520009,
+        "type": "FLASH_CARD",
+        "info": "Warum ist die Stammfunktion $F(x) = x^2$ für $f(x) = 2x$ korrekt?",
+        "backInfo": "Weil die Ableitung von $F(x)$ nach der Potenzregel $F'(x) = 2x$ ergibt, was exakt der Funktion $f(x)$ entspricht.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000811,
+        "topicId": 520009,
+        "type": "FLASH_CARD",
+        "info": "Warum führt das Integrieren ohne Bedingung zu einer Funktionsschar statt einer Einzelfunktion?",
+        "backInfo": "Da die Ableitung jeder Konstanten $C$ null ist, liefern alle Funktionen $F(x) + C$ beim Ableiten dasselbe Ergebnis $f(x)$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000812,
+        "topicId": 520009,
+        "type": "FLASH_CARD",
+        "info": "Bestimme eine Stammfunktion für $f(x) = x^4$ durch Anwendung der Potenzregel.",
+        "backInfo": "Mit $n=4$ folgt $F(x) = \\frac{1}{4+1} \\cdot x^{4+1} = \\frac{1}{5}x^5$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000813,
+        "topicId": 520009,
+        "type": "FLASH_CARD",
+        "info": "Bilde die Stammfunktion von $f(x) = x^2 + e^x$ unter Nutzung der Summenregel.",
+        "backInfo": "Die Summanden werden einzeln integriert: $F(x) = \\frac{1}{3}x^3 + e^x + C$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000814,
+        "topicId": 520009,
+        "type": "FLASH_CARD",
+        "info": "Wie wird der Faktor $5$ beim Integrieren von $f(x) = 5 \\cdot \\cos(x)$ behandelt?",
+        "backInfo": "Nach der Faktorregel bleibt die $5$ erhalten, sodass die Stammfunktion $F(x) = 5 \\cdot \\sin(x) + C$ lautet.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000815,
+        "topicId": 520009,
+        "type": "FLASH_CARD",
+        "info": "Berechne $C$ für $F(x) = x^2 + C$, wenn der Graph durch $P(1|5)$ verläuft.",
+        "backInfo": "Einsetzen ergibt $1^2 + C = 5$, also $1 + C = 5$. Daraus folgt $C = 4$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000816,
+        "topicId": 520009,
+        "type": "FLASH_CARD",
+        "info": "Diagnose: Ein Schüler behauptet $\\int \\sin(x) dx = \\cos(x)$. Warum ist das falsch?",
+        "backInfo": "Die Ableitung von $\\cos(x)$ ist $-\\sin(x)$. Um $\\sin(x)$ zu erhalten, muss die Stammfunktion $-\\cos(x)$ lauten.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000817,
+        "topicId": 520009,
+        "type": "FLASH_CARD",
+        "info": "Wie verifizierst du, ob $F(x) = \\sin(x)$ eine Stammfunktion von $f(x) = \\cos(x)$ ist?",
+        "backInfo": "Man bildet die Ableitung $F'(x)$. Da $(\\sin(x))' = \\cos(x)$ gilt, ist die Stammfunktion korrekt.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000818,
+        "topicId": 520009,
+        "type": "FLASH_CARD",
+        "info": "Was bedeutet die Konstante $C$ für die Lage zweier Stammfunktionen im Koordinatensystem?",
+        "backInfo": "Sie bewirkt, dass die Graphen identisch geformt, aber vertikal (in $y$-Richtung) zueinander versetzt sind.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53000819,
+        "topicId": 520009,
+        "type": "FLASH_CARD",
+        "info": "Welcher Zusammenhang besteht zwischen den Nullstellen von $f$ und den Extrema von $F$?",
+        "backInfo": "Da $F'(x) = f(x)$ gilt, sind die Nullstellen von $f$ die Stellen mit waagerechter Tangente (Extrema) bei $F$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      }
+    ]
+  }
+}

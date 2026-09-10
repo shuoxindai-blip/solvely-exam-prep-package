@@ -1,0 +1,159 @@
+{
+  "epId": 500001,
+  "outlineId": 500002,
+  "topicGroupId": 510003,
+  "topicId": 520025,
+  "packageId": 5001,
+  "contentType": "studyGuide",
+  "contentStatus": "READY",
+  "generationId": "",
+  "progress": {
+    "totalCount": 2,
+    "completedCount": 0,
+    "items": {}
+  },
+  "platform": "system",
+  "payload": {
+    "content": {
+      "lesson_id": "ABITUR-MATHEMATIK-025",
+      "title": "Bedingte Wahrscheinlichkeit, Vierfeldertafel und Unabhängigkeit",
+      "overview": "Dieses Modul behandelt die Analyse von Abhängigkeiten zwischen zwei Ereignissen. Im Zentrum stehen die Berechnung bedingter Wahrscheinlichkeiten, die strukturierte Darstellung in Vierfeldertafeln sowie der formale Nachweis der stochastischen Unabhängigkeit.",
+      "learning_objectives": [
+        "Bedingte Wahrscheinlichkeiten mithilfe der Definition berechnen.",
+        "Vierfeldertafeln aus gegebenen Sachverhalten erstellen und vervollständigen.",
+        "Die stochastische Unabhängigkeit zweier Ereignisse rechnerisch prüfen.",
+        "Zusammenhänge zwischen Baumdiagrammen und Vierfeldertafeln herstellen."
+      ],
+      "sections": [
+        {
+          "title": "Bedingte Wahrscheinlichkeit",
+          "content": "Die bedingte Wahrscheinlichkeit P_A(B) (auch P(B|A)) gibt an, wie groß die Wahrscheinlichkeit für das Eintreten eines Ereignisses B ist, unter der Voraussetzung, dass das Ereignis A bereits eingetreten ist. Sie berechnet sich nach der Formel: P_A(B) = P(A ∩ B) / P(A), wobei P(A) > 0 gelten muss. Hierbei steht P(A ∩ B) für die Wahrscheinlichkeit, dass beide Ereignisse gleichzeitig eintreten (Schnittmenge)."
+        },
+        {
+          "title": "Die Vierfeldertafel",
+          "content": "Die Vierfeldertafel ist ein Werkzeug zur Darstellung von Häufigkeiten oder Wahrscheinlichkeiten zweier Ereignisse A und B sowie deren Gegenereignisse. In den vier inneren Feldern stehen die Schnittwahrscheinlichkeiten (z. B. P(A ∩ B)). In den Randfeldern stehen die Wahrscheinlichkeiten der Einzelereignisse (Marginalwahrscheinlichkeiten), wie P(A) oder P(B). Die Summe der Randfelder ergibt immer 1 (bzw. 100 %). Sie eignet sich besonders gut, um fehlende Werte durch einfache Addition oder Subtraktion zu ermitteln."
+        },
+        {
+          "title": "Stochastische Unabhängigkeit",
+          "content": "Zwei Ereignisse A und B heißen stochastisch unabhängig, wenn das Eintreten von A die Wahrscheinlichkeit von B nicht beeinflusst. Mathematisch wird dies über die Multiplikationsregel geprüft: A und B sind unabhängig, wenn gilt: P(A ∩ B) = P(A) * P(B). Alternativ lässt sich die Unabhängigkeit über die Bedingung P_A(B) = P(B) nachweisen."
+        }
+      ],
+      "worked_examples": [
+        {
+          "question": "In einer Schule sind 60 % der Schüler in einem Sportverein (S). 40 % aller Schüler sind männlich (M). 25 % aller Schüler sind männlich und im Sportverein. Berechnen Sie die Wahrscheinlichkeit, dass ein zufällig ausgewählter Schüler im Sportverein ist, unter der Bedingung, dass er männlich ist. Prüfen Sie zudem, ob die Merkmale 'männlich' und 'Sportverein' stochastisch unabhängig sind.",
+          "solution": "1. Gegebene Werte: P(S) = 0,60; P(M) = 0,40; P(M ∩ S) = 0,25.\n2. Berechnung der bedingten Wahrscheinlichkeit: P_M(S) = P(M ∩ S) / P(M) = 0,25 / 0,40 = 0,625 (62,5 %).\n3. Prüfung auf Unabhängigkeit: P(M) * P(S) = 0,40 * 0,60 = 0,24. Da P(M ∩ S) = 0,25 und somit P(M ∩ S) ≠ P(M) * P(S) gilt (0,25 ≠ 0,24), sind die Ereignisse stochastisch abhängig.\n4. Plausibilitätscheck: Da P_M(S) = 0,625 ungleich P(S) = 0,60 ist, bestätigt dies die Abhängigkeit."
+        }
+      ],
+      "common_mistakes": [
+        "Verwechslung von P(A ∩ B) mit P_A(B): P(A ∩ B) bezieht sich auf die Gesamtmenge, P_A(B) nur auf die Teilmenge A.",
+        "Falsche Grundgesamtheit: Bei bedingten Wahrscheinlichkeiten muss im Nenner immer die Wahrscheinlichkeit der Bedingung stehen, nicht 1.",
+        "Annahme von Unabhängigkeit ohne Rechnung: Unabhängigkeit darf in Aufgaben nie vorausgesetzt werden, außer es ist explizit angegeben."
+      ],
+      "exam_tips": [
+        "Nutzen Sie die Vierfeldertafel, um P(A ∩ B) schnell zu finden, wenn P(A) und P_A(B) nicht direkt gegeben sind.",
+        "Achten Sie auf Formulierungen wie 'unter der Bedingung, dass...' oder 'von denjenigen, die...', um die Bedingung zu identifizieren.",
+        "Prüfen Sie bei Unabhängigkeitsfragen immer beide Seiten der Gleichung P(A ∩ B) = P(A) * P(B) und notieren Sie das Ergebnis des Vergleichs explizit."
+      ],
+      "recap": "Die bedingte Wahrscheinlichkeit P_A(B) setzt das gemeinsame Eintreten P(A ∩ B) ins Verhältnis zur Bedingung P(A). Die Vierfeldertafel hilft bei der Organisation dieser Daten. Stochastische Unabhängigkeit liegt genau dann vor, wenn P(A ∩ B) = P(A) * P(B) gilt.",
+      "knowledge_claims": [
+        {
+          "claim_id": "claim_01",
+          "type": "definition",
+          "content": "Die bedingte Wahrscheinlichkeit P_A(B) beschreibt die Wahrscheinlichkeit von B unter der Voraussetzung, dass A bereits eingetreten ist."
+        },
+        {
+          "claim_id": "claim_02",
+          "type": "formula",
+          "content": "Die Formel für die bedingte Wahrscheinlichkeit lautet P_A(B) = P(A ∩ B) / P(A)."
+        },
+        {
+          "claim_id": "claim_03",
+          "type": "rule",
+          "content": "In einer Vierfeldertafel stehen in den vier inneren Feldern die Wahrscheinlichkeiten der Schnittmengen P(A ∩ B), P(A ∩ ¬B), P(¬A ∩ B) und P(¬A ∩ ¬B)."
+        },
+        {
+          "claim_id": "claim_04",
+          "type": "check",
+          "content": "Die Summe der vier inneren Felder einer Vierfeldertafel muss immer 1 ergeben."
+        },
+        {
+          "claim_id": "claim_05",
+          "type": "rule",
+          "content": "Zwei Ereignisse A und B sind stochastisch unabhängig, wenn gilt: P(A ∩ B) = P(A) * P(B)."
+        },
+        {
+          "claim_id": "claim_06",
+          "type": "interpretation",
+          "content": "Wenn P_A(B) = P(B) gilt, hat das Eintreten von A keinen Einfluss auf die Wahrscheinlichkeit von B; die Ereignisse sind unabhängig."
+        },
+        {
+          "claim_id": "claim_07",
+          "type": "mistake",
+          "content": "Ein häufiger Fehler ist die Annahme, dass 'stochastisch unabhängig' dasselbe bedeutet wie 'disjunkt' (unvereinbar); disjunkte Ereignisse mit P > 0 sind jedoch immer abhängig."
+        },
+        {
+          "claim_id": "claim_08",
+          "type": "procedure",
+          "content": "Um eine Vierfeldertafel zu vervollständigen, nutzt man, dass die Summe der Zeilen- bzw. Spaltenwerte den jeweiligen Randwert ergibt."
+        },
+        {
+          "claim_id": "claim_09",
+          "type": "comparison",
+          "content": "Während das Baumdiagramm bedingte Wahrscheinlichkeiten an den Pfaden der zweiten Stufe zeigt, zeigt die Vierfeldertafel Schnittwahrscheinlichkeiten direkt in den Feldern."
+        },
+        {
+          "claim_id": "claim_10",
+          "type": "application",
+          "content": "Die Wahrscheinlichkeit P(A ∩ B) kann durch Umstellen der bedingten Wahrscheinlichkeit als P(A) * P_A(B) berechnet werden (Pfadmultiplikationsregel)."
+        },
+        {
+          "claim_id": "claim_11",
+          "type": "recognition",
+          "content": "Das Ereignis 'A unter der Bedingung B' wird mathematisch als P_B(A) notiert, wobei B die Teilmenge definiert, auf die man sich bezieht."
+        },
+        {
+          "claim_id": "claim_12",
+          "type": "check",
+          "content": "Beim Rechnen mit bedingten Wahrscheinlichkeiten muss stets geprüft werden, ob P(Bedingung) > 0 ist, da sonst die Division nicht definiert ist."
+        }
+      ],
+      "visual_requests": [],
+      "visual_assets": []
+    },
+    "items": [
+      {
+        "id": 55002400,
+        "sourceQuestionId": "MAT-7643291DE6-01",
+        "topicId": 520025,
+        "type": "STUDENT_PRODUCED_RESPONSE",
+        "stem": "Eine repräsentative Befragung deutscher Unternehmen ergab, dass von ihnen \n♦ 10 % Onlinefortbildungen, aber keine Präsenzfortbildungen, \n♦ 13 % Präsenzfortbildungen, aber keine Onlinefortbildungen und \n♦ 19 % weder Online- noch Präsenzfortbildungen \nfür ihre Beschäftigten anbieten. \nEin deutsches Unternehmen wird zufällig ausgewählt. Betrachtet werden die folgen-\nden Ereignisse: \n1E : „Das Unternehmen bietet Onlinefortbildungen an.“ \n2E : „Das Unternehmen bietet Präsenzfortbildungen an.“\nStellen Sie den Sachverhalt in einer vollständig ausgefüllten Vierfeldertafel dar. 2",
+        "options": {},
+        "correctAnswer": "2 \n e Berechnen Sie die Wahrscheinlichkeit dafür, dass von 25 zufällig ausgewählten \ndeutschen Unternehmen mindestens fünf Präsenzfortbildungen, aber keine Online-\nfortbildungen anbieten. \n2 \n f In einem anderen europäischen Land befinden sich unter 30 zufällig ausgewählten \nUnternehmen mit einer Wahrscheinlichkeit von 98 % mindestens zwei, die Online-\nfortbildungen, aber keine Präsenzfortbildungen anbieten. Bestimmen Sie für dieses \nLand den Anteil der Unternehmen, die Onlinefortbildungen, aber keine Präsenzfort-\nbildungen anbieten. \n4 \n2 Von den 120 Beschäftigten eines Unternehmens sind 80 mit dessen Fortbildungsan-\ngebot zufrieden. Von den 120 Beschäftigten werden 75 zufällig ausgewählt. \n \n a Begründen Sie, dass sich das Modell der Binomialverteilung nicht dafür eignet, eine \nsinnvolle Aussage über die Anzahl derjenigen Beschäftigten unter den ausgewähl-\nten zu treffen, die mit dem Fortbildungsangebot zufrieden sind. \n2 \n b Ermitteln Sie die Wahrscheinlichkeit dafür, dass von den ausgewählten Beschäftig-\nten genau 50 mit dem Fortbildungsangebot zufrieden sind. \n3 \n 20 \n2 Erwartungshorizont \nDer Erwartungshorizont stellt für jede Teilaufgabe eine mögliche Lösung dar. Nicht darge-\nstellte korrekte Lösungen sind als gleichwertig zu akzeptieren. \n BE \n1 a 2E 2E \n1E 58 % 10 % 68 % \n1E 13 % 19 % 32 % \n 71 % 29 % 100 % \n \n2 \n b 58%\n68% 85%≈ 2 \n c Der Term beschreibt das angegebene Ereignis. \nBegründung: Der Term beschreibt das Ereignis, dass 1E oder nur 2E eintritt. Dies \nist genau dann der Fall, wenn mindestens eines der Ereignisse 1E und 2E eintritt. \n3 \n d 100% 58% 42%−= 2 \n e X: Anzahl der Unternehmen, die Präsenzfortbildungen, aber keine Onlinefortbildun-\ngen anbieten \n( )25\n0,13P X 5 22%≥≈ \n2 \n f ( ) ( ) ( )\n30 2930\npP X 2 0,02 1 p 30 p 1 p 0,02< = ⇔ − + ⋅⋅ − = liefert p 18%≈ 4",
+        "explanation": "2 \n e Berechnen Sie die Wahrscheinlichkeit dafür, dass von 25 zufällig ausgewählten \ndeutschen Unternehmen mindestens fünf Präsenzfortbildungen, aber keine Online-\nfortbildungen anbieten. \n2 \n f In einem anderen europäischen Land befinden sich unter 30 zufällig ausgewählten \nUnternehmen mit einer Wahrscheinlichkeit von 98 % mindestens zwei, die Online-\nfortbildungen, aber keine Präsenzfortbildungen anbieten. Bestimmen Sie für dieses \nLand den Anteil der Unternehmen, die Onlinefortbildungen, aber keine Präsenzfort-\nbildungen anbieten. \n4 \n2 Von den 120 Beschäftigten eines Unternehmens sind 80 mit dessen Fortbildungsan-\ngebot zufrieden. Von den 120 Beschäftigten werden 75 zufällig ausgewählt. \n \n a Begründen Sie, dass sich das Modell der Binomialverteilung nicht dafür eignet, eine \nsinnvolle Aussage über die Anzahl derjenigen Beschäftigten unter den ausgewähl-\nten zu treffen, die mit dem Fortbildungsangebot zufrieden sind. \n2 \n b Ermitteln Sie die Wahrscheinlichkeit dafür, dass von den ausgewählten Beschäftig-\nten genau 50 mit dem Fortbildungsangebot zufrieden sind. \n3 \n 20 \n2 Erwartungshorizont \nDer Erwartungshorizont stellt für jede Teilaufgabe eine mögliche Lösung dar. Nicht darge-\nstellte korrekte Lösungen sind als gleichwertig zu akzeptieren. \n BE \n1 a 2E 2E \n1E 58 % 10 % 68 % \n1E 13 % 19 % 32 % \n 71 % 29 % 100 % \n \n2 \n b 58%\n68% 85%≈ 2 \n c Der Term beschreibt das angegebene Ereignis. \nBegründung: Der Term beschreibt das Ereignis, dass 1E oder nur 2E eintritt. Dies \nist genau dann der Fall, wenn mindestens eines der Ereignisse 1E und 2E eintritt. \n3 \n d 100% 58% 42%−= 2 \n e X: Anzahl der Unternehmen, die Präsenzfortbildungen, aber keine Onlinefortbildun-\ngen anbieten \n( )25\n0,13P X 5 22%≥≈ \n2 \n f ( ) ( ) ( )\n30 2930\npP X 2 0,02 1 p 30 p 1 p 0,02< = ⇔ − + ⋅⋅ − = liefert p 18%≈ 4",
+        "userAnswer": null,
+        "isCorrect": -1
+      },
+      {
+        "id": 55002401,
+        "sourceQuestionId": "MAT-8469003281-02",
+        "topicId": 520025,
+        "type": "STUDENT_PRODUCED_RESPONSE",
+        "stem": "Betrachtet werden die Ereignisse A und B: \nA: „Es wird ( )1; 3 , ( )2; 2 oder ( )3;1 erzielt.“ \nB: „Beim ersten Drehen wird eine 2 erzielt.“ \nUntersuchen Sie, ob A und B stochastisch unabhängig sind. \n3",
+        "options": {},
+        "correctAnswer": "2 \n2 Erwartungshorizont \nDer Erwartungshorizont stellt für jede Teilaufgabe dar, in welchem Umfang und in welcher \nForm eine Lösung erwartet wird; nicht alle Lösungen sind dazu vollständig ausgeführt. Nicht \ndargestellte korrekte Lösungen sind als gleichwertig zu akzeptieren. \n BE \na k 2 3 4 5 6 \n( )PX k= 1\n9 2\n9 1\n3 2\n9 1\n9 \n \n2 \nb ( ) ( ) ( )( ) ( )11 1\n33 9PA PB P 2 ; 2 PA B⋅ =⋅== = ∩ , d. h. A und B sind stochastisch unab-\nhängig. \n3 \n 5",
+        "explanation": "2 \n2 Erwartungshorizont \nDer Erwartungshorizont stellt für jede Teilaufgabe dar, in welchem Umfang und in welcher \nForm eine Lösung erwartet wird; nicht alle Lösungen sind dazu vollständig ausgeführt. Nicht \ndargestellte korrekte Lösungen sind als gleichwertig zu akzeptieren. \n BE \na k 2 3 4 5 6 \n( )PX k= 1\n9 2\n9 1\n3 2\n9 1\n9 \n \n2 \nb ( ) ( ) ( )( ) ( )11 1\n33 9PA PB P 2 ; 2 PA B⋅ =⋅== = ∩ , d. h. A und B sind stochastisch unab-\nhängig. \n3 \n 5",
+        "userAnswer": null,
+        "isCorrect": -1
+      }
+    ],
+    "videoLesson": {
+      "title": "Erstelle Vierfeldertafel und berechne bedingte Wahrscheinlichkeit",
+      "coverUrl": "https://solve-now.s3.us-west-2.amazonaws.com/german-abitur/atomic-videos-v2/ABITUR-MATHEMATIK-025/cover.png",
+      "playbackUrl": "https://solve-now.s3.us-west-2.amazonaws.com/german-abitur/atomic-videos-v2/ABITUR-MATHEMATIK-025/lesson.html",
+      "durationSeconds": 480,
+      "description": "Feingranulares IQB-basiertes Topic `Bedingte Wahrscheinlichkeit, Vierfeldertafel und Unabhängigkeit`; abgegrenzt durch: Bedingungen und Unabhängigkeit quantitativ prüfen. Im Quellkorpus: 40 Aufgaben, davon 25 offizielle Pool- oder Beispielaufgaben."
+    }
+  },
+  "lastViewedQuestionId": null,
+  "lastViewedAt": null
+}

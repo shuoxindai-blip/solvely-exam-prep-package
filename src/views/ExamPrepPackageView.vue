@@ -13,6 +13,9 @@ import { buildActReport } from "../data/actReport";
 import { loadApEpExam, loadApManifest, loadApTopicQuiz } from "../data/apData";
 import { buildApDiagnosticExam } from "../data/apDiagnostic";
 import { buildApReport } from "../data/apReport";
+import { loadAbiturEpExam, loadAbiturManifest, loadAbiturTopicQuiz } from "../data/abiturData";
+import { buildAbiturDiagnosticExam } from "../data/abiturDiagnostic";
+import { buildAbiturReport } from "../data/abiturReport";
 import { loadImprovePracticeProgress } from "../data/improvePracticeProgress";
 import type { SatReportReviewQuestion } from "../data/satReport";
 import type { EpExam } from "../types/epV2";
@@ -32,7 +35,7 @@ import {
 } from "../domain/prepState";
 
 type CourseTab = "study" | "results";
-type ExamFamily = "sat" | "act" | "ap-calculus-bc";
+type ExamFamily = "sat" | "act" | "ap-calculus-bc" | "abitur-mathematik";
 type ResultView = "full" | "score" | "review" | "improve";
 type ResultSource = "diagnostic" | "practice";
 type HomePreviewState = "empty" | "created";
@@ -88,7 +91,7 @@ type LastActivity =
 function isLastActivity(value: unknown): value is LastActivity {
   if (typeof value !== "object" || value === null) return false;
   const activity = value as Record<string, unknown>;
-  const validFamily = activity.examFamily === "sat" || activity.examFamily === "act" || activity.examFamily === "ap-calculus-bc";
+  const validFamily = activity.examFamily === "sat" || activity.examFamily === "act" || activity.examFamily === "ap-calculus-bc" || activity.examFamily === "abitur-mathematik";
   const common = validFamily && typeof activity.examTitle === "string" &&
     typeof activity.sectionTitle === "string" && typeof activity.itemTitle === "string";
   if (!common) return false;
@@ -107,15 +110,17 @@ const route = useRoute();
 const router = useRouter();
 const examFamily = computed<ExamFamily>(() => {
   const queryExam = String(route.query.exam || "").toLowerCase();
+  if (queryExam === "abitur-mathematik" || route.hash === "#course-3") return "abitur-mathematik";
   if (queryExam === "ap-calculus-bc" || route.hash === "#course-2") return "ap-calculus-bc";
   if (queryExam === "act" || route.hash === "#course-1") return "act";
   return "sat";
 });
 const isActPackage = computed(() => examFamily.value === "act");
 const isApPackage = computed(() => examFamily.value === "ap-calculus-bc");
-const activeCourseHash = computed(() => isApPackage.value ? "#course-2" : isActPackage.value ? "#course-1" : "#course-0");
-const examName = computed(() => isApPackage.value ? "AP Calculus BC" : isActPackage.value ? "ACT" : "SAT");
-const packageTitle = computed(() => isApPackage.value ? "AP Calculus BC Prep 2027" : `${examName.value} Prep 2026`);
+const isAbiturPackage = computed(() => examFamily.value === "abitur-mathematik");
+const activeCourseHash = computed(() => isAbiturPackage.value ? "#course-3" : isApPackage.value ? "#course-2" : isActPackage.value ? "#course-1" : "#course-0");
+const examName = computed(() => isAbiturPackage.value ? "Abitur Mathematik" : isApPackage.value ? "AP Calculus BC" : isActPackage.value ? "ACT" : "SAT");
+const packageTitle = computed(() => isAbiturPackage.value ? "Abitur Mathematik Prep 2027" : isApPackage.value ? "AP Calculus BC Prep 2027" : `${examName.value} Prep 2026`);
 const examRouteQuery = computed<Record<string, string>>(() => examFamily.value === "sat" ? {} as Record<string, string> : { exam: examFamily.value });
 const { accessState, isProMember, setProAccess } = useProAccess();
 const manifest = ref<SatManifest | null>(null);
@@ -188,7 +193,7 @@ const courseActivityList = computed(() =>
   Object.values(courseActivities.value).filter(Boolean) as LastActivity[],
 );
 const currentCourseActivity = computed(() => courseActivities.value[examFamily.value] ?? null);
-const isCourseOpen = computed(() => ["#course-0", "#course-1", "#course-2"].includes(route.hash));
+const isCourseOpen = computed(() => ["#course-0", "#course-1", "#course-2", "#course-3"].includes(route.hash));
 const forcedHomePreview = computed<RouteHomePreviewState>(() => {
   const override = String(route.query.homeState || "").toLowerCase();
   return override === "first-entry" || override === "active" ? override : null;
@@ -246,16 +251,25 @@ function activityContextLabel(activity: LastActivity) {
   return `${activity.sectionTitle} · ${activityType}`;
 }
 const practiceResultReport = computed(() => resultExam.value
-  ? (isApPackage.value ? buildApReport(resultExam.value) : isActPackage.value ? buildActReport(resultExam.value) : buildSatReport(resultExam.value))
+  ? (isAbiturPackage.value ? buildAbiturReport(resultExam.value) : isApPackage.value ? buildApReport(resultExam.value) : isActPackage.value ? buildActReport(resultExam.value) : buildSatReport(resultExam.value))
   : null);
 const diagnosticExam = computed<EpExam | null>(() => {
   const exam = isActPackage.value ? diagnosticSourceExam.value : resultExam.value;
   if (!exam) return null;
+  if (isAbiturPackage.value) return buildAbiturDiagnosticExam(exam);
   if (isApPackage.value) return buildApDiagnosticExam(exam);
   return isActPackage.value ? buildActDiagnosticExam(exam) : buildSatDiagnosticExam(exam);
 });
 const diagnosticResultReport = computed(() => {
   if (!diagnosticExam.value) return null;
+  if (isAbiturPackage.value) {
+    const report = buildAbiturReport(diagnosticExam.value);
+    return {
+      ...report,
+      attemptId: "abitur-mathematik-diagnostic-anna-2026-09-10",
+      overview: "Your Abitur Mathematik diagnostic estimates your current Notenpunkte and highlights which of the three content domains should lead your study plan.",
+    };
+  }
   if (isApPackage.value) {
     const report = buildApReport(diagnosticExam.value);
     return {
@@ -364,7 +378,7 @@ const practiceTestDurationMinutes = computed(() => {
   const sectionIds = new Set(
     (resultExam.value?.questions ?? []).map((question) => question.sectionId),
   );
-  return isApPackage.value ? 195 : isActPackage.value ? 165 : (
+  return isAbiturPackage.value ? 300 : isApPackage.value ? 195 : isActPackage.value ? 165 : (
     (sectionIds.has("reading-writing") ? 64 : 0) +
     (sectionIds.has("math") ? 70 : 0)
   );
@@ -491,7 +505,8 @@ const targetedPracticeLockTitle = computed(() => {
 const diagnosticTestCard = computed(() => {
   const report = diagnosticResultReport.value;
   const questionCount = diagnosticExam.value?.questions.length ?? 20;
-  const sectionCount = isApPackage.value ? 1 : isActPackage.value ? 4 : 2;
+  const sectionCount = isAbiturPackage.value || isApPackage.value ? 1 : isActPackage.value ? 4 : 2;
+  const assessmentItemLabel = isAbiturPackage.value ? "tasks" : "questions";
   const readingWritingScore =
     report?.sections.find((section) => section.sectionId === "reading-writing")
       ?.score ?? 650;
@@ -502,7 +517,13 @@ const diagnosticTestCard = computed(() => {
     return {
       stateLabel: "Results ready",
       description: `Your predicted ${examName.value} score and free answer review are ready. This estimate does not replace the full-length test.`,
-      metrics: isApPackage.value
+      metrics: isAbiturPackage.value
+        ? [
+            { value: String(report?.totalScore ?? 11), label: "predicted Notenpunkte" },
+            { value: `${report?.accuracy ?? 76}%`, label: "estimated BE" },
+            { value: String(questionCount), label: assessmentItemLabel },
+          ]
+        : isApPackage.value
         ? [
             { value: String(report?.totalScore ?? 4), label: "predicted AP score" },
             { value: String(report?.correct ?? 16), label: "correct" },
@@ -519,10 +540,8 @@ const diagnosticTestCard = computed(() => {
               { value: String(readingWritingScore), label: "Reading & Writing" },
               { value: String(mathScore), label: "Math" },
             ],
-      statusValue: String(
-        report?.totalScore ?? (isApPackage.value ? 4 : isActPackage.value ? 25 : 1280),
-      ),
-      statusTotal: isApPackage.value ? "/5" : isActPackage.value ? "/36" : "/1600",
+      statusValue: String(report?.totalScore ?? (isAbiturPackage.value ? 11 : isApPackage.value ? 4 : isActPackage.value ? 25 : 1280)),
+      statusTotal: isAbiturPackage.value ? "/15" : isApPackage.value ? "/5" : isActPackage.value ? "/36" : "/1600",
       statusUnit: "Score",
       statusMeta: "Results ready",
       cta: "View Free Results",
@@ -531,13 +550,15 @@ const diagnosticTestCard = computed(() => {
   if (diagnosticTestState.value === "scoring")
     return {
       stateLabel: "Scoring",
-      description: isApPackage.value
+      description: isAbiturPackage.value
+        ? "Your answers were submitted. We are calculating your BE result, Notenpunkte estimate, and performance by content domain."
+        : isApPackage.value
         ? "Your answers were submitted. We are calculating your AP score and unit-level performance estimate; results are usually ready in a few seconds."
         : isActPackage.value
           ? "Your answers were submitted. We are calculating your composite and section score predictions; results are usually ready in a few seconds."
           : "Your answers were submitted. We are calculating your total and section score predictions; results are usually ready in a few seconds.",
       metrics: [
-        { value: String(questionCount), label: "questions" },
+        { value: String(questionCount), label: assessmentItemLabel },
         { value: "Untimed", label: "" },
         { value: String(sectionCount), label: sectionCount === 1 ? "section" : "sections" },
       ],
@@ -554,7 +575,7 @@ const diagnosticTestCard = computed(() => {
       description:
         `Continue your quick ${examName.value} score and skill check. Your answers are saved automatically.`,
       metrics: [
-        { value: String(questionCount), label: "questions" },
+        { value: String(questionCount), label: assessmentItemLabel },
         { value: "Untimed", label: "" },
         { value: String(sectionCount), label: sectionCount === 1 ? "section" : "sections" },
       ],
@@ -567,11 +588,13 @@ const diagnosticTestCard = computed(() => {
     };
   return {
     stateLabel: "Free",
-    description: isApPackage.value
+    description: isAbiturPackage.value
+      ? "Get an instant 0–15 Notenpunkte estimate and a focused starting view across Analysis, Analytische Geometrie, and Stochastik."
+      : isApPackage.value
       ? "Get an instant AP score estimate and unit-level skill breakdown with a focused multiple-choice diagnostic."
       : `Get an instant ${examName.value} score estimate and skill breakdown across ${isActPackage.value ? "English, Math, Reading, and Science" : "Reading & Writing and Math"}.`,
     metrics: [
-      { value: String(questionCount), label: "questions" },
+      { value: String(questionCount), label: assessmentItemLabel },
       { value: "Untimed", label: "" },
       { value: String(sectionCount), label: sectionCount === 1 ? "section" : "sections" },
     ],
@@ -588,6 +611,8 @@ const practiceTestCard = computed(() => {
   const questionCount = practiceTestQuestionCount.value;
   const moduleCount = practiceTestModuleCount.value;
   const durationMinutes = practiceTestDurationMinutes.value;
+  const assessmentItemLabel = isAbiturPackage.value ? "tasks" : "questions";
+  const structureLabel = isAbiturPackage.value ? "parts" : isActPackage.value || isApPackage.value ? "sections" : "modules";
   const answeredCount = report ? report.correct + report.incorrect : 0;
   const savedAnsweredCount = Math.min(14, questionCount);
   const readingWritingScore =
@@ -600,11 +625,11 @@ const practiceTestCard = computed(() => {
     return {
       stateLabel: "",
       description:
-        `Take a realistic full-length ${isApPackage.value ? "AP Calculus BC" : isActPackage.value ? "ACT with Science" : "Digital SAT"} with official timing and section structure.`,
+        `Take a realistic full-length ${isAbiturPackage.value ? "Abitur Mathematik eA" : isApPackage.value ? "AP Calculus BC" : isActPackage.value ? "ACT with Science" : "Digital SAT"} with official timing and ${isAbiturPackage.value ? "task" : "section"} structure.`,
       metrics: [
-        { value: String(questionCount), label: "questions" },
+        { value: String(questionCount), label: assessmentItemLabel },
         { value: String(durationMinutes), label: "min" },
-        { value: String(moduleCount), label: isActPackage.value || isApPackage.value ? "sections" : "modules" },
+        { value: String(moduleCount), label: structureLabel },
       ],
       statusValue: "—",
       statusTotal: "",
@@ -619,12 +644,12 @@ const practiceTestCard = computed(() => {
       description:
         "Your answers were submitted. We are preparing your score report and personalized recommendations; results are usually ready in under a minute.",
       metrics: [
-        { value: String(answeredCount), label: "answered" },
+        { value: String(answeredCount), label: isAbiturPackage.value ? "tasks scored" : "answered" },
         {
           value: report ? formatReportDuration(report.durationSeconds) : "—",
           label: "time used",
         },
-        { value: String(moduleCount), label: isActPackage.value || isApPackage.value ? "sections" : "modules" },
+        { value: String(moduleCount), label: structureLabel },
       ],
       statusValue: String(answeredCount),
       statusTotal: `/${questionCount}`,
@@ -637,7 +662,11 @@ const practiceTestCard = computed(() => {
     return {
       stateLabel: "Results ready",
       description: `Your score report and next-step recommendations are ready. Your result is in the ${formatOrdinal(report?.percentile ?? 70)} percentile.`,
-      metrics: isApPackage.value ? [
+      metrics: isAbiturPackage.value ? [
+        { value: String(report?.totalScore ?? 11), label: "Notenpunkte" },
+        { value: `${report?.accuracy ?? 76}%`, label: "BE earned" },
+        { value: "2", label: "parts" },
+      ] : isApPackage.value ? [
         { value: String(report?.totalScore ?? 4), label: "AP score" },
         { value: formatOrdinal(report?.percentile ?? 70), label: "percentile" },
         { value: "2", label: "sections" },
@@ -650,8 +679,8 @@ const practiceTestCard = computed(() => {
         { value: String(readingWritingScore), label: "Reading & Writing" },
         { value: String(mathScore), label: "Math" },
       ],
-      statusValue: String(report?.totalScore ?? (isApPackage.value ? 4 : isActPackage.value ? 25 : 1280)),
-      statusTotal: isApPackage.value ? "/5" : isActPackage.value ? "/36" : "/1600",
+      statusValue: String(report?.totalScore ?? (isAbiturPackage.value ? 11 : isApPackage.value ? 4 : isActPackage.value ? 25 : 1280)),
+      statusTotal: isAbiturPackage.value ? "/15" : isApPackage.value ? "/5" : isActPackage.value ? "/36" : "/1600",
       statusUnit: "Score",
       statusMeta: `Results ready · ${
         report ? formatReportDate(report.completedAt) : "Aug 21, 2026"
@@ -662,11 +691,11 @@ const practiceTestCard = computed(() => {
   return {
     stateLabel: "In progress",
     description:
-      `Resume your saved attempt from ${isApPackage.value ? "Multiple Choice" : isActPackage.value ? "English, Section 1" : "Reading and Writing, Module 1"}. Your answers are saved automatically.`,
+      `Resume your saved attempt from ${isAbiturPackage.value ? "Prüfungsteil A" : isApPackage.value ? "Multiple Choice" : isActPackage.value ? "English, Section 1" : "Reading and Writing, Module 1"}. Your answers are saved automatically.`,
     metrics: [
-      { value: String(questionCount), label: "questions" },
+      { value: String(questionCount), label: assessmentItemLabel },
       { value: String(durationMinutes), label: "min" },
-      { value: String(moduleCount), label: isActPackage.value || isApPackage.value ? "sections" : "modules" },
+      { value: String(moduleCount), label: structureLabel },
     ],
     statusValue: String(savedAnsweredCount),
     statusTotal: `/${questionCount}`,
@@ -1268,7 +1297,7 @@ const topicsBySection = computed(() => {
 
 const recommendedStartTopic = computed(() =>
   [...(manifest.value?.topics ?? [])]
-    .filter((topic) => topic.section === (isApPackage.value ? "AP Calculus BC" : isActPackage.value ? "English" : "Math") && topic.priority === "CORE")
+    .filter((topic) => topic.section === (isAbiturPackage.value ? "Mathematik" : isApPackage.value ? "AP Calculus BC" : isActPackage.value ? "English" : "Math") && topic.priority === "CORE")
     .sort((left, right) => left.order - right.order)[0] ?? null,
 );
 
@@ -1304,7 +1333,7 @@ const courseStartModule = computed(() => {
 
 function topicProgress(topic: SatTopic) {
   if (!isCourseStarted.value) return 0;
-  if (isApPackage.value) {
+  if (isAbiturPackage.value || isApPackage.value) {
     if (topic.order <= 2) return 100;
     if (topic.order === 3) return 62;
     if (topic.order === 4) return 33;
@@ -1456,26 +1485,28 @@ function initializeSectionDisclosure() {
 function examFamilyForCourse(course: Course): ExamFamily {
   const isAct = course.family === "act";
   const isAp = course.family === "ap" && course.title === "AP Calculus BC";
-  return isAp ? "ap-calculus-bc" : isAct ? "act" : "sat";
+  const isAbiturMath = course.family === "abitur" && course.title === "Abitur Mathematik";
+  return isAbiturMath ? "abitur-mathematik" : isAp ? "ap-calculus-bc" : isAct ? "act" : "sat";
 }
 function openCourse(course: Course) {
   activeTab.value = "study";
   const targetFamily = examFamilyForCourse(course);
   const isAct = targetFamily === "act";
   const isAp = targetFamily === "ap-calculus-bc";
+  const isAbiturMath = targetFamily === "abitur-mathematik";
   const courseState: CourseEntryState = startedCourseFamilies.value.has(targetFamily)
     ? "in-progress"
     : "first-visit";
-  sectionFilter.value = isAp ? "AP Calculus BC" : isAct ? "English" : "Math";
+  sectionFilter.value = isAbiturMath ? "Mathematik" : isAp ? "AP Calculus BC" : isAct ? "English" : "Math";
   void router.push({
     name: "package",
     query: {
       access: accessState.value,
       ...(forcedHomePreview.value ? { homeState: forcedHomePreview.value } : {}),
-      ...(isAp ? { exam: "ap-calculus-bc" } : isAct ? { exam: "act" } : {}),
+      ...(targetFamily === "sat" ? {} : { exam: targetFamily }),
       courseState: courseState === "first-visit" ? "not-started" : "in-progress",
     },
-    hash: isAp ? "#course-2" : isAct ? "#course-1" : "#course-0",
+    hash: isAbiturMath ? "#course-3" : isAp ? "#course-2" : isAct ? "#course-1" : "#course-0",
   });
 }
 
@@ -1761,7 +1792,7 @@ function openCourseFromHome(course: Course) {
   openCourse(course);
 }
 function isCourseAvailable(course: Course) {
-  return course.family === "sat" || course.family === "act" || course.title === "AP Calculus BC";
+  return course.family === "sat" || course.family === "act" || course.title === "AP Calculus BC" || course.title === "Abitur Mathematik";
 }
 function courseHomeAction(course: Course) {
   const activity = courseActivities.value[examFamilyForCourse(course)];
@@ -1776,6 +1807,8 @@ function startMockExam(
   if (!isProMember.value) {
     const targetExamName = targetExamFamily === "ap-calculus-bc"
       ? "AP Calculus BC"
+      : targetExamFamily === "abitur-mathematik"
+        ? "Abitur Mathematik"
       : targetExamFamily === "act"
         ? "ACT"
         : "SAT";
@@ -2100,7 +2133,9 @@ async function loadSimilarQuiz(topic: SatTopic) {
   similarQuizLoading.value = true;
   similarQuizLoadError.value = "";
   try {
-    const questions = await (isApPackage.value
+    const questions = await (isAbiturPackage.value
+      ? loadAbiturTopicQuiz(topic.id)
+      : isApPackage.value
       ? loadApTopicQuiz(topic.id)
       : isActPackage.value
         ? loadActTopicQuiz(topic.id)
@@ -2352,7 +2387,7 @@ watch(
     () => route.query.courseState,
   ],
   () => {
-    if (["#course-0", "#course-1", "#course-2"].includes(route.hash)) syncTabFromRoute();
+    if (["#course-0", "#course-1", "#course-2", "#course-3"].includes(route.hash)) syncTabFromRoute();
     else activeTab.value = "study";
   },
 );
@@ -2511,17 +2546,17 @@ async function loadPackageData() {
   diagnosticSourceExam.value = null;
   loadError.value = "";
   resultLoadError.value = "";
-  sectionFilter.value = isApPackage.value ? "AP Calculus BC" : isActPackage.value ? "English" : "Math";
-  improveSection.value = isApPackage.value ? "ap-calculus-bc" : isActPackage.value ? "english" : "math";
+  sectionFilter.value = isAbiturPackage.value ? "Mathematik" : isApPackage.value ? "AP Calculus BC" : isActPackage.value ? "English" : "Math";
+  improveSection.value = isAbiturPackage.value ? "mathematik" : isApPackage.value ? "ap-calculus-bc" : isActPackage.value ? "english" : "math";
   try {
-    manifest.value = isApPackage.value ? await loadApManifest() : isActPackage.value ? await loadActManifest() : await loadSatManifest();
+    manifest.value = isAbiturPackage.value ? await loadAbiturManifest() : isApPackage.value ? await loadApManifest() : isActPackage.value ? await loadActManifest() : await loadSatManifest();
     initializeSectionDisclosure();
   } catch (error) {
     loadError.value = error instanceof Error ? error.message : `Unable to load ${examName.value} materials.`;
   }
   try {
-    resultExam.value = isApPackage.value ? await loadApEpExam(1) : isActPackage.value ? await loadActEpExam(1) : await loadEpExam(1);
-    diagnosticSourceExam.value = isApPackage.value ? resultExam.value : isActPackage.value ? await loadActEpExam(2) : resultExam.value;
+    resultExam.value = isAbiturPackage.value ? await loadAbiturEpExam() : isApPackage.value ? await loadApEpExam(1) : isActPackage.value ? await loadActEpExam(1) : await loadEpExam(1);
+    diagnosticSourceExam.value = isAbiturPackage.value || isApPackage.value ? resultExam.value : isActPackage.value ? await loadActEpExam(2) : resultExam.value;
   } catch (error) {
     resultLoadError.value = error instanceof Error ? error.message : `Unable to load the ${examName.value} score report.`;
   }
@@ -2578,7 +2613,7 @@ onMounted(async () => {
       if (Array.isArray(parsedActivity.startedCourseFamilies)) {
         const validFamilies = parsedActivity.startedCourseFamilies.filter(
           (family): family is ExamFamily =>
-            family === "sat" || family === "act" || family === "ap-calculus-bc",
+            family === "sat" || family === "act" || family === "ap-calculus-bc" || family === "abitur-mathematik",
         );
         startedCourseFamilies.value = new Set(validFamilies);
       }
@@ -2586,7 +2621,7 @@ onMounted(async () => {
         const restoredActivities: Partial<Record<ExamFamily, LastActivity>> = {};
         for (const [family, activity] of Object.entries(parsedActivity.courseActivities)) {
           if (
-            (family === "sat" || family === "act" || family === "ap-calculus-bc") &&
+            (family === "sat" || family === "act" || family === "ap-calculus-bc" || family === "abitur-mathematik") &&
             isLastActivity(activity) && activity.examFamily === family
           ) restoredActivities[family] = activity;
         }
@@ -3530,12 +3565,12 @@ onBeforeUnmount(() => {
                   <span
                     ><svg class="icon" aria-hidden="true">
                       <use href="#i-book" /></svg
-                    ><strong>{{ isApPackage ? '49' : isActPackage ? '235' : '100' }}</strong> video lessons</span
+                    ><strong>{{ isAbiturPackage ? '31' : isApPackage ? '49' : isActPackage ? '235' : '100' }}</strong> video lessons</span
                   >
                   <span
                     ><svg class="icon" aria-hidden="true">
                       <use href="#i-grid" /></svg
-                    ><strong>{{ isApPackage ? '2,940' : isActPackage ? '6,600' : '3,879' }}</strong> practice questions</span
+                    ><strong>{{ isAbiturPackage ? '2,929' : isApPackage ? '2,940' : isActPackage ? '6,600' : '3,879' }}</strong> practice questions</span
                   >
                   <span
                     ><svg class="icon" aria-hidden="true">
@@ -3619,7 +3654,7 @@ onBeforeUnmount(() => {
                 >
                   <h2 id="lessonsTitle">Lessons</h2>
                   <div class="course-topic-filters">
-                    <label v-if="!isApPackage" class="course-topic-select">
+                    <label v-if="!isApPackage && !isAbiturPackage" class="course-topic-select">
                       <select
                         v-model="sectionFilter"
                         aria-label="Filter lessons by section"
@@ -3683,7 +3718,7 @@ onBeforeUnmount(() => {
                       @click="toggleSection(section.id)"
                     >
                       <h3 :id="section.id">
-                        {{ isApPackage ? section.title : `${section.examSection} · ${section.title}` }}
+                        {{ isApPackage || isAbiturPackage ? section.title : `${section.examSection} · ${section.title}` }}
                       </h3>
                       <span class="study-section-meta"
                         ><span>{{ section.topics.length }} Topics</span
@@ -4080,7 +4115,7 @@ onBeforeUnmount(() => {
                 </section>
                 <section v-else class="score-report-card">
                   <header class="score-report-cover">
-                    <span>{{ examName }} Prep 2026</span
+                    <span>{{ packageTitle }}</span
                     ><small>{{
                       resultSource === "diagnostic"
                         ? "Diagnostic result"
@@ -4095,7 +4130,11 @@ onBeforeUnmount(() => {
                   >
                     <div class="score-report-total">
                       <span>{{
-                        isActPackage
+                        isAbiturPackage
+                          ? resultSource === "diagnostic"
+                            ? "Predicted Notenpunkte"
+                            : "Notenpunkte"
+                        : isActPackage
                           ? resultSource === "diagnostic"
                             ? "Predicted composite score"
                             : "Composite score"
@@ -4274,6 +4313,8 @@ onBeforeUnmount(() => {
                     <span>{{
                       isApPackage
                         ? "AP Overview"
+                        : isAbiturPackage
+                        ? "Abitur Overview"
                         : resultSource === "diagnostic"
                         ? "Diagnostic Overview"
                         : `${examName} Overview`
@@ -4285,8 +4326,8 @@ onBeforeUnmount(() => {
                   v-if="resultSource === 'diagnostic'"
                   class="diagnostic-score-disclaimer"
                 >
-                  This predicted score is an estimate based on 20 untimed
-                  questions. It does not replace a full-length {{ examName }} Practice
+                  This predicted score is an estimate based on {{ diagnosticExam?.questions.length ?? 20 }} untimed
+                  {{ isAbiturPackage ? 'tasks' : 'questions' }}. It does not replace a full-length {{ examName }} Practice
                   Test.
                 </p>
                   <div
@@ -4646,7 +4687,7 @@ onBeforeUnmount(() => {
                 >
                   <h2>Question Review</h2>
                   <div class="course-topic-filters">
-                      <label v-if="!isApPackage" class="course-topic-select">
+                      <label v-if="!isApPackage && !isAbiturPackage" class="course-topic-select">
                         <select
                           :value="reviewSectionFilter"
                           aria-label="Filter reviewed questions by section"
@@ -4988,7 +5029,7 @@ onBeforeUnmount(() => {
                 >
                   <h2>Targeted Practice</h2>
                   <div class="course-topic-filters">
-                      <label v-if="!isApPackage" class="course-topic-select">
+                      <label v-if="!isApPackage && !isAbiturPackage" class="course-topic-select">
                         <select
                           v-model="improveSection"
                           aria-label="Filter improvement topics by section"
@@ -5098,7 +5139,7 @@ onBeforeUnmount(() => {
                         class="study-section-head static"
                       >
                         <h3 :id="section.id">
-                          {{ isApPackage ? section.title : `${section.examSection} · ${section.title}` }}
+                          {{ isApPackage || isAbiturPackage ? section.title : `${section.examSection} · ${section.title}` }}
                         </h3>
                         <span class="study-section-meta"
                           ><span
@@ -5250,6 +5291,11 @@ onBeforeUnmount(() => {
                   AP® is a registered trademark of the College Board, which is
                   not affiliated with or endorsed by this product. Practice
                   scores are estimates, not official College Board scores.
+                </p>
+                <p v-else-if="isAbiturPackage">
+                  This practice course uses an IQB-aligned cross-state blueprint.
+                  The 0–15 Notenpunkte result is an estimate based on raw BE and
+                  does not replace a state-issued Abitur grade.
                 </p>
                 <p v-else-if="isActPackage">
                   ACT® is a registered trademark of ACT, Inc., which is not

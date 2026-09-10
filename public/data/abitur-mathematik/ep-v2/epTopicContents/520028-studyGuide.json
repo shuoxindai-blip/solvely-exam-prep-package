@@ -1,0 +1,134 @@
+{
+  "epId": 500001,
+  "outlineId": 500002,
+  "topicGroupId": 510003,
+  "topicId": 520028,
+  "packageId": 5001,
+  "contentType": "studyGuide",
+  "contentStatus": "READY",
+  "generationId": "",
+  "progress": {
+    "totalCount": 0,
+    "completedCount": 0,
+    "items": {}
+  },
+  "platform": "system",
+  "payload": {
+    "content": {
+      "lesson_id": "ABITUR-MATHEMATIK-028",
+      "title": "Binomialverteilung und kumulierte Wahrscheinlichkeiten",
+      "overview": "Dieses Modul behandelt die Modellierung von Zufallsexperimenten mittels Bernoulli-Ketten und die Berechnung von Einzel- sowie kumulierten Wahrscheinlichkeiten. Die Binomialverteilung ist das zentrale Modell für diskrete Zufallsgrößen bei wiederholten, unabhängigen Versuchen mit zwei möglichen Ausgängen.",
+      "learning_objectives": [
+        "Voraussetzungen für eine Bernoulli-Kette prüfen und begründen.",
+        "Einzelwahrscheinlichkeiten mit der Bernoulli-Formel berechnen.",
+        "Kumulierte Wahrscheinlichkeiten für Intervalle bestimmen.",
+        "Sachsituationen in stochastische Terme übersetzen (mindestens, höchstens, weniger als)."
+      ],
+      "sections": [
+        {
+          "title": "Das Bernoulli-Modell",
+          "content": "Ein Zufallsexperiment wird als Bernoulli-Experiment bezeichnet, wenn es genau zwei mögliche Ergebnisse gibt: Treffer (Erfolg) mit Wahrscheinlichkeit p und Niete (Misserfolg) mit Wahrscheinlichkeit q = 1 - p. Eine n-stufige Bernoulli-Kette liegt vor, wenn dieses Experiment n-mal unabhängig voneinander durchgeführt wird. Die Unabhängigkeit bedeutet, dass die Trefferwahrscheinlichkeit p bei jedem Versuch konstant bleibt. In Abituraufgaben muss die Eignung oft begründet werden (z. B. Ziehen mit Zurücklegen oder Ziehen aus einer sehr großen Grundgesamtheit, bei der sich p kaum ändert)."
+        },
+        {
+          "title": "Die Bernoulli-Formel",
+          "content": "Die Zufallsgröße X beschreibt die Anzahl der Treffer in einer Bernoulli-Kette der Länge n. Die Wahrscheinlichkeit für genau k Treffer wird berechnet durch: P(X = k) = B(n; p; k) = (n über k) * p^k * (1 - p)^(n-k). Dabei ist (n über k) der Binomialkoeffizient, der die Anzahl der Pfade mit genau k Treffern im Baumdiagramm angibt."
+        },
+        {
+          "title": "Kumulierte Wahrscheinlichkeiten",
+          "content": "Oft wird nicht nach einem exakten Wert, sondern nach einem Bereich gefragt. Die kumulierte Verteilungsfunktion F(n; p; k) gibt die Wahrscheinlichkeit P(X ≤ k) an. Wichtige Umformungen für den Taschenrechner (GTR/CAS) sind: \n1. Höchstens k Treffer: P(X ≤ k)\n2. Weniger als k Treffer: P(X < k) = P(X ≤ k - 1)\n3. Mindestens k Treffer: P(X ≥ k) = 1 - P(X ≤ k - 1)\n4. Mehr als k Treffer: P(X > k) = 1 - P(X ≤ k)\n5. Bereich von a bis b: P(a ≤ X ≤ b) = P(X ≤ b) - P(X ≤ a - 1)."
+        }
+      ],
+      "worked_examples": [
+        {
+          "question": "Ein Hersteller von Solarmodulen gibt an, dass 5 % der Module kleine optische Mängel aufweisen. Für ein Bauprojekt werden 80 Module zufällig ausgewählt. Die Anzahl der mangelhaften Module wird als binomialverteilt angenommen. Berechnen Sie die Wahrscheinlichkeit, dass (a) genau 4 Module Mängel aufweisen und (b) mindestens 6 Module Mängel aufweisen.",
+          "solution": "Gegeben: n = 80, p = 0,05. X sei die Anzahl der mangelhaften Module.\n(a) Gesucht: P(X = 4). Ansatz: P(X = 4) = (80 über 4) * 0,05^4 * 0,95^76. Rechnung: P(X = 4) ≈ 0,1975. Die Wahrscheinlichkeit beträgt ca. 19,8 %.\n(b) Gesucht: P(X ≥ 6). Ansatz über das Gegenereignis: P(X ≥ 6) = 1 - P(X ≤ 5). Nutzung der kumulierten Binomialverteilung: P(X ≤ 5) ≈ 0,7931. Rechnung: 1 - 0,7931 = 0,2069. Die Wahrscheinlichkeit beträgt ca. 20,7 %."
+        }
+      ],
+      "common_mistakes": [
+        "Verwechslung von 'weniger als k' mit 'höchstens k': Bei 'weniger als 5' darf die 5 nicht mitgezählt werden (also P(X ≤ 4)).",
+        "Anwendung der Binomialverteilung ohne Prüfung der Unabhängigkeit: Wenn ohne Zurücklegen aus einer kleinen Menge gezogen wird, ist die Verteilung nicht binomial, sondern hypergeometrisch.",
+        "Fehler beim Gegenereignis: Bei P(X ≥ k) wird oft vergessen, dass das Gegenereignis P(X ≤ k-1) ist, nicht P(X ≤ k)."
+      ],
+      "exam_tips": [
+        "Achten Sie auf Signalwörter: 'genau' (Einzelwahrscheinlichkeit), 'höchstens/mindestens' (kumuliert).",
+        "Prüfen Sie bei Begründungsaufgaben immer zwei Aspekte: 1. Nur zwei Ausgänge? 2. Bleibt p konstant (Unabhängigkeit)?",
+        "Skizzieren Sie bei Intervallwahrscheinlichkeiten P(a ≤ X ≤ b) kurz eine Zahlenreihe, um sicherzugehen, welche Werte abgezogen werden müssen."
+      ],
+      "recap": "Die Binomialverteilung modelliert die Anzahl der Treffer in einer Bernoulli-Kette. Entscheidend sind die Parameter n (Versuche) und p (Trefferwahrscheinlichkeit). Kumulierte Wahrscheinlichkeiten werden über das Gegenereignis oder Differenzen von P(X ≤ k) berechnet.",
+      "knowledge_claims": [
+        {
+          "claim_id": "claim_01",
+          "type": "definition",
+          "content": "Ein Bernoulli-Experiment ist ein Zufallsversuch mit genau zwei möglichen Ergebnissen: Treffer (p) und Niete (1-p)."
+        },
+        {
+          "claim_id": "claim_02",
+          "type": "rule",
+          "content": "Eine Bernoulli-Kette der Länge n setzt voraus, dass die n Einzelversuche stochastisch unabhängig sind und p konstant bleibt."
+        },
+        {
+          "claim_id": "claim_03",
+          "type": "formula",
+          "content": "Die Bernoulli-Formel für genau k Treffer lautet P(X = k) = (n über k) * p^k * (1-p)^(n-k)."
+        },
+        {
+          "claim_id": "claim_04",
+          "type": "interpretation",
+          "content": "Der Binomialkoeffizient (n über k) gibt die Anzahl der Möglichkeiten an, k Treffer auf n Versuche zu verteilen."
+        },
+        {
+          "claim_id": "claim_05",
+          "type": "procedure",
+          "content": "Die Wahrscheinlichkeit 'höchstens k Treffer' entspricht der kumulierten Wahrscheinlichkeit P(X ≤ k)."
+        },
+        {
+          "claim_id": "claim_06",
+          "type": "procedure",
+          "content": "Die Wahrscheinlichkeit 'mindestens k Treffer' wird über das Gegenereignis berechnet: P(X ≥ k) = 1 - P(X ≤ k - 1)."
+        },
+        {
+          "claim_id": "claim_07",
+          "type": "interpretation",
+          "content": "Die Formulierung 'weniger als k' ist äquivalent zu P(X ≤ k - 1) bei diskreten binomialverteilten Zufallsgrößen."
+        },
+        {
+          "claim_id": "claim_08",
+          "type": "interpretation",
+          "content": "Die Formulierung 'mehr als k' ist äquivalent zu P(X > k) und wird berechnet als 1 - P(X ≤ k)."
+        },
+        {
+          "claim_id": "claim_09",
+          "type": "procedure",
+          "content": "Für die Wahrscheinlichkeit eines Intervalls P(a ≤ X ≤ b) gilt die Formel P(X ≤ b) - P(X ≤ a - 1)."
+        },
+        {
+          "claim_id": "claim_10",
+          "type": "mistake",
+          "content": "Ein häufiger Fehler ist die Annahme einer Binomialverteilung beim Ziehen ohne Zurücklegen aus einer kleinen Grundgesamtheit, da p sich hierbei ändert."
+        },
+        {
+          "claim_id": "claim_11",
+          "type": "check",
+          "content": "Bei einer sehr großen Grundgesamtheit (z. B. Produktion) kann Ziehen ohne Zurücklegen näherungsweise als Bernoulli-Kette modelliert werden."
+        },
+        {
+          "claim_id": "claim_12",
+          "type": "application",
+          "content": "Die Summe aller Einzelwahrscheinlichkeiten P(X = k) von k = 0 bis n ergibt stets 1."
+        }
+      ],
+      "visual_requests": [],
+      "visual_assets": []
+    },
+    "items": [],
+    "videoLesson": {
+      "title": "Berechne Höchstens-Wahrscheinlichkeiten mit Binomialmodell",
+      "coverUrl": "https://solve-now.s3.us-west-2.amazonaws.com/german-abitur/atomic-videos-v2/ABITUR-MATHEMATIK-028/cover.png",
+      "playbackUrl": "https://solve-now.s3.us-west-2.amazonaws.com/german-abitur/atomic-videos-v2/ABITUR-MATHEMATIK-028/lesson.html",
+      "durationSeconds": 480,
+      "description": "Feingranulares IQB-basiertes Topic `Binomialverteilung und kumulierte Wahrscheinlichkeiten`; abgegrenzt durch: Bernoulli-Ketten modellieren und Binomialwahrscheinlichkeiten bestimmen. Im Quellkorpus: 30 Aufgaben, davon 9 offizielle Pool- oder Beispielaufgaben."
+    }
+  },
+  "lastViewedQuestionId": null,
+  "lastViewedAt": null
+}

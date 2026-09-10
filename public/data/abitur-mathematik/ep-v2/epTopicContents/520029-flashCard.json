@@ -1,0 +1,220 @@
+{
+  "epId": 500001,
+  "outlineId": 500002,
+  "topicGroupId": 510003,
+  "topicId": 520029,
+  "packageId": 5001,
+  "contentType": "flashCard",
+  "contentStatus": "READY",
+  "generationId": "",
+  "progress": {
+    "totalCount": 20,
+    "completedCount": 0,
+    "items": {}
+  },
+  "platform": "system",
+  "payload": {
+    "cards": [
+      {
+        "id": 53002800,
+        "topicId": 520029,
+        "type": "FLASH_CARD",
+        "info": "Durch welche zwei Parameter wird eine normalverteilte Zufallsgröße $X \\sim N(\\mu; \\sigma^2)$ definiert?",
+        "backInfo": "Die Normalverteilung wird durch den Erwartungswert $\\mu$ und die Standardabweichung $\\sigma$ (bzw. die Varianz $\\sigma^2$) definiert.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002801,
+        "topicId": 520029,
+        "type": "FLASH_CARD",
+        "info": "Welche Symmetrieeigenschaft besitzt die Dichtefunktion der Normalverteilung?",
+        "backInfo": "Die Dichtefunktion (Gaußsche Glockenkurve) ist achsensymmetrisch zur Geraden $x = \\mu$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002802,
+        "topicId": 520029,
+        "type": "FLASH_CARD",
+        "info": "Wie lautet die Formel zur Standardisierung (z-Transformation) einer Zufallsgröße $X$?",
+        "backInfo": "Die Transformation erfolgt durch die Formel $z = \\frac{x - \\mu}{\\sigma}$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002803,
+        "topicId": 520029,
+        "type": "FLASH_CARD",
+        "info": "Was bedeutet ein z-Wert von $1$ anschaulich für die Lage eines Wertes $x$?",
+        "backInfo": "Ein z-Wert von $1$ bedeutet, dass der Wert $x$ genau eine Standardabweichung oberhalb des Erwartungswerts $\\mu$ liegt.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002804,
+        "topicId": 520029,
+        "type": "FLASH_CARD",
+        "info": "Wie berechnet man $\\Phi(-z)$ für negative z-Werte unter Nutzung der Symmetrie?",
+        "backInfo": "Es gilt die Symmetrieeigenschaft $\\Phi(-z) = 1 - \\Phi(z)$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002805,
+        "topicId": 520029,
+        "type": "FLASH_CARD",
+        "info": "Warum gilt bei der Normalverteilung $P(X \\le k) = P(X < k)$?",
+        "backInfo": "Da es eine stetige Verteilung ist, ist die Punktwahrscheinlichkeit $P(X = k)$ immer gleich null.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002806,
+        "topicId": 520029,
+        "type": "FLASH_CARD",
+        "info": "An welchen Stellen liegen die Wendepunkte einer $N(\\mu; \\sigma^2)$-verteilten Dichtefunktion?",
+        "backInfo": "Die Wendepunkte befinden sich exakt an den Stellen $x = \\mu - \\sigma$ und $x = \\mu + \\sigma$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002807,
+        "topicId": 520029,
+        "type": "FLASH_CARD",
+        "info": "Wie berechnet man die Wahrscheinlichkeit für ein Intervall $[a; b]$ mittels $\\Phi$?",
+        "backInfo": "Die Wahrscheinlichkeit berechnet sich durch $P(a \\le X \\le b) = \\Phi\\left(\\frac{b - \\mu}{\\sigma}\\right) - \\Phi\\left(\\frac{a - \\mu}{\\sigma}\\right)$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002808,
+        "topicId": 520029,
+        "type": "FLASH_CARD",
+        "info": "Welcher Fehler wird häufig beim Nenner der Standardisierungsformel gemacht?",
+        "backInfo": "Häufig wird fälschlicherweise die Varianz $\\sigma^2$ statt der Standardabweichung $\\sigma$ im Nenner verwendet.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002809,
+        "topicId": 520029,
+        "type": "FLASH_CARD",
+        "info": "Welchen Wert hat die Gesamtfläche unter der Dichtefunktion der Normalverteilung?",
+        "backInfo": "Die Gesamtfläche unter der Kurve hat stets den Wert $1$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002810,
+        "topicId": 520029,
+        "type": "FLASH_CARD",
+        "info": "Wie verändert sich die Glockenkurve grafisch, wenn der Parameter $\\sigma$ vergrößert wird?",
+        "backInfo": "Die Glockenkurve wird breiter und flacher, da die Streuung der Werte um den Erwartungswert zunimmt.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002811,
+        "topicId": 520029,
+        "type": "FLASH_CARD",
+        "info": "Wo liegt das Maximum der Dichtefunktion einer normalverteilten Zufallsgröße?",
+        "backInfo": "Aufgrund der Achsensymmetrie liegt das Maximum der Dichtefunktion genau an der Stelle $x = \\mu$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002812,
+        "topicId": 520029,
+        "type": "FLASH_CARD",
+        "info": "In welche spezifische Verteilung wird eine Zufallsgröße $X$ durch die z-Transformation überführt?",
+        "backInfo": "Sie wird in die Standardnormalverteilung $N(0; 1)$ mit Erwartungswert $0$ und Standardabweichung $1$ transformiert.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002813,
+        "topicId": 520029,
+        "type": "FLASH_CARD",
+        "info": "Welchen z-Wert erhält man, wenn der beobachtete Wert $x$ genau dem Erwartungswert $\\mu$ entspricht?",
+        "backInfo": "Der z-Wert ist $0$, da der Zähler der Formel $(x - \\mu)$ in diesem Fall null ergibt.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002814,
+        "topicId": 520029,
+        "type": "FLASH_CARD",
+        "info": "Berechne $\\Phi(-0,5)$ unter der Annahme, dass $\\Phi(0,5) \\approx 0,6915$ bekannt ist.",
+        "backInfo": "$\\Phi(-0,5) = 1 - \\Phi(0,5) \\approx 1 - 0,6915 = 0,3085$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002815,
+        "topicId": 520029,
+        "type": "FLASH_CARD",
+        "info": "Welchen Wert hat die Wahrscheinlichkeit $P(X = 150)$ bei einer Normalverteilung mit $\\mu = 150$?",
+        "backInfo": "Die Wahrscheinlichkeit ist $0$, da bei stetigen Verteilungen Punktwahrscheinlichkeiten stets null sind.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002816,
+        "topicId": 520029,
+        "type": "FLASH_CARD",
+        "info": "Wie groß ist der Abstand zwischen den beiden Wendepunkten einer Normalverteilung?",
+        "backInfo": "Der Abstand beträgt $2\\sigma$, da die Wendepunkte bei $\\mu - \\sigma$ und $\\mu + \\sigma$ liegen.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002817,
+        "topicId": 520029,
+        "type": "FLASH_CARD",
+        "info": "Wie berechnet man $P(X > k)$ mithilfe der Standardnormalverteilung $\\Phi$?",
+        "backInfo": "Man nutzt das Gegenereignis: $P(X > k) = 1 - P(X \\le k) = 1 - \\Phi\\left(\\frac{k - \\mu}{\\sigma}\\right)$.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002818,
+        "topicId": 520029,
+        "type": "FLASH_CARD",
+        "info": "Gegeben ist $N(100; 25)$. Welchen Wert setzt du für $\\sigma$ in die Standardisierungsformel ein?",
+        "backInfo": "Man setzt $\\sigma = 5$ ein, da $25$ die Varianz $\\sigma^2$ darstellt und die Wurzel daraus gezogen werden muss.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      },
+      {
+        "id": 53002819,
+        "topicId": 520029,
+        "type": "FLASH_CARD",
+        "info": "Welches Vorzeichen hat der z-Wert, wenn ein Wert $x$ kleiner als der Erwartungswert $\\mu$ ist?",
+        "backInfo": "Der z-Wert ist negativ, da die Differenz $(x - \\mu)$ im Zähler der Formel negativ wird.",
+        "imageMarkdown": "",
+        "cardType": "BASIC",
+        "userStatus": ""
+      }
+    ]
+  }
+}

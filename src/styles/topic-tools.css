@@ -195,8 +195,10 @@ body.topic-tool-route main { margin-left: 0; }
 .quiz-options i { display: grid; width: 29px; height: 29px; place-items: center; border: 1px solid #cdd5e0; border-radius: 50%; font-size: 12px; font-style: normal; font-weight: 800; }
 .quiz-options b { color: #16845d; font-size: 14px; }
 .quiz-short-answer label { display: block; margin-bottom: 8px; color: #59667b; font-size: 12px; font-weight: 750; }
-.quiz-short-answer > div { display: flex; gap: 8px; }
-.quiz-short-answer input { min-width: 0; flex: 1; height: 45px; padding: 0 13px; border: 1px solid #ccd5e2; border-radius: 9px; font-size: 13px; }
+.quiz-short-answer > div { display: flex; align-items: flex-end; gap: 8px; }
+.quiz-short-answer input,
+.quiz-short-answer textarea { min-width: 0; flex: 1; padding: 11px 13px; border: 1px solid #ccd5e2; border-radius: 9px; font: inherit; font-size: 13px; resize: vertical; }
+.quiz-short-answer input { height: 45px; padding-block: 0; }
 .quiz-short-answer button, .quiz-next { min-height: 43px; padding: 0 17px; border: 0; border-radius: 9px; color: #fff; background: #2768e6; font-size: 12px; font-weight: 750; cursor: pointer; }
 .quiz-short-answer button:disabled, .quiz-next:disabled { opacity: .45; cursor: not-allowed; }
 .quiz-feedback { margin-top: 23px; padding: 20px; border: 1px solid #efc9c3; border-radius: 13px; background: #fff7f5; }

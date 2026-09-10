@@ -1,0 +1,144 @@
+{
+  "epId": 500001,
+  "outlineId": 500002,
+  "topicGroupId": 510001,
+  "topicId": 520012,
+  "packageId": 5001,
+  "contentType": "studyGuide",
+  "contentStatus": "READY",
+  "generationId": "",
+  "progress": {
+    "totalCount": 0,
+    "completedCount": 0,
+    "items": {}
+  },
+  "platform": "system",
+  "payload": {
+    "content": {
+      "lesson_id": "ABITUR-MATHEMATIK-012",
+      "title": "Exponential-, Logarithmus- und trigonometrische Modelle",
+      "overview": "Dieses Modul behandelt die mathematische Modellierung von realen Prozessen mittels spezieller Funktionstypen. Im Fokus stehen exponentielles Wachstum und Zerfall sowie periodische Vorgänge, die durch trigonometrische Funktionen beschrieben werden. Ziel ist es, aus Sachzusammenhängen geeignete Funktionsansätze zu wählen, Parameter zu bestimmen und Ergebnisse im Kontext zu interpretieren.",
+      "learning_objectives": [
+        "Identifikation von Wachstums- und Zerfallsprozessen sowie periodischen Vorgängen in Sachkontexten.",
+        "Aufstellen und Lösen von Funktionsgleichungen für Exponential- und Sinusmodelle.",
+        "Anwendung des natürlichen Logarithmus zur Bestimmung von Zeitpunkten.",
+        "Interpretation von Funktionsparametern im Sachzusammenhang."
+      ],
+      "sections": [
+        {
+          "title": "Exponentielle Modelle",
+          "content": "Exponentielle Prozesse treten auf, wenn sich eine Größe in gleichen Zeitintervallen um denselben Prozentsatz ändert. Die allgemeine Form lautet f(t) = a * b^t oder f(t) = a * e^(k*t). Hierbei ist 'a' der Anfangswert zum Zeitpunkt t=0. Der Wachstumsfaktor 'b' entspricht (1 + p/100) bei Wachstum bzw. (1 - p/100) bei Zerfall. Die Wachstumskonstante 'k' in der e-Basis ist positiv für Wachstum und negativ für Zerfall. Der Zusammenhang zwischen b und k ist durch b = e^k bzw. k = ln(b) gegeben."
+        },
+        {
+          "title": "Trigonometrische Modelle",
+          "content": "Periodische Vorgänge (z. B. Gezeiten, Herzschlag, Jahreszeiten) werden meist durch die allgemeine Sinusfunktion f(x) = a * sin(b * (x - c)) + d modelliert. Dabei ist 'a' die Amplitude (maximale Abweichung von der Mittellage), 'd' die Mittellage (Verschiebung in y-Richtung), 'c' die Phasenverschiebung (Verschiebung in x-Richtung) und 'b' die Periodenzahl. Die Periodenlänge p berechnet sich durch p = 2π / b."
+        },
+        {
+          "title": "Logarithmische Skalen und Berechnungen",
+          "content": "Der natürliche Logarithmus (ln) ist das Umkehroperat zum Exponentieren mit der Basis e. Er wird in Modellen primär genutzt, um nach der Zeit 't' aufzulösen, wenn ein bestimmter Bestand erreicht werden soll. Beispiel: e^(kt) = y führt zu t = ln(y) / k. In Sachaufgaben ist oft die Halbwertszeit (T_H) oder Verdopplungszeit (T_V) gefragt. Es gilt: T_H = ln(0,5) / k bzw. T_V = ln(2) / k."
+        }
+      ],
+      "worked_examples": [
+        {
+          "question": "Ein radioaktives Isotop hat eine Anfangsmasse von 500 mg. Nach 10 Jahren sind noch 350 mg vorhanden. Bestimmen Sie die Zerfallskonstante k für das Modell m(t) = a * e^(kt) und berechnen Sie die Halbwertszeit.",
+          "solution": "1. Gegebene Werte: a = 500, m(10) = 350. \n2. Ansatz: 350 = 500 * e^(k * 10). \n3. Nach k auflösen: 0,7 = e^(10k) => ln(0,7) = 10k => k = ln(0,7) / 10 ≈ -0,03567. \n4. Halbwertszeit berechnen: 0,5 * a = a * e^(k * T_H) => 0,5 = e^(k * T_H) => T_H = ln(0,5) / k. \n5. Einsetzen: T_H = ln(0,5) / -0,03567 ≈ 19,43 Jahre. \nCheck: Da nach 10 Jahren noch mehr als die Hälfte (250 mg) da ist, muss die Halbwertszeit größer als 10 sein. 19,43 ist plausibel."
+        }
+      ],
+      "common_mistakes": [
+        "Verwechslung von Wachstumsrate p (z. B. 0,05) und Wachstumsfaktor b (1,05).",
+        "Falsche Periodenberechnung: b wird oft direkt als Periode missverstanden, statt p = 2π/b zu nutzen.",
+        "Einheitenfehler: Zeitangaben (Minuten vs. Stunden) müssen im Modell konsistent sein."
+      ],
+      "exam_tips": [
+        "Prüfen Sie bei Exponentialfunktionen immer den Grenzwert für t gegen Unendlich (Asymptote), um die physikalische Plausibilität zu testen.",
+        "Nutzen Sie bei trigonometrischen Aufgaben den Taschenrechner im Bogenmaß (RAD), sofern nicht explizit Gradmaß gefordert ist.",
+        "Interpretieren Sie Parameter immer im Sachkontext (z. B. 'd' als Durchschnittstemperatur)."
+      ],
+      "recap": "Exponentialmodelle beschreiben prozentuale Änderungen, während trigonometrische Modelle periodische Schwankungen erfassen. Der natürliche Logarithmus ist das zentrale Werkzeug zur Zeitbestimmung in Wachstumsmodellen.",
+      "knowledge_claims": [
+        {
+          "claim_id": "claim_01",
+          "type": "definition",
+          "content": "Bei exponentiellem Wachstum f(t) = a * b^t stellt 'a' den Anfangswert zum Zeitpunkt t=0 dar."
+        },
+        {
+          "claim_id": "claim_02",
+          "type": "rule",
+          "content": "Der Wachstumsfaktor b berechnet sich aus der prozentualen Wachstumsrate p durch b = 1 + p/100."
+        },
+        {
+          "claim_id": "claim_03",
+          "type": "formula",
+          "content": "Der Zusammenhang zwischen der Basis b und der Wachstumskonstante k in f(t) = a * e^(kt) lautet k = ln(b)."
+        },
+        {
+          "claim_id": "claim_04",
+          "type": "interpretation",
+          "content": "Ein negativer Wert für die Wachstumskonstante k (bzw. 0 < b < 1) kennzeichnet einen Zerfallsprozess."
+        },
+        {
+          "claim_id": "claim_05",
+          "type": "procedure",
+          "content": "Um den Zeitpunkt t zu finden, an dem ein Bestand y erreicht wird, muss die Gleichung y = a * e^(kt) mittels Logarithmieren zu t = ln(y/a) / k umgeformt werden."
+        },
+        {
+          "claim_id": "claim_06",
+          "type": "formula",
+          "content": "Die Halbwertszeit T_H eines exponentiellen Zerfalls berechnet sich durch T_H = ln(0,5) / k."
+        },
+        {
+          "claim_id": "claim_07",
+          "type": "definition",
+          "content": "In der Funktion f(x) = a * sin(b * (x - c)) + d gibt der Parameter 'd' die Mittellage (Ruhelage) des periodischen Prozesses an."
+        },
+        {
+          "claim_id": "claim_08",
+          "type": "definition",
+          "content": "Die Amplitude 'a' einer trigonometrischen Funktion entspricht der maximalen Auslenkung von der Mittellage 'd'."
+        },
+        {
+          "claim_id": "claim_09",
+          "type": "formula",
+          "content": "Die Periodenlänge p einer Sinusfunktion mit dem Faktor b vor dem Argument berechnet sich durch p = 2π / b."
+        },
+        {
+          "claim_id": "claim_10",
+          "type": "interpretation",
+          "content": "Der Parameter 'c' in f(x) = a * sin(b * (x - c)) + d bewirkt eine horizontale Verschiebung des Graphen (Phasenverschiebung)."
+        },
+        {
+          "claim_id": "claim_11",
+          "type": "mistake",
+          "content": "Ein häufiger Fehler ist die Annahme, dass der Faktor b in sin(b*x) direkt die Periodenlänge angibt; tatsächlich ist b die Frequenzkonstante."
+        },
+        {
+          "claim_id": "claim_12",
+          "type": "check",
+          "content": "Die Plausibilität eines Wachstumsmodells kann durch Einsetzen eines sehr großen t-Wertes geprüft werden, um das Langzeitverhalten (Sättigung oder Divergenz) zu beurteilen."
+        },
+        {
+          "claim_id": "claim_13",
+          "type": "application",
+          "content": "Trigonometrische Modelle eignen sich für Prozesse, bei denen sich Werte in festen Zeitabständen wiederholen, wie z.B. Gezeiten oder Tagestemperaturen."
+        },
+        {
+          "claim_id": "claim_14",
+          "type": "comparison",
+          "content": "Lineares Wachstum addiert in jedem Schritt den gleichen Wert, während exponentielles Wachstum in jedem Schritt mit dem gleichen Faktor multipliziert."
+        }
+      ],
+      "visual_requests": [],
+      "visual_assets": []
+    },
+    "items": [],
+    "videoLesson": {
+      "title": "Wähle den Modelltyp und bestimme Parameter",
+      "coverUrl": "https://solve-now.s3.us-west-2.amazonaws.com/german-abitur/atomic-videos-v2/ABITUR-MATHEMATIK-012/cover.png",
+      "playbackUrl": "https://solve-now.s3.us-west-2.amazonaws.com/german-abitur/atomic-videos-v2/ABITUR-MATHEMATIK-012/lesson.html",
+      "durationSeconds": 480,
+      "description": "Feingranulares IQB-basiertes Topic `Exponential-, Logarithmus- und trigonometrische Modelle`; abgegrenzt durch: Wachstum, Zerfall und Periodizität modellieren. Im Quellkorpus: 30 Aufgaben, davon 4 offizielle Pool- oder Beispielaufgaben."
+    }
+  },
+  "lastViewedQuestionId": null,
+  "lastViewedAt": null
+}
