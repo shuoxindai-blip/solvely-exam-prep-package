@@ -46,9 +46,9 @@ type PredictionSample = {
   accuracy: number;
 };
 
-const FIRST_ENTRY_HOME_TITLE = "Adaptive Exam Prep, Built Around You";
+const FIRST_ENTRY_HOME_TITLE = "Adaptive Exam Prep, Tailored to You";
 const FIRST_ENTRY_HOME_SUBTITLE =
-  "Create your study plan, practice high-yield exam questions, or start an interactive course.";
+  "Create your study plan, practice realistic exam questions, or start an interactive course.";
 const ACTIVE_HOME_TITLE = "Stay on Track for Your Best Score";
 const ACTIVE_HOME_SUBTITLE =
   "Personalized exam prep, all the way to test day.";
