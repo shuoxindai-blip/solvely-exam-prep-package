@@ -39,6 +39,15 @@ type ExamFamily = "sat" | "act" | "ap-calculus-bc" | "abitur-mathematik";
 type ResultView = "full" | "score" | "review" | "improve";
 type ResultSource = "diagnostic" | "practice";
 type HomePreviewState = "empty" | "created";
+type ApSubject =
+  | "all"
+  | "social-studies"
+  | "math"
+  | "language"
+  | "science"
+  | "business"
+  | "engineering"
+  | "arts";
 
 const FIRST_ENTRY_HOME_TITLE = "Create adaptive prep plan";
 const FIRST_ENTRY_HOME_SUBTITLE =
@@ -149,7 +158,7 @@ const loadError = ref("");
 const sidebarCollapsed = ref(false);
 const activeTab = ref<CourseTab>("study");
 const searchQuery = ref("");
-const familyFilter = ref("all");
+const apSubjectFilter = ref<ApSubject>("all");
 const sectionFilter = ref<string>("Math");
 const priorityFilter = ref("all");
 const collapsedSections = ref(new Set<string>());
@@ -1306,17 +1315,66 @@ const currentCourseStats = computed(() => selectedCatalogCourse.value ?? (
         : courses.find((course) => course.family === "sat")
 ));
 const hasFullLengthCourse = computed(() => selectedCourseTitle.value !== "AP Networking (Pilot)");
-const courseFamilyFilters = [
-  { value: "all", label: "All courses" },
-  { value: "sat", label: "SAT" },
-  { value: "act", label: "ACT" },
-  { value: "ap", label: "AP" },
-  { value: "abitur", label: "Abitur" },
+const apSubjectFilters: { value: ApSubject; label: string }[] = [
+  { value: "all", label: "All subjects" },
+  { value: "social-studies", label: "Social Studies" },
+  { value: "math", label: "Math" },
+  { value: "language", label: "Language" },
+  { value: "science", label: "Science" },
+  { value: "business", label: "Business" },
+  { value: "engineering", label: "Engineering" },
+  { value: "arts", label: "Arts" },
 ] as const;
+
+const apSubjectByCourseTitle: Record<string, Exclude<ApSubject, "all">> = {
+  "AP African American Studies": "social-studies",
+  "AP Comparative Government and Politics": "social-studies",
+  "AP European History": "social-studies",
+  "AP Human Geography": "social-studies",
+  "AP Psychology": "social-studies",
+  "AP Research": "social-studies",
+  "AP Seminar": "social-studies",
+  "AP United States Government and Politics": "social-studies",
+  "AP United States History": "social-studies",
+  "AP World History: Modern": "social-studies",
+  "AP Precalculus": "math",
+  "AP Calculus AB": "math",
+  "AP Calculus BC": "math",
+  "AP Statistics": "math",
+  "AP English Language and Composition": "language",
+  "AP English Literature and Composition": "language",
+  "AP Spanish Language and Culture": "language",
+  "AP Spanish Literature and Culture": "language",
+  "AP French Language and Culture": "language",
+  "AP Chinese Language and Culture": "language",
+  "AP Japanese Language and Culture": "language",
+  "AP German Language and Culture": "language",
+  "AP Latin": "language",
+  "AP Italian Language and Culture": "language",
+  "AP Biology": "science",
+  "AP Chemistry": "science",
+  "AP Environmental Science": "science",
+  "AP Physics 1: Algebra-Based": "science",
+  "AP Physics 2: Algebra-Based": "science",
+  "AP Physics C: Electricity and Magnetism": "science",
+  "AP Physics C: Mechanics": "science",
+  "AP Business with Personal Finance": "business",
+  "AP Macroeconomics": "business",
+  "AP Microeconomics": "business",
+  "AP Computer Science A": "engineering",
+  "AP Computer Science Principles": "engineering",
+  "AP Cybersecurity": "engineering",
+  "AP Networking (Pilot)": "engineering",
+  "AP 2-D Art and Design": "arts",
+  "AP 3-D Art and Design": "arts",
+  "AP Art History": "arts",
+  "AP Drawing": "arts",
+  "AP Music Theory": "arts",
+};
 
 const COURSE_ACTIVITY_STORAGE_KEY = "solvely:ep:course-activity";
 
-const filteredCourses = computed(() => {
+const searchMatchedCourses = computed(() => {
   const terms = searchQuery.value
     .trim()
     .toLowerCase()
@@ -1324,10 +1382,7 @@ const filteredCourses = computed(() => {
     .filter(Boolean);
   return courses.filter((course) => {
     const haystack = `${course.title} ${course.search}`.toLowerCase();
-    return (
-      (familyFilter.value === "all" || course.family === familyFilter.value) &&
-      terms.every((term) => haystack.includes(term))
-    );
+    return terms.every((term) => haystack.includes(term));
   });
 });
 const courseCatalogGroups = [
@@ -1335,15 +1390,27 @@ const courseCatalogGroups = [
   { key: "ap", title: "Advanced Placement® tests", families: ["ap"] },
   { key: "abitur", title: "Abiturprüfungen", families: ["abitur"] },
 ] as const;
+const apSearchMatchedCourses = computed(() =>
+  searchMatchedCourses.value.filter((course) => course.family === "ap"),
+);
 const groupedFilteredCourses = computed(() =>
   courseCatalogGroups
     .map((group) => ({
       ...group,
-      courses: filteredCourses.value.filter((course) =>
-        group.families.some((family) => family === course.family),
-      ),
+      courses: group.key === "ap"
+        ? apSearchMatchedCourses.value.filter((course) =>
+            apSubjectFilter.value === "all" ||
+            apSubjectByCourseTitle[course.title] === apSubjectFilter.value,
+          )
+        : searchMatchedCourses.value.filter((course) =>
+            group.families.some((family) => family === course.family),
+          ),
     }))
-    .filter((group) => group.courses.length > 0),
+    .filter((group) =>
+      group.key === "ap"
+        ? apSearchMatchedCourses.value.length > 0
+        : group.courses.length > 0,
+    ),
 );
 const examLibraryTotal = computed(
   () => createdPredictions.value.length + (showSeededPrediction.value ? 1 : 0) +
@@ -3616,22 +3683,6 @@ onBeforeUnmount(() => {
             </p>
           </div>
           <div class="exam-catalog-toolbar">
-            <div
-              class="exam-family-filters"
-              role="group"
-              aria-label="Filter standardized test prep courses"
-            >
-              <button
-                v-for="filter in courseFamilyFilters"
-                :key="filter.value"
-                class="exam-family-filter-button"
-                type="button"
-                :aria-pressed="familyFilter === filter.value"
-                @click="familyFilter = filter.value"
-              >
-                {{ filter.label }}
-              </button>
-            </div>
             <label class="exam-search-wrap">
               <img
                 class="exam-search-icon"
@@ -3645,7 +3696,7 @@ onBeforeUnmount(() => {
               />
             </label>
           </div>
-          <div v-if="filteredCourses.length" class="course-groups">
+          <div v-if="searchMatchedCourses.length" class="course-groups">
             <section
               v-for="group in groupedFilteredCourses"
               :key="group.key"
@@ -3653,7 +3704,24 @@ onBeforeUnmount(() => {
               :aria-labelledby="`courseGroup-${group.key}`"
             >
               <h3 :id="`courseGroup-${group.key}`">{{ group.title }}</h3>
-              <div class="course-grid" :aria-label="group.title">
+              <div
+                v-if="group.key === 'ap'"
+                class="ap-subject-filters"
+                role="group"
+                aria-label="Filter Advanced Placement courses by subject"
+              >
+                <button
+                  v-for="filter in apSubjectFilters"
+                  :key="filter.value"
+                  class="ap-subject-filter-button"
+                  type="button"
+                  :aria-pressed="apSubjectFilter === filter.value"
+                  @click="apSubjectFilter = filter.value"
+                >
+                  {{ filter.label }}
+                </button>
+              </div>
+              <div v-if="group.courses.length" class="course-grid" :aria-label="group.title">
                 <button
                   v-for="course in group.courses"
                   :key="course.title"
@@ -3681,9 +3749,12 @@ onBeforeUnmount(() => {
                   </span>
                 </button>
               </div>
+              <p v-else class="course-group-empty">
+                No AP courses match this subject.
+              </p>
             </section>
           </div>
-          <p v-if="!filteredCourses.length" class="course-empty">
+          <p v-if="!searchMatchedCourses.length" class="course-empty">
             No matching courses. Try another exam name.
           </p>
         </section>
