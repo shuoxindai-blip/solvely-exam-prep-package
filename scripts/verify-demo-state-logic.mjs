@@ -59,14 +59,16 @@ const miniQuizHandler = packageViewSource.match(/function practiceReviewQuestion
 assert.match(miniQuizHandler, /showModal\(\)/, 'Start mini quiz must open the drawer directly.')
 assert.doesNotMatch(miniQuizHandler, /openCommercialPaywall|isProMember/, 'Diagnostic mini quiz must stay free.')
 const courseOpenHandler = packageViewSource.match(/function openCourseFromHome[\s\S]*?\n}\nfunction courseHomeAction/)?.[0] ?? ''
-assert.match(courseOpenHandler, /openCourse\(course\)/, 'Every catalog card must enter its course.')
-assert.doesNotMatch(courseOpenHandler, /openCommercialPaywall|isProMember|isCourseAvailable/, 'Course entry must never be membership-gated.')
-assert.doesNotMatch(packageViewSource, /:disabled="!isCourseAvailable\(course\)"/, 'Catalog cards must not be disabled by the old availability gate.')
+assert.match(courseOpenHandler, /courseHasDetailedDemoContent\(course\)/, 'A catalog card may open only when its course content is ready.')
+assert.match(courseOpenHandler, /openCourse\(course\)/, 'Every ready catalog card must enter its own course.')
+assert.doesNotMatch(courseOpenHandler, /openCommercialPaywall|isProMember/, 'Ready course entry must never be membership-gated.')
+assert.match(packageViewSource, /:disabled="!courseHasDetailedDemoContent\(course\)"/, 'Courses without real demo data must remain disabled.')
 assert.match(packageViewSource, /course: course\.title/, 'Course navigation must preserve the selected course instead of mapping it to another subject.')
-assert.match(prdSource, /52 门课程均可进入；学习工具完整免费/, 'The PRD must define course entry as Free.')
+assert.match(prdSource, /当前 Demo 仅 SAT、ACT、AP Calculus BC、Abitur Mathematik 4 门有完整数据并可进入/, 'The PRD must name the four data-ready demo courses.')
+assert.match(prdSource, /任何 `course_ready=true` 的课程对 Free\/Pro 使用同一入口/, 'The PRD must define ready course entry as Free.')
 assert.match(prdSource, /进入课程时不得弹 Paywall/, 'The PRD must prohibit paywalls at course entry.')
 for (const forbiddenCopy of ['Unlock analysis', 'Unlock report', 'Unlock Score Report', 'Unlock to continue']) {
   assert.doesNotMatch(packageViewSource, new RegExp(forbiddenCopy), `Removed Full-Length Free copy must not return: ${forbiddenCopy}`)
 }
 
-console.log(`Verified ${reachablePairs.length} reachable assessment-state pairs, free course entry, report-gate copy, free mini quiz, and all home/access invariants.`)
+console.log(`Verified ${reachablePairs.length} reachable assessment-state pairs, four data-ready demo courses, free ready-course entry, report-gate copy, free mini quiz, and all home/access invariants.`)

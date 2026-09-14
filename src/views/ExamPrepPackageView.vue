@@ -40,7 +40,9 @@ type ResultView = "full" | "score" | "review" | "improve";
 type ResultSource = "diagnostic" | "practice";
 type HomePreviewState = "empty" | "created";
 
-const FIRST_ENTRY_HOME_TITLE = "Adaptive Exam Prep, Tailored to You";
+const FIRST_ENTRY_HOME_TITLE = "Create adaptive prep plan";
+const FIRST_ENTRY_HOME_SUBTITLE =
+  "Turn your study materials into a personalized prep plan including must know topics and realistic mock exams.";
 const ACTIVE_HOME_TITLE = "Stay on Track for Your Best Score";
 const ACTIVE_HOME_SUBTITLE =
   "Personalized exam prep, all the way to test day.";
@@ -63,6 +65,11 @@ type CreatedPrediction = {
   title: string;
   date: string;
   focus: string;
+};
+type UploadedPrepFile = {
+  id: string;
+  name: string;
+  size: number;
 };
 type LastActivity =
   | {
@@ -166,9 +173,13 @@ const newPredictionDialog = ref<HTMLDialogElement | null>(null);
 const predictionExamName = ref("");
 const predictionExamDate = ref("");
 const predictionFocus = ref("Balanced review");
+const predictionSchoolName = ref("");
+const predictionCourseName = ref("");
+const predictionExamType = ref("Midterm Exam");
 const createdPredictions = ref<CreatedPrediction[]>([]);
 const editingPredictionId = ref<string | null>(null);
 const prepFileInput = ref<HTMLInputElement | null>(null);
+const uploadedPrepFiles = ref<UploadedPrepFile[]>([]);
 const startedCourseFamilies = ref(new Set<ExamFamily>());
 const courseActivities = ref<Partial<Record<ExamFamily, LastActivity>>>({});
 const similarQuizDrawer = ref<HTMLDialogElement | null>(null);
@@ -207,14 +218,18 @@ const courseActivityList = computed(() =>
   Object.values(courseActivities.value).filter(Boolean) as LastActivity[],
 );
 const currentCourseActivity = computed(() => courseActivities.value[examFamily.value] ?? null);
-const isCourseOpen = computed(() => Boolean(selectedCourseTitle.value) || ["#course-0", "#course-1", "#course-2", "#course-3"].includes(route.hash));
+const detailedDemoCourseTitles = new Set([
+  "SAT Prep 2026",
+  "ACT Prep 2026",
+  "AP Calculus BC",
+  "Abitur Mathematik",
+]);
 const hasDetailedDemoContent = computed(() =>
-  !selectedCourseTitle.value || [
-    "SAT Prep 2026",
-    "ACT Prep 2026",
-    "AP Calculus BC",
-    "Abitur Mathematik",
-  ].includes(selectedCourseTitle.value),
+  !selectedCourseTitle.value || detailedDemoCourseTitles.has(selectedCourseTitle.value),
+);
+const isCourseOpen = computed(() =>
+  hasDetailedDemoContent.value &&
+  (Boolean(selectedCourseTitle.value) || ["#course-0", "#course-1", "#course-2", "#course-3"].includes(route.hash)),
 );
 const forcedHomePreview = computed<RouteHomePreviewState>(() => {
   const override = String(route.query.homeState || "").toLowerCase();
@@ -1562,7 +1577,11 @@ function coursePackageTitle(course: Course) {
   if (course.family === "sat" || course.family === "act") return course.title;
   return `${course.title} Prep 2027`;
 }
+function courseHasDetailedDemoContent(course: Course) {
+  return detailedDemoCourseTitles.has(course.title);
+}
 function openCourse(course: Course) {
+  if (!courseHasDetailedDemoContent(course)) return;
   activeTab.value = "study";
   const targetFamily = examFamilyForCourse(course);
   const isAct = targetFamily === "act";
@@ -1602,30 +1621,53 @@ function openExamPredictorHome() {
 }
 function showNewPredictionDialog(title: string) {
   editingPredictionId.value = null;
-  predictionExamName.value = title;
-  predictionExamDate.value = "2026-11-12";
+  predictionExamName.value = "";
+  predictionSchoolName.value = "";
+  predictionCourseName.value = title;
+  predictionExamType.value = "Midterm Exam";
+  predictionExamDate.value = "";
   predictionFocus.value = "Balanced review";
   newPredictionDialog.value?.showModal();
 }
 function openNewPrediction() {
-  showNewPredictionDialog("AP Biology Midterm");
+  showNewPredictionDialog("");
 }
 function openPrepFilePicker() {
   prepFileInput.value?.click();
 }
+function addPrepFiles(files: FileList | File[]) {
+  const remaining = Math.max(0, 10 - uploadedPrepFiles.value.length);
+  if (remaining === 0) return;
+  const existing = new Set(uploadedPrepFiles.value.map((file) => `${file.name}:${file.size}`));
+  const additions = Array.from(files)
+    .filter((file) => !existing.has(`${file.name}:${file.size}`))
+    .slice(0, remaining)
+    .map((file, index) => ({
+      id: `${Date.now()}-${index}-${file.name}`,
+      name: file.name,
+      size: file.size,
+    }));
+  uploadedPrepFiles.value = [...uploadedPrepFiles.value, ...additions];
+}
 function handlePrepFileSelection(event: Event) {
   const input = event.currentTarget as HTMLInputElement;
-  const file = input.files?.[0];
-  if (!file) return;
-  const fileTitle = file.name.replace(/\.[^.]+$/, "").trim();
-  showNewPredictionDialog(fileTitle || "My exam");
+  if (input.files) addPrepFiles(input.files);
   input.value = "";
 }
 function handlePrepFileDrop(event: DragEvent) {
-  const file = event.dataTransfer?.files?.[0];
-  if (!file) return;
-  const fileTitle = file.name.replace(/\.[^.]+$/, "").trim();
-  showNewPredictionDialog(fileTitle || "My exam");
+  if (event.dataTransfer?.files) addPrepFiles(event.dataTransfer.files);
+}
+function removePrepFile(fileId: string) {
+  uploadedPrepFiles.value = uploadedPrepFiles.value.filter((file) => file.id !== fileId);
+}
+function formatPrepFileSize(size: number) {
+  if (size < 1024) return `${size} B`;
+  if (size < 1024 * 1024) return `${(size / 1024).toFixed(1)} KB`;
+  return `${(size / (1024 * 1024)).toFixed(1)} MB`;
+}
+function continueWithUploadedFiles() {
+  if (uploadedPrepFiles.value.length === 0) return;
+  showNewPredictionDialog("");
 }
 function persistCourseActivity() {
   try {
@@ -1691,13 +1733,15 @@ function closeNewPrediction() {
   newPredictionDialog.value?.close();
 }
 function createNewPrediction() {
-  const title = predictionExamName.value.trim();
-  if (!title || !predictionExamDate.value) return;
+  const title = editingPredictionId.value
+    ? predictionExamName.value.trim()
+    : predictionCourseName.value.trim();
+  if (!title || (editingPredictionId.value ? !predictionExamDate.value : !predictionSchoolName.value.trim())) return;
   const prediction: CreatedPrediction = {
     id: editingPredictionId.value ?? `prediction-${Date.now()}`,
-    title,
+    title: editingPredictionId.value ? title : `${title} · ${predictionExamType.value}`,
     date: predictionExamDate.value,
-    focus: predictionFocus.value,
+    focus: editingPredictionId.value ? predictionFocus.value : predictionSchoolName.value.trim(),
   };
   if (editingPredictionId.value) {
     createdPredictions.value = createdPredictions.value.map((item) =>
@@ -1714,6 +1758,7 @@ function createNewPrediction() {
   } catch {
     /* The new plan still appears when browser storage is unavailable. */
   }
+  uploadedPrepFiles.value = [];
   closeNewPrediction();
   if (route.query.homeState) {
     const nextQuery = { ...route.query };
@@ -1727,6 +1772,7 @@ function createNewPrediction() {
   });
 }
 function formatPredictionDate(value: string) {
+  if (!value) return "not set";
   return new Intl.DateTimeFormat("en-US", {
     month: "short",
     day: "numeric",
@@ -1859,6 +1905,7 @@ function resumeActivity(activity: LastActivity) {
   }
 }
 function openCourseFromHome(course: Course) {
+  if (!courseHasDetailedDemoContent(course)) return;
   const activity = courseActivities.value[examFamilyForCourse(course)];
   if (!showFirstEntryHome.value && activity?.examTitle === coursePackageTitle(course)) {
     resumeActivity(activity);
@@ -1867,6 +1914,7 @@ function openCourseFromHome(course: Course) {
   openCourse(course);
 }
 function courseHomeAction(course: Course) {
+  if (!courseHasDetailedDemoContent(course)) return "Course unavailable";
   const activity = courseActivities.value[examFamilyForCourse(course)];
   if (!showFirstEntryHome.value && activity?.examTitle === coursePackageTitle(course))
     return activityCta(activity);
@@ -2599,6 +2647,16 @@ onMounted(async () => {
   document.body.classList.add("package-route");
   window.addEventListener("resize", keepDemoControllerInViewport);
   syncTabFromRoute();
+  if (String(route.query.uploadState || "") === "uploaded") {
+    uploadedPrepFiles.value = [{
+      id: "preview-uploaded-file",
+      name: "Biology-midterm-notes.pdf",
+      size: 149_606,
+    }];
+  }
+  if (String(route.query.createPlanModal || "") === "open") {
+    void nextTick(() => showNewPredictionDialog(""));
+  }
   try {
     const savedPredictions =
       window.localStorage.getItem("solvely:ep:created-predictions") ??
@@ -3063,10 +3121,12 @@ onBeforeUnmount(() => {
         <template v-if="showFirstEntryHome">
           <header class="first-entry-heading">
             <h1 id="firstEntryTitle">{{ FIRST_ENTRY_HOME_TITLE }}</h1>
+            <p>{{ FIRST_ENTRY_HOME_SUBTITLE }}</p>
           </header>
           <section class="first-entry-hero" aria-labelledby="firstEntryTitle">
             <div>
               <div
+                v-if="uploadedPrepFiles.length === 0"
                 class="first-entry-upload"
                 role="button"
                 tabindex="0"
@@ -3077,13 +3137,6 @@ onBeforeUnmount(() => {
                 @dragover.prevent
                 @drop.prevent="handlePrepFileDrop"
               >
-                <div class="first-entry-upload-copy">
-                  <h2>Turn your study materials into a personalized prep plan</h2>
-                  <p class="first-entry-upload-formats">
-                    <span>PDF, Word, PPT, TXT, or images</span>
-                  </p>
-                  <span class="first-entry-upload-cta" aria-hidden="true">Upload materials</span>
-                </div>
                 <div class="first-entry-upload-visual" aria-hidden="true">
                   <span class="first-entry-generator-art">
                     <span class="generator-materials">
@@ -3141,12 +3194,63 @@ onBeforeUnmount(() => {
                       </span>
                     </span>
                   </span>
+                  <div class="first-entry-upload-actions">
+                    <p class="first-entry-upload-formats">PDF, Word, PPT, TXT, or images</p>
+                    <span class="first-entry-upload-cta" aria-hidden="true">Upload materials</span>
+                  </div>
                 </div>
+              </div>
+              <div
+                v-else
+                class="uploaded-materials-panel"
+                @dragover.prevent
+                @drop.prevent="handlePrepFileDrop"
+              >
+                <h2>Files uploaded: {{ uploadedPrepFiles.length }}/10</h2>
+                <div class="uploaded-materials-list">
+                  <article
+                    v-for="file in uploadedPrepFiles"
+                    :key="file.id"
+                    class="uploaded-material-card"
+                  >
+                    <span class="uploaded-material-icon" aria-hidden="true">
+                      <svg class="icon"><use href="#i-image" /></svg>
+                    </span>
+                    <span class="uploaded-material-copy">
+                      <strong>{{ file.name }}</strong>
+                      <small>{{ formatPrepFileSize(file.size) }}</small>
+                    </span>
+                    <button
+                      type="button"
+                      :aria-label="`Remove ${file.name}`"
+                      @click="removePrepFile(file.id)"
+                    >
+                      <svg class="icon"><use href="#i-close" /></svg>
+                    </button>
+                  </article>
+                  <button
+                    v-if="uploadedPrepFiles.length < 10"
+                    class="add-prep-files"
+                    type="button"
+                    @click="openPrepFilePicker"
+                  >
+                    <svg class="icon"><use href="#i-plus" /></svg>
+                    <span>Add more files</span>
+                  </button>
+                </div>
+                <button
+                  class="continue-prep-files"
+                  type="button"
+                  @click="continueWithUploadedFiles"
+                >
+                  Continue
+                </button>
               </div>
               <input
                 ref="prepFileInput"
                 class="sr-only"
                 type="file"
+                multiple
                 accept=".pdf,.doc,.docx,.ppt,.pptx,.txt,.jpg,.jpeg,.png,.heic,.webp"
                 aria-label="Choose exam materials"
                 @change="handlePrepFileSelection"
@@ -3535,6 +3639,7 @@ onBeforeUnmount(() => {
                 `course-card-${course.family}`,
               ]"
               type="button"
+              :disabled="!courseHasDetailedDemoContent(course)"
               :aria-label="`${courseHomeAction(course)}: ${course.title}`"
               @click="openCourseFromHome(course)"
             >
@@ -3634,7 +3739,6 @@ onBeforeUnmount(() => {
               </aside>
             </div>
             <nav
-              v-if="hasDetailedDemoContent"
               class="course-package-tabs"
               role="tablist"
               aria-label="Course views"
@@ -3659,42 +3763,7 @@ onBeforeUnmount(() => {
         <div class="course-workspace-body">
           <div class="course-package-panel" role="tabpanel" aria-live="polite">
             <section
-              v-if="!hasDetailedDemoContent"
-              class="course-prototype-preview"
-              aria-labelledby="coursePrototypeTitle"
-            >
-              <div class="course-prototype-preview-copy">
-                <span class="course-prototype-eyebrow">Course preview</span>
-                <h2 id="coursePrototypeTitle">Start learning for free</h2>
-                <p>
-                  Explore this course, take the free diagnostic, and use lessons,
-                  study guides, flashcards, and quizzes at no cost.
-                </p>
-              </div>
-              <div class="course-prototype-feature-grid" aria-label="Included course features">
-                <article>
-                  <svg class="icon" aria-hidden="true"><use href="#i-study-guide-spark" /></svg>
-                  <strong>Study resources</strong>
-                  <span>Lessons, study guides, flashcards &amp; quizzes</span>
-                </article>
-                <article>
-                  <svg class="icon" aria-hidden="true"><use href="#i-target" /></svg>
-                  <strong>Free diagnostic</strong>
-                  <span>Score insights and question review</span>
-                </article>
-                <article v-if="hasFullLengthCourse">
-                  <svg class="icon" aria-hidden="true"><use href="#i-exam" /></svg>
-                  <strong>Pro test &amp; analysis</strong>
-                  <span>Full-length mock test and targeted practice</span>
-                </article>
-              </div>
-              <p class="course-prototype-note">
-                Full subject-level interactions are available in this prototype for SAT,
-                ACT, AP Calculus BC, and Abitur Mathematik.
-              </p>
-            </section>
-            <section
-              v-else-if="activeTab === 'study'"
+              v-if="activeTab === 'study'"
               class="study-practice-layout"
               :aria-label="`${examName} lessons and practice tests`"
             >
@@ -5615,21 +5684,21 @@ onBeforeUnmount(() => {
     </aside>
     <dialog
       ref="newPredictionDialog"
-      class="new-prediction-dialog"
+      :class="['new-prediction-dialog', { 'create-prep-plan-dialog': !editingPredictionId }]"
       aria-labelledby="newPredictionTitle"
       @cancel.prevent="closeNewPrediction"
       @click.self="closeNewPrediction"
     >
       <form class="new-prediction-form" @submit.prevent="createNewPrediction">
-        <header>
-          <span class="new-prediction-dialog-icon" aria-hidden="true">
+        <header :class="{ 'is-create-flow': !editingPredictionId }">
+          <span v-if="editingPredictionId" class="new-prediction-dialog-icon" aria-hidden="true">
             <svg class="icon"><use href="#i-exam" /></svg>
           </span>
           <div>
             <h2 id="newPredictionTitle">
-              {{ editingPredictionId ? 'Edit prep plan' : 'Create a prep plan' }}
+              {{ editingPredictionId ? 'Edit prep plan' : 'Sharpen your prediction' }}
             </h2>
-            <p>Tell Solvely what you are preparing for to build your plan.</p>
+            <p v-if="editingPredictionId">Tell Solvely what you are preparing for to build your plan.</p>
           </div>
           <button
             class="new-prediction-close"
@@ -5641,35 +5710,76 @@ onBeforeUnmount(() => {
           </button>
         </header>
         <div class="new-prediction-fields">
-          <label>
-            <span>Exam or course name</span>
-            <input
-              v-model="predictionExamName"
-              type="text"
-              required
-              placeholder="e.g. Biology 101 Final Exam"
-            />
-          </label>
-          <label>
-            <span>Exam date</span>
-            <input v-model="predictionExamDate" type="date" required />
-          </label>
-          <label>
-            <span>Plan focus</span>
-            <select v-model="predictionFocus">
-              <option>Balanced review</option>
-              <option>High-probability topics</option>
-              <option>Mock exam practice</option>
-            </select>
-          </label>
+          <template v-if="editingPredictionId">
+            <label>
+              <span>Exam or course name</span>
+              <input
+                v-model="predictionExamName"
+                type="text"
+                required
+                placeholder="e.g. Biology 101 Final Exam"
+              />
+            </label>
+            <label>
+              <span>Exam date</span>
+              <input v-model="predictionExamDate" type="date" required />
+            </label>
+            <label>
+              <span>Plan focus</span>
+              <select v-model="predictionFocus">
+                <option>Balanced review</option>
+                <option>High-probability topics</option>
+                <option>Mock exam practice</option>
+              </select>
+            </label>
+          </template>
+          <template v-else>
+            <label>
+              <span>School Name <b>*</b></span>
+              <input
+                v-model="predictionSchoolName"
+                type="text"
+                required
+                placeholder="e.g. University of Georgia"
+              />
+            </label>
+            <label>
+              <span>Course Code &amp; Name <b>*</b></span>
+              <input
+                v-model="predictionCourseName"
+                type="text"
+                required
+                placeholder="e.g. BIOL 101 - Principles of Biology"
+              />
+            </label>
+            <fieldset class="prediction-exam-type">
+              <legend>Exam Type <b>*</b></legend>
+              <div>
+                <button
+                  v-for="type in ['Midterm Exam', 'Final Exam', 'Quiz', 'Others']"
+                  :key="type"
+                  :class="{ active: predictionExamType === type }"
+                  type="button"
+                  :aria-pressed="predictionExamType === type"
+                  @click="predictionExamType = type"
+                >
+                  {{ type }}
+                </button>
+              </div>
+            </fieldset>
+            <label>
+              <span>Exam Date <small title="Adding a date helps Solvely pace your plan.">ⓘ</small></span>
+              <input v-model="predictionExamDate" type="date" />
+            </label>
+          </template>
         </div>
         <footer>
-          <button type="button" class="prediction-secondary" @click="closeNewPrediction">
+          <button v-if="editingPredictionId" type="button" class="prediction-secondary" @click="closeNewPrediction">
             Cancel
           </button>
           <button type="submit" class="prediction-primary">
-            <svg class="icon"><use href="#i-spark" /></svg>
-            {{ editingPredictionId ? 'Save changes' : 'Create prep plan' }}
+            <svg v-if="editingPredictionId" class="icon"><use href="#i-spark" /></svg>
+            {{ editingPredictionId ? 'Save changes' : 'Create Prep Plan' }}
           </button>
         </footer>
       </form>

@@ -8,7 +8,7 @@ import ScientificCalculator from '../components/ScientificCalculator.vue'
 import { loadEpExam } from '../data/satData'
 import { buildSatDiagnosticExam, SAT_DIAGNOSTIC_QUESTIONS_PER_SECTION } from '../data/satDiagnostic'
 import { loadActEpExam } from '../data/actData'
-import { buildActDiagnosticExam, ACT_DIAGNOSTIC_QUESTIONS_PER_SECTION } from '../data/actDiagnostic'
+import { buildActDiagnosticExam, ACT_DIAGNOSTIC_SECTION_COUNTS } from '../data/actDiagnostic'
 import { loadApEpExam } from '../data/apData'
 import { AP_CALCULUS_BC_DIAGNOSTIC_QUESTION_COUNT, buildApDiagnosticExam } from '../data/apDiagnostic'
 import { loadAbiturEpExam } from '../data/abiturData'
@@ -104,10 +104,10 @@ const actFullLengthModules: ModuleDefinition[] = [
   { id: 'act-science', sectionNumber: 4, moduleNumber: 1, section: 'science', title: 'Science', total: 40, duration: 40 * 60 },
 ]
 const actDiagnosticModules: ModuleDefinition[] = [
-  { id: 'act-diagnostic-english', sectionNumber: 1, moduleNumber: 1, section: 'english', title: 'English', total: ACT_DIAGNOSTIC_QUESTIONS_PER_SECTION, duration: 0 },
-  { id: 'act-diagnostic-mathematics', sectionNumber: 2, moduleNumber: 1, section: 'math', title: 'Mathematics', total: ACT_DIAGNOSTIC_QUESTIONS_PER_SECTION, duration: 0 },
-  { id: 'act-diagnostic-reading', sectionNumber: 3, moduleNumber: 1, section: 'reading', title: 'Reading', total: ACT_DIAGNOSTIC_QUESTIONS_PER_SECTION, duration: 0 },
-  { id: 'act-diagnostic-science', sectionNumber: 4, moduleNumber: 1, section: 'science', title: 'Science', total: ACT_DIAGNOSTIC_QUESTIONS_PER_SECTION, duration: 0 },
+  { id: 'act-diagnostic-english', sectionNumber: 1, moduleNumber: 1, section: 'english', title: 'English', total: ACT_DIAGNOSTIC_SECTION_COUNTS.English, duration: 0 },
+  { id: 'act-diagnostic-mathematics', sectionNumber: 2, moduleNumber: 1, section: 'math', title: 'Mathematics', total: ACT_DIAGNOSTIC_SECTION_COUNTS.Mathematics, duration: 0 },
+  { id: 'act-diagnostic-reading', sectionNumber: 3, moduleNumber: 1, section: 'reading', title: 'Reading', total: ACT_DIAGNOSTIC_SECTION_COUNTS.Reading, duration: 0 },
+  { id: 'act-diagnostic-science', sectionNumber: 4, moduleNumber: 1, section: 'science', title: 'Science', total: ACT_DIAGNOSTIC_SECTION_COUNTS.Science, duration: 0 },
 ]
 const apCalculusBcModules: ModuleDefinition[] = [
   { id: 'ap-calculus-bc-mcq', sectionNumber: 1, moduleNumber: 1, section: 'math', title: 'Multiple Choice', total: 42, duration: 105 * 60 },
@@ -227,7 +227,7 @@ function displayQuestion(source: SourceQuestion | undefined): Question {
       passageType: source.stimulusMaterial?.type,
       pictureUrl: source.stimulusMaterial?.pictureUrl,
       prompt: source.question,
-      graph: Boolean(source.stimulusMaterial?.pictureUrl),
+      graph: false,
       diagram: false,
     }
   }
@@ -238,7 +238,17 @@ function displayQuestion(source: SourceQuestion | undefined): Question {
       return { ...source, passage: source.question.slice(0, splitAt).trim(), referenceHighlights: [], prompt: source.question.slice(splitAt).trim(), graph: false, diagram: false }
     }
   }
-  return { ...source, passage: '', referenceHighlights: [], prompt: source.question.replace(/\nEnter your answer\.?$/i, ''), graph: false, diagram: false }
+  return {
+    ...source,
+    passage: '',
+    referenceHighlights: [],
+    pictureUrl: source.stimulusMaterial?.pictureUrl,
+    passageTitle: source.stimulusMaterial?.title,
+    passageType: source.stimulusMaterial?.type,
+    prompt: source.question.replace(/\nEnter your answer\.?$/i, ''),
+    graph: false,
+    diagram: false,
+  }
 }
 
 const stage = ref<ExamStage>('exam')
@@ -249,6 +259,7 @@ const responses = reactive<Record<string, string>>({})
 const eliminated = reactive<Record<string, Set<number>>>({})
 const review = reactive(new Set<string>())
 const highlights = reactive<Record<string, TextHighlight[]>>({})
+const failedStimulusVisuals = reactive(new Set<string>())
 const highlighterEnabled = ref(false)
 const eliminationMode = ref(false)
 const calculatorOpen = ref(false)
@@ -520,6 +531,10 @@ function keyFor(number: number) {
 }
 
 function selectAnswer(index: number) {
+  if (failedStimulusVisuals.has(questionKey.value)) {
+    showToast('Reload the figure before answering this question.')
+    return
+  }
   answers[questionKey.value] = index
 }
 
@@ -528,10 +543,15 @@ function choiceLabel(index: number) {
 }
 
 function setResponse(event: Event) {
+  if (failedStimulusVisuals.has(questionKey.value)) {
+    showToast('Reload the figure before answering this question.')
+    return
+  }
   responses[questionKey.value] = (event.target as HTMLInputElement).value
 }
 
 function toggleEliminated(index: number) {
+  if (failedStimulusVisuals.has(questionKey.value)) return
   const active = eliminated[questionKey.value] ?? new Set<number>()
   if (!eliminated[questionKey.value]) eliminated[questionKey.value] = active
   active.has(index) ? active.delete(index) : active.add(index)
@@ -584,6 +604,14 @@ function startModule(index: number) {
 }
 
 function advanceFromReview() {
+  const failedKey = [...failedStimulusVisuals].find((key) => key.startsWith(`${currentModule.value.id}-`))
+  if (failedKey) {
+    const failedQuestionNumber = Number(failedKey.slice(currentModule.value.id.length + 1))
+    stage.value = 'exam'
+    goToQuestion(failedQuestionNumber)
+    showToast('A required figure did not load. Reload the page before submitting this section.')
+    return
+  }
   if (!isDiagnostic.value && ((isApExam.value && moduleIndex.value === 0) || (!isApExam.value && !isActExam.value && moduleIndex.value === 1))) {
     stage.value = 'break'
     navigatorOpen.value = false
@@ -781,6 +809,17 @@ function closeTransientTools() {
 
 function updateHighlights(value: TextHighlight[]) {
   highlights[questionKey.value] = value
+}
+
+function markStimulusVisualLoaded() {
+  failedStimulusVisuals.delete(questionKey.value)
+}
+
+function markStimulusVisualFailed() {
+  failedStimulusVisuals.add(questionKey.value)
+  delete answers[questionKey.value]
+  delete responses[questionKey.value]
+  showToast('This figure could not be loaded. Reload the page before answering.')
 }
 
 function showToast(message: string) {
@@ -1053,15 +1092,8 @@ onBeforeUnmount(() => {
               <span>{{ currentQuestion.passageType }}</span>
               <h1>{{ currentQuestion.passageTitle }}</h1>
             </header>
-            <img v-if="currentQuestion.pictureUrl" class="act-stimulus-image" :src="currentQuestion.pictureUrl" :alt="`${currentQuestion.passageTitle || currentModule.title} figure`" />
-            <figure v-if="currentQuestion.graph" class="graph-figure" aria-label="Coffee shop density and laptop usage graph">
-              <figcaption>Coffee Shop Density and<br />Average Laptop Usage Time</figcaption>
-              <svg class="graph" viewBox="0 0 500 420" role="img" aria-labelledby="graph-title">
-                <title id="graph-title">Coffee Shop Density and Average Laptop Usage Time</title>
-                <g class="plot-area"><g class="grid-lines"><path d="M95 30H430M95 73.3H430M95 116.7H430M95 160H430M95 203.3H430M95 246.7H430M95 290H430" /></g><path class="axis" d="M95 21V290H440M89 290H101M89 246.7H101M89 203.3H101M89 160H101M89 116.7H101M89 73.3H101M89 30H101" /><g class="axis-labels"><text x="83" y="296">0</text><text x="74" y="252">2</text><text x="74" y="209">4</text><text x="74" y="166">6</text><text x="74" y="123">8</text><text x="65" y="80">10</text><text x="65" y="36">12</text><text x="91" y="315">0</text><text x="199" y="315">10</text><text x="309" y="315">20</text><text x="420" y="315">30</text><text class="x-title" x="264" y="346" text-anchor="middle">Number of coffee shops within 1 kilometer</text><text class="y-title" x="23" y="160" text-anchor="middle" transform="rotate(-90 23 160)">Average daily laptop</text><text class="y-title" x="42" y="160" text-anchor="middle" transform="rotate(-90 42 160)">usage per person (hours)</text></g><polyline class="winter-line" points="95,225 205,214 315,182 425,160" /><rect class="winter-dot" x="90" y="220" width="10" height="10" /><rect class="winter-dot" x="200" y="209" width="10" height="10" /><rect class="winter-dot" x="310" y="177" width="10" height="10" /><rect class="winter-dot" x="420" y="155" width="10" height="10" /><polyline class="summer-line" points="95,247 205,203 315,138 425,52" /><path class="summer-dot" d="m95 240 7 7-7 7-7-7Z" /><path class="summer-dot" d="m205 196 7 7-7 7-7-7Z" /><path class="summer-dot" d="m315 131 7 7-7 7-7-7Z" /><path class="summer-dot" d="m425 45 7 7-7 7-7-7Z" /></g>
-                <g class="legend"><rect x="25" y="367" width="310" height="36" /><path class="winter-line" d="M46 385h50" /><rect class="winter-dot" x="66" y="380" width="10" height="10" /><text x="108" y="391">Winter</text><path class="summer-line" d="M183 385h50" /><path class="summer-dot" d="m208 378 7 7-7 7-7-7Z" /><text x="246" y="391">Summer</text></g>
-              </svg>
-            </figure>
+            <img v-if="currentQuestion.pictureUrl && !failedStimulusVisuals.has(questionKey)" class="act-stimulus-image" :src="currentQuestion.pictureUrl" :alt="`${currentQuestion.passageTitle || currentModule.title} figure`" @load="markStimulusVisualLoaded" @error="markStimulusVisualFailed" />
+            <div v-if="currentQuestion.pictureUrl && failedStimulusVisuals.has(questionKey)" class="stimulus-visual-error" role="alert"><strong>Figure unavailable</strong><span>Reload the page before answering this question.</span></div>
             <HighlightablePassage :key="questionKey" :text="currentQuestion.passage" :enabled="highlighterEnabled" :model-value="highlights[questionKey] ?? []" :reference-highlights="currentQuestion.referenceHighlights" :extra-class="currentQuestion.graph ? 'graph-copy' : ''" @update:model-value="updateHighlights" />
             <div v-if="lineReaderEnabled" class="line-reader-overlay" :style="{ '--line-y': `${lineReaderY}%` }" aria-hidden="true"><span /></div>
           </div>
@@ -1070,7 +1102,7 @@ onBeforeUnmount(() => {
         <article ref="questionScroller" class="question-panel" aria-label="Answer choices"><div class="question-shell">
           <div class="question-toolbar"><span class="number-badge">{{ currentNumber }}</span><button class="review-button" :class="{ active: review.has(questionKey) }" type="button" @click="toggleReview"><svg viewBox="0 0 18 22" aria-hidden="true"><path d="M3 2.5h12v17l-6-4-6 4v-17Z" /></svg>Mark for Review</button><button class="elimination-mode-button" :class="{ active: eliminationMode }" type="button" :aria-pressed="eliminationMode" :aria-label="eliminationMode ? 'Hide answer elimination controls' : 'Show answer elimination controls'" @mouseenter="showToolTooltip($event, 'Cross out answer choices you think are wrong', 'above')" @mouseleave="hideToolTooltip" @focus="showToolTooltip($event, 'Cross out answer choices you think are wrong', 'above')" @blur="hideToolTooltip" @click="toggleEliminationMode"><span aria-hidden="true">{{ eliminationBadge }}</span></button></div>
           <h1>{{ currentQuestion.prompt }}</h1>
-          <div class="choices" role="radiogroup" :aria-label="currentQuestion.prompt"><div v-for="(option, index) in currentQuestion.options" :key="`${questionKey}-${index}`" class="choice-row" :class="{ selected: answers[questionKey] === index, eliminated: eliminated[questionKey]?.has(index), 'elimination-mode': eliminationMode }"><button class="choice-card" type="button" role="radio" :aria-checked="answers[questionKey] === index" @click="selectAnswer(index)"><span class="choice-letter">{{ choiceLabel(index) }}</span><span class="choice-copy">{{ option }}</span></button><button v-if="eliminationMode" class="eliminate-button" type="button" :aria-label="`${eliminated[questionKey]?.has(index) ? 'Restore' : 'Cross out'} answer ${choiceLabel(index)}`" :aria-pressed="eliminated[questionKey]?.has(index) ?? false" @click="toggleEliminated(index)"><span>{{ choiceLabel(index) }}</span></button></div></div>
+          <div class="choices" role="radiogroup" :aria-label="currentQuestion.prompt"><div v-for="(option, index) in currentQuestion.options" :key="`${questionKey}-${index}`" class="choice-row" :class="{ selected: answers[questionKey] === index, eliminated: eliminated[questionKey]?.has(index), 'elimination-mode': eliminationMode }"><button class="choice-card" type="button" role="radio" :aria-checked="answers[questionKey] === index" :disabled="failedStimulusVisuals.has(questionKey)" @click="selectAnswer(index)"><span class="choice-letter">{{ choiceLabel(index) }}</span><span class="choice-copy">{{ option }}</span></button><button v-if="eliminationMode" class="eliminate-button" type="button" :aria-label="`${eliminated[questionKey]?.has(index) ? 'Restore' : 'Cross out'} answer ${choiceLabel(index)}`" :aria-pressed="eliminated[questionKey]?.has(index) ?? false" :disabled="failedStimulusVisuals.has(questionKey)" @click="toggleEliminated(index)"><span>{{ choiceLabel(index) }}</span></button></div></div>
           <p class="keyboard-tip">Tip:&nbsp; press <kbd v-for="index in currentQuestion.options.length" :key="`passage-shortcut-${index}`">{{ index }}</kbd> to pick an answer, then <kbd class="enter-key">Enter</kbd> to go to the next question</p>
         </div></article>
       </section>
@@ -1081,14 +1113,16 @@ onBeforeUnmount(() => {
         <div v-if="calculatorOpen" class="math-calculator-pane" :class="{ 'popped-out-host': calculatorPoppedOut }"><ScientificCalculator @close="calculatorOpen = false; calculatorPoppedOut = false" @popout-change="calculatorPoppedOut = $event" /></div><div v-if="calculatorOpen && !calculatorPoppedOut" class="math-splitter" aria-hidden="true"><span><i /><i /><i /></span></div>
         <article ref="questionScroller" class="math-question-panel" aria-label="Math question"><div class="math-question-shell" :class="{ 'diagram-question': currentQuestion.diagram }">
           <div class="question-toolbar"><span class="number-badge">{{ currentNumber }}</span><button class="review-button" :class="{ active: review.has(questionKey) }" type="button" @click="toggleReview"><svg viewBox="0 0 18 22" aria-hidden="true"><path d="M3 2.5h12v17l-6-4-6 4v-17Z" /></svg>Mark for Review</button><button class="elimination-mode-button" :class="{ active: eliminationMode }" type="button" :aria-pressed="eliminationMode" :aria-label="eliminationMode ? 'Hide answer elimination controls' : 'Show answer elimination controls'" @mouseenter="showToolTooltip($event, 'Cross out answer choices you think are wrong', 'above')" @mouseleave="hideToolTooltip" @focus="showToolTooltip($event, 'Cross out answer choices you think are wrong', 'above')" @blur="hideToolTooltip" @click="toggleEliminationMode"><span aria-hidden="true">{{ eliminationBadge }}</span></button></div>
+          <img v-if="currentQuestion.pictureUrl && !failedStimulusVisuals.has(questionKey)" class="math-stimulus-image" :src="currentQuestion.pictureUrl" :alt="`${currentQuestion.passageTitle || currentModule.title} figure`" @load="markStimulusVisualLoaded" @error="markStimulusVisualFailed" />
+          <div v-if="currentQuestion.pictureUrl && failedStimulusVisuals.has(questionKey)" class="stimulus-visual-error" role="alert"><strong>Figure unavailable</strong><span>Reload the page before answering this question.</span></div>
           <figure v-if="currentQuestion.diagram" class="circle-diagram"><svg viewBox="0 0 620 560" role="img" aria-label="Circle with intersecting lines through O"><circle cx="310" cy="260" r="210" /><path d="M228 66 393 458M395 69 226 457" /><text x="201" y="67">S</text><text x="397" y="67">R</text><text x="198" y="489">P</text><text x="401" y="489">Q</text><text x="321" y="280">O</text></svg><figcaption>Note: Figure not drawn to scale.</figcaption></figure>
           <HighlightablePassage :key="questionKey" :text="currentQuestion.passage" :enabled="highlighterEnabled" :model-value="highlights[questionKey] ?? []" :reference-highlights="currentQuestion.referenceHighlights" extra-class="math-stem-copy" @update:model-value="updateHighlights" />
           <h1>{{ currentQuestion.prompt }}</h1>
-          <div v-if="currentQuestion.options.length" class="choices math-choices" role="radiogroup" :aria-label="currentQuestion.prompt"><div v-for="(option, index) in currentQuestion.options" :key="`${questionKey}-${index}`" class="choice-row" :class="{ selected: answers[questionKey] === index, eliminated: eliminated[questionKey]?.has(index), 'elimination-mode': eliminationMode }"><button class="choice-card" type="button" role="radio" :aria-checked="answers[questionKey] === index" @click="selectAnswer(index)"><span class="choice-letter">{{ choiceLabel(index) }}</span><span class="choice-copy">{{ option }}</span></button><button v-if="eliminationMode" class="eliminate-button" type="button" :aria-label="`${eliminated[questionKey]?.has(index) ? 'Restore' : 'Cross out'} answer ${choiceLabel(index)}`" :aria-pressed="eliminated[questionKey]?.has(index) ?? false" @click="toggleEliminated(index)"><span>{{ choiceLabel(index) }}</span></button></div></div>
+          <div v-if="currentQuestion.options.length" class="choices math-choices" role="radiogroup" :aria-label="currentQuestion.prompt"><div v-for="(option, index) in currentQuestion.options" :key="`${questionKey}-${index}`" class="choice-row" :class="{ selected: answers[questionKey] === index, eliminated: eliminated[questionKey]?.has(index), 'elimination-mode': eliminationMode }"><button class="choice-card" type="button" role="radio" :aria-checked="answers[questionKey] === index" :disabled="failedStimulusVisuals.has(questionKey)" @click="selectAnswer(index)"><span class="choice-letter">{{ choiceLabel(index) }}</span><span class="choice-copy">{{ option }}</span></button><button v-if="eliminationMode" class="eliminate-button" type="button" :aria-label="`${eliminated[questionKey]?.has(index) ? 'Restore' : 'Cross out'} answer ${choiceLabel(index)}`" :aria-pressed="eliminated[questionKey]?.has(index) ?? false" :disabled="failedStimulusVisuals.has(questionKey)" @click="toggleEliminated(index)"><span>{{ choiceLabel(index) }}</span></button></div></div>
           <div v-else class="student-response-field">
             <label :for="`response-${questionKey}`">{{ isAbiturExam ? 'Written response' : 'Student-produced response' }}</label>
-            <textarea v-if="isAbiturExam" :id="`response-${questionKey}`" :value="responses[questionKey] || ''" rows="8" placeholder="Schreiben Sie Ihren Lösungsweg und Ihre Begründung…" @input="setResponse" />
-            <input v-else :id="`response-${questionKey}`" inputmode="decimal" :value="responses[questionKey] || ''" placeholder="Enter your answer" @input="setResponse" />
+            <textarea v-if="isAbiturExam" :id="`response-${questionKey}`" :value="responses[questionKey] || ''" :disabled="failedStimulusVisuals.has(questionKey)" rows="8" placeholder="Schreiben Sie Ihren Lösungsweg und Ihre Begründung…" @input="setResponse" />
+            <input v-else :id="`response-${questionKey}`" inputmode="decimal" :value="responses[questionKey] || ''" :disabled="failedStimulusVisuals.has(questionKey)" placeholder="Enter your answer" @input="setResponse" />
             <small>{{ isAbiturExam ? 'Show the relevant calculations, reasoning, and units.' : 'You may enter an integer, decimal, or fraction.' }}</small>
           </div>
           <p v-if="currentQuestion.options.length" class="keyboard-tip">Tip:&nbsp; press <kbd v-for="index in currentQuestion.options.length" :key="`math-shortcut-${index}`">{{ index }}</kbd> to pick an answer, then <kbd class="enter-key">Enter</kbd> to go to the next question</p>

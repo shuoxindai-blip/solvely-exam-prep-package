@@ -11,7 +11,7 @@ export type ParsedActPassage = {
 
 export function parseActPassage(body: string, prompt: string): ParsedActPassage {
   const rawPassage = body.replace(/^(ENGLISH|READING|SCIENCE) PASSAGE[^\n]*\n/i, '')
-  const passage = rawPassage.replace(/\[\[|\]\]/g, '')
+  const passage = rawPassage.replace(/\[(?:\d+)\]|\[\[|\]\]/g, '')
   const referenceNumber = prompt.match(/\[(\d+)\]/)?.[1]
   if (!referenceNumber) {
     const quotedTerm = prompt.match(/^As (?:it is )?used in the passage,\s*[\u201c"]([^\u201d"]+)[\u201d"]/i)?.[1]
@@ -56,7 +56,7 @@ export function parseActPassage(body: string, prompt: string): ParsedActPassage 
   }
 
   if (rawStart < 0 || rawEnd <= rawStart) return { passage, referenceHighlights: [] }
-  const cleanOffset = (rawOffset: number) => rawPassage.slice(0, rawOffset).replace(/\[\[|\]\]/g, '').length
+  const cleanOffset = (rawOffset: number) => rawPassage.slice(0, rawOffset).replace(/\[(?:\d+)\]|\[\[|\]\]/g, '').length
   const start = cleanOffset(rawStart)
   const end = cleanOffset(rawEnd)
   return {
