@@ -3492,8 +3492,8 @@ onBeforeUnmount(() => {
           <div class="predictor-library-heading exam-catalog-heading">
             <h2 id="examCatalogTitle">Standardized Test Prep Courses</h2>
             <p>
-              Every course includes free diagnostics, score analysis &amp; study resources,
-              plus a full-length mock test &amp; targeted practice.
+              Every course includes a free diagnostic assessment, score analysis, study
+              resources, a full-length mock test, and targeted practice.
             </p>
           </div>
           <div class="exam-catalog-toolbar">

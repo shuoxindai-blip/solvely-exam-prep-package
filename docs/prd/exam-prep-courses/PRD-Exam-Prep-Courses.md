@@ -234,7 +234,7 @@ Exam Prep & Courses
 
 | 项目 | 说明 | 图示 |
 |---|---|---|
-| 标题与搜索 | 标题：`Standardized Test Prep Courses`；说明：`Every course includes free diagnostics, score analysis & study resources, plus a full-length mock test & targeted practice.`；不展示 Total。搜索 Placeholder：`Search by test name`。 | ![VIS-02 课程库](./images/VIS-02-home-first-entry-prep-courses.png) |
+| 标题与搜索 | 标题：`Standardized Test Prep Courses`；说明：`Every course includes a free diagnostic assessment, score analysis, study resources, a full-length mock test, and targeted practice.`；不展示 Total。搜索 Placeholder：`Search by test name`。 | ![VIS-02 课程库](./images/VIS-02-home-first-entry-prep-courses.png) |
 | 分类筛选 | All courses、SAT、ACT、AP、Abitur。搜索和筛选组合生效；结果按课程配置顺序展示。 | ![VIS-72 搜索与筛选](./images/VIS-72-course-search-and-coming-soon.png) |
 | 卡片网格 | 桌面端一行固定三张；卡片尺寸和间距与首页 Demo 一致。只有两张结果时，仍保持三列中单卡宽度，不拉伸。 | ![VIS-04 三列课程](./images/VIS-04-home-active-exam-library.png) |
 | 卡片信息 | 卡片整体为一个视觉区块，只展示课程名与一行副标题 `{videoLessonCount} video lessons · {practiceQuestionCount} questions`；所有数量以课程当前发布配置为准。卡片不展示 CTA、Total、`score insights` 或上下分区。 | ![VIS-02 课程卡片](./images/VIS-02-home-first-entry-prep-courses.png) |
@@ -948,7 +948,7 @@ Course→Writing 的跨产品转化复用 Writing Tools 已有埋点协议；在
 | `ep.library.title` | Exam Library | 已有进度首页 |
 | `ep.plan.new` | New Prep Plan | 首页 CTA |
 | `ep.courses.title` | Standardized Test Prep Courses | 课程区标题 |
-| `ep.courses.description` | Every course includes free diagnostics, score analysis & study resources, plus a full-length mock test & targeted practice. | 课程区说明 |
+| `ep.courses.description` | Every course includes a free diagnostic assessment, score analysis, study resources, a full-length mock test, and targeted practice. | 课程区说明 |
 | `ep.courses.search` | Search by test name | Search placeholder |
 | `ep.course.open` | Open course | 所有课程；仅用于可访问名称，不在卡片上展示 CTA |
 | `ep.course.continue` | Continue learning | 有进度课程 |
