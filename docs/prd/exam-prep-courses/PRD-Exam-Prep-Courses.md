@@ -2,7 +2,7 @@
 
 > 文档版本：v1.13
 > 基准日期：2026-09-14
-> 产品范围：Exam Prep 首页、Standardized Test Prep Courses、课程学习工具、SAT/ACT/AP/Abitur 模考、成绩报告与商业化门槛
+> 产品范围：Exam Prep 首页、Standardized test prep courses、课程学习工具、SAT/ACT/AP/Abitur 模考、成绩报告与商业化门槛
 > Demo 基准：`ChatGPT Site · 2026-09-10 published build`
 > 文档状态：评审稿
 
@@ -135,8 +135,8 @@
 ```text
 Exam Prep & Courses
 ├── 首页（由真实数据推导，不单独保存“空/有进度”布尔值）
-│   ├── 无任何计划或课程活动 → 上传 Custom Plan 资料 + Standardized Test Prep Courses（同页）
-│   └── 已创建计划或已开始课程 → Exam Library + Standardized Test Prep Courses
+│   ├── 无任何计划或课程活动 → 上传 Custom Plan 资料 + Standardized test prep courses（同页）
+│   └── 已创建计划或已开始课程 → Exam Library + Standardized test prep courses
 ├── Custom Plan → 上传资料 → 创建计划 → Plan Detail
 └── Prep Course
     ├── Course Content → Lessons / Diagnostic / Full-Length
@@ -184,7 +184,7 @@ Exam Prep & Courses
 |---|---|---|---|
 | 否 | Free | 首次进入；上传区与课程目录同屏纵向展示 | 上传资料创建计划、浏览全部课程并进入已就绪课程；Pro 动作按 4.8 拦截 |
 | 否 | Pro | 同上 | 创建计划、浏览课程；Pro 动作直接执行 |
-| 是 | Free | `Exam Library + Standardized Test Prep Courses` | 继续真实活动、创建新计划；Pro 动作按 4.8 拦截 |
+| 是 | Free | `Exam Library + Standardized test prep courses` | 继续真实活动、创建新计划；Pro 动作按 4.8 拦截 |
 | 是 | Pro | 同上 | 继续真实活动、创建新计划；Pro 动作直接执行 |
 
 ![VIS-05 首页未创建 + 免费状态](./images/VIS-05-demo-controller-home-empty-free.png)
@@ -216,13 +216,13 @@ Exam Prep & Courses
 
 | 项目 | 说明 | 图示 |
 |---|---|---|
-| 页面头部 | 当用户没有成功创建过 Custom Plan，且没有开始过任何 Prep Course 学习资源或考试时，不展示全页营销主标题。内容区首个标题左对齐展示 **Create adaptive prep plan**，副标题为 `Turn your study materials into a personalized prep plan including must know topics and realistic mock exams.`；标题与下方 Standardized Test Prep Courses 使用一致的模块层级。 | ![VIS-01 首次进入](./images/VIS-01-home-first-entry-custom-plan.png) |
-| 页面结构 | Custom Plan 上传区与 Standardized Test Prep Courses 同屏纵向展示，不再使用顶部 `Custom Plan / Prep Courses` 切换 Tab，也不展示 `SAT, ACT and AP Prep` 气泡。滚动页面即可浏览课程。 | ![VIS-02 首次进入课程区](./images/VIS-02-home-first-entry-prep-courses.png) |
-| Custom Plan 上传 | 整个虚线区域都可点击、键盘触发或拖拽上传；上传框内不重复标题或副标题，以居中的生成流程插图为主体。格式提示 `PDF, Word, PPT, TXT, or images` 与 CTA `Upload materials` 均包含在浅蓝插图容器内，CTA 位于流程图下方居中。不在入口外露页数限制；文件校验时仍按每个文件最多处理 50 页。 | ![VIS-01 上传入口](./images/VIS-01-home-first-entry-custom-plan.png) |
+| 页面头部 | 当用户没有成功创建过 Custom Plan，且没有开始过任何 Prep Course 学习资源或考试时，不展示全页营销主标题。内容区首个标题左对齐展示 **Create adaptive prep plan**，副标题为 `Turn your study materials into a personalized prep plan including must know topics and realistic mock exams.`；标题与下方 Standardized test prep courses 使用一致的模块层级。 | ![VIS-01 首次进入](./images/VIS-01-home-first-entry-custom-plan.png) |
+| 页面结构 | Custom Plan 上传区与 Standardized test prep courses 同屏纵向展示，不再使用顶部 `Custom Plan / Prep Courses` 切换 Tab，也不展示 `SAT, ACT and AP Prep` 气泡。滚动页面即可浏览课程。 | ![VIS-02 首次进入课程区](./images/VIS-02-home-first-entry-prep-courses.png) |
+| Custom Plan 上传 | 整个虚线区域都可点击、键盘触发或拖拽上传；上传框内不重复标题或副标题，以居中的生成流程插图为主体。格式提示 `PDF, Word, PPT, TXT, or images` 与 CTA `Upload materials` 位于流程图下方居中，且与插图同处一个连续上传面，不再使用独立浅蓝插图底框。不在入口外露页数限制；文件校验时仍按每个文件最多处理 50 页。 | ![VIS-01 上传入口](./images/VIS-01-home-first-entry-custom-plan.png) |
 | 上传交互与反馈 | Hover 整个虚线框时，边框与背景呈品牌蓝高亮，鼠标显示可点击；键盘聚焦显示焦点环，Enter/Space 与点击 Upload materials 执行同一上传动作，每次只打开一次文件选择器。拖入文件进入同一校验流程；取消选择不创建计划或进度。选择文件后先进入“已上传文件”中间状态，不直接打开创建弹窗。 | 见 VIS-01 |
 | 已上传文件状态 | 虚线入口替换为同宽文件面板。顶部显示 `Files uploaded: {fileCount}/10`；每个文件卡显示文件图标、完整文件名、格式化大小和 Remove；`Add more files` 继续使用同一选择器并最多累计 10 个；右下角 `Continue` 仅在至少 1 个有效文件时可用。Remove 最后一个文件后恢复空上传入口。文件状态本身不创建计划或进度。 | ![VIS-97 已上传文件](./images/VIS-97-uploaded-materials.png) |
-| 插图与空间层级 | 桌面端同一虚线框内左侧为精简文案与按钮，右侧为代码绘制插图：Notes、Lecture slides、Past exams → Solvely Logo / Build your prep → FOCUSED / Priority topics、REALISTIC / Mock exams。插图不表示已生成真实结果，不提供独立操作。上传区约 232px 高，与课程区约 38px 间距；页面主标题约 36px，上传框标题约 18px，形成接近 2:1 的层级关系；课程区标题约 24px。窄屏上下排列，文字完整换行，不裁切或省略；最小文字 12px。 | 见 VIS-01 |
-| 示例计划 | 不展示原 3 张 Sample 卡；上传区结束后直接展示 Standardized Test Prep Courses。 | ![VIS-02 课程区](./images/VIS-02-home-first-entry-prep-courses.png) |
+| 插图与空间层级 | 桌面端同一虚线框内居中展示代码绘制流程图：Notes、Lecture slides、Past exams → Solvely Logo / Build your prep → FOCUSED / Priority topics、REALISTIC / Mock exams；格式提示与 CTA 紧随其下。插图不表示已生成真实结果，不提供独立操作，也不再使用内嵌卡片底色。上传区约 238px 高，与课程区约 38px 间距；`Create adaptive prep plan` 与课程区标题均约 24px。窄屏自适应缩放并纵向保留操作区，文字完整换行，不裁切或省略；最小文字 12px。 | 见 VIS-01 |
+| 示例计划 | 不展示原 3 张 Sample 卡；上传区结束后直接展示 Standardized test prep courses。 | ![VIS-02 课程区](./images/VIS-02-home-first-entry-prep-courses.png) |
 | 创建计划弹窗 | 用户在已上传文件状态点击 `Continue` 后打开。标题 `Sharpen your prediction`；必填 `School Name`（Placeholder：`e.g. University of Georgia`）、必填 `Course Code & Name`（Placeholder：`e.g. BIOL 101 - Principles of Biology`）、必填 `Exam Type`（Midterm Exam / Final Exam / Quiz / Others，单选，默认 Midterm Exam）、可选 `Exam Date`。主 CTA 为 `Create Prep Plan`；X/Escape 关闭并保留本次已上传文件，未提交不生成计划或首页进度。已有计划的 Edit 入口继续使用 Edit prep plan / Save changes。 | ![VIS-03 创建计划](./images/VIS-03-create-prep-plan-dialog.png) |
 
 #### 4.4.2 已有进度首页
@@ -234,12 +234,13 @@ Exam Prep & Courses
 | 继续学习 | 点击课程进度卡，进入上次学习的课程/Topic/工具；点击计划卡进入计划详情。Course 一旦有进度，就必须同步出现在 Exam Library。 | ![VIS-04 继续学习](./images/VIS-04-home-active-exam-library.png) |
 | 侧边栏 | 支持折叠/展开；折叠不改变主内容层级和三列卡片尺寸。 | ![VIS-78 侧边栏折叠](./images/VIS-78-home-sidebar-collapsed.png) |
 
-#### 4.4.3 Standardized Test Prep Courses
+#### 4.4.3 Standardized test prep courses
 
 | 项目 | 说明 | 图示 |
 |---|---|---|
-| 标题与搜索 | 标题：`Standardized Test Prep Courses`；说明：`Every course includes a free diagnostic assessment, score analysis, study resources, a full-length mock test, and targeted practice.`；不展示 Total。搜索 Placeholder：`Search by test name`。 | ![VIS-02 课程库](./images/VIS-02-home-first-entry-prep-courses.png) |
+| 标题与搜索 | 标题：`Standardized test prep courses`；说明：`Every course includes a free diagnostic assessment, score analysis, study resources, a full-length mock test, and targeted practice.`；不展示 Total。搜索 Placeholder：`Search by test name`。 | ![VIS-02 课程库](./images/VIS-02-home-first-entry-prep-courses.png) |
 | 分类筛选 | All courses、SAT、ACT、AP、Abitur，以横向胶囊按钮展示，默认 All courses。桌面端分类在左、搜索框在右；窄屏自适应排列。点击分类只过滤当前页课程，保留搜索词；搜索和分类组合生效，结果按课程配置顺序展示，不切换页面或创建进度。 | ![VIS-02 搜索与筛选](./images/VIS-02-home-first-entry-prep-courses.png) |
+| 课程分组 | 筛选与搜索之后，非空结果按 `College admission tests`（SAT、ACT）、`Advanced Placement® tests`（全部 AP）、`Abiturprüfungen`（德国 Abitur）分组展示；空分组隐藏。分组标题仅建立信息层级，不改变课程卡片顺序、尺寸、入口权限或进度状态。 | ![VIS-02 课程库](./images/VIS-02-home-first-entry-prep-courses.png) |
 | 卡片网格 | 桌面端一行固定三张；卡片尺寸和间距与首页 Demo 一致。只有两张结果时，仍保持三列中单卡宽度，不拉伸。 | ![VIS-04 三列课程](./images/VIS-04-home-active-exam-library.png) |
 | 卡片信息 | 卡片整体为一个视觉区块，只展示课程名与一行副标题 `{videoLessonCount} video lessons · {practiceQuestionCount} questions`；所有数量以课程当前发布配置为准。卡片不展示 CTA、Total、`score insights` 或上下分区。 | ![VIS-02 课程卡片](./images/VIS-02-home-first-entry-prep-courses.png) |
 | 卡片入口与权限 | `course_ready=true` 的课程卡可点击，Free 与 Pro 进入相同课程页，入口不得出现 Pro 标识或 Paywall；当前 Demo 为 SAT、ACT、AP Calculus BC、Abitur Mathematik。没有内容数据的卡片 disabled、使用 `Course unavailable: {course}` 无障碍名称且不跳独立占位页。只打开可用课程不创建进度；进入后仅在触发 M-03/M-05/M-06/M-07 的受限动作时校验会员。 | ![VIS-72 课程入口](./images/VIS-72-course-search-and-coming-soon.png) |
@@ -1005,7 +1006,7 @@ Course→Writing 的跨产品转化复用 Writing Tools 已有埋点协议；在
 | `ep.plan.create.cta` | Create Prep Plan | 新建计划主 CTA |
 | `ep.library.title` | Exam Library | 已有进度首页 |
 | `ep.plan.new` | New Prep Plan | 首页 CTA |
-| `ep.courses.title` | Standardized Test Prep Courses | 课程区标题 |
+| `ep.courses.title` | Standardized test prep courses | 课程区标题 |
 | `ep.courses.description` | Every course includes a free diagnostic assessment, score analysis, study resources, a full-length mock test, and targeted practice. | 课程区说明 |
 | `ep.courses.search` | Search by test name | Search placeholder |
 | `ep.course.open` | Open course | 所有课程；仅用于可访问名称，不在卡片上展示 CTA |

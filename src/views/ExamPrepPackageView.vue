@@ -1330,6 +1330,21 @@ const filteredCourses = computed(() => {
     );
   });
 });
+const courseCatalogGroups = [
+  { key: "college", title: "College admission tests", families: ["sat", "act"] },
+  { key: "ap", title: "Advanced Placement® tests", families: ["ap"] },
+  { key: "abitur", title: "Abiturprüfungen", families: ["abitur"] },
+] as const;
+const groupedFilteredCourses = computed(() =>
+  courseCatalogGroups
+    .map((group) => ({
+      ...group,
+      courses: filteredCourses.value.filter((course) =>
+        group.families.some((family) => family === course.family),
+      ),
+    }))
+    .filter((group) => group.courses.length > 0),
+);
 const examLibraryTotal = computed(
   () => createdPredictions.value.length + (showSeededPrediction.value ? 1 : 0) +
     (forcedHomePreview.value === "first-entry" ? 0 : courseActivityList.value.length),
@@ -3594,7 +3609,7 @@ onBeforeUnmount(() => {
           aria-labelledby="examCatalogTitle"
         >
           <div class="predictor-library-heading exam-catalog-heading">
-            <h2 id="examCatalogTitle">Standardized Test Prep Courses</h2>
+            <h2 id="examCatalogTitle">Standardized test prep courses</h2>
             <p>
               Every course includes a free diagnostic assessment, score analysis, study
               resources, a full-length mock test, and targeted practice.
@@ -3630,33 +3645,43 @@ onBeforeUnmount(() => {
               />
             </label>
           </div>
-          <div class="course-grid" aria-label="Standardized test prep courses">
-            <button
-              v-for="course in filteredCourses"
-              :key="course.title"
-              :class="[
-                'course-card',
-                `course-card-${course.family}`,
-              ]"
-              type="button"
-              :disabled="!courseHasDetailedDemoContent(course)"
-              :aria-label="`${courseHomeAction(course)}: ${course.title}`"
-              @click="openCourseFromHome(course)"
+          <div v-if="filteredCourses.length" class="course-groups">
+            <section
+              v-for="group in groupedFilteredCourses"
+              :key="group.key"
+              class="course-group"
+              :aria-labelledby="`courseGroup-${group.key}`"
             >
-              <span
-                :class="['course-card-icon', { 'course-card-icon-exam': course.icon === 'exam' }]"
-                aria-hidden="true"
-              >
-                <span v-if="course.icon === 'exam'">{{ course.label }}</span>
-                <svg v-else class="icon"><use :href="`#i-course-${course.icon}`" /></svg>
-              </span>
-              <span class="course-card-copy">
-                <strong>{{ course.title }}</strong>
-                <span class="course-card-detail">
-                  {{ course.videos }} video lessons · {{ course.questions }} questions
-                </span>
-              </span>
-            </button>
+              <h3 :id="`courseGroup-${group.key}`">{{ group.title }}</h3>
+              <div class="course-grid" :aria-label="group.title">
+                <button
+                  v-for="course in group.courses"
+                  :key="course.title"
+                  :class="[
+                    'course-card',
+                    `course-card-${course.family}`,
+                  ]"
+                  type="button"
+                  :disabled="!courseHasDetailedDemoContent(course)"
+                  :aria-label="`${courseHomeAction(course)}: ${course.title}`"
+                  @click="openCourseFromHome(course)"
+                >
+                  <span
+                    :class="['course-card-icon', { 'course-card-icon-exam': course.icon === 'exam' }]"
+                    aria-hidden="true"
+                  >
+                    <span v-if="course.icon === 'exam'">{{ course.label }}</span>
+                    <svg v-else class="icon"><use :href="`#i-course-${course.icon}`" /></svg>
+                  </span>
+                  <span class="course-card-copy">
+                    <strong>{{ course.title }}</strong>
+                    <span class="course-card-detail">
+                      {{ course.videos }} video lessons · {{ course.questions }} questions
+                    </span>
+                  </span>
+                </button>
+              </div>
+            </section>
           </div>
           <p v-if="!filteredCourses.length" class="course-empty">
             No matching courses. Try another exam name.

@@ -1121,7 +1121,7 @@
     .first-entry-heading { width:100%; max-width:1000px; margin:0 auto; text-align:left; }
     .first-entry-heading h1 { margin:0; color:#101216; font:700 24px/31px Inter,ui-sans-serif,system-ui,sans-serif; letter-spacing:-.35px; }
     .first-entry-heading p { max-width:820px; margin:6px 0 0; color:#626a77; font-size:14px; font-weight:400; line-height:21px; }
-    .first-entry-upload { min-height:262px; display:flex; align-items:center; justify-content:center; padding:18px 20px; overflow:hidden; border:1.5px dashed rgba(0,122,255,.3); border-radius:24px; outline:0; background:linear-gradient(135deg,#fff 0%,#fff 48%,#f4f9ff 100%); box-shadow:0 12px 32px rgba(27,36,50,.07); cursor:pointer; transition:border-color .18s ease,background .18s ease,box-shadow .18s ease,transform .18s ease; }
+    .first-entry-upload { min-height:238px; display:flex; align-items:center; justify-content:center; padding:20px 24px; overflow:hidden; border:1.5px dashed rgba(0,122,255,.3); border-radius:24px; outline:0; background:linear-gradient(135deg,#fff 0%,#fbfdff 58%,#f4f9ff 100%); box-shadow:0 12px 32px rgba(27,36,50,.07); cursor:pointer; transition:border-color .18s ease,background .18s ease,box-shadow .18s ease,transform .18s ease; }
     .first-entry-upload:hover { border-color:#007aff; background:linear-gradient(135deg,#f8fbff 0%,#f5f9ff 48%,#eaf4ff 100%); box-shadow:0 16px 38px rgba(0,122,255,.13); transform:translateY(-1px); }
     .first-entry-upload:focus-visible { border-color:#007aff; box-shadow:0 0 0 4px rgba(0,122,255,.12),0 16px 38px rgba(0,122,255,.12); }
     .first-entry-upload p { margin:0; color:#626a77; font-size:14px; line-height:21px; }
@@ -1129,9 +1129,8 @@
     .first-entry-upload .first-entry-upload-formats { color:#89919e; font-size:12px; line-height:18px; }
     .first-entry-upload-cta { min-width:142px; height:40px; display:inline-flex; align-items:center; justify-content:center; padding:0 30px; border-radius:999px; background:#007aff; color:#fff; font-size:16px; font-weight:650; line-height:24px; transition:background .16s ease,box-shadow .16s ease,transform .16s ease; }
     .first-entry-upload:hover .first-entry-upload-cta,.first-entry-upload:focus-visible .first-entry-upload-cta { background:#006fe8; box-shadow:0 7px 18px rgba(0,122,255,.22); transform:translateY(-1px); }
-    .first-entry-upload-visual { width:min(620px,100%); min-width:0; min-height:224px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:7px; overflow:hidden; padding:10px 16px 16px; border-radius:18px; background:radial-gradient(circle at 50% 42%,rgba(123,184,255,.22),rgba(226,239,255,.64) 55%,rgba(244,249,255,.96) 100%); transition:background .18s ease; }
-    .first-entry-upload:hover .first-entry-upload-visual,.first-entry-upload:focus-visible .first-entry-upload-visual { background:radial-gradient(circle at 50% 50%,rgba(94,169,255,.3),rgba(218,235,255,.74) 55%,rgba(239,247,255,.98) 100%); }
-    .first-entry-generator-art { width:max-content; display:flex; align-items:center; justify-content:center; gap:10px; transform:scale(.82); transform-origin:center; }
+    .first-entry-upload-visual { width:min(760px,100%); min-width:0; min-height:196px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; overflow:hidden; padding:4px 16px 8px; background:transparent; }
+    .first-entry-generator-art { width:max-content; display:flex; align-items:center; justify-content:center; gap:10px; transform:scale(.88); transform-origin:center; }
     .generator-materials { width:166px; height:132px; position:relative; flex:0 0 auto; }
     .generator-file { width:150px; height:48px; position:absolute; display:flex; align-items:center; gap:9px; overflow:hidden; padding:7px 11px; border:1px solid rgba(72,109,155,.14); border-radius:12px; background:rgba(255,255,255,.98); box-shadow:0 8px 18px rgba(26,65,116,.12); transform:rotate(-4deg); transition:transform .18s ease,box-shadow .18s ease; }
     .generator-file-icon { width:30px; height:30px; flex:0 0 auto; display:grid; place-items:center; border-radius:9px; background:#f1ecff; color:#7257cf; }
@@ -1192,8 +1191,6 @@
     body.dark .first-entry-upload:hover,body.dark .first-entry-upload:focus-visible { border-color:#51a9fe; background:linear-gradient(135deg,#182438 0%,#19283f 48%,#1d3350 100%); box-shadow:0 0 0 4px rgba(81,169,254,.1),0 16px 38px rgba(0,0,0,.3); }
     body.dark .first-entry-upload p { color:var(--muted); }
     body.dark .first-entry-upload .first-entry-upload-formats { color:#93a0b4; }
-    body.dark .first-entry-upload-visual { background:radial-gradient(circle at 50% 50%,rgba(44,126,224,.24),rgba(29,45,68,.78) 56%,rgba(23,31,44,.96) 100%); }
-    body.dark .first-entry-upload:hover .first-entry-upload-visual,body.dark .first-entry-upload:focus-visible .first-entry-upload-visual { background:radial-gradient(circle at 50% 50%,rgba(44,126,224,.32),rgba(29,45,68,.82) 56%,rgba(23,31,44,.98) 100%); }
     body.dark .generator-file,body.dark .generator-result-card { border-color:rgba(81,169,254,.22); background:#202b3d; box-shadow:0 10px 22px rgba(0,0,0,.23); }
     body.dark .generator-file b { color:#d6dfec; }
     body.dark .generator-file-icon { background:#302a48; color:#bcaaff; }
@@ -1281,6 +1278,9 @@
     .exam-search-wrap input { width:100%; min-width:0; border:0; outline:0; background:transparent; color:var(--text); font-family:Inter,sans-serif; font-size:14px; font-weight:400; line-height:14px; }
     .exam-search-wrap input::placeholder { color:#989b9e; opacity:1; }
     .exam-search-wrap:focus-within { border-color:#8cbcf5; background:var(--surface); box-shadow:0 0 0 3px rgba(0,122,255,.09); }
+    .course-groups { display:grid; gap:36px; }
+    .course-group { min-width:0; display:grid; gap:16px; }
+    .course-group h3 { margin:0; color:var(--text); font-size:18px; font-weight:650; line-height:24px; letter-spacing:-.15px; }
     .course-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:24px; }
     .course-card { min-height:132px; display:grid; grid-template-columns:40px minmax(0,1fr); align-items:center; gap:14px; padding:22px 24px; overflow:hidden; border:1px solid #e5e7eb; border-radius:24px; background:linear-gradient(135deg,rgba(0,122,255,.055),rgba(90,156,255,.14)); color:var(--text); text-align:left; cursor:pointer; box-shadow:0 2px 8px rgba(16,24,40,.06); transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease; }
     .course-card:not(:disabled):hover { transform:translateY(-1px); border-color:rgba(0,122,255,.35); box-shadow:0 8px 24px rgba(0,122,255,.09); }
@@ -1314,6 +1314,7 @@
     body.dark .course-card { background:linear-gradient(135deg,rgba(0,122,255,.15),rgba(50,75,104,.42)); }
     body.dark .course-card-detail { color:var(--muted); }
     body.dark .course-card-icon { background:rgba(255,255,255,.1); color:#79bbff; box-shadow:none; }
+    body.dark .course-group h3 { color:var(--text); }
 
     .new-prediction-dialog { width:min(560px,calc(100vw - 32px)); max-height:calc(100vh - 32px); padding:0; overflow:hidden; border:1px solid var(--line); border-radius:24px; background:var(--surface); color:var(--text); box-shadow:0 30px 90px rgba(15,30,52,.28); }
     .new-prediction-dialog.create-prep-plan-dialog { width:min(760px,calc(100vw - 32px)); border:0; border-radius:32px; }
@@ -2723,8 +2724,8 @@
       .predictor-home-copy h1 { font-size:34px; line-height:1.14; letter-spacing:-.7px; }
       .first-entry-heading p { max-width:680px; margin-top:6px; white-space:normal; }
       .first-entry-upload { padding:18px; }
-      .first-entry-upload-visual { min-height:224px; }
-      .first-entry-generator-art { transform:scale(.74); }
+      .first-entry-upload-visual { min-height:204px; }
+      .first-entry-generator-art { transform:scale(.76); }
       .uploaded-materials-list { padding-right:0; }
       .continue-prep-files { position:static; align-self:flex-end; margin-top:auto; }
       .predictor-mastery { width:190px; }
@@ -2765,7 +2766,7 @@
       .first-entry-upload p { font-size:13px; line-height:20px; }
       .first-entry-upload .first-entry-upload-formats { font-size:12px; line-height:18px; }
       .first-entry-upload-cta { width:100%; max-width:260px; }
-      .first-entry-upload-visual { min-height:232px; padding:8px 0 14px; border-radius:15px; }
+      .first-entry-upload-visual { min-height:220px; padding:8px 0 12px; }
       .first-entry-generator-art { transform:scale(.58); }
       .uploaded-materials-panel { min-height:0; padding:20px; border-radius:20px; }
       .uploaded-materials-panel h2 { font-size:18px; }
@@ -2890,6 +2891,9 @@
       .diag-report-tabs { grid-template-columns:repeat(3,minmax(0,1fr)); width:100%; }
       .diagnostic-ready-summary { grid-template-columns:1fr; }
       .course-grid { grid-template-columns:1fr; }
+      .course-groups { gap:30px; }
+      .course-group { gap:14px; }
+      .course-group h3 { font-size:17px; line-height:23px; }
       .crop-dialog { width:calc(100vw - 16px); height:calc(100vh - 16px); border-radius:22px; }
       .crop-dialog-head { min-height:70px; padding:0 18px; }
       .crop-dialog-head h2 { font-size:21px; }
