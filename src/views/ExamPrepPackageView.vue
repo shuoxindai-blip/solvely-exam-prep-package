@@ -3484,7 +3484,7 @@ onBeforeUnmount(() => {
               <input
                 v-model="searchQuery"
                 aria-label="Search standardized test prep courses"
-                placeholder="Search SAT, ACT, AP, Abitur..."
+                placeholder="Search by test name"
               />
             </label>
           </div>
