@@ -49,9 +49,9 @@ type ApSubject =
   | "engineering"
   | "arts";
 
-const FIRST_ENTRY_HOME_TITLE = "Create adaptive prep plan";
+const FIRST_ENTRY_HOME_TITLE = "Create your personalized prep plan";
 const FIRST_ENTRY_HOME_SUBTITLE =
-  "Turn your study materials into a personalized prep plan including must know topics and realistic mock exams.";
+  "Upload your study materials to identify priority topics and generate realistic mock exams.";
 const ACTIVE_HOME_TITLE = "Stay on Track for Your Best Score";
 const ACTIVE_HOME_SUBTITLE =
   "Personalized exam prep, all the way to test day.";
