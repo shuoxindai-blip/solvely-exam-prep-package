@@ -82,7 +82,7 @@
 
 | 策略决策 | 用户与考试依据 | 商业化价值 |
 |---|---|---|
-| 免费开放 Study Guide、Flashcards、Topic Quiz | 降低首次使用成本，让用户可以验证内容质量、题目质量和方法是否适合自己 | 扩大课程使用和回访；课程本身成为产品专业能力的可体验证明，而不是只靠营销文案建立信任 |
+| 免费开放课程入口、Study Guide、Flashcards、Topic Quiz | Free 用户可进入任一已发布的标准化备考课程，降低首次使用成本，并验证内容质量、题目质量和方法是否适合自己 | 扩大课程使用和回访；课程本身成为产品专业能力的可体验证明，而不是只靠营销文案建立信任 |
 | Diagnostic Test 免费且在课程前部突出 | AP 用户优先关心薄弱点；SAT/ACT 用户需要先判断能力缺口与练习方向 | 先交付明确价值，再在结果后的 Targeted Practice 承接高意图转化 |
 | Full-Length Practice Test 前置展示但仅 Pro 可开始 | 完整模考是准备度验证、正式节奏模拟和高成本分析入口 | 让用户提前感知产品深度；点击 Start 即明确 Paywall，避免完成长流程后才被拦截 |
 | Ask Solvely、Diagnostic Targeted Practice、Full-Length 与完整报告收费 | 这些能力具备更强个性化、即时反馈、计算成本或高价值诊断属性 | 将付费点放在用户已经表达明确问题或提升意图的时刻，而不是阻断基础课程探索 |
@@ -90,11 +90,11 @@
 | SAT/ACT 内容侧重练习、技巧和效率 | 能力提升依赖反复练习；用户需要的不只是知识讲解，还包括解题策略和时间管理 | 用高质量题库与独家技巧提升长期使用价值，推动用户在需要 AI 辅导或深度分析时升级 |
 | 观察长期辅助转化，而非只看同次会话购买 | 免费课程可能先建立习惯与信任，用户的付费需求可能在数天或数周后出现 | 同时评估 Course→Custom Plan、Course→Ask Solvely 与 Course-assisted Pro conversion；Writing 转化复用主产品既有协议，未完成事件映射前不作为本需求上线门槛 |
 
-该策略不改变已确认的商业化边界：课程学习工具免费；Diagnostic 免费；Ask Solvely、Diagnostic Targeted Practice、Full-Length Practice Test 和 Full-Length Score Report 为 Pro。具体触发时机、Pro 标识、Paywall 恢复及会员过期逻辑以 4.8 为准。
+该策略不改变已确认的商业化边界：课程目录与课程页对 Free/Pro 一致开放；课程学习工具免费；Diagnostic 免费；Ask Solvely、Diagnostic Targeted Practice、Full-Length Practice Test 和 Full-Length Score Report 为 Pro。进入课程时不得弹 Paywall，具体受限动作、触发时机、Pro 标识、Paywall 恢复及会员过期逻辑以 4.8 为准。
 
 ### 2.4 非目标
 
-- 本期不实现 AP/Abitur 全部 Coming soon 课程的完整内容生产。
+- Demo 本期只完整接入 SAT、ACT、AP Calculus BC 与 Abitur Mathematik 的学科数据；其余课程仍必须允许 Free/Pro 进入课程预览，不得以会员限制或 disabled 卡片代替内容覆盖说明。生产环境需加载用户所选课程自己的已发布物料，不得复用其他学科内容。
 - 本期不改造 Solvely 全站侧边栏、账户、支付后端或应用商店入口。
 - 本期不把 Question Review 的 Similar Questions 纳入 Study Plan 进度；Mini quiz 是额外练习。
 - Diagnostic 与 Full-Length 最终交卷后不增加独立结算页：立即返回课程首页显示 Scoring；评分完成后卡片切为 Results ready。鼓励结算文案仅用于 3 题 Mini Quiz。
@@ -168,8 +168,8 @@ Exam Prep & Courses
 | BR-007 | Similar Questions Mini Quiz 固定 3 题，独立于 Study Plan 与 Targeted Practice；完成页仅提供 Review Quiz，不提供 Create More Quiz。 |
 | BR-008 | AP 页面不显示 Section 筛选；Topic 标题不重复课程名。 |
 | BR-009 | 所有题目选项必须使用结构化 `options` 渲染，不得并入题干。支持 A/B/C/D、F/G/H/J、其他标签及无选项 Student-Produced Response。 |
-| BR-010 | 课程目录展示 52 门课程：SAT 1、ACT 1、AP 43、Abitur 7；当前仅 SAT、ACT、AP Calculus BC 可进入，其余为 Coming soon。 |
-| BR-011 | 课程卡片固定三行：`• {topicCount} topics · video lessons`、`• {practiceQuestionCount} practice questions`、`• 1 full-length test • score insights`。Topic 与练习题数量读取当前课程真实配置并按语言环境格式化；第一行只展示一次 Topic 数量，不为 video lessons 重复数字；`score insights` 使用小写 `s`。未来测试数量不为 1 时需同步复数化为 `tests`。 |
+| BR-010 | 课程目录展示 52 门课程：SAT 1、ACT 1、AP 43、Abitur 7；所有课程卡对 Free/Pro 都可点击并进入对应课程，不得在课程入口校验会员或展示 Paywall。课程内仅 4.8 明确列出的动作可校验 Pro。 |
+| BR-011 | 课程卡只展示一行副标题：`{videoLessonCount} video lessons · {practiceQuestionCount} questions`。数量读取当前课程真实配置并按语言环境格式化；卡片不再分上下区、不展示 CTA，也不展示 `score insights`。 |
 | BR-012 | 所有商业化差异只以 **4.8 商业化与权限** 为准；其他章节只引用规则编号，不重复定义 Free/Pro。 |
 | BR-013 | 报告未生成或被 Pro 锁定时可展示对应考试的预生成封面与报告模块结构；预览模板不可交互、不写入成绩也不计入真实报告埋点，真实成绩仍只在测试记录进入 Results ready（结果已生成）后生成。 |
 
@@ -215,10 +215,10 @@ Exam Prep & Courses
 
 | 项目 | 说明 | 图示 |
 |---|---|---|
-| 页面头部 | 当用户没有成功创建过 Custom Plan，且没有开始过任何 Prep Course 学习资源或考试时，标题：**Adaptive Exam Prep, Tailored to You**；副标题：**Create your study plan, practice realistic exam questions, or start an interactive course.** 标题与副标题保持清晰但克制的层级：桌面端分别为 40px / 15px，标题行高 1.15；桌面端优先单行展示，窄屏可自然换行。 | ![VIS-01 首次进入 Custom Plan](./images/VIS-01-home-first-entry-custom-plan.png) |
-| 分段 Tab | `Custom Plan` / `Prep Courses`。Tab 视觉、键盘切换和滑块动画与课程内部状态切换器一致。首次进入默认 Custom Plan。Custom Plan 状态下，在 Prep Courses 旁展示 `SAT, ACT and AP Prep` 引导提示。 | ![VIS-02 首次进入 Prep Courses](./images/VIS-02-home-first-entry-prep-courses.png) |
-| Custom Plan 上传 | 拖拽或 Select files；支持 PDF、Word、PPT、TXT、JPG、JPEG、PNG、HEIC、WebP；每个文件只处理前 50 页。上传区宽度与下方三张示例卡组成的容器一致。 | ![VIS-01 上传入口](./images/VIS-01-home-first-entry-custom-plan.png) |
-| 示例计划 | 标题固定 `Exam prep plan examples`，字体、颜色与 `Standardized Test Prep Courses` 一致；展示三张真实感示例卡。点击后进入真实预测/计划体验。 | ![VIS-01 示例计划](./images/VIS-01-home-first-entry-custom-plan.png) |
+| 页面头部 | 当用户没有成功创建过 Custom Plan，且没有开始过任何 Prep Course 学习资源或考试时，只展示标题 **Adaptive Exam Prep, Tailored to You**；不展示副标题。桌面端标题 32–36px、700 字重，窄屏自然换行。 | ![VIS-01 首次进入](./images/VIS-01-home-first-entry-custom-plan.png) |
+| 页面结构 | Custom Plan 上传区与 Standardized Test Prep Courses 同屏纵向展示，不再使用顶部 `Custom Plan / Prep Courses` 切换 Tab，也不展示 `SAT, ACT and AP Prep` 气泡。滚动页面即可浏览课程。 | ![VIS-02 首次进入课程区](./images/VIS-02-home-first-entry-prep-courses.png) |
+| Custom Plan 上传 | 整个虚线区域都可点击、键盘触发或拖拽上传；主文案 `Turn your study materials into a personalized prep plan`，CTA `Upload materials`，格式提示仅为 `PDF, Word, PPT, TXT, or images`。不在入口外露页数限制；文件校验时仍按每个文件最多处理 50 页。 | ![VIS-01 上传入口](./images/VIS-01-home-first-entry-custom-plan.png) |
+| 示例计划 | 不展示原 3 张 Sample 卡；上传区结束后直接展示 Standardized Test Prep Courses。 | ![VIS-02 课程区](./images/VIS-02-home-first-entry-prep-courses.png) |
 | 创建计划弹窗 | 标题 Create a prep plan；字段 Exam or course name、Exam date、Plan focus；Focus 选项为 Balanced review、High-probability topics、Mock exam practice。必填校验通过后创建；Cancel/X/Escape 关闭。编辑时标题改 Edit prep plan，CTA 改 Save changes。 | ![VIS-03 创建计划](./images/VIS-03-create-prep-plan-dialog.png) |
 
 #### 4.4.2 已有进度首页
@@ -234,11 +234,11 @@ Exam Prep & Courses
 
 | 项目 | 说明 | 图示 |
 |---|---|---|
-| 标题与搜索 | 标题：`Standardized Test Prep Courses`；删除说明句和 Total 数量。搜索 Placeholder：`Search a ready-made course for the exam you are preparing for...`。 | ![VIS-02 课程库](./images/VIS-02-home-first-entry-prep-courses.png) |
-| 分类筛选 | All courses、SAT、ACT、AP、Abitur。搜索和筛选组合生效；结果按课程配置顺序展示。 | ![VIS-72 搜索与 Coming soon](./images/VIS-72-course-search-and-coming-soon.png) |
+| 标题与搜索 | 标题：`Standardized Test Prep Courses`；说明：`Every course includes free diagnostics, score analysis & study resources, plus a full-length mock test & targeted practice.`；不展示 Total。搜索 Placeholder：`Search by test name`。 | ![VIS-02 课程库](./images/VIS-02-home-first-entry-prep-courses.png) |
+| 分类筛选 | All courses、SAT、ACT、AP、Abitur。搜索和筛选组合生效；结果按课程配置顺序展示。 | ![VIS-72 搜索与筛选](./images/VIS-72-course-search-and-coming-soon.png) |
 | 卡片网格 | 桌面端一行固定三张；卡片尺寸和间距与首页 Demo 一致。只有两张结果时，仍保持三列中单卡宽度，不拉伸。 | ![VIS-04 三列课程](./images/VIS-04-home-active-exam-library.png) |
-| 卡片信息 | 固定为三行：`• {topicCount} topics · video lessons`、`• {practiceQuestionCount} practice questions`、`• 1 full-length test • score insights`。所有数量以课程当前发布配置为准；第一行不得把同一数量在 topics 和 video lessons 前各显示一次；`score insights` 的 `s` 保持小写。 | ![VIS-02 课程卡片](./images/VIS-02-home-first-entry-prep-courses.png) |
-| 卡片状态 | 可用课程 CTA 为 Open course/Continue learning；不可用课程 CTA 为 Coming soon 且 disabled。左上角不展示 Coming soon/Ready/In progress 状态标签，状态只在 CTA 或 Exam Library 体现。 | ![VIS-72 Coming soon](./images/VIS-72-course-search-and-coming-soon.png) |
+| 卡片信息 | 卡片整体为一个视觉区块，只展示课程名与一行副标题 `{videoLessonCount} video lessons · {practiceQuestionCount} questions`；所有数量以课程当前发布配置为准。卡片不展示 CTA、Total、`score insights` 或上下分区。 | ![VIS-02 课程卡片](./images/VIS-02-home-first-entry-prep-courses.png) |
+| 卡片入口与权限 | 52 张课程卡全部可点击；Free 与 Pro 进入相同课程页，课程入口不得出现 Pro 标识或 Paywall。只打开课程不创建进度；进入后仅在触发 M-03/M-05/M-06/M-07 的受限动作时校验会员。 | ![VIS-72 课程入口](./images/VIS-72-course-search-and-coming-soon.png) |
 | 空结果 | 搜索无匹配课程时展示明确 Empty State、保留搜索框和分类筛选，并提供 Clear search。 | ![VIS-73 搜索无结果](./images/VIS-73-course-search-empty.png) |
 
 ### 4.5 课程首页与学习内容
@@ -627,7 +627,7 @@ Mini Quiz 是 Diagnostic 免费 Question Review 的延伸练习，对 Free / Pro
 | ID | 功能/动作 | Free | Pro | 前置与触发时机 | 购买成功 | 取消/失败 | 入口标识 |
 |---|---|---|---|---|---|---|---|
 | M-01 | Custom Plan | 沿用主产品免费额度 | 沿用主产品权益 | 只有超出既有额度时按主产品规则触发；本期不新增门槛 | 恢复创建动作 | 保留已填表单 | 沿用主产品 |
-| M-02 | Study Guide / Flashcards / Topic Quiz | 完整免费 | 可用 | 不弹 Paywall | 不适用 | 不适用 | 无 |
+| M-02 | Course entry / Study Guide / Flashcards / Topic Quiz | 52 门课程均可进入；学习工具完整免费 | 同 Free | 点击课程卡或学习工具时不弹 Paywall；只打开课程不写进度 | 不适用 | 内容加载失败按 4.10 Retry，不得改为会员拦截 | 课程入口与学习工具均无 Pro 标识 |
 | M-03 | Ask Solvely | 不可用 | 可用 | 点击 Ask Solvely 时校验 | 打开原 Topic/题目上下文的对话面板 | 留在原学习位置，上下文不丢失 | Pro badge |
 | M-04 | Diagnostic Test | 免费开始/继续/重做 | 可用 | 不弹 Paywall | 不适用 | 不适用 | `Free` 标签，不是 Pro |
 | M-05 | Diagnostic Targeted Practice | 不可进入 | 可用 | 报告点击 Unlock practice / Practice / Continue / Review 时校验 | 恢复同一 Topic、同一 action | 留在同一报告与滚动位置 | 48px Pro + 单一标题 + CTA；无说明小字、灰锁底框或按钮内重复 Pro |
@@ -651,11 +651,11 @@ Mini Quiz 是 Diagnostic 免费 Question Review 的延伸练习，对 Free / Pro
 
 | 分类 | 数量 | 当前可用 | 其他状态 |
 |---|---:|---|---|
-| SAT | 1 | SAT Prep 2026 | — |
-| ACT | 1 | ACT Prep 2026 | — |
-| AP | 43 | AP Calculus BC | 其余 Coming soon |
-| Abitur | 7 | 无 | Coming soon |
-| 合计 | 52 | 3 | 49 |
+| SAT | 1 | 1 门均可进入 | Demo 完整学科数据：SAT Prep 2026 |
+| ACT | 1 | 1 门均可进入 | Demo 完整学科数据：ACT Prep 2026 |
+| AP | 43 | 43 门均可进入 | Demo 完整学科数据：AP Calculus BC；其他课程展示对应课程预览，不得错误复用 Calculus 内容 |
+| Abitur | 7 | 7 门均可进入 | Demo 完整学科数据：Abitur Mathematik；其他课程展示对应课程预览，不得错误复用 Mathematik 内容 |
+| 合计 | 52 | 52 门均可进入 | 4 门完整数据覆盖；其余为非付费的课程预览覆盖 |
 
 #### 4.9.2 题目渲染契约
 
@@ -692,7 +692,7 @@ type Question = {
 | 德国高考 | 7 | 177 | 5,310 | 6,514 | 11,824 | 7 份逐学科 mock CSV；7 份 Study Guide/Flashcard CSV；1 份 Quiz master；1 份视频 manifest |
 | 合计 | 52 | 1,704 | 51,120 | 52,550 | 103,670 | 课程总数仅用于内部完整性校验，首页仍不展示“52 Total” |
 
-> AP 的 43 条课程记录包含 **AP Networking (Pilot)**。当前物料里只有 42 份逐课程 mock CSV，Networking Pilot 没有独立 full-length mock，因此不得因“课程存在”自动判定 `full_length_ready=true`。课程 `Ready / Coming soon` 与 `diagnostic_ready / full_length_ready` 必须分别配置。
+> AP 的 43 条课程记录包含 **AP Networking (Pilot)**。当前物料里只有 42 份逐课程 mock CSV，Networking Pilot 没有独立 full-length mock，因此不得因“课程可进入”自动判定 `full_length_ready=true`。`course_entry_enabled`、`diagnostic_ready` 与 `full_length_ready` 必须分别配置；缺少 Full-Length 只影响对应测试入口，不得阻断课程页。
 
 | 复用等级 | 内容 | Web 要求 |
 |---|---|---|
@@ -711,7 +711,7 @@ type Question = {
 4. Study Guide 与 Flashcards 共用合并 CSV 时，以资产类型映射到各自字段和 UI，不得把同一内容重复渲染两次或跨 Topic 串用。
 5. 视频/封面/音频链接发布前验证状态码、MIME、跨域、HTTPS、时长和可播放性；HTML 视频必须使用受限 iframe/sandbox 与 CSP。单个资源失效只降级对应工具，不得导致整门课程空白。
 6. Full-Length 仅在题目、Section/Module、计时、评分、报告、必要音频/Reference 全部就绪时设为 Ready；Diagnostic 可从已审核 Quiz 池按配置抽题，但必须独立通过题量、分布与算分 QA。
-7. 资产存在不等于课程可见或可进入；Course Catalog API 的 `publish_status` 决定 Coming soon/Ready，发布采用整批原子切换，失败回滚上一内容版本。
+7. Course Catalog API 返回的 52 门课程均设置 `course_entry_enabled=true`，Free/Pro 使用同一入口。单项资产缺失只使对应 `asset_ready=false`，不得把课程卡 disabled 或触发 Paywall；发布采用整批原子切换，失败回滚上一内容版本。
 8. Web 与 iOS 可共享内容 ID 和服务端进度，但各端 UI 状态不互相推导；跨端同步只接受服务端 `progress_version` 较新的记录。
 
 ### 4.10 错误、空态与恢复
@@ -737,14 +737,12 @@ type Question = {
 
 | 功能 | 入口与前置条件 | 用户操作、结果与返回位置 | 埋点与异常处理 |
 |---|---|---|---|
-| 侧边栏与首页 | 点击侧边栏 `Exam Prep & Courses`；首页状态由真实计划和课程活动推导 | 进入首页；无进度显示 Custom Plan/Prep Courses，有进度显示 Exam Library 和课程库 | `Web_EP_Tab` 记录入口，`web_ep_home_view` 记录实际到达；加载失败按 4.10 Retry |
-| 首页模式切换 | 仅首次进入布局显示 | 点击或键盘切换 Custom Plan/Prep Courses；滑块动画完成后展示对应内容，不创建进度 | `web_ep_home_mode_switch`；切换失败保留原 Tab |
-| Custom Plan 文件上传 | Custom Plan Tab 的上传区 | 拖拽或选择文件；校验后显示文件状态，可 Retry/Remove；选择文件不等于上传或创建成功 | 复用 Picker/Drag/Remove 旧事件；服务端终态报 `web_ep_plan_upload_result`，客户端校验失败报 `web_ep_plan_file_validation_result` |
+| 侧边栏与首页 | 点击侧边栏 `Exam Prep & Courses`；首页状态由真实计划和课程活动推导 | 进入首页；无进度时上传区与课程库同屏展示，有进度时先展示 Exam Library、再展示课程库 | `Web_EP_Tab` 记录入口，`web_ep_home_view` 记录实际到达；加载失败按 4.10 Retry |
+| Custom Plan 文件上传 | 首次进入首页顶部上传区 | 点击整个虚线区、键盘触发、拖拽或点击 CTA 选择文件；校验后显示文件状态，可 Retry/Remove；选择文件不等于上传或创建成功 | 复用 Picker/Drag/Remove 旧事件；服务端终态报 `web_ep_plan_upload_result`，客户端校验失败报 `web_ep_plan_file_validation_result` |
 | Custom Plan 创建与编辑 | 上传有效资料、新建按钮或示例计划入口 | 打开表单，校验名称、日期和方向；提交成功进入 Plan Detail，取消或失败保留已填内容 | `web_ep_plan_create_view`、`web_ep_plan_create_submit`、`web_ep_plan_create_result` 由 `request_id` 关联；失败不生成计划或首页进度 |
-| 示例计划 | Custom Plan 下方三张示例卡 | 点击后载入对应示例并进入真实计划创建体验；只有创建成功才写入 Exam Library | 复用 `Web_EP_OB_Sample`；创建结果仍使用新建计划 Result 事件 |
 | Exam Library | 至少有一个真实计划或已开始课程 | 点击计划卡进入 Plan Detail；点击课程卡恢复最近 Topic/工具；返回后保留首页滚动位置 | 计划复用 `Web_EP_Exam_Click`，课程报 `web_ep_course_open(entry_point=exam_library)` |
-| 课程库搜索与筛选 | Prep Courses Tab 或有进度首页课程区 | 输入搜索词、切换分类；点击 Ready 课程进入课程页，Coming soon 不进入，空结果可 Clear search | `web_ep_course_catalog_view`、`web_ep_course_search`、`web_ep_course_open`、`web_ep_course_coming_soon_click`；加载失败保留搜索与筛选后 Retry |
-| 课程首页与主 Tab | 进入 Ready 课程 | Course Content/Performance & Insights 切换；只打开课程不写进度，打开学习资源或开始考试后才写 In progress | `web_ep_course_view`、`web_ep_course_tab_switch`；不存在课程时返回课程库 |
+| 课程库搜索与筛选 | 首次进入上传区下方，或有进度首页课程区 | 输入搜索词、切换分类；Free/Pro 点击任一课程都进入对应课程页，空结果可 Clear search | `web_ep_course_catalog_view`、`web_ep_course_search`、`web_ep_course_open`；课程入口不做会员校验，加载失败保留搜索与筛选后 Retry |
+| 课程首页与主 Tab | 进入任一课程 | Course Content/Performance & Insights 切换；只打开课程不写进度，打开学习资源或开始考试后才写 In progress | `web_ep_course_view`、`web_ep_course_tab_switch`；不存在课程时返回课程库，不得用 Paywall 代替 404/内容错误 |
 | Lessons 与 Topic 工具 | Course Content 的 Lessons 区 | 按 Section（仅 SAT/ACT）和 Priority 筛选，展开分组；Hover/Focus Topic 后打开 Study Guide、Flashcards 或 Quiz | 工具实际打开时报 `web_ep_topic_tool_open`；筛选和折叠不单独埋点，空组显示明确空态 |
 | Study Guide | Topic 工具入口 | 播放视频、阅读内容、完成 Quick Practice；提交后原位显示结果，可 Try Another 或 Next Topic | 答案保存报 `web_ep_topic_answer_submit`；内容失败只重试当前区域 |
 | Flashcards | Topic 工具入口 | 点击或 Space 翻面，Previous/Next、Star、Need to review、Mastered、Shuffle、Card/List 切换；返回时保留 Topic 进度 | 细粒度翻卡不单独埋点，状态由 Topic 进度服务保存；失败不影响其他学习工具 |
@@ -793,20 +791,18 @@ type Question = {
 - SAT、ACT、AP、Abitur 与 Custom Plan 使用 `exam_family` 分层；不为每个考试体系复制事件名。
 - 购买相关两行使用 `subscription_period` 表示套餐周期，不得复用 `plan_id`；`plan_id` 只表示 Custom Plan ID。
 
-### 5.3 38 条 PRD 事件一对一命名映射
+### 5.3 37 条 PRD 事件一对一命名映射
 
 | 事件描述（业务价值与触发场景） | Event_Name | 类型 | Params (key/value) | 备注 | 埋点端 |
 |---|---|---|---|---|---|
-| 业务价值：建立首页曝光分母。<br>触发场景：首页关键内容首次成功渲染；同一 page_view 一次。 | `web_ep_home_view` | 新增 | 1. `key=home_state`<br>　`value=empty \| active`<br>2. `key=default_mode`<br>　`value=custom_plan \| prep_courses` | 原 PRD：`ep_home_view`。Tab 切换不重复。 | 客户端 |
-| 业务价值：衡量 Custom Plan / Prep Courses 偏好。<br>触发场景：滑块通过点击、键盘或拖动成功切换后一次。 | `web_ep_home_mode_switch` | 新增 | 1. `key=from_mode`<br>　`value=custom_plan \| prep_courses`<br>2. `key=to_mode`<br>　`value=custom_plan \| prep_courses`<br>3. `key=interaction`<br>　`value=click \| keyboard \| drag` | 原 PRD：`ep_home_mode_switch`。未改变模式不报。 | 客户端 |
-| 业务价值：建立创建表单真实曝光分母。<br>触发场景：创建/编辑界面完整可见后一次。 | `web_ep_plan_create_view` | 新增 | 1. `key=action`<br>　`value=create \| edit`<br>2. `key=entry_point`<br>　`value=upload \| sample \| new_plan \| existing_plan` | 原 PRD：`ep_plan_create_start`；名称改为 View 以匹配触发阶段。 | 客户端 |
+| 业务价值：建立首页曝光分母。<br>触发场景：首页关键内容首次成功渲染；同一 page_view 一次。 | `web_ep_home_view` | 新增 | 1. `key=home_state`<br>　`value=empty \| active`<br>2. `key=layout`<br>　`value=unified` | 原 PRD：`ep_home_view`。上传区与课程库同屏，不再存在模式 Tab。 | 客户端 |
+| 业务价值：建立创建表单真实曝光分母。<br>触发场景：创建/编辑界面完整可见后一次。 | `web_ep_plan_create_view` | 新增 | 1. `key=action`<br>　`value=create \| edit`<br>2. `key=entry_point`<br>　`value=upload \| new_plan \| existing_plan` | 原 PRD：`ep_plan_create_start`；名称改为 View 以匹配触发阶段。 | 客户端 |
 | 业务价值：衡量文件上传服务成功率。<br>触发场景：服务端完成一次上传批次并返回成功/失败；每个 `upload_request_id` 一次。 | `web_ep_plan_upload_result` | 新增 | 1. `key=upload_request_id`<br>　`value=上传批次稳定 ID`<br>2. `key=result`<br>　`value=success \| failure`<br>3. `key=file_count`<br>　`value=本批次文件数`<br>4. `key=error_code`<br>　`value=失败时必填；成功为空` | 原 PRD：`ep_plan_upload_result`。发生在客户端文件校验通过之后；Picker/Drag 不能替代。 | 服务端 |
 | 业务价值：建立创建请求分母。<br>触发场景：表单校验通过且创建/编辑请求实际发出；每个 `request_id` 一次。 | `web_ep_plan_create_submit` | 新增 | 1. `key=request_id`<br>　`value=客户端生成并传给服务端的稳定 ID`<br>2. `key=action`<br>　`value=create \| edit`<br>3. `key=file_count`<br>　`value=提交时有效文件数`<br>4. `key=has_exam_date`<br>　`value=true \| false` | 原 PRD：`ep_plan_create_submit`。校验失败不报。 | 客户端 |
 | 业务价值：计算权威创建成功率。<br>触发场景：服务端创建/编辑请求结束；每个 `request_id` 幂等一次。 | `web_ep_plan_create_result` | 新增 | 1. `key=request_id`<br>　`value=与 Submit 完全一致`<br>2. `key=action`<br>　`value=create \| edit`<br>3. `key=result`<br>　`value=success \| failure`<br>4. `key=error_code`<br>　`value=失败时必填；成功为空`<br>5. `key=plan_id`<br>　`value=成功时必填的 Custom Plan ID` | 原 PRD：`ep_plan_create_result`。不得用 `Web_EP_Predict_Success` 替代。 | 服务端 |
 | 业务价值：建立课程目录曝光分母。<br>触发场景：课程网格按当前查询成功渲染；初次或查询变化后一次。 | `web_ep_course_catalog_view` | 新增 | 1. `key=result_count`<br>　`value=当前结果数`<br>2. `key=filter`<br>　`value=all \| sat \| act \| ap \| abitur`<br>3. `key=query_present`<br>　`value=true \| false` | 原 PRD：`ep_course_catalog_view`；查询去抖 300ms。 | 客户端 |
 | 业务价值：衡量课程搜索需求与零结果。<br>触发场景：提交搜索或停输 500ms；同一查询状态一次。 | `web_ep_course_search` | 新增 | 1. `key=query_length`<br>　`value=字符数，不上传原词`<br>2. `key=filter`<br>　`value=当前筛选`<br>3. `key=result_count`<br>　`value=结果数` | 原 PRD：`ep_course_search`；禁止上传原始搜索词。 | 客户端 |
-| 业务价值：衡量可用课程启动。<br>触发场景：点击 Ready 课程并成功进入；每次一次。 | `web_ep_course_open` | 新增 | 1. `key=course_id`<br>　`value=真实课程 ID`<br>2. `key=entry_point`<br>　`value=first_entry \| catalog \| exam_library`<br>3. `key=course_state`<br>　`value=first_visit \| in_progress` | 原 PRD：`ep_course_open`。Coming soon 不报。 | 客户端 |
-| 业务价值：衡量未开放课程需求。<br>触发场景：用户点击可交互的 Coming soon 卡；每次一次。 | `web_ep_course_coming_soon_click` | 新增 | 1. `key=course_id`<br>　`value=课程 ID` | 原 PRD：`ep_course_coming_soon_click`。完全 disabled 时改用曝光而非伪造点击。 | 客户端 |
+| 业务价值：衡量课程启动。<br>触发场景：Free 或 Pro 点击任一课程并成功进入；每次一次。 | `web_ep_course_open` | 新增 | 1. `key=course_id`<br>　`value=真实课程 ID`<br>2. `key=entry_point`<br>　`value=first_entry \| catalog \| exam_library`<br>3. `key=course_state`<br>　`value=first_visit \| in_progress`<br>4. `key=access_tier`<br>　`value=free \| pro` | 原 PRD：`ep_course_open`。Free/Pro 共用事件；进入课程不得产生 Paywall 事件。 | 客户端 |
 | 业务价值：衡量课程页到达与回访。<br>触发场景：课程首页关键内容渲染成功；每次进入一次。 | `web_ep_course_view` | 新增 | 1. `key=course_state`<br>　`value=first_visit \| in_progress`<br>2. `key=last_activity_type`<br>　`value=无活动时为空；否则 lesson \| diagnostic \| full_length` | 原 PRD：`ep_course_view`。 | 客户端 |
 | 业务价值：衡量内容/报告导航。<br>触发场景：Course Content 与 Performance & Insights 成功切换后一次。 | `web_ep_course_tab_switch` | 新增 | 1. `key=from_tab`<br>　`value=content \| insights`<br>2. `key=to_tab`<br>　`value=content \| insights` | 原 PRD：`ep_course_tab_switch`。 | 客户端 |
 | 业务价值：衡量 Topic 工具使用。<br>触发场景：Study Guide/Flashcards/Quiz 实际打开后一次。 | `web_ep_topic_tool_open` | 新增 | 1. `key=topic_id`<br>　`value=Topic ID`<br>2. `key=tool`<br>　`value=study_guide \| flashcards \| quiz`<br>3. `key=entry_point`<br>　`value=topic_popover \| report \| resume` | 原 PRD：`ep_topic_tool_open`。 | 客户端 |
@@ -836,18 +832,17 @@ type Question = {
 | 业务价值：定位长考试答案保存失败和恢复风险。<br>触发场景：答案同步达到最终失败或进入需用户关注的重试状态；同一 `sync_request_id` 一次。 | `web_ep_exam_answer_sync_failure` | 新增 | 1. `key=sync_request_id`<br>　`value=答案同步请求 ID`<br>2. `key=attempt_id`<br>　`value=attempt ID`<br>3. `key=question_id`<br>　`value=题目 ID`<br>4. `key=error_code`<br>　`value=offline \| conflict \| timeout \| server`<br>5. `key=retry_count`<br>　`value=失败前自动重试次数` | 原 PRD：`exam_answer_sync_failure`；仅异常终态，不与正常答案保存重复。 | 客户端 |
 | 业务价值：定位 SAT/AP Reference 资源不可用问题。<br>触发场景：Reference 面板打开后，PDF/公式资源最终加载失败；同一资源每次打开最多一次。 | `web_ep_exam_reference_load_failure` | 新增 | 1. `key=reference_type`<br>　`value=sat_math_formula \| ap_pdf`<br>2. `key=exam_slug`<br>　`value=AP 考试 slug；SAT 时为空`<br>3. `key=error_code`<br>　`value=network \| missing_asset \| unsupported \| timeout` | 原 PRD：`exam_reference_load_failure`；仅对真实存在 Reference 入口的考试上报。 | 客户端 |
 
-### 5.4 旧事件条件复用清单（8 条）
+### 5.4 旧事件条件复用清单（7 条）
 
 | 事件描述（业务价值与触发场景） | Event_Name | 类型 | Params (key/value) | 备注 | 埋点端 |
 |---|---|---|---|---|---|
-| 业务价值：侧栏入口意图。<br>触发场景：点击侧栏入口。 | `Web_EP_Tab` | 复用 | 1. `key=location`<br>　`value=sidebar` | 进入 38 条主映射；不能作为 Home View。 | 客户端 |
-| 业务价值：新建入口意图。<br>触发场景：点击新建计划入口。 | `Web_EP_Create_Exam` | 复用 | 1. `key=location`<br>　`value=home_empty \| home_active` | 进入 38 条主映射；不能作为 Create View/Result。 | 客户端 |
+| 业务价值：侧栏入口意图。<br>触发场景：点击侧栏入口。 | `Web_EP_Tab` | 复用 | 1. `key=location`<br>　`value=sidebar` | 进入 37 条主映射；不能作为 Home View。 | 客户端 |
+| 业务价值：新建入口意图。<br>触发场景：点击新建计划入口。 | `Web_EP_Create_Exam` | 复用 | 1. `key=location`<br>　`value=home_empty \| home_active` | 进入 37 条主映射；不能作为 Create View/Result。 | 客户端 |
 | 业务价值：文件选择意图。<br>触发场景：系统文件选择器成功打开。 | `Web_EP_Choose_File` | 复用 | 1. `key=location`<br>　`value=upload_zone` | 未必选择文件；不能作为上传分母终点。 | 客户端 |
 | 业务价值：本地文件选取来源。<br>触发场景：用户在 Picker 中选到文件，发生在校验和上传前。 | `Web_EP_File_Picker` | 复用 | 1. `key=fileType`<br>　`value=文件扩展/MIME 分类`<br>2. `key=location`<br>　`value=upload_zone` | 保留既有字段名与语义。 | 客户端 |
 | 业务价值：拖拽上传意图。<br>触发场景：文件被拖入上传区，发生在校验和上传前。 | `Web_EP_File_Drag` | 复用 | 1. `key=fileType`<br>　`value=文件扩展/MIME 分类`<br>2. `key=location`<br>　`value=upload_zone` | 保留既有字段名与语义。 | 客户端 |
-| 业务价值：示例计划偏好。<br>触发场景：点击一张示例计划卡。 | `Web_EP_OB_Sample` | 复用 | 1. `key=sample`<br>　`value=1 \| 2 \| 3` | 不是示例保存成功。 | 客户端 |
 | 业务价值：文件移除/上传阻力。<br>触发场景：用户点击移除已列出的文件。 | `Web_EP_Upload_File_Del` | 复用 | 1. `key=fileType`<br>　`value=被移除文件类型`<br>2. `key=location`<br>　`value=upload_zone` | 只表示移除动作。 | 客户端 |
-| 业务价值：已有计划继续使用。<br>触发场景：点击已有 EP 计划卡。 | `Web_EP_Exam_Click` | 复用 | 1. `key=examId`<br>　`value=真实 EP examId` | 进入 38 条主映射；仅复用原 EP 对象时使用，课程卡另记。 | 客户端 |
+| 业务价值：已有计划继续使用。<br>触发场景：点击已有 EP 计划卡。 | `Web_EP_Exam_Click` | 复用 | 1. `key=examId`<br>　`value=真实 EP examId` | 进入 37 条主映射；仅复用原 EP 对象时使用，课程卡另记。 | 客户端 |
 
 ### 5.5 客户端文件校验失败补点建议
 
@@ -945,25 +940,19 @@ Course→Writing 的跨产品转化复用 Writing Tools 已有埋点协议；在
 |---|---|---|
 | `ep.nav` | Exam Prep & Courses | 侧边栏 |
 | `ep.hero.first_entry.title` | Adaptive Exam Prep, Tailored to You | 没有 Custom Plan 且没有课程活动时的首页标题 |
-| `ep.hero.first_entry.subtitle` | Create your study plan, practice realistic exam questions, or start an interactive course. | 没有 Custom Plan 且没有课程活动时的首页副标题 |
 | `ep.hero.active.title` | Stay on Track for Your Best Score | 已成功创建计划或已开始课程后的首页标题 |
 | `ep.hero.active.subtitle` | Personalized exam prep, all the way to test day. | 已成功创建计划或已开始课程后的首页副标题 |
-| `ep.mode.custom` | Custom Plan | 首次进入 Tab |
-| `ep.mode.courses` | Prep Courses | 首次进入 Tab |
-| `ep.mode.cue` | SAT, ACT and AP Prep | Prep Courses 指引 |
-| `ep.upload.title` | Drag & drop exam materials here | 上传区 |
-| `ep.upload.cta` | Select files | 上传按钮 |
-| `ep.examples.title` | Exam prep plan examples | 示例标题 |
+| `ep.upload.title` | Turn your study materials into a personalized prep plan | 上传区主文案；无句号 |
+| `ep.upload.formats` | PDF, Word, PPT, TXT, or images | 上传格式提示 |
+| `ep.upload.cta` | Upload materials | 上传 CTA |
 | `ep.library.title` | Exam Library | 已有进度首页 |
 | `ep.plan.new` | New Prep Plan | 首页 CTA |
 | `ep.courses.title` | Standardized Test Prep Courses | 课程区标题 |
-| `ep.courses.search` | Search a ready-made course for the exam you are preparing for... | Search placeholder |
-| `ep.course.open` | Open course | 可用课程 |
+| `ep.courses.description` | Every course includes free diagnostics, score analysis & study resources, plus a full-length mock test & targeted practice. | 课程区说明 |
+| `ep.courses.search` | Search by test name | Search placeholder |
+| `ep.course.open` | Open course | 所有课程；仅用于可访问名称，不在卡片上展示 CTA |
 | `ep.course.continue` | Continue learning | 有进度课程 |
-| `ep.course.soon` | Coming soon | 未开放课程 |
-| `ep.course.meta.topics` | • {topicCount} topics · video lessons | 课程卡第 1 行；不重复 video lesson 数量 |
-| `ep.course.meta.questions` | • {practiceQuestionCount} practice questions | 课程卡第 2 行 |
-| `ep.course.meta.test` | • 1 full-length test • score insights | 课程卡第 3 行；`score insights` 使用小写 `s` |
+| `ep.course.meta` | {videoLessonCount} video lessons · {practiceQuestionCount} questions | 课程卡唯一副标题 |
 
 ### 8.2 学习、考试与报告
 
@@ -1015,21 +1004,21 @@ Course→Writing 的跨产品转化复用 Writing Tools 已有埋点协议；在
 
 | ID | 前置条件 | 操作 | 预期结果 |
 |---|---|---|---|
-| TC-001 | 新用户，无计划/课程进度 | 进入 Exam Prep & Courses | 显示 `Adaptive Exam Prep, Tailored to You` 与 `Create your study plan, practice realistic exam questions, or start an interactive course.`；Custom Plan 为默认 Tab；显示上传区和 3 张示例；无 Exam Library |
-| TC-002 | 同上 | 点击/键盘/拖动切换到 Prep Courses | 滑块切换；显示课程标题、搜索、筛选、三列卡片；状态可访问 |
+| TC-001 | 新用户，无计划/课程进度 | 进入 Exam Prep & Courses | 只显示 `Adaptive Exam Prep, Tailored to You` 标题；上传区和课程库同屏纵向展示；无副标题、顶部模式 Tab、3 张示例或 Exam Library |
+| TC-002 | 同上 | 页面向下滚动 | 直接看到课程标题、说明、搜索、筛选与三列课程卡；无模式切换步骤 |
 | TC-003 | 同上 | 上传不支持格式或超页数文件 | 格式错误被阻止；支持文件明确提示只处理前 50 页 |
 | TC-004 | 同上 | 创建计划 | 必填校验；只有创建成功后首页才切到 active；标题变为 `Stay on Track for Your Best Score`，副标题变为 `Personalized exam prep, all the way to test day.`；计划出现在 Exam Library |
 | TC-005 | 用户已有课程进度 | 进入首页 | 显示 active 标题与副标题；Exam Library 出现课程进度卡和最近活动；课程目录卡尺寸不变 |
 | TC-006 | 课程库 | 搜索 `ACT`，再筛选 AP | 组合条件正确；无结果时显示 Empty State 和 Clear search |
 | TC-007 | 课程库只剩 2 张结果 | 调整筛选 | 单卡宽度仍为三列宽度，不拉伸占满 |
-| TC-008 | Coming soon 课程 | 点击/键盘操作 | 不进入空课程；状态可感知；不触发 `web_ep_course_open` |
+| TC-008 | Free 用户，任一 SAT/ACT/AP/Abitur 课程卡 | 点击或键盘操作 | 进入所选课程页；不弹 Paywall；成功到达后触发 `web_ep_course_open(access_tier=free)`；只打开课程不创建进度 |
 | TC-009 | 新用户，无任何真实数据 | 仅打开课程后返回首页 | 首页仍为首次进入；不出现 Exam Library 或虚假进度 |
 | TC-010 | 新用户 | 创建一个计划后返回首页 | 自动切为已有进度布局；Exam Library 只出现真实计划 |
 | TC-011 | 新用户 | 首次开始一个 Topic 工具后返回首页 | 自动切为已有进度布局；Exam Library 只出现对应课程并可恢复准确 Topic/工具 |
 | TC-012 | 已有两个课程活动 | 进入首页 | Exam Library 分别展示两张固定三列宽度卡片；最近活动与完成度互不串用 |
 | TC-013 | query 请求 empty，但服务端已有活动 | 刷新首页 | 真实数据优先，展示 active，不出现“初始状态 + 进度”组合 |
-| TC-014 | Coming soon 课程被注入 activity | 刷新首页/课程库 | 忽略非法 activity、记录告警；课程仍 disabled 且不进入 Exam Library |
-| TC-015 | 任一课程卡有真实发布数据 | 检查三行信息 | 依次显示 `{topicCount} topics · video lessons`、`{practiceQuestionCount} practice questions`、`1 full-length test • score insights`；每行数量正确，首行不重复 Topic 数量，`score insights` 的 `s` 为小写 |
+| TC-014 | 两门同考试体系课程分别有 activity | 刷新首页/课程库 | 进度按 `course_id` 区分，不得因同属 AP/Abitur 串用；点击各自卡片恢复对应课程 |
+| TC-015 | 任一课程卡有真实发布数据 | 检查卡片信息 | 只显示 `{videoLessonCount} video lessons · {practiceQuestionCount} questions` 一行副标题；数量正确，无 CTA、上下分区或 `score insights` |
 
 ### 9.2 课程、学习工具与商业化
 
@@ -1048,7 +1037,7 @@ Course→Writing 的跨产品转化复用 Writing Tools 已有埋点协议；在
 | TC-111 | 内容服务加载当前发布 manifest | 读取课程目录 | 返回 52 条内部课程记录（SAT 1、ACT 1、AP 43、Abitur 7）；首页不展示“52 Total” |
 | TC-112 | 同一物料已在 iOS 和 Web 发布 | 对比 `course_id/topic_id/question_id/content_version/checksum` | ID 与版本一致；Web 只重做呈现和交互，不产生重复内容记录 |
 | TC-113 | 附件文件名题量与 manifest 不一致 | 导入 SAT/ACT Quiz CSV | 不从文件名取数；按显式 schema 去重统计并产生差异告警，卡片读取发布 manifest 数字 |
-| TC-114 | AP Networking (Pilot) 无逐课程 mock | 打开课程/读取测试卡配置 | `full_length_ready=false`；不得展示可点击 Full-Length；课程 Coming soon 状态不被附件存在自动改写 |
+| TC-114 | AP Networking (Pilot) 无逐课程 mock | Free 用户打开课程/读取测试卡配置 | 课程可进入且不弹 Paywall；`full_length_ready=false`，不得展示可点击 Full-Length；其他已就绪学习内容仍可使用 |
 | TC-115 | Study Guide/Flashcards 来自同一合并 CSV | 分别打开两个工具并切换 Topic | 各工具只读自身字段；无重复渲染、无跨 Topic 串用、无缺失内容被错误标记完成 |
 | TC-116 | 视频/封面/音频 URL 过期或 MIME 错误 | 打开对应 Lesson | 对应工具显示 unavailable + Retry；其余课程内容可用；发布监控产生 asset_invalid 告警 |
 | TC-117 | AP questions/answers PDF 未授权发布 | 检查生产 API 与页面资源 | 不返回、不展示附件；只有 `license_status=approved` 且 `publishable=true` 后才可发布 |
@@ -1128,7 +1117,7 @@ Course→Writing 的跨产品转化复用 Writing Tools 已有埋点协议；在
 | ID | 前置条件 | 操作 | 预期结果 |
 |---|---|---|---|
 | TC-501 | 首次进入首页 | 点击侧栏后等待页面渲染 | `Web_EP_Tab` 仅在点击时上报；`web_ep_home_view` 在首屏成功渲染后上报；两个事件各一次且互不替代 |
-| TC-502 | 打开创建界面 | 分别由上传、新建按钮、示例进入 | `web_ep_plan_create_view` 在界面完整可见时上报；`entry_point` 准确；`Web_EP_Create_Exam` / `Web_EP_OB_Sample` 仍只表示入口动作 |
+| TC-502 | 打开创建界面 | 分别由上传区、新建按钮、已有计划进入 | `web_ep_plan_create_view` 在界面完整可见时上报；`entry_point=upload/new_plan/existing_plan` 准确；`Web_EP_Create_Exam` 仍只表示入口动作 |
 | TC-503 | 选择有效文件 | 分别用 Picker 和 Drag，等待上传 | 先上报对应 `Web_EP_File_Picker` / `Web_EP_File_Drag`；服务端上传终态只上报一次 `web_ep_plan_upload_result`；失败与成功均不重复 |
 | TC-504 | 选择不支持、过大、超页或空文件 | 触发客户端校验 | 上报一次 `web_ep_plan_file_validation_result(result=failure)` 和准确 `error_code`；不调用上传接口、不产生 `web_ep_plan_upload_result` |
 | TC-505 | 创建/编辑表单有效 | 提交并分别模拟成功、失败、重复回调 | 客户端每个 `request_id` 仅一个 `web_ep_plan_create_submit`；服务端每个 `request_id` 仅一个 `web_ep_plan_create_result`；二者 `request_id/action` 一致，失败必有 `error_code` |
@@ -1137,7 +1126,7 @@ Course→Writing 的跨产品转化复用 Writing Tools 已有埋点协议；在
 | TC-508 | SAT、ACT、AP 分别执行同一考试动作 | Start、Submit、打开 Report | 均使用同一套 `web_ep_exam_*` / `web_ep_report_view` 名称，仅通过 `exam_family` 区分；不产生考试专属复制事件 |
 | TC-509 | Paywall 展示并选择月付/年付 | 点击 CTA 并完成/失败 | View、Unlock、Purchase 通过 `paywall_impression_id` 关联；购买两行只携带 `subscription_period=monthly|annual`，不使用 `plan_id` 表示套餐周期 |
 | TC-510 | 服务端提交/评分/购买回调重试 | 重放同一业务结果 | `web_ep_exam_submit_success`、`web_ep_exam_scoring_result`、`web_ep_purchase_result` 按各自业务 ID 幂等；客户端不重复上报服务端权威结果 |
-| TC-511 | 完整埋点协议表 | 自动解析事件注册表 | 38 条主映射 Event_Name 唯一；每行仅一个事件，类型只能为新增/复用，埋点端非空；8 条条件复用与 1 条补点建议均可追溯 |
+| TC-511 | 完整埋点协议表 | 自动解析事件注册表 | 37 条主映射 Event_Name 唯一；每行仅一个事件，类型只能为新增/复用，埋点端非空；7 条条件复用与 1 条补点建议均可追溯 |
 | TC-512 | Similar Questions 生成成功/失败/重试 | 重放同一 `load_request_id` 并分别返回成功、失败 | 每个请求只产生一个 `web_ep_mini_quiz_load_result`；仅成功且第 1 题可见后产生 `web_ep_mini_quiz_start_success`；失败不制造 Start |
 | TC-513 | 长考试答案同步失败 | 模拟离线、冲突、超时和服务端失败并自动重试 | 达到异常终态后每个 `sync_request_id` 只产生一个 `web_ep_exam_answer_sync_failure`；正常保存不报；`retry_count` 准确 |
 | TC-514 | SAT 公式与允许的 AP PDF Reference 加载失败 | 分别模拟网络、资源缺失、格式不支持和超时 | 每个资源每次打开最多一个 `web_ep_exam_reference_load_failure`；无 Reference 入口的 ACT/AP 课程不产生该事件 |
@@ -1165,7 +1154,7 @@ Course→Writing 的跨产品转化复用 Writing Tools 已有埋点协议；在
 - [ ] 报告未开始、进行中、评分中、结果已生成、Pro 锁定和完整可见状态全部通过；Diagnostic 报告中的 Targeted Practice 锁定状态单独通过。
 - [ ] 92 张视觉基准对应页面完成 UI Review；所有可见文字 ≥ 12 px；主蓝、Hover、Selected 状态符合 Solvely Design System。
 - [ ] 埋点 QA 完成，核心指标可由事件唯一重建，无答案原文或问题详情泄露到分析平台。
-- [ ] 38 条主事件映射、8 条条件复用与 1 条客户端校验补点通过 TC-501–515；Submit/Result 可按 `request_id` 一对一关联，购买参数不存在套餐周期误用 `plan_id`；Mini Quiz 加载、答案同步与 Reference 失败均可幂等重建。
+- [ ] 37 条主事件映射、7 条条件复用与 1 条客户端校验补点通过 TC-501–515；Submit/Result 可按 `request_id` 一对一关联，购买参数不存在套餐周期误用 `plan_id`；Mini Quiz 加载、答案同步与 Reference 失败均可幂等重建。
 - [ ] 错误、空态、断网恢复、评分超时和购买失败路径均完成测试。
 - [ ] Accessibility：键盘、焦点环、Dialog 焦点锁、ARIA、色彩对比、reduced-motion 全部通过。
 - [ ] GAP-01 与 GAP-02 在开发锁版前由负责人完成决策并更新本文档。

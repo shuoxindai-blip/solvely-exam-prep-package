@@ -54,11 +54,19 @@ assert.deepEqual(Object.keys(diagnosticReportPrerequisiteCopy), ['not-started', 
 assert.deepEqual(Object.keys(fullLengthMemberReportPrerequisiteCopy), ['not-started', 'in-progress', 'scoring'])
 
 const packageViewSource = readFileSync(new URL('../src/views/ExamPrepPackageView.vue', import.meta.url), 'utf8')
+const prdSource = readFileSync(new URL('../docs/prd/exam-prep-courses/PRD-Exam-Prep-Courses.md', import.meta.url), 'utf8')
 const miniQuizHandler = packageViewSource.match(/function practiceReviewQuestion[\s\S]*?\n}\nasync function loadSimilarQuiz/)?.[0] ?? ''
 assert.match(miniQuizHandler, /showModal\(\)/, 'Start mini quiz must open the drawer directly.')
 assert.doesNotMatch(miniQuizHandler, /openCommercialPaywall|isProMember/, 'Diagnostic mini quiz must stay free.')
+const courseOpenHandler = packageViewSource.match(/function openCourseFromHome[\s\S]*?\n}\nfunction courseHomeAction/)?.[0] ?? ''
+assert.match(courseOpenHandler, /openCourse\(course\)/, 'Every catalog card must enter its course.')
+assert.doesNotMatch(courseOpenHandler, /openCommercialPaywall|isProMember|isCourseAvailable/, 'Course entry must never be membership-gated.')
+assert.doesNotMatch(packageViewSource, /:disabled="!isCourseAvailable\(course\)"/, 'Catalog cards must not be disabled by the old availability gate.')
+assert.match(packageViewSource, /course: course\.title/, 'Course navigation must preserve the selected course instead of mapping it to another subject.')
+assert.match(prdSource, /52 门课程均可进入；学习工具完整免费/, 'The PRD must define course entry as Free.')
+assert.match(prdSource, /进入课程时不得弹 Paywall/, 'The PRD must prohibit paywalls at course entry.')
 for (const forbiddenCopy of ['Unlock analysis', 'Unlock report', 'Unlock Score Report', 'Unlock to continue']) {
   assert.doesNotMatch(packageViewSource, new RegExp(forbiddenCopy), `Removed Full-Length Free copy must not return: ${forbiddenCopy}`)
 }
 
-console.log(`Verified ${reachablePairs.length} reachable assessment-state pairs, report-gate copy, free mini quiz, and all home/access invariants.`)
+console.log(`Verified ${reachablePairs.length} reachable assessment-state pairs, free course entry, report-gate copy, free mini quiz, and all home/access invariants.`)

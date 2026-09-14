@@ -107,6 +107,7 @@ function isLastActivity(value: unknown): value is LastActivity {
 
 const route = useRoute();
 const router = useRouter();
+const selectedCourseTitle = computed(() => String(route.query.course || "").trim());
 const examFamily = computed<ExamFamily>(() => {
   const queryExam = String(route.query.exam || "").toLowerCase();
   if (queryExam === "abitur-mathematik" || route.hash === "#course-3") return "abitur-mathematik";
@@ -118,9 +119,23 @@ const isActPackage = computed(() => examFamily.value === "act");
 const isApPackage = computed(() => examFamily.value === "ap-calculus-bc");
 const isAbiturPackage = computed(() => examFamily.value === "abitur-mathematik");
 const activeCourseHash = computed(() => isAbiturPackage.value ? "#course-3" : isApPackage.value ? "#course-2" : isActPackage.value ? "#course-1" : "#course-0");
-const examName = computed(() => isAbiturPackage.value ? "Abitur Mathematik" : isApPackage.value ? "AP Calculus BC" : isActPackage.value ? "ACT" : "SAT");
-const packageTitle = computed(() => isAbiturPackage.value ? "Abitur Mathematik Prep 2027" : isApPackage.value ? "AP Calculus BC Prep 2027" : `${examName.value} Prep 2026`);
-const examRouteQuery = computed<Record<string, string>>(() => examFamily.value === "sat" ? {} as Record<string, string> : { exam: examFamily.value });
+const examName = computed(() => {
+  if (selectedCourseTitle.value.startsWith("SAT Prep")) return "SAT";
+  if (selectedCourseTitle.value.startsWith("ACT Prep")) return "ACT";
+  if (selectedCourseTitle.value) return selectedCourseTitle.value;
+  return isAbiturPackage.value ? "Abitur Mathematik" : isApPackage.value ? "AP Calculus BC" : isActPackage.value ? "ACT" : "SAT";
+});
+const packageTitle = computed(() => {
+  if (selectedCourseTitle.value.startsWith("SAT Prep") || selectedCourseTitle.value.startsWith("ACT Prep")) {
+    return selectedCourseTitle.value;
+  }
+  if (selectedCourseTitle.value) return `${selectedCourseTitle.value} Prep 2027`;
+  return isAbiturPackage.value ? "Abitur Mathematik Prep 2027" : isApPackage.value ? "AP Calculus BC Prep 2027" : `${examName.value} Prep 2026`;
+});
+const examRouteQuery = computed<Record<string, string>>(() => ({
+  ...(examFamily.value === "sat" ? {} : { exam: examFamily.value }),
+  ...(selectedCourseTitle.value ? { course: selectedCourseTitle.value } : {}),
+}));
 const { accessState, isProMember, setProAccess } = useProAccess();
 const manifest = ref<SatManifest | null>(null);
 const loadError = ref("");
@@ -192,7 +207,15 @@ const courseActivityList = computed(() =>
   Object.values(courseActivities.value).filter(Boolean) as LastActivity[],
 );
 const currentCourseActivity = computed(() => courseActivities.value[examFamily.value] ?? null);
-const isCourseOpen = computed(() => ["#course-0", "#course-1", "#course-2", "#course-3"].includes(route.hash));
+const isCourseOpen = computed(() => Boolean(selectedCourseTitle.value) || ["#course-0", "#course-1", "#course-2", "#course-3"].includes(route.hash));
+const hasDetailedDemoContent = computed(() =>
+  !selectedCourseTitle.value || [
+    "SAT Prep 2026",
+    "ACT Prep 2026",
+    "AP Calculus BC",
+    "Abitur Mathematik",
+  ].includes(selectedCourseTitle.value),
+);
 const forcedHomePreview = computed<RouteHomePreviewState>(() => {
   const override = String(route.query.homeState || "").toLowerCase();
   return override === "first-entry" || override === "active" ? override : null;
@@ -1255,6 +1278,19 @@ const courses: Course[] = [
   catalogCourse("abitur", "Abitur Mathematik", 31, 2929, "math", "german abitur mathematik mathematics math"),
   catalogCourse("abitur", "Abitur Physik", 25, 1503, "physics", "german abitur physics physik science"),
 ];
+const selectedCatalogCourse = computed(() =>
+  courses.find((course) => course.title === selectedCourseTitle.value) ?? null,
+);
+const currentCourseStats = computed(() => selectedCatalogCourse.value ?? (
+  isAbiturPackage.value
+    ? courses.find((course) => course.title === "Abitur Mathematik")
+    : isApPackage.value
+      ? courses.find((course) => course.title === "AP Calculus BC")
+      : isActPackage.value
+        ? courses.find((course) => course.family === "act")
+        : courses.find((course) => course.family === "sat")
+));
+const hasFullLengthCourse = computed(() => selectedCourseTitle.value !== "AP Networking (Pilot)");
 const courseFamilyFilters = [
   { value: "all", label: "All courses" },
   { value: "sat", label: "SAT" },
@@ -1518,9 +1554,13 @@ function initializeSectionDisclosure() {
 
 function examFamilyForCourse(course: Course): ExamFamily {
   const isAct = course.family === "act";
-  const isAp = course.family === "ap" && course.title === "AP Calculus BC";
-  const isAbiturMath = course.family === "abitur" && course.title === "Abitur Mathematik";
-  return isAbiturMath ? "abitur-mathematik" : isAp ? "ap-calculus-bc" : isAct ? "act" : "sat";
+  const isAp = course.family === "ap";
+  const isAbitur = course.family === "abitur";
+  return isAbitur ? "abitur-mathematik" : isAp ? "ap-calculus-bc" : isAct ? "act" : "sat";
+}
+function coursePackageTitle(course: Course) {
+  if (course.family === "sat" || course.family === "act") return course.title;
+  return `${course.title} Prep 2027`;
 }
 function openCourse(course: Course) {
   activeTab.value = "study";
@@ -1528,7 +1568,8 @@ function openCourse(course: Course) {
   const isAct = targetFamily === "act";
   const isAp = targetFamily === "ap-calculus-bc";
   const isAbiturMath = targetFamily === "abitur-mathematik";
-  const courseState: CourseEntryState = startedCourseFamilies.value.has(targetFamily)
+  const matchingActivity = courseActivities.value[targetFamily]?.examTitle === coursePackageTitle(course);
+  const courseState: CourseEntryState = matchingActivity
     ? "in-progress"
     : "first-visit";
   sectionFilter.value = isAbiturMath ? "Mathematik" : isAp ? "AP Calculus BC" : isAct ? "English" : "Math";
@@ -1538,6 +1579,7 @@ function openCourse(course: Course) {
       access: accessState.value,
       ...(forcedHomePreview.value ? { homeState: forcedHomePreview.value } : {}),
       ...(targetFamily === "sat" ? {} : { exam: targetFamily }),
+      course: course.title,
       courseState: courseState === "first-visit" ? "not-started" : "in-progress",
     },
     hash: isAbiturMath ? "#course-3" : isAp ? "#course-2" : isAct ? "#course-1" : "#course-0",
@@ -1817,22 +1859,18 @@ function resumeActivity(activity: LastActivity) {
   }
 }
 function openCourseFromHome(course: Course) {
-  if (!isCourseAvailable(course)) return;
   const activity = courseActivities.value[examFamilyForCourse(course)];
-  if (!showFirstEntryHome.value && activity) {
+  if (!showFirstEntryHome.value && activity?.examTitle === coursePackageTitle(course)) {
     resumeActivity(activity);
     return;
   }
   openCourse(course);
 }
-function isCourseAvailable(course: Course) {
-  return course.family === "sat" || course.family === "act" || course.title === "AP Calculus BC" || course.title === "Abitur Mathematik";
-}
 function courseHomeAction(course: Course) {
   const activity = courseActivities.value[examFamilyForCourse(course)];
-  if (!showFirstEntryHome.value && activity)
+  if (!showFirstEntryHome.value && activity?.examTitle === coursePackageTitle(course))
     return activityCta(activity);
-  return isCourseAvailable(course) ? "Open course" : "Coming soon";
+  return "Open course";
 }
 function startMockExam(
   examId: number,
@@ -3495,10 +3533,8 @@ onBeforeUnmount(() => {
               :class="[
                 'course-card',
                 `course-card-${course.family}`,
-                { 'sample-course': !isCourseAvailable(course) },
               ]"
               type="button"
-              :disabled="!isCourseAvailable(course)"
               :aria-label="`${courseHomeAction(course)}: ${course.title}`"
               @click="openCourseFromHome(course)"
             >
@@ -3541,21 +3577,21 @@ onBeforeUnmount(() => {
               <div class="course-package-copy">
                 <h1 id="courseWorkspaceTitle">{{ packageTitle }}</h1>
                 <p>
-                  {{ packageTitle }} with focused study tools, a realistic {{ examName }} test,
-                  a score report, and targeted practice.
+                  Focused study tools, realistic exam practice, score insights,
+                  and targeted practice for {{ examName }}.
                 </p>
                 <div class="course-package-stats" aria-label="Course contents">
                   <span
                     ><svg class="icon" aria-hidden="true">
                       <use href="#i-book" /></svg
-                    ><strong>{{ isAbiturPackage ? '31' : isApPackage ? '49' : isActPackage ? '235' : '100' }}</strong> video lessons</span
+                    ><strong>{{ currentCourseStats?.videos }}</strong> video lessons</span
                   >
                   <span
                     ><svg class="icon" aria-hidden="true">
                       <use href="#i-grid" /></svg
-                    ><strong>{{ isAbiturPackage ? '2,929' : isApPackage ? '2,940' : isActPackage ? '6,600' : '3,879' }}</strong> practice questions</span
+                    ><strong>{{ currentCourseStats?.questions }}</strong> practice questions</span
                   >
-                  <span
+                  <span v-if="hasFullLengthCourse"
                     ><svg class="icon" aria-hidden="true">
                       <use href="#i-exam" /></svg
                     ><strong>1</strong> full-length test</span
@@ -3563,7 +3599,7 @@ onBeforeUnmount(() => {
                 </div>
               </div>
               <aside
-                v-if="!isCourseStarted"
+                v-if="hasDetailedDemoContent && !isCourseStarted"
                 class="course-journey-start"
                 aria-label="Start your prep journey"
               >
@@ -3598,6 +3634,7 @@ onBeforeUnmount(() => {
               </aside>
             </div>
             <nav
+              v-if="hasDetailedDemoContent"
               class="course-package-tabs"
               role="tablist"
               aria-label="Course views"
@@ -3622,7 +3659,42 @@ onBeforeUnmount(() => {
         <div class="course-workspace-body">
           <div class="course-package-panel" role="tabpanel" aria-live="polite">
             <section
-              v-if="activeTab === 'study'"
+              v-if="!hasDetailedDemoContent"
+              class="course-prototype-preview"
+              aria-labelledby="coursePrototypeTitle"
+            >
+              <div class="course-prototype-preview-copy">
+                <span class="course-prototype-eyebrow">Course preview</span>
+                <h2 id="coursePrototypeTitle">Start learning for free</h2>
+                <p>
+                  Explore this course, take the free diagnostic, and use lessons,
+                  study guides, flashcards, and quizzes at no cost.
+                </p>
+              </div>
+              <div class="course-prototype-feature-grid" aria-label="Included course features">
+                <article>
+                  <svg class="icon" aria-hidden="true"><use href="#i-study-guide-spark" /></svg>
+                  <strong>Study resources</strong>
+                  <span>Lessons, study guides, flashcards &amp; quizzes</span>
+                </article>
+                <article>
+                  <svg class="icon" aria-hidden="true"><use href="#i-target" /></svg>
+                  <strong>Free diagnostic</strong>
+                  <span>Score insights and question review</span>
+                </article>
+                <article v-if="hasFullLengthCourse">
+                  <svg class="icon" aria-hidden="true"><use href="#i-exam" /></svg>
+                  <strong>Pro test &amp; analysis</strong>
+                  <span>Full-length mock test and targeted practice</span>
+                </article>
+              </div>
+              <p class="course-prototype-note">
+                Full subject-level interactions are available in this prototype for SAT,
+                ACT, AP Calculus BC, and Abitur Mathematik.
+              </p>
+            </section>
+            <section
+              v-else-if="activeTab === 'study'"
               class="study-practice-layout"
               :aria-label="`${examName} lessons and practice tests`"
             >

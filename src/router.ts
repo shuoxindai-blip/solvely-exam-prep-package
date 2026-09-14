@@ -47,10 +47,11 @@ router.beforeEach((to) => {
 router.afterEach((to) => {
   const examQuery = String(to.query.exam || '').toLowerCase()
   const exam = examQuery === 'abitur-mathematik' ? 'Abitur Mathematik' : examQuery === 'ap-calculus-bc' ? 'AP Calculus BC' : examQuery === 'act' ? 'ACT' : 'SAT'
+  const selectedCourse = String(to.query.course || '').trim()
   const labels: Record<string, string> = { 'mock-exam': `${exam} Practice Test`, 'study-guide': `${exam} Study Guide`, flashcards: `${exam} Flashcards`, quiz: `${exam} Quiz` }
   const label = to.name === 'mock-exam' && to.query.mode === 'diagnostic'
     ? `${exam} Diagnostic Test`
-    : labels[String(to.name)] || `${exam} Exam Prep`
+    : labels[String(to.name)] || (selectedCourse ? `${selectedCourse} Exam Prep` : `${exam} Exam Prep`)
   document.title = `${label} — Solvely`
 })
 
