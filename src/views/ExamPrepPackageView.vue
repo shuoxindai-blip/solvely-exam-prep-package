@@ -3124,8 +3124,8 @@ onBeforeUnmount(() => {
                           <svg><use href="#i-study-guide-spark" /></svg>
                         </span>
                         <span class="generator-result-copy">
-                          <small>PERSONALIZED</small>
-                          <strong>Study plan</strong>
+                      <small>FOCUSED</small>
+                      <strong>Priority topics</strong>
                         </span>
                         <span class="generator-result-check">✓</span>
                       </span>
