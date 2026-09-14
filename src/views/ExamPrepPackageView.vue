@@ -39,7 +39,6 @@ type ExamFamily = "sat" | "act" | "ap-calculus-bc" | "abitur-mathematik";
 type ResultView = "full" | "score" | "review" | "improve";
 type ResultSource = "diagnostic" | "practice";
 type HomePreviewState = "empty" | "created";
-type FirstEntryTab = "create" | "courses";
 
 const FIRST_ENTRY_HOME_TITLE = "Adaptive Exam Prep, Tailored to You";
 const ACTIVE_HOME_TITLE = "Stay on Track for Your Best Score";
@@ -211,11 +210,6 @@ const showSeededPrediction = computed(() =>
   createdPredictions.value.length === 0 &&
   startedCourseFamilies.value.size === 0,
 );
-const firstEntryTab = ref<FirstEntryTab>("create");
-const firstEntryCreatePanel = ref<HTMLElement | null>(null);
-const firstEntryCoursesPanel = ref<HTMLElement | null>(null);
-let firstEntryScrollFrame: number | null = null;
-let firstEntryScrollLockTimer: number | null = null;
 const controllerHomeState = computed<HomePreviewState>(() =>
   showFirstEntryHome.value ? "empty" : "created",
 );
@@ -2435,47 +2429,6 @@ watch([() => route.query.paywall, isProMember], syncDirectPaywallIntent);
 
 watch(sectionFilter, initializeSectionDisclosure);
 
-function syncFirstEntryTabFromScroll() {
-  firstEntryScrollFrame = null;
-  if (
-    !showFirstEntryHome.value ||
-    isCourseOpen.value ||
-    firstEntryScrollLockTimer !== null ||
-    !firstEntryCoursesPanel.value
-  ) return;
-
-  const activationLine = Math.min(260, window.innerHeight * 0.34);
-  firstEntryTab.value =
-    firstEntryCoursesPanel.value.getBoundingClientRect().top <= activationLine
-      ? "courses"
-      : "create";
-}
-
-function scheduleFirstEntryTabSync() {
-  if (firstEntryScrollFrame !== null) return;
-  firstEntryScrollFrame = window.requestAnimationFrame(syncFirstEntryTabFromScroll);
-}
-
-function scrollToFirstEntrySection(section: FirstEntryTab) {
-  firstEntryTab.value = section;
-  const target = section === "create"
-    ? firstEntryCreatePanel.value
-    : firstEntryCoursesPanel.value;
-  if (!target) return;
-
-  if (firstEntryScrollLockTimer !== null) {
-    window.clearTimeout(firstEntryScrollLockTimer);
-  }
-  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const stickyOffset = window.innerWidth <= 820 ? 156 : 88;
-  const top = window.scrollY + target.getBoundingClientRect().top - stickyOffset;
-  window.scrollTo({ top: Math.max(0, top), behavior: reduceMotion ? "auto" : "smooth" });
-  firstEntryScrollLockTimer = window.setTimeout(() => {
-    firstEntryScrollLockTimer = null;
-    scheduleFirstEntryTabSync();
-  }, reduceMotion ? 0 : 700);
-}
-
 function clampDemoControllerPosition(x: number, y: number) {
   const controller = demoController.value;
   if (!controller) return { x, y };
@@ -2607,7 +2560,6 @@ watch(examFamily, () => { void loadPackageData(); });
 onMounted(async () => {
   document.body.classList.add("package-route");
   window.addEventListener("resize", keepDemoControllerInViewport);
-  window.addEventListener("scroll", scheduleFirstEntryTabSync, { passive: true });
   syncTabFromRoute();
   try {
     const savedPredictions =
@@ -2691,8 +2643,6 @@ onMounted(async () => {
   syncDirectPaywallIntent();
   improvePracticeProgress.value = loadImprovePracticeProgress();
   await loadPackageData();
-  await nextTick();
-  scheduleFirstEntryTabSync();
 });
 
 onBeforeUnmount(() => {
@@ -2703,15 +2653,8 @@ onBeforeUnmount(() => {
   if (studyTopicPopoverReleaseTimer !== null) {
     window.clearTimeout(studyTopicPopoverReleaseTimer);
   }
-  if (firstEntryScrollFrame !== null) {
-    window.cancelAnimationFrame(firstEntryScrollFrame);
-  }
-  if (firstEntryScrollLockTimer !== null) {
-    window.clearTimeout(firstEntryScrollLockTimer);
-  }
   stopDemoControllerDrag();
   window.removeEventListener("resize", keepDemoControllerInViewport);
-  window.removeEventListener("scroll", scheduleFirstEntryTabSync);
   document.body.classList.remove("package-route", "dark");
 });
 </script>
@@ -3083,37 +3026,8 @@ onBeforeUnmount(() => {
           <header class="first-entry-heading">
             <h1 id="firstEntryTitle">{{ FIRST_ENTRY_HOME_TITLE }}</h1>
           </header>
-          <div class="first-entry-tabs-wrap">
-            <div class="first-entry-tabs" role="navigation" aria-label="Choose how to prepare">
-              <button
-                id="firstEntryCreateTab"
-                class="first-entry-tab"
-                type="button"
-                :aria-current="firstEntryTab === 'create' ? 'page' : undefined"
-                aria-controls="firstEntryCreatePanel"
-                @click="scrollToFirstEntrySection('create')"
-              >
-                Custom Plan
-              </button>
-              <button
-                id="firstEntryCoursesTab"
-                class="first-entry-tab"
-                type="button"
-                :aria-current="firstEntryTab === 'courses' ? 'page' : undefined"
-                aria-controls="firstEntryCoursesPanel"
-                @click="scrollToFirstEntrySection('courses')"
-              >
-                Prep Courses
-              </button>
-            </div>
-          </div>
           <section class="first-entry-hero" aria-labelledby="firstEntryTitle">
-            <div
-              ref="firstEntryCreatePanel"
-              id="firstEntryCreatePanel"
-              class="first-entry-tab-panel"
-              aria-labelledby="firstEntryCreateTab"
-            >
+            <div>
               <div
                 class="first-entry-upload"
                 role="button"
@@ -3514,10 +3428,9 @@ onBeforeUnmount(() => {
         </section>
 
         <section
-          ref="firstEntryCoursesPanel"
           id="firstEntryCoursesPanel"
-          :class="['exam-catalog', { 'first-entry-courses-panel': showFirstEntryHome }]"
-          :aria-labelledby="showFirstEntryHome ? 'firstEntryCoursesTab' : 'examCatalogTitle'"
+          class="exam-catalog"
+          aria-labelledby="examCatalogTitle"
         >
           <div class="predictor-library-heading exam-catalog-heading">
             <h2 id="examCatalogTitle">Standardized Test Prep Courses</h2>
