@@ -3050,37 +3050,56 @@ onBeforeUnmount(() => {
                   <span class="first-entry-generator-art">
                     <span class="generator-materials">
                       <span class="generator-file generator-file-notes">
+                        <span class="generator-file-icon">
+                          <svg><use href="#i-book" /></svg>
+                        </span>
                         <b>Notes</b>
                       </span>
                       <span class="generator-file generator-file-slides">
+                        <span class="generator-file-icon">
+                          <svg><use href="#i-image" /></svg>
+                        </span>
                         <b>Lecture slides</b>
                       </span>
                       <span class="generator-file generator-file-exams">
+                        <span class="generator-file-icon">
+                          <svg><use href="#i-exam" /></svg>
+                        </span>
                         <b>Past exams</b>
                       </span>
                     </span>
                     <span class="generator-flow" />
                     <span class="generator-engine">
-                      <img
-                        class="generator-engine-logo"
-                        src="/assets/solvely-ai-logo.jpeg"
-                        alt=""
-                      />
-                      <strong>Solvely AI</strong>
+                      <span class="generator-engine-mark">
+                        <img
+                          class="generator-engine-logo"
+                          src="/assets/solvely-ai-logo.jpeg"
+                          alt=""
+                        />
+                      </span>
                       <small>Build your prep</small>
                     </span>
                     <span class="generator-flow" />
                     <span class="generator-outcomes">
                       <span class="generator-result-card plan">
-                        <small>STUDY PLAN</small>
-                        <strong>Personalized plan</strong>
-                        <span class="generator-plan-lines"><i /><i /><i /></span>
+                        <span class="generator-result-icon">
+                          <svg><use href="#i-study-guide-spark" /></svg>
+                        </span>
+                        <span class="generator-result-copy">
+                          <small>PERSONALIZED</small>
+                          <strong>Study plan</strong>
+                        </span>
+                        <span class="generator-result-check">✓</span>
                       </span>
                       <span class="generator-result-card exam">
-                        <small>MOCK EXAM</small>
-                        <strong>Realistic questions</strong>
-                        <span class="generator-answer-line"><i /> A</span>
-                        <span class="generator-answer-line selected"><i /> B</span>
+                        <span class="generator-result-icon">
+                          <svg><use href="#i-quiz-stacked" /></svg>
+                        </span>
+                        <span class="generator-result-copy">
+                          <small>REALISTIC</small>
+                          <strong>Mock exam</strong>
+                        </span>
+                        <span class="generator-result-check">✓</span>
                       </span>
                     </span>
                   </span>
