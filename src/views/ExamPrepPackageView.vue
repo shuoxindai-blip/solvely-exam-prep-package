@@ -3135,7 +3135,7 @@ onBeforeUnmount(() => {
                         </span>
                         <span class="generator-result-copy">
                           <small>REALISTIC</small>
-                          <strong>Mock exam</strong>
+                          <strong>Mock exams</strong>
                         </span>
                         <span class="generator-result-check">✓</span>
                       </span>
