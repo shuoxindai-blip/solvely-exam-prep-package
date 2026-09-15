@@ -123,7 +123,7 @@ const mathQuestions: DiagnosticQuestion[] = [
   {
     sourceQuestionId: "ac472881", sectionId: "math", sectionTitle: "Math", contentDomain: "Algebra",
     officialSkill: "Linear equations in one variable", difficulty: "HARD",
-    stem: "(12x + 28) / 4 − s / 13 = r(x − 8)\n\nIn the given equation, s and r are constants, and s > 0. If the equation has infinitely many solutions, what is the value of s?\nEnter your answer.",
+    stem: "$$\\frac{12x + 28}{4} - \\frac{s}{13} = r(x - 8)$$\n\nIn the given equation, $s$ and $r$ are constants, and $s > 0$. If the equation has infinitely many solutions, what is the value of $s$?\nEnter your answer.",
     correctAnswer: "403",
     explanation: "Rewrite the equation as 3x + 7 − s/13 = rx − 8r. Infinitely many solutions require r = 3 and 7 − s/13 = −24, so s/13 = 31 and s = 403.",
   },
@@ -142,21 +142,21 @@ const mathQuestions: DiagnosticQuestion[] = [
   {
     sourceQuestionId: "3d1070c9", sectionId: "math", sectionTitle: "Math", contentDomain: "Algebra",
     officialSkill: "Linear functions", difficulty: "EASY",
-    stem: "The function f is defined by f(x) = 25x + 30. What is the value of f(x) when x = 2?",
+    stem: "The function $f$ is defined by $f(x) = 25x + 30$. What is the value of $f(x)$ when $x = 2$?",
     options: { A: "50", B: "57", C: "80", D: "110" }, correctAnswer: "C",
     explanation: "Substitute x = 2: f(2) = 25(2) + 30 = 80.",
   },
   {
     sourceQuestionId: "002dba45", sectionId: "math", sectionTitle: "Math", contentDomain: "Algebra",
     officialSkill: "Linear equations in two variables", difficulty: "MEDIUM",
-    stem: "Line k is defined by y = −(17/3)x + 5. Line j is perpendicular to line k in the xy-plane. What is the slope of line j?\nEnter your answer.",
+    stem: "Line $k$ is defined by $y = -\\frac{17}{3}x + 5$. Line $j$ is perpendicular to line $k$ in the $xy$-plane. What is the slope of line $j$?\nEnter your answer.",
     correctAnswer: "3/17",
     explanation: "A perpendicular line has the negative reciprocal slope. The negative reciprocal of −17/3 is 3/17 (about 0.176).",
   },
   {
     sourceQuestionId: "edc1b7b7", sectionId: "math", sectionTitle: "Math", contentDomain: "Algebra",
     officialSkill: "Systems of two linear equations in two variables", difficulty: "HARD",
-    stem: "2(8x) + 4(7y) = 12\n−2(8x) + 4(7y) = 12\n\nThe solution to the given system of equations is (x, y). What is the value of 8x + 7y?\nEnter your answer.",
+    stem: "$$\\begin{aligned}2(8x) + 4(7y) &= 12 \\\\ -2(8x) + 4(7y) &= 12\\end{aligned}$$\n\nThe solution to the given system of equations is $(x, y)$. What is the value of $8x + 7y$?\nEnter your answer.",
     correctAnswer: "3",
     explanation: "Adding the equations gives 8(7y) = 24, so 7y = 3. Substitution gives 8x = 0; therefore 8x + 7y = 3.",
   },
@@ -185,7 +185,7 @@ const mathQuestions: DiagnosticQuestion[] = [
     sourceQuestionId: "eccbf957", sectionId: "math", sectionTitle: "Math", contentDomain: "Problem-Solving and Data Analysis",
     officialSkill: "Probability and conditional probability", difficulty: "EASY",
     stem: "Each face of a fair 14-sided die is labeled with a number from 1 through 14, with a different number appearing on each face. If the die is rolled one time, what is the probability of rolling a 2?",
-    options: { A: "1/14", B: "2/14", C: "12/14", D: "13/14" }, correctAnswer: "A",
+    options: { A: "$\\frac{1}{14}$", B: "$\\frac{2}{14}$", C: "$\\frac{12}{14}$", D: "$\\frac{13}{14}$" }, correctAnswer: "A",
     explanation: "Exactly one of the 14 equally likely faces is labeled 2, so the probability is 1/14.",
   },
   {
@@ -198,8 +198,8 @@ const mathQuestions: DiagnosticQuestion[] = [
   {
     sourceQuestionId: "954943a4", sectionId: "math", sectionTitle: "Math", contentDomain: "Problem-Solving and Data Analysis",
     officialSkill: "Percentages", difficulty: "HARD",
-    stem: "Jennifer bought a box of Crunchy Grain cereal. The nutrition facts state that a serving size is 3/4 cup and provides 210 calories, 50 of which are calories from fat. Each serving also provides 180 milligrams of potassium, which is 5% of the daily allowance for adults. If p percent of an adult’s daily allowance of potassium is provided by x servings per day, which expression gives p in terms of x?",
-    options: { A: "p = 0.5x", B: "p = 5x", C: "p = (0.05)ˣ", D: "p = (1.05)ˣ" }, correctAnswer: "B",
+    stem: "Jennifer bought a box of Crunchy Grain cereal. The nutrition facts state that a serving size is $\\frac{3}{4}$ cup and provides 210 calories, 50 of which are calories from fat. Each serving also provides 180 milligrams of potassium, which is 5% of the daily allowance for adults. If $p$ percent of an adult’s daily allowance of potassium is provided by $x$ servings per day, which expression gives $p$ in terms of $x$?",
+    options: { A: "$p = 0.5x$", B: "$p = 5x$", C: "$p = (0.05)^x$", D: "$p = (1.05)^x$" }, correctAnswer: "B",
     explanation: "Each serving provides 5 percentage points of the daily allowance, so x servings provide p = 5x percent.",
   },
 ];

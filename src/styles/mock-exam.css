@@ -836,6 +836,26 @@ body.is-resizing * {
   white-space: pre-line;
 }
 
+.math-content {
+  min-width: 0;
+}
+
+.math-content .katex-display {
+  margin: 0.5em 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.08em 0;
+  text-align: left;
+}
+
+.math-content .katex-display > .katex {
+  text-align: left;
+}
+
+.choice-copy .math-content .katex-display {
+  margin: 0.18em 0;
+}
+
 .choice-row.eliminated .choice-card {
   color: #8b8b8b;
   text-decoration: line-through;
