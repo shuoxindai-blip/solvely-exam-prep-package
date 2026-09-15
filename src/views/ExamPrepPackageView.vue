@@ -3677,26 +3677,25 @@ onBeforeUnmount(() => {
           class="exam-catalog"
           aria-labelledby="examCatalogTitle"
         >
-          <div class="predictor-library-heading exam-catalog-heading">
-            <h2 id="examCatalogTitle">Standardized test prep courses</h2>
-            <p>
-              Every course includes a free diagnostic assessment, score analysis, study
-              resources, a full-length mock test, and targeted practice.
-            </p>
-          </div>
-          <div class="exam-catalog-toolbar">
-            <label class="exam-search-wrap">
-              <img
-                class="exam-search-icon"
-                src="/assets/course-filter/search.svg"
-                alt=""
-              />
-              <input
-                v-model="searchQuery"
-                aria-label="Search standardized test prep courses"
-                placeholder="Search by test name"
-              />
-            </label>
+          <div class="exam-catalog-header">
+            <div class="predictor-library-heading exam-catalog-heading">
+              <h2 id="examCatalogTitle">Standardized test prep courses</h2>
+              <p>Free diagnostic, full-length mock test, and targeted practice</p>
+            </div>
+            <div class="exam-catalog-toolbar">
+              <label class="exam-search-wrap">
+                <img
+                  class="exam-search-icon"
+                  src="/assets/course-filter/search.svg"
+                  alt=""
+                />
+                <input
+                  v-model="searchQuery"
+                  aria-label="Search standardized test prep courses"
+                  placeholder="Search by test name"
+                />
+              </label>
+            </div>
           </div>
           <div v-if="searchMatchedCourses.length" class="course-groups">
             <section
