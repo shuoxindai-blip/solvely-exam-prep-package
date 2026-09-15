@@ -283,9 +283,22 @@ Exam Prep & Courses
 
 **最近活动与排除规则**
 
-- 每个 `course_id` 只显示一张课程卡，以最新一次可恢复的学习/考试活动决定两行文案；不同课程不得按 `exam_family` 合并或串用进度。
+卡片展示的是用户**退出该课程时正在做什么**，不是历史上完成度最高、最早开始或最近完成的工具。产品侧将其实现为“最后一次成功保存的可恢复上下文”：每次进入/切换主工具、保存学习进度、保存考试答案或考试状态改变时更新活动快照；用户返回首页、切换侧栏、刷新或关闭页面后，首页读取该课程最新快照。不得只依赖 `beforeunload`，避免浏览器关闭时保存失败。
+
+| 用户退出前最后所在位置 | 课程卡采用的上下文 |
+|---|---|
+| Study Guide / Flashcards / Quiz / Targeted Practice | 使用当时所在的工具、Section、Topic 及最新已保存进度，按学习工具矩阵展示。 |
+| Diagnostic 作答页 | 使用 Diagnostic test 与当时 attempt 状态/已答题数。 |
+| Full-Length 作答页 | 使用 Full-length practice test 与当时 attempt 状态/已答题数。 |
+| Diagnostic 报告任一 Section | 映射为 `Results ready` + `Diagnostic test`；点击恢复该 Diagnostic 报告。 |
+| Full-Length 报告任一 Section | 映射为 `Results ready` + `Full-length practice test`；点击恢复该 Full-Length 报告。 |
+| Course Content 首页，但本次没有开始新工具 | 保留离开前已有的最后可恢复活动，不把 Course Content 写成工具。 |
+| Paywall、Ask Solvely、筛选、Hover、Question Review 或 Mini Quiz | 这些是浮层、浏览或附属交互，不单独成为工具；保留其背后的 Study Guide/Quiz/Diagnostic/Full-Length 主上下文。 |
+
+- 每个 `course_id` 只显示一张课程卡，以用户退出时最后成功保存的可恢复学习/考试上下文决定两行文案；不同课程不得按 `exam_family` 合并或串用进度。
+- 同一课程在多个页面/标签页更新时，以服务端或本地存储中 `activity_revision` 最大的成功快照为准；旧页面不得用更小 revision 覆盖新进度。
 - Section 为空、仅重复课程名或只是课程级容器时，视为“无有效 Section”，第二行只显示工具名。SAT/ACT/AP/Abitur 使用同一规则。
-- 浏览课程目录/报告、搜索或筛选、打开 Paywall、Ask Solvely、Question Review、Similar Questions Mini Quiz，以及只 Hover/展开 Topic 都不替换最近活动。
+- 进入 Diagnostic/Full-Length 报告时，以该报告来源考试写入 `Results ready` 主上下文；报告内滚动、切换 Section、Question Review 或 Similar Questions Mini Quiz 不再改变工具名称。课程目录浏览、搜索/筛选、打开 Paywall、Ask Solvely，以及只 Hover/展开 Topic 均不产生新的主工具快照。
 - 不单列 `Video Lesson`：它是 Study Guide 内部内容；不单列 Question Review 或 Mini Quiz：它们属于报告内浏览/轻练习，不改变 Exam Library 的恢复入口。
 - 卡片的 Free/Pro 文案不分叉；权限差异只发生在点击后的 M-05、M-06、M-07 校验，避免同一进度出现两套状态文本。
 
@@ -1249,7 +1262,9 @@ Solvely Pro 商业化弹窗的套餐、续费、退费与法务文案直接复�
 | TC-024 | Full-Length attempt 分别处于已创建未作答、已作答未提交、评分中、结果已生成 | 以 Pro 与会员到期用户检查课程卡并点击 | 第一行依次符合 4.4.2.1；第二行始终只显示 Full-length practice test；Pro 恢复对应状态，会员到期用户保留相同卡片文案但点击后按 M-06/M-07 拦截；从未有 Pro attempt 的 Free 用户不生成该进度卡 |
 | TC-025 | 最近一道考试题带 Section/Module；最近一次工具名与容器名相同 | 检查课程卡 | 考试第二行不展示 Section/Module/题号；不得出现 `Full-length practice test · Practice test`、重复课程名、额外第三行或可见 CTA |
 | TC-026 | Quiz/考试已答完全部题但尚未提交；随后提交并评分完成 | 依次返回首页 | 未提交时仍显示 `{total} of {total} answered`；提交成功后显示 Scoring；报告真实生成后才显示 Results ready，不得提前跳状态 |
-| TC-027 | 已有一张课程进度卡 | 依次浏览报告、搜索课程、打开 Paywall、使用 Ask Solvely、Question Review 与 Mini Quiz | 上述动作均不替换最近活动；返回首页仍显示原两行文案和原恢复去向 |
+| TC-027 | 已有一张课程进度卡 | 打开 Diagnostic/Full-Length 报告，再依次滚动/切换报告 Section、搜索课程、打开 Paywall、使用 Ask Solvely、Question Review 与 Mini Quiz | 进入报告后卡片映射为对应考试的 `Results ready` 上下文；后续附属交互不再改变该主上下文。若未进入报告，则保留原主工具与恢复去向 |
+| TC-028 | 用户依次进入 Study Guide、Flashcards、Quiz、Diagnostic、Full-Length 或 Targeted Practice | 分别在各主工具有保存进度时返回首页、切换侧栏、刷新或关闭后重开 | 每次都以退出前最后所在的可恢复主工具更新课程卡，不按完成度最高或最早活动选择；第一/二行及点击去向与退出快照一致 |
+| TC-029 | 同一课程在两个标签页产生不同 activity revision | 新标签页保存后，再让旧标签页离开 | 首页使用 revision 较大的成功快照；旧标签页不得覆盖新进度。Course Content、Paywall 或附属交互没有产生新主工具快照时，保留原活动 |
 
 ### 9.2 课程、学习工具与商业化
 
