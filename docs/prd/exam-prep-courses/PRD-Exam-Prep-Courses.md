@@ -229,7 +229,7 @@ Exam Prep & Courses
 
 | 项目 | 说明 | 图示 |
 |---|---|---|
-| 页面头部 | 当用户成功创建至少一个 Custom Plan，或实际开始任一 Prep Course 的 Study Guide、Flashcards、Quiz、Lesson、Diagnostic 或 Full-Length Test 后，标题切换为 **Stay on Track for Your Best Score**；副标题切换为 **Personalized exam prep, all the way to test day.** 标题桌面端 36px、700 字重，在 ≤820px / ≤560px 时分别为 34px / 28px；副标题桌面端 15px。右上角展示 `+ New Prep Plan`。仅浏览、搜索、打开课程或取消弹窗不得触发此状态。 | ![VIS-04 已有进度首页](./images/VIS-04-home-active-exam-library.png) |
+| 页面头部 | 当用户成功创建至少一个 Custom Plan，或实际开始任一 Prep Course 的 Study Guide、Flashcards、Quiz、Lesson、Diagnostic 或 Full-Length Test 后，标题切换为 **Stay on Track for Your Best Score**；副标题切换为 **Personalized exam prep, all the way to test day**。标题桌面端 36px、700 字重，在 ≤820px / ≤560px 时分别为 34px / 28px；副标题桌面端 15px。右上角展示 `+ New Prep Plan`。仅浏览、搜索、打开课程或取消弹窗不得触发此状态。 | ![VIS-04 已有进度首页](./images/VIS-04-home-active-exam-library.png) |
 | Exam Library | 同时展示用户创建的计划和已经学习的 Prep Course。课程卡显示 `IN PROGRESS`，并固定为两行有效信息：第一行只显示当前工具进度，例如 `24 of 120 answered` 或 `62% complete`；第二行显示工具上下文。Study Guide、Flashcards、Quiz 等学习工具有 Section 时显示 `{Section} · {Tool}`，例如 `Advanced Math · Study Guide`，没有 Section 时只显示 Tool；`Full-length practice test` 和 `Free diagnostic` 一律不显示 Section，第二行只显示工具名。不得再追加第三行或出现重复工具名称。计划卡显示 READY/IN PROGRESS 与考试日期。 | ![VIS-04 Exam Library](./images/VIS-04-home-active-exam-library.png) |
 | 继续学习 | 点击课程进度卡，进入上次学习的课程/Topic/工具；点击计划卡进入计划详情。Course 一旦有进度，就必须同步出现在 Exam Library。 | ![VIS-04 继续学习](./images/VIS-04-home-active-exam-library.png) |
 | 侧边栏 | 支持折叠/展开；折叠不改变主内容层级和三列卡片尺寸。 | ![VIS-78 侧边栏折叠](./images/VIS-78-home-sidebar-collapsed.png) |
@@ -990,7 +990,7 @@ Course→Writing 的跨产品转化复用 Writing Tools 已有埋点协议；在
 | `ep.home.create.title` | Create your personalized prep plan | 没有 Custom Plan 且没有课程活动时的首个模块标题 |
 | `ep.home.create.subtitle` | Identify high-yield topics and predict likely exam questions | 首个模块标题下的说明文案 |
 | `ep.home.active.title` | Stay on Track for Your Best Score | 已成功创建计划或已开始课程后的首页标题 |
-| `ep.home.active.subtitle` | Personalized exam prep, all the way to test day. | 已成功创建计划或已开始课程后的首页副标题 |
+| `ep.home.active.subtitle` | Personalized exam prep, all the way to test day | 已成功创建计划或已开始课程后的首页副标题 |
 | `ep.upload.formats` | PDF, Word, PPT, TXT, or images | 上传格式提示 |
 | `ep.upload.cta` | Upload materials | 上传 CTA |
 | `ep.upload.files_count` | Files uploaded: {count}/10 | 已上传文件状态标题；1–10 |
@@ -1158,7 +1158,7 @@ Solvely Pro 商业化弹窗的套餐、续费、退费与法务文案直接复�
 | TC-001 | 新用户，无计划/课程进度 | 进入 Exam Prep & Courses | 首个模块左对齐显示 `Create your personalized prep plan` 与 `Identify high-yield topics and predict likely exam questions`；上传区和课程库同屏纵向展示；上传框内不重复标题，插图居中且 CTA 位于其下；课程标题行右侧展示搜索框；无顶部模式 Tab、3 张示例或 Exam Library |
 | TC-002 | 同上 | 页面向下滚动 | 直接看到 `Standardized test prep courses` 标题与说明、标题行右侧的 `Search by test name`、College admission tests / Advanced Placement® tests / Abiturprüfungen 固定分区和三列课程卡；只有 AP 分区显示学科筛选，无考试家族总筛选或模式切换。窄屏时搜索框换行全宽 |
 | TC-003 | 同上 | 上传不支持格式或超过 50 页的支持文件 | 不支持格式在校验时阻止；支持文件沿用每文件最多处理前 50 页的规则，处理反馈在文件流程中展示；首页上传卡仍只显示格式，不外露页数限制 |
-| TC-004 | 同上 | 创建计划 | 必填校验；只有创建成功后首页才切到 active；标题变为 `Stay on Track for Your Best Score`，副标题变为 `Personalized exam prep, all the way to test day.`；计划出现在 Exam Library |
+| TC-004 | 同上 | 创建计划 | 必填校验；只有创建成功后首页才切到 active；标题变为 `Stay on Track for Your Best Score`，副标题变为 `Personalized exam prep, all the way to test day`；计划出现在 Exam Library |
 | TC-005 | 用户已有课程进度 | 进入首页 | 显示 active 标题与副标题；Exam Library 出现课程进度卡和最近活动；课程目录卡尺寸不变 |
 | TC-006 | 课程库 | 搜索 `ACT`，再筛选 AP | 组合条件正确；无结果时显示 Empty State 和 Clear search |
 | TC-007 | 课程库只剩 2 张结果 | 调整筛选 | 单卡宽度仍为三列宽度，不拉伸占满 |

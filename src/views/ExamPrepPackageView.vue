@@ -54,7 +54,7 @@ const FIRST_ENTRY_HOME_SUBTITLE =
   "Identify high-yield topics and predict likely exam questions";
 const ACTIVE_HOME_TITLE = "Stay on Track for Your Best Score";
 const ACTIVE_HOME_SUBTITLE =
-  "Personalized exam prep, all the way to test day.";
+  "Personalized exam prep, all the way to test day";
 type DiagnosticTestState = AssessmentState;
 type PracticeTestState = AssessmentState;
 type ReviewFilter = "ALL" | "INCORRECT" | "CORRECT" | "OMITTED";
