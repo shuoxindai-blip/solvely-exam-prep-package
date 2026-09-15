@@ -283,13 +283,16 @@ function activityCta(activity: LastActivity) {
 }
 function activityProgressLabel(activity: LastActivity) {
   return activity.kind === "learning"
-    ? `${activity.progressPercent}% Complete`
-    : `${activity.answered} of ${activity.total} Answered`;
+    ? `${activity.progressPercent}% complete`
+    : activity.answered > 0
+      ? `${activity.answered} of ${activity.total} answered`
+      : "Ready to begin";
 }
 function activityContextLabel(activity: LastActivity) {
-  const activityType =
-    activity.kind === "learning" ? activity.resourceLabel : activity.moduleLabel;
-  return `${activity.sectionTitle} · ${activityType}`;
+  if (activity.kind === "exam") return activity.moduleLabel;
+  const activityType = activity.resourceLabel;
+  const sectionTitle = activity.sectionTitle.trim();
+  return sectionTitle ? `${sectionTitle} · ${activityType}` : activityType;
 }
 const practiceResultReport = computed(() => resultExam.value
   ? (isAbiturPackage.value ? buildAbiturReport(resultExam.value) : isApPackage.value ? buildApReport(resultExam.value) : isActPackage.value ? buildActReport(resultExam.value) : buildSatReport(resultExam.value))
@@ -1790,9 +1793,9 @@ function recordExamActivity(kind: ResultSource, answered = 0) {
     kind: "exam",
     examFamily: examFamily.value,
     examTitle: packageTitle.value,
-    sectionTitle: kind === "diagnostic" ? "Diagnostic Test" : "Full-Length Practice Test",
+    sectionTitle: "",
     itemTitle: answered > 0 ? `Question ${answered} of ${total}` : "Ready to begin",
-    moduleLabel: kind === "diagnostic" ? "Diagnostic" : "Practice Test",
+    moduleLabel: kind === "diagnostic" ? "Diagnostic test" : "Full-length practice test",
     answered,
     total,
     examId: 1,
@@ -3380,7 +3383,6 @@ onBeforeUnmount(() => {
                 <div class="predictor-library-details">
                   <span><svg class="icon" aria-hidden="true"><use href="#i-target" /></svg>{{ activityProgressLabel(activity) }}</span>
                   <span><svg class="icon" aria-hidden="true"><use href="#i-history" /></svg>{{ activityContextLabel(activity) }}</span>
-                  <small>{{ activity.itemTitle }}</small>
                 </div>
               </button>
               <button
