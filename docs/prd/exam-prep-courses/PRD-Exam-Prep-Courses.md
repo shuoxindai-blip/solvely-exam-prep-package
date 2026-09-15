@@ -1,9 +1,9 @@
 # Exam Prep & Courses 完整产品需求文档（PRD）
 
-> 文档版本：v1.13
-> 基准日期：2026-09-14
+> 文档版本：v1.14
+> 基准日期：2026-09-15
 > 产品范围：Exam Prep 首页、Standardized test prep courses、课程学习工具、SAT/ACT/AP/Abitur 模考、成绩报告与商业化门槛
-> Demo 基准：`ChatGPT Site · 2026-09-10 published build`
+> Demo 基准：`ChatGPT Site · v40 · 2026-09-15 published build`
 > 文档状态：评审稿
 
 ## 1. 关键问题同步与变更记录
@@ -216,12 +216,12 @@ Exam Prep & Courses
 
 | 项目 | 说明 | 图示 |
 |---|---|---|
-| 页面头部 | 当用户没有成功创建过 Custom Plan，且没有开始过任何 Prep Course 学习资源或考试时，不展示全页营销主标题。内容区首个标题左对齐展示 **Create adaptive prep plan**，副标题为 `Turn your study materials into a personalized prep plan including must know topics and realistic mock exams.`；标题与下方 Standardized test prep courses 使用一致的模块层级。 | ![VIS-01 首次进入](./images/VIS-01-home-first-entry-custom-plan.png) |
+| 页面头部 | 当用户没有成功创建过 Custom Plan，且没有开始过任何 Prep Course 学习资源或考试时，不展示全页营销主标题。内容区首个标题左对齐展示 **Create your personalized prep plan**，副标题为 `Identify high-yield topics and predict likely exam questions`；标题与下方 Standardized test prep courses 使用一致的模块层级。 | ![VIS-01 首次进入](./images/VIS-01-home-first-entry-custom-plan.png) |
 | 页面结构 | Custom Plan 上传区与 Standardized test prep courses 同屏纵向展示，不再使用顶部 `Custom Plan / Prep Courses` 切换 Tab，也不展示 `SAT, ACT and AP Prep` 气泡。滚动页面即可浏览课程。 | ![VIS-02 首次进入课程区](./images/VIS-02-home-first-entry-prep-courses.png) |
 | Custom Plan 上传 | 整个虚线区域都可点击、键盘触发或拖拽上传；上传框内不重复标题或副标题，以居中的生成流程插图为主体。格式提示 `PDF, Word, PPT, TXT, or images` 与 CTA `Upload materials` 位于流程图下方居中，且与插图同处一个连续上传面，不再使用独立浅蓝插图底框。不在入口外露页数限制；文件校验时仍按每个文件最多处理 50 页。 | ![VIS-01 上传入口](./images/VIS-01-home-first-entry-custom-plan.png) |
 | 上传交互与反馈 | Hover 整个虚线框时，边框与背景呈品牌蓝高亮，鼠标显示可点击；键盘聚焦显示焦点环，Enter/Space 与点击 Upload materials 执行同一上传动作，每次只打开一次文件选择器。拖入文件进入同一校验流程；取消选择不创建计划或进度。选择文件后先进入“已上传文件”中间状态，不直接打开创建弹窗。 | 见 VIS-01 |
 | 已上传文件状态 | 虚线入口替换为同宽文件面板。顶部显示 `Files uploaded: {fileCount}/10`；每个文件卡显示文件图标、完整文件名、格式化大小和 Remove；`Add more files` 继续使用同一选择器并最多累计 10 个；右下角 `Continue` 仅在至少 1 个有效文件时可用。Remove 最后一个文件后恢复空上传入口。文件状态本身不创建计划或进度。 | ![VIS-97 已上传文件](./images/VIS-97-uploaded-materials.png) |
-| 插图与空间层级 | 桌面端同一虚线框内居中展示代码绘制流程图：Notes、Lecture slides、Past exams → Solvely Logo / Build your prep → FOCUSED / Priority topics、REALISTIC / Mock exams；格式提示与 CTA 紧随其下。插图不表示已生成真实结果，不提供独立操作，也不再使用内嵌卡片底色。上传区约 238px 高，与课程区约 38px 间距；`Create adaptive prep plan` 与课程区标题均约 24px。窄屏自适应缩放并纵向保留操作区，文字完整换行，不裁切或省略；最小文字 12px。 | 见 VIS-01 |
+| 插图与空间层级 | 桌面端同一虚线框内居中展示代码绘制流程图：Notes、Lecture slides、Past exams → Solvely Logo / Build your prep → FOCUSED / Priority topics、REALISTIC / Mock exams；格式提示与 CTA 紧随其下。插图不表示已生成真实结果，不提供独立操作，也不再使用内嵌卡片底色。上传区约 238px 高，与课程区约 38px 间距；`Create your personalized prep plan` 与课程区标题均约 24px。窄屏自适应缩放并纵向保留操作区，文字完整换行，不裁切或省略；最小文字 12px。 | 见 VIS-01 |
 | 示例计划 | 不展示原 3 张 Sample 卡；上传区结束后直接展示 Standardized test prep courses。 | ![VIS-02 课程区](./images/VIS-02-home-first-entry-prep-courses.png) |
 | 创建计划弹窗 | 用户在已上传文件状态点击 `Continue` 后打开。标题 `Sharpen your prediction`；必填 `School Name`（Placeholder：`e.g. University of Georgia`）、必填 `Course Code & Name`（Placeholder：`e.g. BIOL 101 - Principles of Biology`）、必填 `Exam Type`（Midterm Exam / Final Exam / Quiz / Others，单选，默认 Midterm Exam）、可选 `Exam Date`。主 CTA 为 `Create Prep Plan`；X/Escape 关闭并保留本次已上传文件，未提交不生成计划或首页进度。已有计划的 Edit 入口继续使用 Edit prep plan / Save changes。 | ![VIS-03 创建计划](./images/VIS-03-create-prep-plan-dialog.png) |
 
@@ -238,13 +238,13 @@ Exam Prep & Courses
 
 | 项目 | 说明 | 图示 |
 |---|---|---|
-| 标题与搜索 | 标题：`Standardized test prep courses`；说明：`Every course includes a free diagnostic assessment, score analysis, study resources, a full-length mock test, and targeted practice.`；不展示 Total。搜索 Placeholder：`Search by test name`。 | ![VIS-02 课程库](./images/VIS-02-home-first-entry-prep-courses.png) |
-| 分类筛选 | All courses、SAT、ACT、AP、Abitur，以横向胶囊按钮展示，默认 All courses。桌面端分类在左、搜索框在右；窄屏自适应排列。点击分类只过滤当前页课程，保留搜索词；搜索和分类组合生效，结果按课程配置顺序展示，不切换页面或创建进度。 | ![VIS-02 搜索与筛选](./images/VIS-02-home-first-entry-prep-courses.png) |
+| 标题与搜索 | 标题：`Standardized test prep courses`；说明：`Free diagnostic, full-length mock test, and targeted practice`；不展示 Total。桌面端标题/副标题位于左侧，搜索框与标题区同一行并靠右，Placeholder 为 `Search by test name`；窄屏时搜索框换到下一行并占满内容宽度。 | ![VIS-02 课程库](./images/VIS-02-home-first-entry-prep-courses.png) |
+| 搜索与 AP 学科筛选 | 不提供 All courses / SAT / ACT / AP / Abitur 考试家族总筛选。搜索按课程名称实时匹配并作用于全部分区；AP 分区单独提供 All subjects、Social Studies、Math、Language、Science、Business、Engineering、Arts，搜索与 AP 学科筛选按 AND 生效，不切换页面或创建进度。 | ![VIS-02 搜索与筛选](./images/VIS-02-home-first-entry-prep-courses.png) |
 | 课程分组 | 筛选与搜索之后，非空结果按 `College admission tests`（SAT、ACT）、`Advanced Placement® tests`（全部 AP）、`Abiturprüfungen`（德国 Abitur）分组展示；空分组隐藏。分组标题仅建立信息层级，不改变课程卡片顺序、尺寸、入口权限或进度状态。 | ![VIS-02 课程库](./images/VIS-02-home-first-entry-prep-courses.png) |
 | 卡片网格 | 桌面端一行固定三张；卡片尺寸和间距与首页 Demo 一致。只有两张结果时，仍保持三列中单卡宽度，不拉伸。 | ![VIS-04 三列课程](./images/VIS-04-home-active-exam-library.png) |
 | 卡片信息 | 卡片整体为一个视觉区块，只展示课程名与一行副标题 `{videoLessonCount} video lessons · {practiceQuestionCount} questions`；所有数量以课程当前发布配置为准。卡片不展示 CTA、Total、`score insights` 或上下分区。 | ![VIS-02 课程卡片](./images/VIS-02-home-first-entry-prep-courses.png) |
 | 卡片入口与权限 | `course_ready=true` 的课程卡可点击，Free 与 Pro 进入相同课程页，入口不得出现 Pro 标识或 Paywall；当前 Demo 为 SAT、ACT、AP Calculus BC、Abitur Mathematik。没有内容数据的卡片 disabled、使用 `Course unavailable: {course}` 无障碍名称且不跳独立占位页。只打开可用课程不创建进度；进入后仅在触发 M-03/M-05/M-06/M-07 的受限动作时校验会员。 | ![VIS-72 课程入口](./images/VIS-72-course-search-and-coming-soon.png) |
-| 空结果 | 搜索无匹配课程时展示明确 Empty State、保留搜索框和分类筛选，并提供 Clear search。 | ![VIS-73 搜索无结果](./images/VIS-73-course-search-empty.png) |
+| 空结果 | 全局搜索无匹配课程时展示 `No matching courses. Try another exam name.`；AP 学科在当前搜索条件下无结果时展示 `No AP courses match this subject.`。保留搜索框和 AP 学科筛选，不展示旧版 Clear search CTA。 | ![VIS-73 搜索无结果](./images/VIS-73-course-search-empty.png) |
 
 ### 4.5 统一课程页面与学习内容
 
@@ -734,7 +734,7 @@ type Question = {
 | 德国高考 | 7 | 177 | 5,310 | 6,514 | 11,824 | 7 份逐学科 mock CSV；7 份 Study Guide/Flashcard CSV；1 份 Quiz master；1 份视频 manifest |
 | 合计 | 52 | 1,704 | 51,120 | 52,550 | 103,670 | 课程总数仅用于内部完整性校验，首页仍不展示“52 Total” |
 
-> AP 的 43 条课程记录包含 **AP Networking (Pilot)**。当前物料盘点只有 42 份逐课程 mock CSV，Networking Pilot 缺独立 Full-Length；这与首页“Every course includes … a full-length mock test”承诺冲突。生产全量发布前必须补齐并通过 QA，否则 AP Networking (Pilot) 不得进入可见生产目录，同时课程总数及文案需按实际发布数更新。`course_ready`、`diagnostic_ready` 与 `full_length_ready` 仍必须分别配置，不得伪造 Ready。
+> AP 的 43 条课程记录包含 **AP Networking (Pilot)**。当前物料盘点只有 42 份逐课程 mock CSV，Networking Pilot 缺独立 Full-Length。首页课程副标题包含 Full-length mock test，因此生产全量发布前必须补齐并通过 QA；否则 AP Networking (Pilot) 不得进入可点击的生产目录。`course_ready`、`diagnostic_ready` 与 `full_length_ready` 仍必须分别配置，不得伪造 Ready。
 
 | 复用等级 | 内容 | Web 要求 |
 |---|---|---|
@@ -760,7 +760,7 @@ type Question = {
 
 | 场景 | 需求 |
 |---|---|
-| 首页课程加载失败 | 保留标题、上传入口、分类筛选和搜索，展示 Retry；不把错误当成 0 门课程。 |
+| 首页课程加载失败 | 保留标题、上传入口、搜索框和 AP 学科筛选，展示 Retry；不把错误当成 0 门课程。 |
 | 上传失败 | 显示文件名、失败原因、Retry/Remove；其他已成功文件不丢失。 |
 | 不支持的文件 | 在上传前拦截并说明支持格式；超过 50 页说明只处理前 50 页。 |
 | Course/Topic 不存在 | 展示 Course unavailable，并提供 Back to courses；不进入空白页。 |
@@ -981,8 +981,8 @@ Course→Writing 的跨产品转化复用 Writing Tools 已有埋点协议；在
 | Key | English | Context |
 |---|---|---|
 | `ep.nav` | Exam Prep & Courses | 侧边栏 |
-| `ep.hero.first_entry.title` | Create adaptive prep plan | 没有 Custom Plan 且没有课程活动时的首个模块标题 |
-| `ep.hero.first_entry.subtitle` | Turn your study materials into a personalized prep plan including must know topics and realistic mock exams. | 首个模块标题下的说明文案 |
+| `ep.hero.first_entry.title` | Create your personalized prep plan | 没有 Custom Plan 且没有课程活动时的首个模块标题 |
+| `ep.hero.first_entry.subtitle` | Identify high-yield topics and predict likely exam questions | 首个模块标题下的说明文案 |
 | `ep.hero.active.title` | Stay on Track for Your Best Score | 已成功创建计划或已开始课程后的首页标题 |
 | `ep.hero.active.subtitle` | Personalized exam prep, all the way to test day. | 已成功创建计划或已开始课程后的首页副标题 |
 | `ep.upload.formats` | PDF, Word, PPT, TXT, or images | 上传格式提示 |
@@ -1007,8 +1007,8 @@ Course→Writing 的跨产品转化复用 Writing Tools 已有埋点协议；在
 | `ep.library.title` | Exam Library | 已有进度首页 |
 | `ep.plan.new` | New Prep Plan | 首页 CTA |
 | `ep.courses.title` | Standardized test prep courses | 课程区标题 |
-| `ep.courses.description` | Every course includes a free diagnostic assessment, score analysis, study resources, a full-length mock test, and targeted practice. | 课程区说明 |
-| `ep.courses.search` | Search by test name | Search placeholder |
+| `ep.courses.description` | Free diagnostic, full-length mock test, and targeted practice | 首次进入与已有进度首页共享的课程区说明 |
+| `ep.courses.search` | Search by test name | 桌面端课程标题行右侧搜索框；窄屏换行全宽 |
 | `ep.course.open` | Open course | 所有课程；仅用于可访问名称，不在卡片上展示 CTA |
 | `ep.course.continue` | Continue learning | 有进度课程 |
 | `ep.course.meta` | {videoLessonCount} video lessons · {practiceQuestionCount} questions | 课程卡唯一副标题 |
@@ -1063,8 +1063,8 @@ Course→Writing 的跨产品转化复用 Writing Tools 已有埋点协议；在
 
 | ID | 前置条件 | 操作 | 预期结果 |
 |---|---|---|---|
-| TC-001 | 新用户，无计划/课程进度 | 进入 Exam Prep & Courses | 首个模块左对齐显示 `Create adaptive prep plan` 及指定副标题；上传区和课程库同屏纵向展示；上传框内不重复标题，插图居中且 CTA 位于其下；无顶部模式 Tab、3 张示例或 Exam Library |
-| TC-002 | 同上 | 页面向下滚动 | 直接看到课程标题、说明、搜索、筛选与三列课程卡；无模式切换步骤 |
+| TC-001 | 新用户，无计划/课程进度 | 进入 Exam Prep & Courses | 首个模块左对齐显示 `Create your personalized prep plan` 与 `Identify high-yield topics and predict likely exam questions`；上传区和课程库同屏纵向展示；上传框内不重复标题，插图居中且 CTA 位于其下；课程标题行右侧展示搜索框；无顶部模式 Tab、3 张示例或 Exam Library |
+| TC-002 | 同上 | 页面向下滚动 | 直接看到 `Standardized test prep courses` 标题与说明、标题行右侧的 `Search by test name`、College admission tests / Advanced Placement® tests / Abiturprüfungen 固定分区和三列课程卡；只有 AP 分区显示学科筛选，无考试家族总筛选或模式切换。窄屏时搜索框换行全宽 |
 | TC-003 | 同上 | 上传不支持格式或超过 50 页的支持文件 | 不支持格式在校验时阻止；支持文件沿用每文件最多处理前 50 页的规则，处理反馈在文件流程中展示；首页上传卡仍只显示格式，不外露页数限制 |
 | TC-004 | 同上 | 创建计划 | 必填校验；只有创建成功后首页才切到 active；标题变为 `Stay on Track for Your Best Score`，副标题变为 `Personalized exam prep, all the way to test day.`；计划出现在 Exam Library |
 | TC-005 | 用户已有课程进度 | 进入首页 | 显示 active 标题与副标题；Exam Library 出现课程进度卡和最近活动；课程目录卡尺寸不变 |
@@ -1104,7 +1104,7 @@ Course→Writing 的跨产品转化复用 Writing Tools 已有埋点协议；在
 | TC-111 | 内容服务加载当前发布 manifest | 读取课程目录 | 返回 52 条内部课程记录（SAT 1、ACT 1、AP 43、Abitur 7）；首页不展示“52 Total” |
 | TC-112 | 同一物料已在 iOS 和 Web 发布 | 对比 `course_id/topic_id/question_id/content_version/checksum` | ID 与版本一致；Web 只重做呈现和交互，不产生重复内容记录 |
 | TC-113 | 附件文件名题量与 manifest 不一致 | 导入 SAT/ACT Quiz CSV | 不从文件名取数；按显式 schema 去重统计并产生差异告警，卡片读取发布 manifest 数字 |
-| TC-114 | AP Networking (Pilot) 的 Full-Length 物料未通过发布校验 | 生成生产 Catalog | 不得把 `full_length_ready` 伪造为 true，不得将该课程放入对用户可见的“Every course includes a full-length mock test”目录；补齐并通过 QA 后才可和其他 AP 课程使用同一课程页上线 |
+| TC-114 | AP Networking (Pilot) 的 Full-Length 物料未通过发布校验 | 生成生产 Catalog | 不得把 `full_length_ready` 伪造为 true，卡片不得变为可点击状态；补齐并通过 QA 后才可和其他 AP 课程使用同一课程页上线 |
 | TC-115 | Study Guide/Flashcards 来自同一合并 CSV | 分别打开两个工具并切换 Topic | 各工具只读自身字段；无重复渲染、无跨 Topic 串用、无缺失内容被错误标记完成 |
 | TC-116 | 视频/封面/音频 URL 过期或 MIME 错误 | 打开对应 Lesson | 对应工具显示 unavailable + Retry；其余课程内容可用；发布监控产生 asset_invalid 告警 |
 | TC-117 | AP questions/answers PDF 未授权发布 | 检查生产 API 与页面资源 | 不返回、不展示附件；只有 `license_status=approved` 且 `publishable=true` 后才可发布 |
