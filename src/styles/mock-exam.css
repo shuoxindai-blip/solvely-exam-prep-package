@@ -451,10 +451,139 @@ button:focus-visible,
   display: block;
   width: min(100%, 560px);
   height: auto;
-  margin: 0 auto 26px;
+  margin: 0 auto;
   border: 1px solid #e0e2e5;
   border-radius: 8px;
   background: #fff;
+}
+
+.act-stimulus-gallery {
+  display: grid;
+  gap: 20px;
+  margin-top: 28px;
+}
+
+.writing-workspace {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1.08fr) minmax(420px, .92fr);
+  min-height: 0;
+  overflow: hidden;
+  background: #fff;
+}
+
+.writing-prompt-panel,
+.writing-response-panel {
+  min-width: 0;
+  overflow: auto;
+  padding: 42px clamp(30px, 4vw, 64px) 88px;
+}
+
+.writing-prompt-panel {
+  border-right: 1px solid #dedede;
+  color: #202329;
+  font: 400 17px/1.7 Georgia, 'Times New Roman', serif;
+}
+
+.writing-prompt-heading {
+  margin-bottom: 24px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid #dedede;
+}
+
+.writing-prompt-heading span {
+  color: #69707b;
+  font: 700 12px/1.2 Arial, Helvetica, sans-serif;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+}
+
+.writing-prompt-heading h1 {
+  margin: 7px 0 0;
+  font: 700 30px/1.2 Arial, Helvetica, sans-serif;
+  letter-spacing: -.025em;
+}
+
+.writing-issue,
+.writing-perspective-intro,
+.writing-task p,
+.writing-perspectives p { margin: 0; }
+.writing-perspective-intro { margin-top: 22px; }
+
+.writing-perspectives {
+  margin-top: 18px;
+  border-bottom: 1px solid #dedede;
+}
+
+.writing-perspectives article {
+  padding: 17px 0;
+  border-top: 1px solid #dedede;
+}
+
+.writing-perspectives h2,
+.writing-task h2 {
+  margin: 0 0 9px;
+  font: 700 15px/1.35 Arial, Helvetica, sans-serif;
+}
+
+.writing-perspectives p { font-size: 14px; line-height: 1.55; }
+
+.writing-task {
+  margin-top: 24px;
+  padding: 22px 0 0;
+  border-top: 1px solid #dedede;
+}
+
+.writing-response-panel {
+  background: #fff;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.writing-response-panel > label {
+  display: block;
+  margin: 28px 0 10px;
+  color: #202329;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.writing-response-panel textarea {
+  display: block;
+  width: 100%;
+  min-height: 480px;
+  padding: 18px;
+  resize: vertical;
+  border: 1px solid #cfd6df;
+  border-radius: 12px;
+  background: #fff;
+  color: #202329;
+  font: 400 16px/1.65 Georgia, 'Times New Roman', serif;
+}
+
+.writing-response-panel textarea:focus {
+  border-color: var(--solvely-brand);
+  outline: 3px solid rgba(var(--solvely-brand-rgb), .14);
+}
+
+.writing-response-meta {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 9px;
+  color: #737985;
+  font-size: 12px;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
 }
 
 .stimulus-visual-error {
@@ -2356,6 +2485,18 @@ body.mock-exam-route.mock-exam-dark {
 .exam-app.dark-mode .act-passage-heading { border-color: var(--exam-border); }
 .exam-app.dark-mode .act-passage-heading span { color: var(--exam-muted-foreground); }
 .exam-app.dark-mode .act-stimulus-image { border-color: var(--exam-border); background: #171717; }
+.exam-app.dark-mode .writing-workspace,
+.exam-app.dark-mode .writing-prompt-panel,
+.exam-app.dark-mode .writing-response-panel { background: var(--exam-background); color: var(--exam-foreground); }
+.exam-app.dark-mode .writing-prompt-panel { border-color: var(--exam-border); }
+.exam-app.dark-mode .writing-prompt-heading { border-color: var(--exam-border); }
+.exam-app.dark-mode .writing-prompt-heading span,
+.exam-app.dark-mode .writing-response-meta { color: var(--exam-muted-foreground); }
+.exam-app.dark-mode .writing-perspectives,
+.exam-app.dark-mode .writing-perspectives article,
+.exam-app.dark-mode .writing-task { border-color: var(--exam-border); }
+.exam-app.dark-mode .writing-response-panel > label { color: var(--exam-foreground); }
+.exam-app.dark-mode .writing-response-panel textarea { border-color: var(--exam-border); background: var(--exam-card); color: var(--exam-foreground); }
 .exam-app.dark-mode .stimulus-visual-error { border-color: #6f3434; background: #2e1b1b; color: #ffb7b7; }
 .exam-app.dark-mode .line-reader-overlay { box-shadow: 0 -1000px 0 1000px rgba(13, 13, 13, .72), 0 1000px 0 1000px rgba(13, 13, 13, .72); }
 
@@ -2742,6 +2883,16 @@ body.mock-exam-route.mock-exam-dark {
   background: #fff;
 }
 
+.math-stimulus-gallery {
+  display: grid;
+  gap: 24px;
+  margin: 6px 0 30px;
+}
+
+.math-stimulus-gallery .math-stimulus-image {
+  margin: 0 auto;
+}
+
 .circle-diagram {
   width: min(650px, 100%);
   margin: 45px auto 80px;
@@ -2777,6 +2928,14 @@ body.mock-exam-route.mock-exam-dark {
 
 .math-choices .choice-copy {
   font-size: 20px;
+}
+
+@media (max-width: 980px) {
+  .writing-workspace { grid-template-columns: 1fr; overflow: auto; }
+  .writing-prompt-panel,
+  .writing-response-panel { overflow: visible; }
+  .writing-prompt-panel { border-right: 0; border-bottom: 1px solid #dedede; }
+  .writing-perspectives { grid-template-columns: 1fr; }
 }
 
 .complete-page {

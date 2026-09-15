@@ -64,7 +64,9 @@ for (const [source, questionId, assetUrl] of requiredVisualBindings) {
 }
 
 assert(
-  count(rendererSource, /<img\s+v-if="currentQuestion\.pictureUrl/g) >= 2,
+  rendererSource.includes('class="act-stimulus-gallery"') &&
+    rendererSource.includes('class="math-stimulus-gallery"') &&
+    count(rendererSource, /v-for="\(picture, pictureIndex\) in currentQuestion\.pictureUrls"/g) >= 2,
   "Mock exam must render source visuals in both passage and math layouts.",
 );
 

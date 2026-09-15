@@ -420,21 +420,22 @@ const actScorePathways = computed(() => {
         value: summary?.score ?? null,
         maximumScore: summary?.maximumScore ?? 36,
         muted: summary?.status === "NOT_AVAILABLE",
-        note: id === "STEM" ? "Math + Science" : "Requires optional Writing",
+        note: id === "STEM" ? "Math + Science" : summary?.status === "AVAILABLE" ? "English + Reading + Writing" : "Requires optional Writing",
         tooltip:
           id === "STEM"
             ? (summary?.formula ?? "(Mathematics + Science) ÷ 2, rounded") +
               ". ACT reports the score when Mathematics and Science are both included."
-            : (summary?.formula ?? "(English + Reading + Writing) ÷ 3, rounded") +
-              ". This test does not include the optional Writing section.",
+            : summary?.formula ?? "Writing is required for this Solvely ELA readiness indicator.",
       },
     };
   };
   return [
     buildPathway("STEM", ["mathematics", "science"], []),
-    buildPathway("ELA", ["english", "reading"], [
-      { id: "writing", label: "Writing", optional: true },
-    ]),
+    buildPathway(
+      "ELA",
+      ["english", "reading", "writing"],
+      sectionById.has("writing") ? [] : [{ id: "writing", label: "Writing", optional: true }],
+    ),
   ];
 });
 const practiceTestQuestionCount = computed(
@@ -452,7 +453,7 @@ const practiceTestDurationMinutes = computed(() => {
   const sectionIds = new Set(
     (resultExam.value?.questions ?? []).map((question) => question.sectionId),
   );
-  return isAbiturPackage.value ? 300 : isApPackage.value ? 195 : isActPackage.value ? 165 : (
+  return isAbiturPackage.value ? 300 : isApPackage.value ? 195 : isActPackage.value ? 205 : (
     (sectionIds.has("reading-writing") ? 78 : 0) +
     (sectionIds.has("math") ? 86 : 0)
   );
@@ -685,7 +686,8 @@ const practiceTestCard = computed(() => {
   const questionCount = practiceTestQuestionCount.value;
   const moduleCount = practiceTestModuleCount.value;
   const durationMinutes = practiceTestDurationMinutes.value;
-  const assessmentItemLabel = isAbiturPackage.value ? "tasks" : "questions";
+  const assessmentItemLabel = isAbiturPackage.value ? "tasks" : isActPackage.value ? "questions + essay" : "questions";
+  const assessmentItemValue = isActPackage.value ? "171 + 1" : String(questionCount);
   const structureLabel = isAbiturPackage.value ? "parts" : isActPackage.value || isApPackage.value ? "sections" : "modules";
   const answeredCount = report ? report.correct + report.incorrect : 0;
   const savedAnsweredCount = Math.min(14, questionCount);
@@ -699,9 +701,9 @@ const practiceTestCard = computed(() => {
     return {
       stateLabel: "",
       description:
-        `Take a realistic full-length ${isAbiturPackage.value ? "Abitur Mathematik eA" : isApPackage.value ? "AP Calculus BC" : isActPackage.value ? "ACT with Science" : "Digital SAT"} with official timing and ${isAbiturPackage.value ? "task" : "section"} structure.`,
+        `Take a realistic full-length ${isAbiturPackage.value ? "Abitur Mathematik eA" : isApPackage.value ? "AP Calculus BC" : isActPackage.value ? "ACT with Science and Writing" : "Digital SAT"} with official timing and ${isAbiturPackage.value ? "task" : "section"} structure.`,
       metrics: [
-        { value: String(questionCount), label: assessmentItemLabel },
+        { value: assessmentItemValue, label: assessmentItemLabel },
         { value: String(durationMinutes), label: "min" },
         { value: String(moduleCount), label: structureLabel },
       ],
@@ -747,7 +749,7 @@ const practiceTestCard = computed(() => {
       ] : isActPackage.value ? [
         { value: String(report?.totalScore ?? 25), label: "composite" },
         { value: String(report?.sections.find((section) => section.sectionId === "science")?.score ?? 25), label: "Science" },
-        { value: "4", label: "sections" },
+        { value: String(report?.sections.find((section) => section.sectionId === "writing")?.score ?? 9), label: "Writing /12" },
       ] : [
         { value: String(report?.totalScore ?? 1280), label: "total score" },
         { value: String(readingWritingScore), label: "Reading & Writing" },
@@ -767,7 +769,7 @@ const practiceTestCard = computed(() => {
     description:
       `Resume your saved attempt from ${isAbiturPackage.value ? "Prüfungsteil A" : isApPackage.value ? "Multiple Choice" : isActPackage.value ? "English, Section 1" : "Reading and Writing, Module 1"}. Your answers are saved automatically.`,
     metrics: [
-      { value: String(questionCount), label: assessmentItemLabel },
+      { value: assessmentItemValue, label: assessmentItemLabel },
       { value: String(durationMinutes), label: "min" },
       { value: String(moduleCount), label: structureLabel },
     ],
@@ -4681,7 +4683,7 @@ onBeforeUnmount(() => {
                   </header>
                   <div class="knowledge-section-grid">
                     <article
-                      v-for="section in resultReport.sections"
+                      v-for="section in resultReport.sections.filter((section) => section.sectionId !== 'writing')"
                       :key="`domain-${section.sectionId}`"
                       class="knowledge-section-card"
                     >
@@ -4815,7 +4817,7 @@ onBeforeUnmount(() => {
                     </header>
                     <div class="report-confidence-grid">
                       <section
-                        v-for="section in resultReport.sections"
+                        v-for="section in resultReport.sections.filter((section) => section.sectionId !== 'writing')"
                         :key="`confidence-${section.sectionId}`"
                         class="report-confidence-column"
                       >
