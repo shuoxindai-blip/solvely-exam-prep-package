@@ -51,7 +51,7 @@ type ApSubject =
 
 const FIRST_ENTRY_HOME_TITLE = "Create your personalized prep plan";
 const FIRST_ENTRY_HOME_SUBTITLE =
-  "Upload your study materials to identify priority topics and generate realistic mock exams.";
+  "Identify high-yield topics and predict likely exam questions";
 const ACTIVE_HOME_TITLE = "Stay on Track for Your Best Score";
 const ACTIVE_HOME_SUBTITLE =
   "Personalized exam prep, all the way to test day.";
