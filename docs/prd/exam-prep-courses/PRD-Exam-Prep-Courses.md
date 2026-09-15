@@ -230,9 +230,64 @@ Exam Prep & Courses
 | 项目 | 说明 | 图示 |
 |---|---|---|
 | 页面头部 | 当用户成功创建至少一个 Custom Plan，或实际开始任一 Prep Course 的 Study Guide、Flashcards、Quiz、Lesson、Diagnostic 或 Full-Length Test 后，标题切换为 **Stay on Track for Your Best Score**；副标题切换为 **Personalized exam prep, all the way to test day**。标题桌面端 36px、700 字重，在 ≤820px / ≤560px 时分别为 34px / 28px；副标题桌面端 15px。右上角展示 `+ New Prep Plan`。仅浏览、搜索、打开课程或取消弹窗不得触发此状态。 | ![VIS-04 已有进度首页](./images/VIS-04-home-active-exam-library.png) |
-| Exam Library | 同时展示用户创建的计划和已经学习的 Prep Course。课程卡显示 `IN PROGRESS`，并固定为两行有效信息：第一行只显示当前工具进度，例如 `24 of 120 answered` 或 `62% complete`；第二行显示工具上下文。Study Guide、Flashcards、Quiz 等学习工具有 Section 时显示 `{Section} · {Tool}`，例如 `Advanced Math · Study Guide`，没有 Section 时只显示 Tool；`Full-length practice test` 和 `Free diagnostic` 一律不显示 Section，第二行只显示工具名。不得再追加第三行或出现重复工具名称。计划卡显示 READY/IN PROGRESS 与考试日期。 | ![VIS-04 Exam Library](./images/VIS-04-home-active-exam-library.png) |
-| 继续学习 | 点击课程进度卡，进入上次学习的课程/Topic/工具；点击计划卡进入计划详情。Course 一旦有进度，就必须同步出现在 Exam Library。 | ![VIS-04 继续学习](./images/VIS-04-home-active-exam-library.png) |
+| Exam Library | 同时展示用户创建的计划和已经学习的 Prep Course。课程卡显示 `IN PROGRESS`，并固定为两行有效信息：第一行只显示最近工具的真实进度或状态；第二行只显示工具上下文。完整文案组合见 4.4.2.1。不得追加第三行、重复工具名称或展示不存在的进度。计划卡显示 READY/IN PROGRESS 与考试日期。 | ![VIS-04 Exam Library](./images/VIS-04-home-active-exam-library.png) |
+| 继续学习 | 点击课程进度卡，必须恢复该课程最近一次可继续的 Topic、工具、题号/卡片位置或考试状态；点击计划卡进入计划详情。Course 一旦有真实进度，就必须同步出现在 Exam Library。 | ![VIS-04 继续学习](./images/VIS-04-home-active-exam-library.png) |
 | 侧边栏 | 支持折叠/展开；折叠不改变主内容层级和三列卡片尺寸。 | ![VIS-78 侧边栏折叠](./images/VIS-78-home-sidebar-collapsed.png) |
+
+##### 4.4.2.1 已有进度 Prep Course 卡片文案矩阵
+
+**固定结构**
+
+| 位置 | 文案/数据源 | 规则 |
+|---|---|---|
+| 状态标签 | `IN PROGRESS` | 所有已进入 Exam Library 的 Prep Course 统一使用课程级状态；不得因最近一次测试已出分而改成 READY 或 RESULTS。 |
+| 课程标题 | `{courseName}` | 使用当前课程目录中的完整名称与年份，例如 `SAT Prep 2026`。 |
+| 第一行 | 最近工具的进度或状态 | 只回答“进行到哪里”，不得重复工具名或 Section。 |
+| 第二行 | `{sectionName} · {toolName}` 或 `{toolName}` | 只回答“正在使用什么”。只有学习工具且存在有意义的 Section 时才显示 Section；Diagnostic 与 Full-Length 永远只显示工具名。 |
+| 点击区域 | 整张卡 | 不展示额外 CTA。点击后恢复最近活动；卡片本身是唯一入口。 |
+
+**学习工具组合**
+
+| 最近工具 | Section 条件 | 第一行完整文案 | 第二行完整文案 | 点击后恢复 |
+|---|---|---|---|---|
+| Study Guide | 有 Section | `{progressPercent}% complete` | `{sectionName} · Study Guide` | 同一 Topic、Study Guide 与最近阅读位置；内嵌 Video Lesson 和 Quick Practice 均仍记为 Study Guide。 |
+| Study Guide | 无有效 Section | `{progressPercent}% complete` | `Study Guide` | 同上；不得为了填满第二行重复课程名。 |
+| Flashcards | 有 Section | `{reviewedCardCount} of {totalCardCount} reviewed` | `{sectionName} · Flashcards` | 同一 Topic、牌组与最近卡片。 |
+| Flashcards | 无有效 Section | `{reviewedCardCount} of {totalCardCount} reviewed` | `Flashcards` | 同上。 |
+| Quiz | 有 Section | `{answeredCount} of {totalQuestionCount} answered` | `{sectionName} · Quiz` | 同一 Topic Quiz 与最近题号；已答但尚未提交时仍使用 answered 文案。 |
+| Quiz | 无有效 Section | `{answeredCount} of {totalQuestionCount} answered` | `Quiz` | 同上。 |
+| Targeted Practice | 有 Section | `{answeredCount} of {totalQuestionCount} answered` | `{sectionName} · Targeted Practice` | 同一报告来源、Topic、练习及最近题号；进入前按 M-05/M-07 实时校验权限。 |
+| Targeted Practice | 无有效 Section | `{answeredCount} of {totalQuestionCount} answered` | `Targeted Practice` | 同上。 |
+
+学习工具进度边界：`progressPercent` 取 1–100 的整数；Flashcards/Quiz/Targeted Practice 的分子取 0–分母。只有用户真正打开工具或创建了可恢复练习后才生成课程卡，因此不得用 `0% complete` 代替未开始状态。完成学习工具后可以显示 `100% complete` 或 `{total} of {total} reviewed/answered`，但仍保留 `IN PROGRESS`，因为它表示整门课程已有进度而不是当前工具未完成。
+
+**考试状态组合**
+
+| 最近工具 | Attempt 状态 | 第一行完整文案 | 第二行完整文案 | 点击后去向 |
+|---|---|---|---|---|
+| Diagnostic test | 已创建、尚未作答 | `Ready to begin` | `Diagnostic test` | 进入同一 attempt 的第 1 题。 |
+| Diagnostic test | 已作答、尚未提交 | `{answeredCount} of {totalQuestionCount} answered` | `Diagnostic test` | 回到同一 attempt 的最近保存位置。 |
+| Diagnostic test | 已提交、评分中 | `Scoring` | `Diagnostic test` | 回到 Course Content 的 Diagnostic 卡片；不得创建第二个评分任务。 |
+| Diagnostic test | 结果已生成 | `Results ready` | `Diagnostic test` | 打开 Performance & Insights，并定位 Diagnostic 报告。 |
+| Full-length practice test | 已创建、尚未作答 | `Ready to begin` | `Full-length practice test` | Pro 用户进入同一 attempt 的第 1 题。 |
+| Full-length practice test | 已作答、尚未提交 | `{answeredCount} of {totalQuestionCount} answered` | `Full-length practice test` | Pro 用户回到同一 attempt 的最近保存位置。 |
+| Full-length practice test | 已提交、评分中 | `Scoring` | `Full-length practice test` | 回到 Course Content 的 Full-Length 卡片；不得创建第二个评分任务。 |
+| Full-length practice test | 结果已生成 | `Results ready` | `Full-length practice test` | 打开 Performance & Insights，并定位 Full-Length 报告。 |
+
+考试卡片规则：
+
+- `answeredCount = totalQuestionCount` 但用户尚未提交时，第一行仍为 `{totalQuestionCount} of {totalQuestionCount} answered`；只有提交成功并进入评分任务后才能显示 `Scoring`，只有报告真正生成后才能显示 `Results ready`。
+- Diagnostic 与 Full-Length 的第二行永远不拼接 Section、Module、题号或 `Practice test`，即使最近一道题属于某个 Section；禁止出现 `Full-length practice test · Practice test` 等重复文案。
+- Free 用户不能创建或推进 Full-Length attempt；因此从未获得 Pro 权限且无历史 attempt 时，不可能出现 Full-Length 进度卡。会员到期后保留已有进度和结果，卡片文案不变；点击时再按 M-06/M-07 校验并打开 Paywall。
+- Diagnostic 免费；其 `Ready to begin`、进行中、`Scoring` 与 `Results ready` 卡片对 Free/Pro 使用相同文案。
+
+**最近活动与排除规则**
+
+- 每个 `course_id` 只显示一张课程卡，以最新一次可恢复的学习/考试活动决定两行文案；不同课程不得按 `exam_family` 合并或串用进度。
+- Section 为空、仅重复课程名或只是课程级容器时，视为“无有效 Section”，第二行只显示工具名。SAT/ACT/AP/Abitur 使用同一规则。
+- 浏览课程目录/报告、搜索或筛选、打开 Paywall、Ask Solvely、Question Review、Similar Questions Mini Quiz，以及只 Hover/展开 Topic 都不替换最近活动。
+- 不单列 `Video Lesson`：它是 Study Guide 内部内容；不单列 Question Review 或 Mini Quiz：它们属于报告内浏览/轻练习，不改变 Exam Library 的恢复入口。
+- 卡片的 Free/Pro 文案不分叉；权限差异只发生在点击后的 M-05、M-06、M-07 校验，避免同一进度出现两套状态文本。
 
 #### 4.4.3 Standardized test prep courses
 
@@ -785,7 +840,7 @@ type Question = {
 | Custom Plan 文件上传 | 首次进入首页顶部上传区 | 点击整个虚线区、键盘触发、拖拽或点击 CTA 选择文件；校验后切换为 `Files uploaded: {fileCount}/10` 文件清单，可 Remove、Add more files；选到文件不自动开弹窗，也不创建计划或进度 | 复用 Picker/Drag/Remove 旧事件；服务端终态报 `web_ep_plan_upload_result`，客户端校验失败报 `web_ep_plan_file_validation_result` |
 | Custom Plan 创建与编辑 | 已上传文件状态点击 `Continue`，或已有进度首页点击 `New Prep Plan` | 创建表单使用 School Name、Course Code & Name、Exam Type、可选 Exam Date；CTA `Create Prep Plan`。提交成功进入 Plan Detail；关闭/失败保留文件与已填内容且不生成进度。已有计划 Edit 使用原编辑字段与 Save changes | `web_ep_plan_create_view`、`web_ep_plan_create_submit`、`web_ep_plan_create_result` 由 `request_id` 关联；`entry_point=upload/new_plan/existing_plan`；失败不生成计划或首页进度 |
 | Exam Library | 至少有一个真实计划或已开始课程 | 点击计划卡进入 Plan Detail；点击课程卡恢复最近 Topic/工具；返回后保留首页滚动位置 | 计划复用 `Web_EP_Exam_Click`，课程报 `web_ep_course_open(entry_point=exam_library)` |
-| 课程库搜索与筛选 | 首次进入上传区下方，或有进度首页课程区 | 输入搜索词、切换 AP 学科；Free/Pro 点击任一已就绪课程都进入对应课程页，未就绪卡片不可点击，空结果可 Clear search | `web_ep_course_catalog_view`、`web_ep_course_search`、`web_ep_ap_subject_filter`、`web_ep_course_open`；课程入口不做会员校验，readiness 或加载失败不得伪装成 Paywall |
+| 课程库搜索与筛选 | 首次进入上传区下方，或有进度首页课程区 | 输入搜索词、切换 AP 学科；Free/Pro 点击任一已就绪课程都进入对应课程页，未就绪卡片不可点击；空结果保留当前搜索框和 AP 学科筛选，不提供额外 Clear search CTA | `web_ep_course_catalog_view`、`web_ep_course_search`、`web_ep_ap_subject_filter`、`web_ep_course_open`；课程入口不做会员校验，readiness 或加载失败不得伪装成 Paywall |
 | 课程首页与主 Tab | 进入任一已就绪课程 | Course Content/Performance & Insights 切换；只打开课程不写进度，打开学习资源或开始考试后才写 In progress | `web_ep_course_view` 记录课程到达；`web_ep_performance_insights_view` 仅在 Performance & Insights 首屏成功显示后记录；不存在或未就绪课程时停留/返回课程库，不得用 Paywall 代替内容错误 |
 | Lessons 与 Topic 工具 | Course Content 的 Lessons 区 | 按 Section（仅 SAT/ACT）和 Priority 筛选，展开分组；Hover/Focus Topic 后打开 Study Guide、Flashcards 或 Quiz | 工具实际打开时报 `web_ep_topic_tool_open`；筛选和折叠不单独埋点，空组显示明确空态 |
 | Study Guide | Topic 工具入口 | 播放视频、阅读内容、完成 Quick Practice；提交后原位显示结果，可 Try Another 或 Next Topic | 答案保存报 `web_ep_topic_answer_submit`；内容失败只重试当前区域 |
@@ -1019,6 +1074,19 @@ Course→Writing 的跨产品转化复用 Writing Tools 已有埋点协议；在
 | `ep.course.open` | Open course | 所有课程；仅用于可访问名称，不在卡片上展示 CTA |
 | `ep.course.continue` | Continue learning | 有进度课程 |
 | `ep.course.meta` | {videoLessonCount} video lessons · {practiceQuestionCount} questions | 课程卡唯一副标题 |
+| `ep.library.course.status` | IN PROGRESS | Exam Library 中已有进度的 Prep Course 状态标签 |
+| `ep.library.progress.percent` | {progressPercent}% complete | Study Guide 进度 |
+| `ep.library.progress.reviewed` | {reviewedCardCount} of {totalCardCount} reviewed | Flashcards 进度 |
+| `ep.library.progress.answered` | {answeredCount} of {totalQuestionCount} answered | Quiz、Targeted Practice、未提交考试进度 |
+| `ep.library.progress.ready` | Ready to begin | 已创建但尚未作答的考试 attempt |
+| `ep.library.progress.scoring` | Scoring | 考试已提交、报告未生成 |
+| `ep.library.progress.results` | Results ready | 报告已生成 |
+| `ep.library.tool.study_guide` | Study Guide | 学习工具；有 Section 时拼为 `{sectionName} · Study Guide` |
+| `ep.library.tool.flashcards` | Flashcards | 学习工具；有 Section 时拼接 Section |
+| `ep.library.tool.quiz` | Quiz | 学习工具；有 Section 时拼接 Section |
+| `ep.library.tool.targeted` | Targeted Practice | 报告练习；有 Section 时拼接 Section |
+| `ep.library.tool.diagnostic` | Diagnostic test | Diagnostic 所有状态；永远不拼 Section |
+| `ep.library.tool.full_length` | Full-length practice test | Full-Length 所有状态；永远不拼 Section |
 
 ### 8.2 学习、考试与报告
 
@@ -1160,7 +1228,7 @@ Solvely Pro 商业化弹窗的套餐、续费、退费与法务文案直接复�
 | TC-003 | 同上 | 上传不支持格式或超过 50 页的支持文件 | 不支持格式在校验时阻止；支持文件沿用每文件最多处理前 50 页的规则，处理反馈在文件流程中展示；首页上传卡仍只显示格式，不外露页数限制 |
 | TC-004 | 同上 | 创建计划 | 必填校验；只有创建成功后首页才切到 active；标题变为 `Stay on Track for Your Best Score`，副标题变为 `Personalized exam prep, all the way to test day`；计划出现在 Exam Library |
 | TC-005 | 用户已有课程进度 | 进入首页 | 显示 active 标题与副标题；Exam Library 出现课程进度卡和最近活动；课程目录卡尺寸不变 |
-| TC-006 | 课程库 | 搜索 `ACT`，再筛选 AP | 组合条件正确；无结果时显示 Empty State 和 Clear search |
+| TC-006 | 课程库 | 搜索 `ACT`，再切换 AP 学科筛选 | 搜索作用于全部分区，AP 学科筛选只作用于 AP 分区；两者按 AND 生效；无结果时显示对应 Empty State，保留当前搜索框和筛选项，不展示旧版 Clear search CTA |
 | TC-007 | 课程库只剩 2 张结果 | 调整筛选 | 单卡宽度仍为三列宽度，不拉伸占满 |
 | TC-008 | Free 用户，任一 SAT/ACT/AP/Abitur 课程卡 | 点击或键盘操作 | 进入所选课程页；不弹 Paywall；成功到达后触发 `web_ep_course_open(access_tier=free)`；只打开课程不创建进度 |
 | TC-009 | 新用户，无任何真实数据 | 仅打开课程后返回首页 | 首页仍为首次进入；不出现 Exam Library 或虚假进度 |
@@ -1176,6 +1244,12 @@ Solvely Pro 商业化弹窗的套餐、续费、退费与法务文案直接复�
 | TC-019 | 首次进入，选择 1–10 个有效文件 | 完成 Picker/Drag，删除一个文件，再 Add more files | 不自动打开弹窗；显示准确 `Files uploaded: {fileCount}/10`、文件名与大小；删除和追加后计数同步，删除最后一个文件恢复空上传入口；全程不生成 Exam Library 进度 |
 | TC-020 | 至少 1 个有效文件 | 点击 Continue；依次切换四个 Exam Type；关闭后再次 Continue | 弹窗显示 Sharpen your prediction、两个必填文本字段、必填 Exam Type、可选 Exam Date、Create Prep Plan；Exam Type 单选；关闭后文件仍在；校验失败不创建计划，成功后才进入 active 首页 |
 | TC-021 | 课程目录含尚未接入数据的课程 | 分别点击/键盘操作已就绪与未就绪卡片 | SAT、ACT、AP Calculus BC、Abitur Mathematik 可进入且 Free 不弹 Paywall；其余卡片 disabled，不跳转、不生成 placeholder 页面或进度 |
+| TC-022 | Study Guide、Flashcards、Quiz、Targeted Practice 分别有真实进度 | 检查有/无有效 Section 的课程卡并点击 | 标签统一为 IN PROGRESS；第一行分别按 4.4.2.1 展示 percent/reviewed/answered；第二行有 Section 时为 `{sectionName} · {toolName}`，无 Section 时只显示工具名；点击恢复对应 Topic、工具与保存位置 |
+| TC-023 | Diagnostic attempt 分别处于已创建未作答、已作答未提交、评分中、结果已生成 | 检查课程卡并点击 | 第一行依次为 Ready to begin、`{answeredCount} of {totalQuestionCount} answered`、Scoring、Results ready；第二行始终只显示 Diagnostic test；点击分别进入 attempt、Course Content 评分态或 Diagnostic 报告 |
+| TC-024 | Full-Length attempt 分别处于已创建未作答、已作答未提交、评分中、结果已生成 | 以 Pro 与会员到期用户检查课程卡并点击 | 第一行依次符合 4.4.2.1；第二行始终只显示 Full-length practice test；Pro 恢复对应状态，会员到期用户保留相同卡片文案但点击后按 M-06/M-07 拦截；从未有 Pro attempt 的 Free 用户不生成该进度卡 |
+| TC-025 | 最近一道考试题带 Section/Module；最近一次工具名与容器名相同 | 检查课程卡 | 考试第二行不展示 Section/Module/题号；不得出现 `Full-length practice test · Practice test`、重复课程名、额外第三行或可见 CTA |
+| TC-026 | Quiz/考试已答完全部题但尚未提交；随后提交并评分完成 | 依次返回首页 | 未提交时仍显示 `{total} of {total} answered`；提交成功后显示 Scoring；报告真实生成后才显示 Results ready，不得提前跳状态 |
+| TC-027 | 已有一张课程进度卡 | 依次浏览报告、搜索课程、打开 Paywall、使用 Ask Solvely、Question Review 与 Mini Quiz | 上述动作均不替换最近活动；返回首页仍显示原两行文案和原恢复去向 |
 
 ### 9.2 课程、学习工具与商业化
 
