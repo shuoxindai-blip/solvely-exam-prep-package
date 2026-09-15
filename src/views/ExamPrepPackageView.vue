@@ -453,8 +453,8 @@ const practiceTestDurationMinutes = computed(() => {
     (resultExam.value?.questions ?? []).map((question) => question.sectionId),
   );
   return isAbiturPackage.value ? 300 : isApPackage.value ? 195 : isActPackage.value ? 165 : (
-    (sectionIds.has("reading-writing") ? 64 : 0) +
-    (sectionIds.has("math") ? 70 : 0)
+    (sectionIds.has("reading-writing") ? 78 : 0) +
+    (sectionIds.has("math") ? 86 : 0)
   );
 });
 const assessmentStateLabels: Record<AssessmentState, string> = {

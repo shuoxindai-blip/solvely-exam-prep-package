@@ -285,6 +285,7 @@ export type EpExamQuestion = EpQuestion & {
   isScored: boolean
   maximumRawPoints: number
   responseType: 'MULTIPLE_CHOICE' | 'STUDENT_PRODUCED_RESPONSE'
+  optionPictureUrls?: Record<string, string>
   stimulusMaterial?: unknown | null
   attachments?: unknown[]
   scoreDetail?: Record<string, unknown> | null

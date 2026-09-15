@@ -8,7 +8,7 @@ const props = withDefaults(defineProps<{
   text: '',
 })
 
-const explicitMathPattern = /(\$\$[\s\S]+?\$\$|\\\[[\s\S]+?\\\]|\$[^$\n]+?\$|\\\([\s\S]+?\\\))/g
+const explicitMathPattern = /(\$\$[\s\S]+?\$\$|\\\[[\s\S]+?\\\]|(?<!\\)\$[^$\n]+?(?<!\\)\$|\\\([\s\S]+?\\\))/g
 
 function escapeHtml(value: string) {
   return value
@@ -17,6 +17,10 @@ function escapeHtml(value: string) {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#039;')
+}
+
+function escapePlainText(value: string) {
+  return escapeHtml(value).replace(/\\\$/g, '$')
 }
 
 function normalizeLegacyMath(value: string) {
@@ -71,7 +75,7 @@ function renderDelimitedText(value: string) {
 
   for (const match of value.matchAll(explicitMathPattern)) {
     const index = match.index ?? 0
-    output += escapeHtml(value.slice(cursor, index)).replace(/\n/g, '<br>')
+    output += escapePlainText(value.slice(cursor, index)).replace(/\n/g, '<br>')
 
     const token = match[0]
     const displayMode = token.startsWith('$$') || token.startsWith(String.raw`\[`)
@@ -85,7 +89,7 @@ function renderDelimitedText(value: string) {
     cursor = index + token.length
   }
 
-  output += escapeHtml(value.slice(cursor)).replace(/\n/g, '<br>')
+  output += escapePlainText(value.slice(cursor)).replace(/\n/g, '<br>')
   return output
 }
 

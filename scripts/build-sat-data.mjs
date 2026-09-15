@@ -654,11 +654,14 @@ await writeFile(resolve(root, 'public/data/ep-v2/epExams/index.json'), JSON.stri
     epId: exam.epId,
     outlineId: exam.outlineId,
     packageId: exam.packageId,
-    totalCount: exam.totalCount,
+    totalCount: index === 0 ? 120 : exam.totalCount,
     path: `/data/ep-v2/epExams/${index + 1}.json`,
   })),
 }))
 for (const [index, exam] of epExams.entries()) {
+  // Practice Test 10 is imported from the official user-supplied PDFs by
+  // scripts/import-sat-practice-test-10.py and must not be overwritten here.
+  if (index === 0) continue
   await writeFile(resolve(root, `public/data/ep-v2/epExams/${index + 1}.json`), JSON.stringify(exam))
 }
 await writeFile(resolve(root, 'public/data/ep-v2/storage-contract.json'), JSON.stringify({

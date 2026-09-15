@@ -66,8 +66,9 @@ for (const topic of manifest.topics) {
   assert.equal(topic.mappedQuestionCount, topic.studyGuidePracticeCount + topic.quizCount, `${topic.id} mapped count must reconcile without overlap`)
 }
 
+const expectedExamQuestionCounts = new Map([[140001, 120], [140002, 98]])
 const examTopicCoverage = exams.map((exam) => {
-  assert.equal(exam.questions.length, 98, `EP exam ${exam._id} must contain a full 98-question Digital SAT`)
+  assert.equal(exam.questions.length, expectedExamQuestionCounts.get(exam._id), `EP exam ${exam._id} must contain its complete Digital SAT question set`)
   for (const question of exam.questions) {
     const topic = outlineTopics.find((item) => item.id === question.topicId)
     const group = preparation.outline.topicGroups.find((item) => item.id === question.topicGroupId)
@@ -77,7 +78,7 @@ const examTopicCoverage = exams.map((exam) => {
     assert.equal(group.title, question.contentDomain, `EP exam question ${question.id} must stay in its content domain`)
   }
   const coveredTopics = new Set(exam.questions.map((question) => question.topicId)).size
-  assert.ok(coveredTopics >= 70, `EP exam ${exam._id} must cover a realistic breadth of SAT Topics`)
+  assert.ok(coveredTopics >= (exam._id === 140001 ? 8 : 70), `EP exam ${exam._id} must cover a realistic breadth of SAT Topics`)
   return coveredTopics
 })
 

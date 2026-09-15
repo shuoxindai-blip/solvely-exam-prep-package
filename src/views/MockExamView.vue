@@ -8,6 +8,7 @@ import PdfReferenceSheet from '../components/PdfReferenceSheet.vue'
 import ScientificCalculator from '../components/ScientificCalculator.vue'
 import { loadEpExam } from '../data/satData'
 import { buildSatDiagnosticExam, SAT_DIAGNOSTIC_QUESTIONS_PER_SECTION } from '../data/satDiagnostic'
+import { getSatPracticeTest10ScoreRange } from '../data/satPracticeTest10Scoring'
 import { loadActEpExam } from '../data/actData'
 import { buildActDiagnosticExam, ACT_DIAGNOSTIC_SECTION_COUNTS } from '../data/actDiagnostic'
 import { loadApEpExam } from '../data/apData'
@@ -53,6 +54,7 @@ type Question = {
   pictureUrl?: string
   options: string[]
   optionLabels: string[]
+  optionPictureUrls: string[]
   correctIndex: number
   answer: string
   explanation: string
@@ -66,6 +68,7 @@ type SourceQuestion = {
   question: string
   options: string[]
   optionLabels: string[]
+  optionPictureUrls: string[]
   correctIndex: number
   answer: string
   explanation: string
@@ -89,6 +92,12 @@ type SourceQuestion = {
 type SourceExam = { id: string; title: string; questions: SourceQuestion[] }
 
 const fullLengthModules: ModuleDefinition[] = [
+  { id: 'reading-1', sectionNumber: 1, moduleNumber: 1, section: 'reading', title: 'Reading and Writing', total: 33, duration: 39 * 60 },
+  { id: 'reading-2', sectionNumber: 1, moduleNumber: 2, section: 'reading', title: 'Reading and Writing', total: 33, duration: 39 * 60 },
+  { id: 'math-1', sectionNumber: 2, moduleNumber: 1, section: 'math', title: 'Math', total: 27, duration: 43 * 60 },
+  { id: 'math-2', sectionNumber: 2, moduleNumber: 2, section: 'math', title: 'Math', total: 27, duration: 43 * 60 },
+]
+const legacySatFullLengthModules: ModuleDefinition[] = [
   { id: 'reading-1', sectionNumber: 1, moduleNumber: 1, section: 'reading', title: 'Reading and Writing', total: 27, duration: 32 * 60 },
   { id: 'reading-2', sectionNumber: 1, moduleNumber: 2, section: 'reading', title: 'Reading and Writing', total: 27, duration: 32 * 60 },
   { id: 'math-1', sectionNumber: 2, moduleNumber: 1, section: 'math', title: 'Math', total: 22, duration: 35 * 60 },
@@ -136,14 +145,14 @@ const isAbiturExam = computed(() => examSlug.value === 'abitur-mathematik')
 const examName = computed(() => isAbiturExam.value ? 'Abitur Mathematik' : isApExam.value ? 'AP Calculus BC' : isActExam.value ? 'ACT' : 'SAT')
 const packageHash = computed(() => isAbiturExam.value ? '#course-3' : isApExam.value ? '#course-2' : isActExam.value ? '#course-1' : '#course-0')
 const examQuery = computed(() => isAbiturExam.value ? { exam: 'abitur-mathematik' } : isApExam.value ? { exam: 'ap-calculus-bc' } : isActExam.value ? { exam: 'act' } : {})
+const examId = computed(() => String(route.params.examId) === '2' ? 2 : 1)
 const modules = computed(() => isAbiturExam.value
   ? (isDiagnostic.value ? abiturMathematikDiagnosticModules : abiturMathematikModules)
   : isApExam.value
   ? (isDiagnostic.value ? apCalculusBcDiagnosticModules : apCalculusBcModules)
   : isActExam.value
   ? (isDiagnostic.value ? actDiagnosticModules : actFullLengthModules)
-  : (isDiagnostic.value ? diagnosticModules : fullLengthModules))
-const examId = computed(() => String(route.params.examId) === '2' ? 2 : 1)
+  : (isDiagnostic.value ? diagnosticModules : examId.value === 1 ? fullLengthModules : legacySatFullLengthModules))
 const activeEpExam = ref<EpExam | null>(null)
 const examLoadError = ref('')
 
@@ -153,7 +162,7 @@ function adaptEpExam(exam: EpExam, index: number, diagnostic = false): SourceExa
     id: String(exam._id),
     title: diagnostic
       ? `Free ${examName.value} Diagnostic Test`
-      : isAbiturExam.value ? 'Abitur Mathematik eA Full-Length Practice Test' : isApExam.value ? 'AP Calculus BC Full-Length Practice Test' : isActExam.value ? 'ACT Full-Length Practice Test' : `Digital SAT Full-Length Practice Test ${index + 1}`,
+      : isAbiturExam.value ? 'Abitur Mathematik eA Full-Length Practice Test' : isApExam.value ? 'AP Calculus BC Full-Length Practice Test' : isActExam.value ? 'ACT Full-Length Practice Test' : index === 0 ? 'Digital SAT Practice Test 10' : `Digital SAT Full-Length Practice Test ${index + 1}`,
     questions: exam.questions.map((question) => {
       const module = question.module === 'Module 2' ? 'M2' : 'M1'
       const moduleKey = `${question.sectionTitle}:${module}`
@@ -164,6 +173,7 @@ function adaptEpExam(exam: EpExam, index: number, diagnostic = false): SourceExa
         question: question.stem,
         options: optionEntries.map(([, option]) => option),
         optionLabels: optionEntries.map(([letter]) => letter),
+        optionPictureUrls: optionEntries.map(([letter]) => question.optionPictureUrls?.[letter] ?? ''),
         correctIndex: optionEntries.findIndex(([letter]) => letter === question.correctAnswer),
         answer: question.correctAnswer,
         explanation: question.explanation,
@@ -218,7 +228,7 @@ function sourceQuestionFor(module: ModuleDefinition, number: number) {
 }
 
 function displayQuestion(source: SourceQuestion | undefined): Question {
-  if (!source) return { prompt: 'Question unavailable', passage: '', referenceHighlights: [], options: [], optionLabels: [], correctIndex: -1, answer: '', explanation: '', difficulty: '', domain: '' }
+  if (!source) return { prompt: 'Question unavailable', passage: '', referenceHighlights: [], options: [], optionLabels: [], optionPictureUrls: [], correctIndex: -1, answer: '', explanation: '', difficulty: '', domain: '' }
   if (isActExam.value) {
     const parsedPassage = parseActPassage(source.stimulusMaterial?.body ?? '', source.question)
     return {
@@ -233,10 +243,20 @@ function displayQuestion(source: SourceQuestion | undefined): Question {
     }
   }
   if (source.section === 'Reading and Writing') {
-    const markers = ['Which choice', 'According to', 'Based on the', 'What is the']
+    const markers = ['Which choice', 'Which completion', 'Which quotation', 'Which finding', 'According to', 'Based on the', 'What is the', 'How would']
     const splitAt = Math.max(...markers.map((marker) => source.question.lastIndexOf(marker)))
     if (splitAt > 20) {
-      return { ...source, passage: source.question.slice(0, splitAt).trim(), referenceHighlights: [], prompt: source.question.slice(splitAt).trim(), graph: false, diagram: false }
+      return {
+        ...source,
+        passage: source.question.slice(0, splitAt).trim(),
+        referenceHighlights: [],
+        pictureUrl: source.stimulusMaterial?.pictureUrl,
+        passageTitle: source.stimulusMaterial?.title,
+        passageType: source.stimulusMaterial?.type,
+        prompt: source.question.slice(splitAt).trim(),
+        graph: false,
+        diagram: false,
+      }
     }
   }
   return {
@@ -371,7 +391,8 @@ function isCorrectFor(module: ModuleDefinition, number: number) {
   const source = sourceQuestionFor(module, number)
   if (!source) return false
   if (source.options.length) return answers[key] === source.correctIndex
-  return normalize(responses[key]) === normalize(source.answer)
+  const acceptedAnswers = source.answer.split(';').map(normalize).filter(Boolean)
+  return acceptedAnswers.includes(normalize(responses[key]))
 }
 
 function topicFor(module: ModuleDefinition, number: number) {
@@ -423,6 +444,9 @@ const subjectStats = computed(() =>
     const incorrect = stats.reduce((sum, module) => sum + module.incorrect, 0)
     const attempted = correct + incorrect
     const seconds = stats.reduce((sum, module) => sum + module.averageSeconds * module.attempted, 0)
+    const satScoreRange = !isDiagnostic.value && examId.value === 1 && !isAbiturExam.value && !isApExam.value && !isActExam.value
+      ? getSatPracticeTest10ScoreRange(section === 'math' ? 'math' : 'reading', correct)
+      : null
     return {
       section,
       label: sectionName(section),
@@ -439,7 +463,10 @@ const subjectStats = computed(() =>
         ? Math.max(1, Math.min(5, Math.round(1 + (correct / Math.max(1, total)) * 4)))
         : isActExam.value
         ? Math.max(1, Math.min(36, Math.round(1 + (correct / Math.max(1, total)) * 35)))
+        : satScoreRange
+        ? Math.round((satScoreRange.lower + satScoreRange.upper) / 20) * 10
         : 200 + Math.round(((correct / Math.max(1, total)) * 600) / 10) * 10,
+      scoreRange: satScoreRange,
     }
   }),
 )
@@ -449,6 +476,7 @@ const totalStats = computed(() => {
   const correct = moduleStats.value.reduce((sum, module) => sum + module.correct, 0)
   const incorrect = moduleStats.value.reduce((sum, module) => sum + module.incorrect, 0)
   const attempted = correct + incorrect
+  const satRanges = subjectStats.value.map((subject) => subject.scoreRange).filter((range): range is { lower: number; upper: number } => Boolean(range))
   return {
     total,
     correct,
@@ -462,6 +490,12 @@ const totalStats = computed(() => {
       : isActExam.value
       ? Math.round(subjectStats.value.filter((subject) => ['english', 'math', 'reading'].includes(subject.section)).reduce((sum, subject) => sum + subject.score, 0) / 3)
       : subjectStats.value.reduce((sum, subject) => sum + subject.score, 0),
+    scoreRange: satRanges.length === 2
+      ? {
+          lower: satRanges.reduce((sum, range) => sum + range.lower, 0),
+          upper: satRanges.reduce((sum, range) => sum + range.upper, 0),
+        }
+      : null,
   }
 })
 
@@ -998,14 +1032,14 @@ onBeforeUnmount(() => {
 
       <section class="report-disclaimer">
         <div class="report-brand-mark" aria-hidden="true">S</div>
-        <div><h2>Practice score disclaimer</h2><p>{{ isAbiturExam ? 'This practice test follows an IQB-aligned cross-state eA blueprint. Its 0–15 Notenpunkte result is an estimate and not an official state Abitur grade.' : isActExam ? 'This practice test follows the current ACT structure with Science. Its score is an estimate and is not an official ACT score.' : 'This practice test is calibrated to the current Digital SAT structure. Its score is an estimate and is not an official College Board score.' }}</p></div>
+        <div><h2>Practice score disclaimer</h2><p>{{ isAbiturExam ? 'This practice test follows an IQB-aligned cross-state eA blueprint. Its 0–15 Notenpunkte result is an estimate and not an official state Abitur grade.' : isActExam ? 'This practice test follows the current ACT structure with Science. Its score is an estimate and is not an official ACT score.' : examId === 1 && !isDiagnostic ? 'This result uses the College Board Practice Test 10 paper-version raw-score conversion table. Section and total scores are shown as ranges and are estimates, not official College Board scores.' : 'This practice test is calibrated to the current Digital SAT structure. Its score is an estimate and is not an official College Board score.' }}</p></div>
       </section>
 
       <section class="report-section" aria-labelledby="overview-title">
         <h2 id="overview-title" class="report-section-title"><span aria-hidden="true">◔</span>Overview</h2>
-        <div class="analysis-banner"><div><strong>Your complete analysis is ready.</strong><span>Every number below reflects this practice session.</span></div><span class="analysis-banner-badge">98 questions</span></div>
+        <div class="analysis-banner"><div><strong>Your complete analysis is ready.</strong><span>Every number below reflects this practice session.</span></div><span class="analysis-banner-badge">{{ totalStats.total }} questions</span></div>
         <div class="score-grid">
-          <div class="score-card total-score-card"><span>Estimated Total Score</span><strong>{{ totalStats.score }}</strong><small>400–1600</small><div class="subject-score-row"><div v-for="subject in subjectStats" :key="subject.section"><span>{{ subject.label }}</span><strong>{{ subject.score }}</strong><small>200–800</small></div></div></div>
+          <div class="score-card total-score-card"><span>Estimated Total Score</span><strong>{{ totalStats.scoreRange ? `${totalStats.scoreRange.lower}–${totalStats.scoreRange.upper}` : totalStats.score }}</strong><small>400–1600</small><div class="subject-score-row"><div v-for="subject in subjectStats" :key="subject.section"><span>{{ subject.label }}</span><strong>{{ subject.scoreRange ? `${subject.scoreRange.lower}–${subject.scoreRange.upper}` : subject.score }}</strong><small>200–800</small></div></div></div>
           <div class="score-card distribution-card"><div class="distribution-labels"><span>Practice range</span><strong>You</strong></div><svg viewBox="0 0 520 210" role="img" aria-label="Estimated score distribution"><defs><linearGradient id="curveFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#aeeaff" stop-opacity=".65" /><stop offset="1" stop-color="#effaff" stop-opacity=".18" /></linearGradient></defs><path d="M15 185C75 180 105 161 142 127C184 88 210 43 260 39C310 43 336 88 378 127C415 161 445 180 505 185V198H15Z" fill="url(#curveFill)" /><path d="M15 185C75 180 105 161 142 127C184 88 210 43 260 39C310 43 336 88 378 127C415 161 445 180 505 185" fill="none" stroke="#54c7f1" stroke-width="3" /><line x1="280" y1="28" x2="280" y2="194" stroke="#171717" stroke-width="2" stroke-dasharray="7 7" /><circle cx="280" cy="105" r="8" fill="#111" /></svg><p>Estimated score based on {{ totalStats.correct }} correct answers across all four modules.</p></div>
         </div>
         <div class="summary-stat-grid"><div><span>Correct</span><strong>{{ totalStats.correct }}<small>/{{ totalStats.total }}</small></strong></div><div><span>Wrong</span><strong>{{ totalStats.incorrect }}</strong></div><div><span>Accuracy</span><strong>{{ totalStats.accuracy }}%</strong></div><div><span>Unattempted</span><strong>{{ totalStats.unattempted }}</strong></div></div>
@@ -1103,7 +1137,7 @@ onBeforeUnmount(() => {
         <article ref="questionScroller" class="question-panel" aria-label="Answer choices"><div class="question-shell">
           <div class="question-toolbar"><span class="number-badge">{{ currentNumber }}</span><button class="review-button" :class="{ active: review.has(questionKey) }" type="button" @click="toggleReview"><svg viewBox="0 0 18 22" aria-hidden="true"><path d="M3 2.5h12v17l-6-4-6 4v-17Z" /></svg>Mark for Review</button><button class="elimination-mode-button" :class="{ active: eliminationMode }" type="button" :aria-pressed="eliminationMode" :aria-label="eliminationMode ? 'Hide answer elimination controls' : 'Show answer elimination controls'" @mouseenter="showToolTooltip($event, 'Cross out answer choices you think are wrong', 'above')" @mouseleave="hideToolTooltip" @focus="showToolTooltip($event, 'Cross out answer choices you think are wrong', 'above')" @blur="hideToolTooltip" @click="toggleEliminationMode"><span aria-hidden="true">{{ eliminationBadge }}</span></button></div>
           <h1><MathText :text="currentQuestion.prompt" /></h1>
-          <div class="choices" role="radiogroup" :aria-label="currentQuestion.prompt"><div v-for="(option, index) in currentQuestion.options" :key="`${questionKey}-${index}`" class="choice-row" :class="{ selected: answers[questionKey] === index, eliminated: eliminated[questionKey]?.has(index), 'elimination-mode': eliminationMode }"><button class="choice-card" type="button" role="radio" :aria-checked="answers[questionKey] === index" :disabled="failedStimulusVisuals.has(questionKey)" @click="selectAnswer(index)"><span class="choice-letter">{{ choiceLabel(index) }}</span><span class="choice-copy"><MathText :text="option" /></span></button><button v-if="eliminationMode" class="eliminate-button" type="button" :aria-label="`${eliminated[questionKey]?.has(index) ? 'Restore' : 'Cross out'} answer ${choiceLabel(index)}`" :aria-pressed="eliminated[questionKey]?.has(index) ?? false" :disabled="failedStimulusVisuals.has(questionKey)" @click="toggleEliminated(index)"><span>{{ choiceLabel(index) }}</span></button></div></div>
+          <div class="choices" role="radiogroup" :aria-label="currentQuestion.prompt"><div v-for="(option, index) in currentQuestion.options" :key="`${questionKey}-${index}`" class="choice-row" :class="{ selected: answers[questionKey] === index, eliminated: eliminated[questionKey]?.has(index), 'elimination-mode': eliminationMode }"><button class="choice-card" type="button" role="radio" :aria-checked="answers[questionKey] === index" :disabled="failedStimulusVisuals.has(questionKey)" @click="selectAnswer(index)"><span class="choice-letter">{{ choiceLabel(index) }}</span><span class="choice-copy"><img v-if="currentQuestion.optionPictureUrls[index]" class="choice-option-image" :src="currentQuestion.optionPictureUrls[index]" :alt="`Answer choice ${choiceLabel(index)}`" /><MathText v-else :text="option" /></span></button><button v-if="eliminationMode" class="eliminate-button" type="button" :aria-label="`${eliminated[questionKey]?.has(index) ? 'Restore' : 'Cross out'} answer ${choiceLabel(index)}`" :aria-pressed="eliminated[questionKey]?.has(index) ?? false" :disabled="failedStimulusVisuals.has(questionKey)" @click="toggleEliminated(index)"><span>{{ choiceLabel(index) }}</span></button></div></div>
           <p class="keyboard-tip">Tip:&nbsp; press <kbd v-for="index in currentQuestion.options.length" :key="`passage-shortcut-${index}`">{{ index }}</kbd> to pick an answer, then <kbd class="enter-key">Enter</kbd> to go to the next question</p>
         </div></article>
       </section>
@@ -1115,11 +1149,11 @@ onBeforeUnmount(() => {
         <article ref="questionScroller" class="math-question-panel" aria-label="Math question"><div class="math-question-shell" :class="{ 'diagram-question': currentQuestion.diagram }">
           <div class="question-toolbar"><span class="number-badge">{{ currentNumber }}</span><button class="review-button" :class="{ active: review.has(questionKey) }" type="button" @click="toggleReview"><svg viewBox="0 0 18 22" aria-hidden="true"><path d="M3 2.5h12v17l-6-4-6 4v-17Z" /></svg>Mark for Review</button><button class="elimination-mode-button" :class="{ active: eliminationMode }" type="button" :aria-pressed="eliminationMode" :aria-label="eliminationMode ? 'Hide answer elimination controls' : 'Show answer elimination controls'" @mouseenter="showToolTooltip($event, 'Cross out answer choices you think are wrong', 'above')" @mouseleave="hideToolTooltip" @focus="showToolTooltip($event, 'Cross out answer choices you think are wrong', 'above')" @blur="hideToolTooltip" @click="toggleEliminationMode"><span aria-hidden="true">{{ eliminationBadge }}</span></button></div>
           <img v-if="currentQuestion.pictureUrl && !failedStimulusVisuals.has(questionKey)" class="math-stimulus-image" :src="currentQuestion.pictureUrl" :alt="`${currentQuestion.passageTitle || currentModule.title} figure`" @load="markStimulusVisualLoaded" @error="markStimulusVisualFailed" />
-          <div v-if="currentQuestion.pictureUrl && failedStimulusVisuals.has(questionKey)" class="stimulus-visual-error" role="alert"><strong>Figure unavailable</strong><span>Reload the page before answering this question.</span></div>
+          <div v-if="(currentQuestion.pictureUrl || currentQuestion.optionPictureUrls.some(Boolean)) && failedStimulusVisuals.has(questionKey)" class="stimulus-visual-error" role="alert"><strong>Figure unavailable</strong><span>Reload the page before answering this question.</span></div>
           <figure v-if="currentQuestion.diagram" class="circle-diagram"><svg viewBox="0 0 620 560" role="img" aria-label="Circle with intersecting lines through O"><circle cx="310" cy="260" r="210" /><path d="M228 66 393 458M395 69 226 457" /><text x="201" y="67">S</text><text x="397" y="67">R</text><text x="198" y="489">P</text><text x="401" y="489">Q</text><text x="321" y="280">O</text></svg><figcaption>Note: Figure not drawn to scale.</figcaption></figure>
           <HighlightablePassage :key="questionKey" :text="currentQuestion.passage" :enabled="highlighterEnabled" :model-value="highlights[questionKey] ?? []" :reference-highlights="currentQuestion.referenceHighlights" extra-class="math-stem-copy" @update:model-value="updateHighlights" />
           <h1><MathText :text="currentQuestion.prompt" /></h1>
-          <div v-if="currentQuestion.options.length" class="choices math-choices" role="radiogroup" :aria-label="currentQuestion.prompt"><div v-for="(option, index) in currentQuestion.options" :key="`${questionKey}-${index}`" class="choice-row" :class="{ selected: answers[questionKey] === index, eliminated: eliminated[questionKey]?.has(index), 'elimination-mode': eliminationMode }"><button class="choice-card" type="button" role="radio" :aria-checked="answers[questionKey] === index" :disabled="failedStimulusVisuals.has(questionKey)" @click="selectAnswer(index)"><span class="choice-letter">{{ choiceLabel(index) }}</span><span class="choice-copy"><MathText :text="option" /></span></button><button v-if="eliminationMode" class="eliminate-button" type="button" :aria-label="`${eliminated[questionKey]?.has(index) ? 'Restore' : 'Cross out'} answer ${choiceLabel(index)}`" :aria-pressed="eliminated[questionKey]?.has(index) ?? false" :disabled="failedStimulusVisuals.has(questionKey)" @click="toggleEliminated(index)"><span>{{ choiceLabel(index) }}</span></button></div></div>
+          <div v-if="currentQuestion.options.length" class="choices math-choices" role="radiogroup" :aria-label="currentQuestion.prompt"><div v-for="(option, index) in currentQuestion.options" :key="`${questionKey}-${index}`" class="choice-row" :class="{ selected: answers[questionKey] === index, eliminated: eliminated[questionKey]?.has(index), 'elimination-mode': eliminationMode }"><button class="choice-card" type="button" role="radio" :aria-checked="answers[questionKey] === index" :disabled="failedStimulusVisuals.has(questionKey)" @click="selectAnswer(index)"><span class="choice-letter">{{ choiceLabel(index) }}</span><span class="choice-copy"><img v-if="currentQuestion.optionPictureUrls[index]" class="choice-option-image" :src="currentQuestion.optionPictureUrls[index]" :alt="`Answer choice ${choiceLabel(index)}`" @load="markStimulusVisualLoaded" @error="markStimulusVisualFailed" /><MathText v-else :text="option" /></span></button><button v-if="eliminationMode" class="eliminate-button" type="button" :aria-label="`${eliminated[questionKey]?.has(index) ? 'Restore' : 'Cross out'} answer ${choiceLabel(index)}`" :aria-pressed="eliminated[questionKey]?.has(index) ?? false" :disabled="failedStimulusVisuals.has(questionKey)" @click="toggleEliminated(index)"><span>{{ choiceLabel(index) }}</span></button></div></div>
           <div v-else class="student-response-field">
             <label :for="`response-${questionKey}`">{{ isAbiturExam ? 'Written response' : 'Student-produced response' }}</label>
             <textarea v-if="isAbiturExam" :id="`response-${questionKey}`" :value="responses[questionKey] || ''" :disabled="failedStimulusVisuals.has(questionKey)" rows="8" placeholder="Schreiben Sie Ihren Lösungsweg und Ihre Begründung…" @input="setResponse" />
