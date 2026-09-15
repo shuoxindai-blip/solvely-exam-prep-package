@@ -45,11 +45,6 @@ const requiredVisualBindings = [
   [satSource, "3f5a3602", "/assets/diagnostic/sat/system-graph.png"],
   [satSource, "85939da5", "/assets/diagnostic/sat/texting-table.png"],
   [actSource, "ACT76C-MATH-9", "/assets/diagnostic/act/parallel-lines.svg"],
-  ...[8, 9, 10, 11, 12, 13, 14].map((number) => [
-    actSource,
-    `ACT76C-SCI-${number}`,
-    "/assets/diagnostic/act/diet-cola-experiment.svg",
-  ]),
 ];
 
 for (const [source, questionId, assetUrl] of requiredVisualBindings) {
@@ -63,6 +58,23 @@ for (const [source, questionId, assetUrl] of requiredVisualBindings) {
   );
 }
 
+for (const assetUrl of [
+  "/assets/diagnostic/act/diet-cola-apparatus.png",
+  "/assets/diagnostic/act/diet-cola-table-1.png",
+  "/assets/diagnostic/act/diet-cola-table-2.png",
+]) {
+  assert(
+    actSource.includes(`"${assetUrl}"`),
+    `ACT science passage must retain its original-source visual ${assetUrl}.`,
+  );
+}
+for (const number of [8, 9, 10, 11, 12, 13, 14]) {
+  const questionStart = actSource.indexOf(`sourceQuestionId: "ACT76C-SCI-${number}"`);
+  const nextQuestionStart = actSource.indexOf("sourceQuestionId:", questionStart + 1);
+  const questionBlock = actSource.slice(questionStart, nextQuestionStart < 0 ? undefined : nextQuestionStart);
+  assert(questionBlock.includes("stimulusMaterial: scienceStimulus"), `ACT76C-SCI-${number} must use the shared source visuals.`);
+}
+
 assert(
   rendererSource.includes('class="act-stimulus-gallery"') &&
     rendererSource.includes('class="math-stimulus-gallery"') &&
@@ -74,7 +86,7 @@ const assetUrls = [...new Set(
   `${satSource}\n${actSource}`
     .match(/\/assets\/diagnostic\/[a-z0-9_./-]+\.(?:png|svg|webp|jpe?g)/gi) ?? [],
 )];
-assert(assetUrls.length === 4, `Expected 4 diagnostic visual assets, found ${assetUrls.length}.`);
+assert(assetUrls.length === 6, `Expected 6 diagnostic visual assets, found ${assetUrls.length}.`);
 await Promise.all(assetUrls.map((url) => access(resolve(projectRoot, "public", url.slice(1)))));
 
 const assetStats = await Promise.all(assetUrls.map(async (url) => ({
@@ -85,12 +97,13 @@ for (const asset of assetStats) {
   assert(asset.bytes >= 1_000, `${asset.url} is unexpectedly small and may be incomplete.`);
 }
 
-const scienceVisual = await readFile(
-  resolve(projectRoot, "public/assets/diagnostic/act/diet-cola-experiment.svg"),
-  "utf8",
-);
-for (const label of ["Figure 1", "Table 1", "Table 2"]) {
-  assert(scienceVisual.includes(label), `ACT science visual must retain ${label}.`);
+for (const sourceVisual of [
+  "/assets/diagnostic/act/diet-cola-apparatus.png",
+  "/assets/diagnostic/act/diet-cola-table-1.png",
+  "/assets/diagnostic/act/diet-cola-table-2.png",
+]) {
+  const sourceVisualStats = await stat(resolve(projectRoot, "public", sourceVisual.slice(1)));
+  assert(sourceVisualStats.size >= 20_000, `${sourceVisual} is unexpectedly small and may not retain the source artwork.`);
 }
 
 console.log(JSON.stringify({
